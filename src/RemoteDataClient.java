@@ -1,0 +1,3 @@
+class RemoveDataClient implements DataIfc {
+
+}

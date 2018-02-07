@@ -1,0 +1,3 @@
+class LocalDataServer implements DataIfc {
+
+}
