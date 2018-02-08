@@ -13,6 +13,10 @@ class LocalDataServer implements DataIfc {
 	private String localServerIP;
 	private static final int PORT = 56789 ;
 	
+	private int numClients = 0;
+	//TODO implement Core with constructor
+	Core core = new Core(this);
+	
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>(); 
 	
 	public LocalDataServer() {
@@ -36,6 +40,7 @@ class LocalDataServer implements DataIfc {
 			e.printStackTrace();
 		}
 		new NewClientListener(this, this.server).start();
+		this.numClients++;
 	}
 
 	public void addNewClient(Socket client) {
@@ -44,11 +49,35 @@ class LocalDataServer implements DataIfc {
 		communicator.start();
 	}
 
-	public void recievedNewPacket(Packet packet) {
-			System.out.println("Server Recieved: " + packet.getCode());	
+	public void recievedNewPacket(int id, Packet packet) {
+			switch(packet.getCommand()){
+			case DICE:
+				core.dice();
+				break;
+			case BUILD_VILLAGE:
+				core.buildRequest(id, Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
+				break;
+			case BUILD_CITY:
+				core.buildRequest(id, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+				break;
+			case BUILD_STREET:
+				core.buildRequest(id, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+				break;
+			case STRING:
+				System.out.println("Server reached Message: "+ packet.getDebugString());
+				break;
+			default:
+				System.err.println("Unknown Command reached Server");
+			}
 	}
 
-	public void messageTo(int idxClient, String message) {
-		this.clients.get(idxClient).message(new Packet(message));
+	public void messageTo(int idxClient, Packet packet) {
+		this.clients.get(idxClient).message(packet);
+	}
+	
+	
+	//Getter Setter
+	public int getNumClients() {
+		return this.numClients;
 	}
 }

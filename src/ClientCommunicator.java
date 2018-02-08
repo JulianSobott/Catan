@@ -9,13 +9,14 @@ public class ClientCommunicator extends Thread{
 	
 	private LocalDataServer localDataServer;
 	private Socket client;
-	
+	private int id; 
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	
 	public ClientCommunicator(LocalDataServer localDataServer, Socket client) {
 		this.localDataServer = localDataServer;
 		this.client = client;
+		this.id = this.localDataServer.getNumClients();
 	}
 	
 	public void run() {
@@ -32,7 +33,7 @@ public class ClientCommunicator extends Thread{
 			Packet packet;
 			try {
 				packet = (Packet) input.readObject();
-				this.localDataServer.recievedNewPacket(packet);
+				this.localDataServer.recievedNewPacket(this.id, packet);
 			}catch(IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -47,7 +48,7 @@ public class ClientCommunicator extends Thread{
 			this.output.writeObject(p);
 			this.output.flush();
 		}catch(IOException e) {
-			System.err.println("Can´t send Packet to Client with the Code:" + p.getCode());
+			System.err.println("Can´t send Packet to Client with the Code:" + p.getCommand());
 		}
 		
 	}

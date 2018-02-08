@@ -13,7 +13,10 @@ class RemoteDataClient implements DataIfc {
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	
-	public RemoteDataClient(String serverIP) {
+	//TODO implement connection to local Game
+	LocalLogic localLogic = new LocalLogic();
+	
+	public RemoteDataClient(UI ui, String serverIP) {
 		this.serverIP = serverIP;
 		//Init Connection to server
 		try {
@@ -38,7 +41,25 @@ class RemoteDataClient implements DataIfc {
 	}
 
 	public void recievedNewMessage(Packet packet) {
-		System.out.println("Client Recieved: " + packet.getCode());
+		switch(packet.getCommand()){
+		case DICE:
+			this.localLogic.diceResult(((Packet.DiceResult) packet.data).getDiceresult());
+			break;
+		case BUILD_VILLAGE:
+			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_CITY:
+			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_STREET:
+			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			break;
+		case STRING:
+			System.out.println("Client reached Message: " + packet.getDebugString());
+			break;
+		default:
+			System.err.println("Unknown Command reached Client");
+		}
 	}
 	
 	public void sendMessage(Packet p) {
