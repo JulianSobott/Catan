@@ -20,7 +20,7 @@ public class Game {
 
 	// local
 	LocalLogic local_logic = new LocalLogic();
-	UI ui = new UI(local_logic);
+	UI ui = new UI(local_logic, this);
 	DataIfc data_connection;
 
 	// server
@@ -38,11 +38,7 @@ public class Game {
 	void run() throws InterruptedException {
 		window.create(new VideoMode(800, 600), "Catan", RenderWindow.DEFAULT);
 
-		// tmp stuff
-		Text tmp_text = new Text(Language.HELLO_WORLD.get_text(), std_font);
-		tmp_text.setCharacterSize(100);
-		tmp_text.setOrigin(tmp_text.getLocalBounds().width/2, tmp_text.getLocalBounds().height/2);
-		tmp_text.setPosition(window.getSize().x/2, window.getSize().y/2);
+		ui.init(std_font);
 
 		std_timer.restart();
 		while( running ){
@@ -50,17 +46,21 @@ public class Game {
 				if( evt.type == Event.Type.CLOSED) {
 					running = false;
 				}
+				if(! ui.handle_event(evt)){
+					// not handled by the ui
+
+				}
 			}
 
 			// updating
 			float whole_time = std_timer.getElapsedTime().asSeconds();
 			float delta_time = frame_timer.restart().asSeconds();
-			tmp_text.setScale((float)Math.sin(whole_time*Math.PI)*.2f+1.f, 1.f);
+			ui.update();
 
 			// rendering
 			window.clear(new Color(12, 145, 255));
 
-			window.draw(tmp_text);
+			ui.render(window);
 
 			window.display();
 
@@ -76,5 +76,19 @@ public class Game {
 
 		Game game = new Game();
 		game.run();
+	}
+
+	// creates a new game with this machine as host
+	void init_host_game() {
+		LocalDataServer server = new LocalDataServer(ui);
+		data_connection = server;
+
+		core = new Core(server);
+	}
+
+	// creates a new game with this machine as host
+	void init_guest_game() {
+		data_connection = new RemoveDataClient(ui);
+
 	}
 }
