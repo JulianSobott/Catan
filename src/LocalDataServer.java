@@ -8,19 +8,19 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 class LocalDataServer extends DataIfc {
-	
+
 	private ServerSocket server;
 	private String localServerIP;
-	private static final int PORT = 56789 ;
-	
+	private static final int PORT = 56789;
+
 	private int numClients = 0;
 	//TODO implement Core with constructor
 	Core core = new Core(this);
-	
-	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>(); 
-	
+
+	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
+
 	public LocalDataServer(UI ui) {
-    suerper(ui);
+		super(ui);
 		//Getting the local IP Adress
 		DatagramSocket ds;
 		try {
@@ -51,46 +51,46 @@ class LocalDataServer extends DataIfc {
 	}
 
 	public void recievedNewPacket(int id, Packet packet) {
-			switch(packet.getCommand()){
-			case DICE:
-				core.dice();
-				break;
-			case BUILD_VILLAGE:
-				core.buildRequest(id, Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
-				break;
-			case BUILD_CITY:
-				core.buildRequest(id, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
-				break;
-			case BUILD_STREET:
-				core.buildRequest(id, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
-				break;
-			case STRING:
-				System.out.println("Server reached Message: "+ packet.getDebugString());
-				break;
-			default:
-				System.err.println("Unknown Command reached Server");
-			}
+		switch (packet.getCommand()) {
+		case DICE:
+			core.dice();
+			break;
+		case BUILD_VILLAGE:
+			core.buildRequest(id, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_CITY:
+			core.buildRequest(id, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_STREET:
+			core.buildRequest(id, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			break;
+		case STRING:
+			System.out.println("Server reached Message: " + packet.getDebugString());
+			break;
+		default:
+			System.err.println("Unknown Command reached Server");
+		}
 	}
 
 	public void messageTo(int idxClient, Packet packet) {
 		this.clients.get(idxClient).message(packet);
 	}
-	
+
 	//Getter Setter
 	public int getNumClients() {
 		return this.numClients;
 	}
-  
+
 	// commands from the core
 	void update_new_map(Field[][] fields) {
 		// TODO push to other clients
 
 		update_new_map_local(fields);
 	}
-  
+
 	//
 	@Override
 	public void update_new_map_local(Field[][] fields) {
 		ui.logic.update_new_map(fields);
-  }
+	}
 }
