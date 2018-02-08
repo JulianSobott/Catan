@@ -1,3 +1,5 @@
+import org.jsfml.system.Vector2i;
+
 class Core {
 	// data server
 	LocalDataServer data_server;
@@ -12,5 +14,14 @@ class Core {
 		map.create_map(Map.map_size, 42);
 		data_server.update_new_map(map.fields);
 
+	}
+
+	public void dice() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void buildRequest(int id, Command buildType, Vector2i position) {
+		
 	}
 }
