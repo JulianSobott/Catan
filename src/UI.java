@@ -1,11 +1,5 @@
-import java.util.List;
-
-import org.jsfml.graphics.CircleShape;
-import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
-import org.jsfml.graphics.Text;
-import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 
 public class UI {

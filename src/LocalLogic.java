@@ -51,7 +51,7 @@ class LocalLogic {
 			shape.setFillColor(resource.getKey().color);
 			shape.setOrigin(Map.field_size * 0.5f, Map.field_size * 0.5f);
 			shape.setOutlineColor(new Color(150,150,150));
-			shape.setOutlineThickness(2);
+			shape.setOutlineThickness(2.5f);
 
 			for (Vector2f pos : resource.getValue()) {
 				shape.setPosition(pos);

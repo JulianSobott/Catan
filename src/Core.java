@@ -9,7 +9,7 @@ class Core {
 		this.data_server = data_server;
 
 		// DEBUG
-		map.create_map(5, 42);
+		map.create_map(Map.map_size, 42);
 		data_server.update_new_map(map.fields);
 
 	}
