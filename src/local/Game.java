@@ -1,3 +1,4 @@
+package local;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,7 +12,16 @@ import org.jsfml.window.VideoMode;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
+import core.Core;
+import core.Map;
+import network.DataIfc;
+import network.LocalDataServer;
+import network.RemoteDataClient;
+
 public class Game {
+	//Debugging Stuff
+	boolean startAtLobby = true;
+	
 	// windowing & stuff
 	RenderWindow window = new RenderWindow();
 	boolean running = true;
@@ -64,6 +74,7 @@ public class Game {
 			for (Event evt : window.pollEvents()) {
 				if (evt.type == Event.Type.CLOSED) {
 					running = false;
+					data_connection.closeAllRessources();
 				}
 				if (!ui.handle_event(evt)) {
 					// not handled by the ui
@@ -139,9 +150,11 @@ public class Game {
 		core = new Core(server);
 	}
 
-	// creates a new game with this machine as host
+	// creates a new game with this machine as client
+	//TODO Deliver Server IP with Lobby Action
 	void init_guest_game() {
-		data_connection = new RemoveDataClient(ui);
+		String serverIp = "192.168.2.118";
+		data_connection = new RemoteDataClient(ui, serverIp);
 
 	}
 }

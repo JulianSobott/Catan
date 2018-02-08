@@ -1,3 +1,4 @@
+package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,6 +14,8 @@ public class ClientCommunicator extends Thread{
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	
+	private boolean running = true;
+	
 	public ClientCommunicator(LocalDataServer localDataServer, Socket client) {
 		this.localDataServer = localDataServer;
 		this.client = client;
@@ -26,10 +29,12 @@ public class ClientCommunicator extends Thread{
 		}catch(IOException e) {
 			System.err.println("Can´t create input and output streams to client");
 			e.printStackTrace();
+		}catch (Exception e) {
+			System.err.println("Can´t initilize listener at ClientCommunicator");
 		}
 		
 		//Listen for Input from Client
-		while(true) {
+		while(this.running && output != null && input != null) {
 			Packet packet;
 			try {
 				packet = (Packet) input.readObject();
@@ -41,6 +46,7 @@ public class ClientCommunicator extends Thread{
 				e.printStackTrace();
 			}
 		}
+		return;
 	}
 	
 	public void message(Packet p) {
@@ -51,5 +57,15 @@ public class ClientCommunicator extends Thread{
 			System.err.println("Can´t send Packet to Client with the Code:" + p.getCommand());
 		}
 		
+	}
+	
+	public void stopRunning() {
+		this.running = false;
+		try {
+			this.input.close();
+			this.output.close();
+		} catch (IOException e) {
+			System.err.println("Can´t close Listener at ClientCommunicator");
+		}
 	}
 }

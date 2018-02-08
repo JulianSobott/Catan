@@ -1,3 +1,4 @@
+package network;
 
 
 import java.io.IOException;
@@ -18,19 +19,24 @@ public class NewClientListener extends Thread{
 	}
 	
 	public void run() {
-		while(listenForNewClients) {
+		while(listenForNewClients && !this.server.isClosed()) {
 			try {
-				client = server.accept();
+				client = this.server.accept();
 			}catch(IOException e) {
-				e.printStackTrace();
+				System.err.println("Can´t accept new Clients");
 			}
 			this.localDataServer.addNewClient(client);
 		}
-		
+		return;
 	}
 	
 	public void stopListen() {
 		this.listenForNewClients = false;
+		try {
+			this.server.close();
+		} catch (IOException e) {
+			System.err.println("Can´t close ClientSocket at NewClientListener");
+		}
 	}
 
 }

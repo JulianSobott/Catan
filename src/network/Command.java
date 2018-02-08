@@ -1,3 +1,4 @@
+package network;
 public enum Command {
 	DICE,
 	BUILD_VILLAGE,

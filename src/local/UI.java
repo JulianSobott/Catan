@@ -1,3 +1,4 @@
+package local;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.window.event.Event;
@@ -5,7 +6,7 @@ import org.jsfml.window.event.Event;
 public class UI {
 	// local state
 	LocalState state;
-	LocalLogic logic;
+	private LocalLogic logic;
 	Game game;
 
 	// fonts
@@ -37,4 +38,9 @@ public class UI {
 	void render(RenderTarget target) {
 		
 	}
+
+	public LocalLogic getLogic() {
+		return logic;
+	}
+
 }

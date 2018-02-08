@@ -1,3 +1,4 @@
+package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -32,9 +33,15 @@ public class ClientInputListener extends Thread{
 			}
 			
 		}
+		return;
 	}
 	
 	public void closeConnectionToServer() {
 		this.connectionToServer = false;
+		try {
+			this.input.close();
+		} catch (IOException e) {
+			System.err.println("Can´t close Listener at ClientInputListener");
+		}
 	}
 }

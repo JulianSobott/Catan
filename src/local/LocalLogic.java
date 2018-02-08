@@ -1,3 +1,4 @@
+package local;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +11,11 @@ import org.jsfml.graphics.Text;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
+import core.Map;
+import network.Command;
+
 // TODO name?
-class LocalLogic {
+public class LocalLogic {
 	// state
 	LocalState state;
 
@@ -19,7 +23,7 @@ class LocalLogic {
 	Font std_font;
 	
 	
-	LocalLogic() {
+	public LocalLogic() {
 		state = new LocalState();
 	}
 
@@ -28,7 +32,7 @@ class LocalLogic {
 
 	}
 
-	void update_new_map(Field[][] fields) {
+	public void update_new_map(Field[][] fields) {
 		state.field_resources = new HashMap<>();
 		for (Resource res : Resource.values())
 			state.field_resources.put(res, new ArrayList<Vector2f>());

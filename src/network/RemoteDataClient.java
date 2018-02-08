@@ -1,3 +1,4 @@
+package network;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -5,14 +6,20 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import local.Field;
+import local.LocalLogic;
+import local.UI;
+
 //TODO Error handling when Entered a wrong IP address (reentering)
-class RemoteDataClient extends DataIfc {
+public class RemoteDataClient extends DataIfc {
 	private Socket server;
 	private static final int PORT = 56789;
 	private String serverIP;
 	
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
+	
+	private ClientInputListener clientInputListener;
 	
 	//TODO implement connection to local Game
 	LocalLogic localLogic = new LocalLogic();
@@ -39,7 +46,8 @@ class RemoteDataClient extends DataIfc {
 			e.printStackTrace();
 		}
 		
-		new ClientInputListener(this, input).start();
+		this.clientInputListener = new ClientInputListener(this, input);
+		this.clientInputListener.start();
 	}
 
 	public void recievedNewMessage(Packet packet) {
@@ -77,5 +85,17 @@ class RemoteDataClient extends DataIfc {
 	@Override
 	void update_new_map_local(Field[][] fields) {
     // TODO
+	}
+
+	@Override
+	public void closeAllRessources() {
+		this.clientInputListener.closeConnectionToServer();
+		try {
+			this.input.close();
+			this.output.close();
+			this.server.close();
+		} catch (IOException e) {
+			System.err.println("Can´t close Listener at ClientCommunicator");
+		}
 	}
 }

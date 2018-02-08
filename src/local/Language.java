@@ -1,4 +1,5 @@
-enum Language {
+package local;
+public enum Language {
 
 	HELLO_WORLD("Hello world", "Hallo Welt");
 

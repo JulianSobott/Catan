@@ -1,3 +1,4 @@
+package network;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -7,13 +8,19 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-class LocalDataServer extends DataIfc {
+import core.Core;
+import local.Field;
+import local.UI;
+
+public class LocalDataServer extends DataIfc {
 
 	private ServerSocket server;
 	private String localServerIP;
 	private static final int PORT = 56789;
 
 	private int numClients = 0;
+	
+	private NewClientListener newClientListener;
 	//TODO implement Core with constructor
 	Core core = new Core(this);
 
@@ -40,7 +47,8 @@ class LocalDataServer extends DataIfc {
 			System.err.println("CouldnÂ´t create Server Socket");
 			e.printStackTrace();
 		}
-		new NewClientListener(this, this.server).start();
+		this.newClientListener = new NewClientListener(this, this.server);
+		this.newClientListener.start();
 		this.numClients++;
 	}
 
@@ -82,7 +90,7 @@ class LocalDataServer extends DataIfc {
 	}
 
 	// commands from the core
-	void update_new_map(Field[][] fields) {
+	public void update_new_map(Field[][] fields) {
 		// TODO push to other clients
 
 		update_new_map_local(fields);
@@ -91,6 +99,19 @@ class LocalDataServer extends DataIfc {
 	//
 	@Override
 	public void update_new_map_local(Field[][] fields) {
-		ui.logic.update_new_map(fields);
+		ui.getLogic().update_new_map(fields);
+	}
+
+	@Override
+	public void closeAllRessources() {
+		this.newClientListener.stopListen();
+		for(ClientCommunicator client : clients) {
+			client.stopRunning();
+		}
+		try {
+			this.server.close();
+		} catch (IOException e) {
+			System.err.println("Can´t close Server at LocalDataServer");
+		}
 	}
 }
