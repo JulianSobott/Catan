@@ -7,7 +7,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-class LocalDataServer implements DataIfc {
+class LocalDataServer extends DataIfc {
 	
 	private ServerSocket server;
 	private String localServerIP;
@@ -19,7 +19,8 @@ class LocalDataServer implements DataIfc {
 	
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>(); 
 	
-	public LocalDataServer() {
+	public LocalDataServer(UI ui) {
+    suerper(ui);
 		//Getting the local IP Adress
 		DatagramSocket ds;
 		try {
@@ -36,7 +37,7 @@ class LocalDataServer implements DataIfc {
 		try {
 			server = new ServerSocket(PORT);
 		} catch (IOException e) {
-			System.err.println("Couldn´t create Server Socket");
+			System.err.println("CouldnÂ´t create Server Socket");
 			e.printStackTrace();
 		}
 		new NewClientListener(this, this.server).start();
@@ -75,9 +76,21 @@ class LocalDataServer implements DataIfc {
 		this.clients.get(idxClient).message(packet);
 	}
 	
-	
 	//Getter Setter
 	public int getNumClients() {
 		return this.numClients;
 	}
+  
+	// commands from the core
+	void update_new_map(Field[][] fields) {
+		// TODO push to other clients
+
+		update_new_map_local(fields);
+	}
+  
+	//
+	@Override
+	public void update_new_map_local(Field[][] fields) {
+		ui.logic.update_new_map(fields);
+  }
 }
