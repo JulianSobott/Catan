@@ -1,3 +1,3 @@
-interface DataIfc {
+interface DataIfc{
 	
 }
