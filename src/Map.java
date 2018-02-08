@@ -4,6 +4,7 @@ class Map {
 	public final static int number_count = 11;
 	public final static float field_size = 100;
 	public final static float field_offset = field_size*0.5f;
+	public final static float field_distance = -12;
 
 	Field[][] fields;
 

@@ -1,6 +1,7 @@
 import java.util.List;
 
 import org.jsfml.graphics.CircleShape;
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
@@ -40,28 +41,6 @@ public class UI {
 	}
 
 	void render(RenderTarget target) {
-		render_map(target);
-	}
-
-	void render_map(RenderTarget target) {
-		for (java.util.Map.Entry<Resource, List<Vector2f>> resource : state.field_resources.entrySet()) {
-			CircleShape shape = new CircleShape(Map.field_size * 0.5f, 6);
-			shape.setFillColor(resource.getKey().color);
-			shape.setOrigin(Map.field_size * 0.5f, Map.field_size * 0.5f);
-
-			for (Vector2f pos : resource.getValue()) {
-				shape.setPosition(pos);
-				target.draw(shape);
-			}
-		}
-		for (java.util.Map.Entry<Byte, List<Vector2f>> number : state.field_numbers.entrySet()) {
-			Text text = new Text("" + number.getKey(), std_font);
-			text.setOrigin(text.getGlobalBounds().width * 0.5f, text.getGlobalBounds().height * 0.5f);
-
-			for (Vector2f pos : number.getValue()) {
-				text.setPosition(pos);
-				target.draw(text);
-			}
-		}
+		
 	}
 }

@@ -1,7 +1,11 @@
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+
 import org.jsfml.graphics.*;
 import org.jsfml.system.Clock;
+import org.jsfml.system.Vector2f;
+import org.jsfml.window.ContextSettings;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
@@ -10,6 +14,16 @@ public class Game {
 	RenderWindow window = new RenderWindow();
 	boolean running = true;
 	float target_fps = 60.f;
+	
+	// view management
+	View view;
+	float delta = 0.01667f;
+	float zoom_level = 1.f;
+	float mouse_value = 3.f;
+	Vector2f mouse_start;
+	ArrayList<Vector2f> mouse_moved;
+	boolean mouse_was_moved = false;
+
 
 	// font
 	Font std_font;
@@ -36,19 +50,29 @@ public class Game {
 	}
 
 	void run() throws InterruptedException {
-		window.create(new VideoMode(800, 600), "Catan", RenderWindow.DEFAULT);
+		window.create(new VideoMode(800, 600), "Catan", RenderWindow.DEFAULT, new ContextSettings(0, 0, 4));
+		view = (View) window.getDefaultView();
 
+		local_logic.init(std_font);
 		ui.init(std_font);
 
 		std_timer.restart();
 		while( running ){
-			for(Event evt : window.pollEvents()){
+			for(Event evt : window.pollEvents()) {
 				if( evt.type == Event.Type.CLOSED) {
 					running = false;
 				}
-				if(! ui.handle_event(evt)){
+				if( !ui.handle_event(evt) ) {
 					// not handled by the ui
-
+					 if (evt.type == Event.Type.RESIZED)
+					 {
+						 update_view();
+					 }
+					 else if (evt.type == Event.Type.MOUSE_WHEEL_MOVED)
+					 {
+						 zoom_level *= Math.pow(0.9f, (float)evt.asMouseWheelEvent().delta);
+						 update_view();
+					 }
 				}
 			}
 
@@ -61,6 +85,7 @@ public class Game {
 			window.clear(new Color(12, 145, 255));
 
 			ui.render(window);
+			local_logic.render_map(window);
 
 			window.display();
 
@@ -71,9 +96,13 @@ public class Game {
 		}
 	}
 
-	public static void main(String[] args) throws InterruptedException {
-		System.out.println("Works!");
+	void update_view()
+	{
+		view.setSize((float)window.getSize().x * zoom_level, (float)window.getSize().y * zoom_level);
+		window.setView(view);
+	}
 
+	public static void main(String[] args) throws InterruptedException {
 		Game game = new Game();
 		game.run();
 	}
