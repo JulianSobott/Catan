@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
-import org.jsfml.system.Vector2i;
 import org.jsfml.window.ContextSettings;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.Mouse;
@@ -78,7 +77,7 @@ public class Game {
 				if (evt.type == Event.Type.CLOSED) {
 					running = false;
 					try {
-						data_connection.closeAllRessources();
+						data_connection.closeAllResources();
 					} catch (Exception e) {
 						System.err.println("Closed before all resources closed");
 					}

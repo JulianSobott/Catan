@@ -1,18 +1,16 @@
 package local;
 
 import java.util.ArrayList;
-import local.LocalState.GameMode;
+
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
-import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderTarget;
-import org.jsfml.graphics.RenderWindow;
-import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.Mouse;
-import org.jsfml.window.Window;
 import org.jsfml.window.event.Event;
+
+import local.LocalState.GameMode;
 
 public class UI {
 	// local state

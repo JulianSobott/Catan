@@ -13,6 +13,6 @@ public abstract class DataIfc {
 
 	abstract void update_new_map_local(Field[][] fields);
 
-	public abstract void closeAllRessources();
+	public abstract void closeAllResources();
 
 }
