@@ -1,14 +1,9 @@
 package local;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
-import org.jsfml.graphics.IntRect;
 import org.jsfml.graphics.RectangleShape;
-import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
 import org.jsfml.system.Vector2f;

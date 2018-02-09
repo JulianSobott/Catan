@@ -45,7 +45,7 @@ public class LocalDataServer extends DataIfc {
 		try {
 			server = new ServerSocket(PORT);
 		} catch (IOException e) {
-			System.err.println("CouldnÂ´t create Server Socket");
+			System.err.println("Couldn't create Server Socket");
 			e.printStackTrace();
 		}
 		this.newClientListener = new NewClientListener(this, this.server);
@@ -59,7 +59,7 @@ public class LocalDataServer extends DataIfc {
 		communicator.start();
 	}
 
-	public void recievedNewPacket(int id, Packet packet) {
+	public void receivedNewPacket(int id, Packet packet) {
 		switch (packet.getCommand()) {
 		case DICE:
 			core.dice();
@@ -115,7 +115,7 @@ public class LocalDataServer extends DataIfc {
 	}
 
 	@Override
-	public void closeAllRessources() {
+	public void closeAllResources() {
 		this.newClientListener.stopListen();
 		for(ClientCommunicator client : clients) {
 			client.stopRunning();
@@ -123,7 +123,7 @@ public class LocalDataServer extends DataIfc {
 		try {
 			this.server.close();
 		} catch (IOException e) {
-			System.err.println("Can´t close Server at LocalDataServer");
+			System.err.println("Canï¿½t close Server at LocalDataServer");
 		}
 	}
 }

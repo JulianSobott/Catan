@@ -1,9 +1,5 @@
 package local;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Paths;
-
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;

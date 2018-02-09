@@ -50,10 +50,10 @@ public class RemoteDataClient extends DataIfc {
 		this.clientInputListener.start();
 	}
 
-	public void recievedNewMessage(Packet packet) {
+	public void receivedNewMessage(Packet packet) {
 		switch(packet.getCommand()){
 		case DICE:
-			this.local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceresult());
+			this.local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceResult());
 			break;
 		case BUILD_VILLAGE:
 			this.local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
@@ -95,14 +95,14 @@ public class RemoteDataClient extends DataIfc {
 	}
 
 	@Override
-	public void closeAllRessources() {
+	public void closeAllResources() {
 		this.clientInputListener.closeConnectionToServer();
 		try {
 			this.input.close();
 			this.output.close();
 			this.server.close();
 		} catch (IOException e) {
-			System.err.println("Can´t close Listener at ClientCommunicator");
+			System.err.println("Canï¿½t close Listener at ClientCommunicator");
 		}
 	}
 }
