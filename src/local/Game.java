@@ -1,4 +1,5 @@
 package local;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -21,14 +22,15 @@ import network.RemoteDataClient;
 public class Game {
 	//Debugging Stuff
 	boolean startAtLobby = true;
-	
+
 	// windowing & stuff
 	RenderWindow window = new RenderWindow();
 	boolean running = true;
 	float target_fps = 60.f;
 
 	// view management
-	View view;
+	View game_view;
+	View gui_view;// TODO make gui view aware of window resizing
 	float zoom_level = 1.f;
 	float mouse_value = 3.f;
 	Vector2f mouse_start;
@@ -61,22 +63,15 @@ public class Game {
 
 	void run() throws InterruptedException {
 		window.create(new VideoMode(1200, 800), "Catan", RenderWindow.DEFAULT, new ContextSettings(8));
-		view = (View) window.getDefaultView();
-		view.setCenter((Map.field_size + Map.field_distance + 1.f) * (float) Map.map_size * 0.5f,
+		game_view = (View) window.getDefaultView();
+		gui_view = new View(game_view.getCenter(), game_view.getSize());
+		game_view.setCenter((Map.field_size + Map.field_distance + 1.f) * (float) Map.map_size * 0.5f,
 				(Map.field_size + Map.field_distance) * (float) Map.map_size * 0.866f * 0.5f);
 		update_view();
 
 		local_logic.init(std_font);
-		//ui.init(std_font);
-		
-		//Lobby stuff
-		float buttonWidth = Button.getWidthMenuButtons();
-		float buttonHeight = Button.getHeightMenuButtons();
-		view.setSize((float) window.getSize().x, (float) window.getSize().y);
-		view.setCenter(buttonWidth/2, (buttonHeight+20)* 5* 0.866f * 0.5f);
-		window.setView(view);
-		ui.initLobby(window);
-		
+		ui.init(std_font);
+
 		std_timer.restart();
 		while (running) {
 			for (Event evt : window.pollEvents()) {
@@ -84,12 +79,12 @@ public class Game {
 					running = false;
 					try {
 						data_connection.closeAllRessources();
-					}catch(Exception e) {
+					} catch (Exception e) {
 						System.err.println("Closed before all resources closed");
 					}
-					
+
 				}
-				if (!ui.handle_event(view, evt)) {
+				if (!ui.handle_event(evt)) {
 					// not handled by the ui
 					if (evt.type == Event.Type.RESIZED) {
 						update_view();
@@ -111,7 +106,7 @@ public class Game {
 					} else if (evt.type == Event.Type.MOUSE_MOVED) {
 						if (mouse_was_moved) {
 							float x = (float) evt.asMouseEvent().position.x, y = (float) evt.asMouseEvent().position.y;
-							view.move((mouse_start.x - x) * zoom_level, (mouse_start.y - y) * zoom_level);
+							game_view.move((mouse_start.x - x) * zoom_level, (mouse_start.y - y) * zoom_level);
 							mouse_start = new Vector2f(x, y);
 							update_view();
 						}
@@ -127,8 +122,10 @@ public class Game {
 			// rendering
 			window.clear(new Color(12, 145, 255));
 
-			ui.render(window);
+			window.setView(game_view);
 			local_logic.render_map(window);
+			window.setView(gui_view);
+			ui.render(window);
 
 			window.display();
 
@@ -141,13 +138,16 @@ public class Game {
 	}
 
 	void update_view() {
-		view.setCenter(
-				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size, view.getCenter().x)),
-				Math.max(0.f,
-						Math.min((Map.field_size + Map.field_distance) * Map.map_size * 0.866f, view.getCenter().y)));// constraint
+		game_view
+				.setCenter(
+						Math.max(0.f,
+								Math.min((Map.field_size + Map.field_distance) * Map.map_size,
+										game_view.getCenter().x)),
+						Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size * 0.866f,
+								game_view.getCenter().y)));// constraint
 		zoom_level = Math.max(0.2f, Math.min(Map.map_size * 0.15f, zoom_level));// constraint
-		view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
-		window.setView(view);
+		game_view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
+		ui.update_window_size(new Vector2f(window.getSize().x, window.getSize().y));
 	}
 
 	public static void main(String[] args) throws InterruptedException {

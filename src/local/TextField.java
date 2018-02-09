@@ -13,96 +13,92 @@ import org.jsfml.graphics.Text;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.Keyboard;
 
-public class TextField extends Widget{
-	FloatRect textField;
-	private String text = "";
-	private boolean isActive = false;
-	private int borderThickness = 1;
-	
-	
-	public TextField() {
-		super(500, 10, 200, 25);
+public class TextField extends Widget {
+	private static final int DEFAULT_MENU_TEXTFIELD_OUTLINE_THICKNESS = 3;
+	private static final int DEFAULT_MENU_TEXTFIELD_LEFT_SPACING = 5;
+
+	private RectangleShape shape;
+	private Text text;
+	private boolean is_active = false;
+	private Color outline_color = Color.BLACK;
+
+	public TextField(FloatRect bounds) {
+		super(bounds);
+
+		shape = new RectangleShape(new Vector2f(bounds.width, bounds.height));
+		shape.setPosition(bounds.left, bounds.top);
+		shape.setOutlineColor(default_outline_color);
+		shape.setOutlineThickness(DEFAULT_MENU_TEXTFIELD_OUTLINE_THICKNESS);
+
+		this.text = new Text("", default_font);
+		this.text.setString("XOW");// needed to properly calculate bounds
+		this.text.setOrigin(-DEFAULT_MENU_TEXTFIELD_LEFT_SPACING, this.text.getGlobalBounds().height * 0.5f);
+		this.text.setString("");
+		this.text.setPosition(bounds.left, bounds.top + bounds.height * 0.5f);
+		this.text.setColor(default_text_color);
 	}
 
 	@Override
 	public void render(RenderTarget target) {
-		Font font = new Font();
-		try {
-			font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
-		} catch(IOException ex) {
-		    //Failed to load font
-		    ex.printStackTrace();
-		}
-		Text t = new Text(this.text, font);
-		FloatRect rect= t.getLocalBounds();
-		t.setOrigin(-5, 20);
-		t.setPosition(this.x , this.y + this.height/2);
-		t.setScale(.8f, .8f);
-		//t.move(new Vector2f(this.x, this.y));
-		t.setColor(new Color(100, 70, 100));
-		
-		RectangleShape rs = new RectangleShape(new Vector2f(this.width, this.height));
-		rs.move(new Vector2f(this.x, this.y));
-		textField = rs.getGlobalBounds();
-		rs.setFillColor(Color.WHITE);
-		if(isActive) {
-			rs.setOutlineColor(Color.RED);
-		}else {
-			rs.setOutlineColor(Color.BLACK);
-		}
-		rs.setOutlineThickness(borderThickness);
-		target.draw(rs);
-		target.draw(t);
+		target.draw(shape);
+		target.draw(text);
 	}
-	
-	public void setOnClick() {
-		this.text = "Clicked";
+
+	@Override
+	public void do_mouse_click() {
+		is_active = true;
+		shape.setOutlineColor(default_outline_highlight_color);
 	}
-	
-	public boolean checkClicked(Vector2f mouseClick) {
-		if(textField.contains(mouseClick)) {
-			this.isActive = true;
+
+	public void deactivate() {
+		is_active = false;
+		shape.setOutlineColor(outline_color);
+	}
+
+	public void text_input(char character) {
+		if (character != '\n' && character != '\r' && character != '\b' && character != '\t')
+			text.setString(text.getString() + character);
+	}
+
+	// returns true if the key was handled
+	public boolean special_input(Keyboard.Key key) {
+		if (key == Keyboard.Key.BACKSPACE) {
+			String str = text.getString();
+			if (!str.isEmpty())
+				text.setString(str.substring(0, str.length() - 1));
 			return true;
-		}else {
-			return false;
 		}
+		return false;
 	}
-	
-	public void addChar(Keyboard.Key key, boolean shift) {
-		if(key.toString().length() == 1) {
-			if(shift) {
-				this.text += key.toString();
-			}else {
-				this.text += key.toString().toLowerCase();
-			}	
-		}else if(key.toString().contains("NUM")){
-			this.text += key.toString().substring(3, 4);
-		}else {
-			switch(key.toString()) {
-			case "BACKSPACE":
-				if(this.text != null && this.text.length() > 0) {
-					this.text = text.substring(0, text.length()-1);
-				}
-				break;
-			case "SPACE":
-				this.text += " ";
-				break;
-			case "LSHIFT":
-				break;
-			case "RSHIFT":
-				break;
-			case "COMMA":
-				this.text += ",";
-				break;
-			case "PERIOD":
-				this.text += ".";
-				break;
-			default:
-				this.text += ":-)";
-			}	
-		}
+
+	// setter
+
+	public void set_font(Font font) {
+		text.setFont(font);
 	}
-	
-	
-	
+
+	public String get_text() {
+		return text.getString();
+	}
+
+	public void set_text_color(Color color) {
+		text.setColor(color);
+	}
+
+	public void set_outline_color(Color color) {
+		outline_color = color;
+		if (!is_active)
+			shape.setOutlineColor(color);
+	}
+
+	public void set_position(Vector2f pos) {
+		update_bounds(new FloatRect(pos.x, pos.y, bounds.width, bounds.height));
+		shape.setPosition(pos);
+		text.setPosition(bounds.left, bounds.top + bounds.height * 0.5f);
+	}
+
+	public void set_text_size(int character_size) {
+		text.setCharacterSize(character_size);
+	}
+
 }

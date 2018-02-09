@@ -1,7 +1,7 @@
 package local;
 public enum Language {
 
-	HELLO_WORLD("Hello world", "Hallo Welt"),
+	NO_TEXT("NO TEXT FOUND", "KEIN TEXT GEFUNDEN"),
 	//Start Window
 	CREATE_NEW_GAME("Create new Game", "Neues Spiel erstellen"),
 	JOIN_GAME("Join game", "Spiel beitreten"),

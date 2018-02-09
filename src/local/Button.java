@@ -13,72 +13,60 @@ import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
 import org.jsfml.system.Vector2f;
 
-public class Button extends Widget{
-	FloatRect button;
-	private ClickEvent clickEvent;
-	private String text;
-	private static int heightMenuButtons = 100;
-	private static int widthMenuButtons = 400;
-	public Button(String text) {
-		super(0, 0, widthMenuButtons, heightMenuButtons);
-		this.text = text;
+public class Button extends Widget {
+	private RectangleShape shape;
+	private Text text;
+	private Runnable click_event;
+
+	public Button(String text, FloatRect bounds) {
+		super(bounds);
+
+		shape = new RectangleShape(new Vector2f(bounds.width, bounds.height));
+		shape.setPosition(bounds.left, bounds.top);
+
+		this.text = new Text(text, default_font);
+		this.text.setOrigin(this.text.getGlobalBounds().width * 0.5f, this.text.getGlobalBounds().height * 0.5f);
+		this.text.setPosition(bounds.left + bounds.width * 0.5f, bounds.top + bounds.height * 0.5f);
+		this.text.setColor(default_text_color);
 	}
-	
+
+	@Override
 	public void render(RenderTarget target) {
-		Font font = new Font();
-		try {
-			font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
-		} catch(IOException ex) {
-		    //Failed to load font
-		    ex.printStackTrace();
-		}
-		RectangleShape rs= new RectangleShape(new Vector2f(this.width, this.height));
-		rs.move(new Vector2f(this.x, this.y));
-		button = rs.getGlobalBounds();
-		Text t = new Text(this.text, font);
-		FloatRect rect= t.getLocalBounds();
-		t.setOrigin(rect.width / 2, rect.height / 2);
-		t.setPosition(this.x + this.width/2 , this.y + this.height/2);
-		//t.move(new Vector2f(this.x, this.y));
-		t.setColor(new Color(100, 70, 100));
-		target.draw(rs);
-		target.draw(t);
-	}
-	
-
-	public boolean checkClicked(Vector2f mouseClick) {
-		if(button.contains(mouseClick)) {
-			this.clickEvent.handle();
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	
-	public String getText() {
-		return this.text;
+		target.draw(shape);
+		target.draw(text);
 	}
 
-	public void setOnClick(ClickEvent clickEvent) {
-		this.clickEvent = clickEvent;
+	@Override
+	public void do_mouse_click() {
+		if( click_event != null) click_event.run();
 	}
-	
-	public void setPosition(Vector2f pos) {
-		this.x = (int) pos.x;
-		this.y = (int) pos.y;
+
+	// setter
+
+	public void set_font(Font font) {
+		text.setFont(font);
 	}
-	
-	public void setPosition(int idx) {
-		this.x = 0;
-		this.y = (this.height + 20) * idx;
+
+	public String get_text() {
+		return text.getString();
 	}
-	
-	public static int getHeightMenuButtons() {
-		return heightMenuButtons;
+
+	public void set_text_color(Color color) {
+		text.setColor(color);
 	}
-	
-	public static int getWidthMenuButtons() {
-		return widthMenuButtons;
+
+	public void set_position(Vector2f pos) {
+		update_bounds(new FloatRect(pos.x, pos.y, bounds.width, bounds.height));
+		shape.setPosition(pos);
+		text.setPosition(bounds.left + bounds.width * 0.5f, bounds.top + bounds.height * 0.5f);
 	}
+
+	public void set_click_callback(Runnable click_event) {
+		this.click_event = click_event;
+	}
+
+	public void set_text_size(int character_size) {
+		text.setCharacterSize(character_size);
+	}
+
 }
