@@ -11,7 +11,10 @@ public enum Language {
 	//Create game window 
 	START("Start game", "Spiel starten"),
 	//Join game window
-	JOIN("Join game", "Spiel beitreten")
+	JOIN("Join game", "Spiel beitreten"),
+	//Lobby Window
+	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
+	MEMBERS("MEMBERS", "Mitspieler");
 	;
 
 

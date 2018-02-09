@@ -1,5 +1,8 @@
 package local;
-public class Field {
+
+import java.io.Serializable;
+
+public class Field implements Serializable{
 	Resource resource;
 	byte number;
 

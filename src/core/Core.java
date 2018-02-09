@@ -28,4 +28,8 @@ public class Core {
 	public void buildRequest(int id, Command buildType, Vector2i position) {
 		
 	}
+	
+	public Map getMap() {
+		return this.map;
+	}
 }

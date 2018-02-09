@@ -15,8 +15,10 @@ import org.jsfml.window.event.Event;
 
 import core.Core;
 import core.Map;
+import network.Command;
 import network.DataIfc;
 import network.LocalDataServer;
+import network.Packet;
 import network.RemoteDataClient;
 
 public class Game {
@@ -45,14 +47,15 @@ public class Game {
 	Clock frame_timer = new Clock();
 
 	// local
+	DataIfc data_connection;
 	LocalLogic local_logic = new LocalLogic();
 	UI ui = new UI(local_logic, this);
-	DataIfc data_connection;
 
 	// server
 	Core core;
 
 	Game() {
+		local_logic.addUI(ui);
 		std_font = new Font();
 		try {
 			std_font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
@@ -157,17 +160,27 @@ public class Game {
 
 	// creates a new game with this machine as host
 	void init_host_game() {
-		LocalDataServer server = new LocalDataServer(ui);
+		LocalDataServer server = new LocalDataServer(ui, local_logic);
 		data_connection = server;
-
+		local_logic.addDataConnection(data_connection);
 		core = new Core(server);
 	}
 
 	// creates a new game with this machine as client
-	//TODO Deliver Server IP with Lobby Action
-	void init_guest_game() {
+	//TODO Maybe delete this duplicate Method
+	void init_guest_game(String ip) {
 		String serverIp = "192.168.2.118";
-		data_connection = new RemoteDataClient(ui, serverIp);
+		data_connection = new RemoteDataClient(ui, local_logic, serverIp);
+	}
 
+	public void init_guest_game(String ip, String name) {
+		String serverIp = "192.168.2.118";
+		data_connection = new RemoteDataClient(ui, local_logic, serverIp);
+		local_logic.addDataConnection(data_connection);
+		((RemoteDataClient) data_connection).sendMessage(new Packet(Command.NAME, new Packet.Name(name)));
+	}
+	
+	public Core getCore() {
+		return this.core;
 	}
 }

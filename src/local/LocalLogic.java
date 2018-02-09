@@ -15,19 +15,35 @@ import org.jsfml.system.Vector2i;
 import core.Map;
 import local.LocalState.GameMode;
 import network.Command;
+import network.DataIfc;
+import network.LocalDataServer;
+import network.Packet;
+import network.RemoteDataClient;
 
 // TODO name?
 public class LocalLogic {
 	// state
 	LocalState state;
-
+	
+	UI ui;
+	DataIfc data_connection; 
 	// fonts
 	Font std_font;
 
 	public LocalLogic() {
 		state = new LocalState();
-	}
 
+	}
+	
+
+	public void addUI(UI ui) {
+		this.ui = ui;
+	}
+	
+	public void addDataConnection(DataIfc data_connection) {
+		this.data_connection = data_connection;
+	}
+	
 	void init(Font std_font) {
 		this.std_font = std_font;
 
@@ -88,4 +104,19 @@ public class LocalLogic {
 
 	}
 
+	public void build_guest_lobby_window() {
+		this.ui.build_guest_lobby_window();
+	}
+
+	public void messageStartGame() {
+		((LocalDataServer) this.data_connection).update_new_map(ui.game.core.getMap().getFields());;
+		((LocalDataServer) this.data_connection).messageToAll(new Packet(Command.START_GAME));
+		startGame();
+		
+	}
+	
+	public void startGame() {
+		state.mode = GameMode.game;
+		ui.build_game_surface();
+	}
 }

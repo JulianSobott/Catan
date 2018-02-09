@@ -21,20 +21,19 @@ public class RemoteDataClient extends DataIfc {
 	
 	private ClientInputListener clientInputListener;
 	
-	//TODO implement connection to local Game
-	LocalLogic localLogic = new LocalLogic();
-	
-	public RemoteDataClient(UI ui, String serverIP) {
-    super(ui);
+	public RemoteDataClient(UI ui, LocalLogic local_logic, String serverIP) {
+		super(ui, local_logic);
 		this.serverIP = serverIP;
 		//Init Connection to server
 		try {
 			this.server = new Socket(this.serverIP, PORT);
 		}catch(UnknownHostException e) {
-			System.err.println("Unknown Host! Try to enter a new IP");
+			System.err.println("Unknown Host! Try to enter a new IP");	
 			e.printStackTrace();
+			return;
 		}catch(IOException e) {
 			e.printStackTrace();
+			return;
 		}
 		
 		//Init Output and Input to Server 
@@ -42,10 +41,11 @@ public class RemoteDataClient extends DataIfc {
 			this.output = new ObjectOutputStream(this.server.getOutputStream());
 			this.input = new ObjectInputStream(this.server.getInputStream());
 		}catch(IOException e) {
-			System.err.println("CanÂ´t create input and output streams to server");
+			System.err.println("Can´t create input and output streams to server");
 			e.printStackTrace();
+			return;
 		}
-		
+		this.ui.build_guest_lobby_window();
 		this.clientInputListener = new ClientInputListener(this, input);
 		this.clientInputListener.start();
 	}
@@ -53,19 +53,26 @@ public class RemoteDataClient extends DataIfc {
 	public void recievedNewMessage(Packet packet) {
 		switch(packet.getCommand()){
 		case DICE:
-			this.localLogic.diceResult(((Packet.DiceResult) packet.data).getDiceresult());
+			this.local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceresult());
 			break;
 		case BUILD_VILLAGE:
-			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
+			this.local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_CITY:
-			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			this.local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_STREET:
-			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			this.local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
 			break;
 		case STRING:
 			System.out.println("Client reached Message: " + packet.getDebugString());
+			break;
+		case START_GAME:
+			local_logic.startGame();
+			System.out.println("Start game at Client");
+			break;
+		case NEW_MAP:
+			update_new_map_local(((Packet.New_Map) packet.data).getFields());
 			break;
 		default:
 			System.err.println("Unknown Command reached Client");
@@ -84,7 +91,7 @@ public class RemoteDataClient extends DataIfc {
   
 	@Override
 	void update_new_map_local(Field[][] fields) {
-    // TODO
+		this.local_logic.update_new_map(fields);
 	}
 
 	@Override

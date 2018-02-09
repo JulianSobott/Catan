@@ -7,6 +7,10 @@ public enum Command {
 	TRADE,
 	FIELD,
 	SCORE,
-	STRING;
+	STRING,
+	//Pre Game Stuff
+	NEW_MAP,
+	NAME,
+	START_GAME;
 	
 }

@@ -22,8 +22,9 @@ public class ClientInputListener extends Thread{
 					packet = (Packet) input.readObject();
 					this.remoteDataClient.recievedNewMessage(packet);
 				}catch(IOException e) {
+					e.printStackTrace();
 					System.err.println("Connection to Server closed (ClientInputListener Line 26)");
-					this.connectionToServer = false;
+					//this.connectionToServer = false;
 				}catch(ClassNotFoundException e) {
 					System.err.println("Object is from unknown Class");
 					e.printStackTrace();

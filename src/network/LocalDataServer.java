@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import core.Core;
 import local.Field;
+import local.LocalLogic;
 import local.UI;
 
 public class LocalDataServer extends DataIfc {
@@ -26,8 +27,8 @@ public class LocalDataServer extends DataIfc {
 
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
 
-	public LocalDataServer(UI ui) {
-		super(ui);
+	public LocalDataServer(UI ui, LocalLogic local_logic) {
+		super(ui, local_logic);
 		//Getting the local IP Adress
 		DatagramSocket ds;
 		try {
@@ -75,6 +76,9 @@ public class LocalDataServer extends DataIfc {
 		case STRING:
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;
+		case NAME:
+			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
+			break;	
 		default:
 			System.err.println("Unknown Command reached Server");
 		}
@@ -83,7 +87,12 @@ public class LocalDataServer extends DataIfc {
 	public void messageTo(int idxClient, Packet packet) {
 		this.clients.get(idxClient).message(packet);
 	}
-
+	
+	public void messageToAll(Packet packet) {
+		for(ClientCommunicator client: clients) {
+			client.message(packet);
+		}
+	}
 	//Getter Setter
 	public int getNumClients() {
 		return this.numClients;
@@ -91,8 +100,11 @@ public class LocalDataServer extends DataIfc {
 
 	// commands from the core
 	public void update_new_map(Field[][] fields) {
-		// TODO push to other clients
-
+		try {
+			messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(fields)));
+		}catch(Exception e) {
+			System.err.println("Could not send map");
+		}
 		update_new_map_local(fields);
 	}
 

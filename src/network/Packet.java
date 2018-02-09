@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import org.jsfml.system.Vector2i;
 
+import local.Field;
+
 public class Packet implements Serializable{
 	public static class DiceResult implements Serializable {
 		private byte result;
@@ -39,6 +41,25 @@ public class Packet implements Serializable{
 		}
 	}
 	
+	public static class Name implements Serializable{
+		private String name;
+		public Name(String name) {
+			this.name = name;
+		}
+		public String getName() {
+			return this.name;
+		}
+	}
+	
+	public static class New_Map implements Serializable{
+		private Field[][] fields;
+		public New_Map(Field[][] fields) {
+			this.fields = fields;
+		}
+		public Field[][] getFields() {
+			return this.fields;
+		}
+	}
 	private Command cmd;
 	Serializable data;
 	

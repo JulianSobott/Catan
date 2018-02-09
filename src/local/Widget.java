@@ -13,6 +13,7 @@ public abstract class Widget {
 	protected static Color default_text_color;
 	protected static Color default_outline_color;
 	protected static Color default_outline_highlight_color;
+	protected static Color default_fill_color;
 
 	public Widget(FloatRect bounds) {
 		update_bounds(bounds);
@@ -43,7 +44,10 @@ public abstract class Widget {
 	public static void set_default_outline_highlight_color(Color color) {
 		default_outline_highlight_color = color;
 	}
-
+	
+	public static void set_default_fill_color(Color color) {
+		default_fill_color = color;
+	}
 	// getter
 
 	public Vector2f get_position() {
