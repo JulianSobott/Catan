@@ -12,6 +12,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import core.Map;
+import local.LocalState.GameMode;
 import network.Command;
 
 // TODO name?
@@ -25,6 +26,7 @@ public class LocalLogic {
 	
 	public LocalLogic() {
 		state = new LocalState();
+		state.mode = GameMode.main_menu;
 	}
 
 	void init(Font std_font) {
@@ -73,7 +75,8 @@ public class LocalLogic {
 			}
 		}
 	}
-  
+	
+	
 	public void diceResult(byte diceresult) {
 		// TODO Auto-generated method stub
 		System.out.println("Dice result at Client: " + diceresult);

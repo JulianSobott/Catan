@@ -67,16 +67,29 @@ public class Game {
 		update_view();
 
 		local_logic.init(std_font);
-		ui.init(std_font);
-
+		//ui.init(std_font);
+		
+		//Lobby stuff
+		float buttonWidth = Button.getWidthMenuButtons();
+		float buttonHeight = Button.getHeightMenuButtons();
+		view.setSize((float) window.getSize().x, (float) window.getSize().y);
+		view.setCenter(buttonWidth/2, (buttonHeight+20)* 5* 0.866f * 0.5f);
+		window.setView(view);
+		ui.initLobby(window);
+		
 		std_timer.restart();
 		while (running) {
 			for (Event evt : window.pollEvents()) {
 				if (evt.type == Event.Type.CLOSED) {
 					running = false;
-					data_connection.closeAllRessources();
+					try {
+						data_connection.closeAllRessources();
+					}catch(Exception e) {
+						System.err.println("Closed before all resources closed");
+					}
+					
 				}
-				if (!ui.handle_event(evt)) {
+				if (!ui.handle_event(view, evt)) {
 					// not handled by the ui
 					if (evt.type == Event.Type.RESIZED) {
 						update_view();
