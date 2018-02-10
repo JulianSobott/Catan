@@ -14,7 +14,9 @@ public enum Language {
 	JOIN("Join game", "Spiel beitreten"),
 	//Lobby Window
 	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
-	MEMBERS("MEMBERS", "Mitspieler");
+	MEMBERS("MEMBERS", "Mitspieler"), 
+	MAP_SIZE("Map size", "Karten Größe"),
+	SEED("Seed", "Seed");
 	;
 
 

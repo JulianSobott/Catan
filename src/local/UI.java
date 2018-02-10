@@ -217,8 +217,19 @@ public class UI {
 		
 		Label lbl;
 		//Row0 ==> Settings
-		lbl = new Label(Language.SETTINGS.get_text(), new FloatRect(row0, 10, 100, 100));
+		lbl = new Label(Language.SETTINGS.get_text()+": ", new FloatRect(row0, 10, 100, 100));
 		widgets.add(lbl);
+		lbl = new Label(Language.MAP_SIZE.get_text()+": ", new FloatRect(row0, 110, 100, 35));
+		widgets.add(lbl);
+		TextField tfMapSize = new TextField(new FloatRect(row0 + 100, 110, 200, 35));
+		tfMapSize.set_text_color(new Color(20, 20, 20));
+		widgets.add(tfMapSize);
+		
+		lbl = new Label(Language.SEED.get_text()+": ", new FloatRect(row0, 150, 100, 35));
+		widgets.add(lbl);
+		TextField tfSeed = new TextField(new FloatRect(row0 + 100, 150, 200, 35));
+		tfSeed.set_text_color(new Color(20, 20, 20));
+		widgets.add(tfSeed);
 		
 		//Row1 ==> members
 		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(row1, 10, 100, 100));
@@ -229,8 +240,8 @@ public class UI {
 			@Override
 			public void run() {
 				state.mode = GameMode.game;
-				int map_size = 6; //TODO get from TF
-				int seed = 42; //TODO random or from Tf
+				int map_size = tfMapSize.get_text().length() > 0 ? Integer.parseInt(tfMapSize.get_text()) : 5; //TODO get from TF
+				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text()) : ((int)Math.random()*100)+1; 
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
 				((LocalDataServer) data_connection).messageToAll(new Packet(Command.START_GAME));
 				build_game_menu();
