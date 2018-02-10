@@ -1,6 +1,7 @@
 package network;
 public enum Command {
 	DICE,
+	DICE_RESULT,
 	BUILD_VILLAGE,
 	BUILD_CITY,
 	BUILD_STREET,
