@@ -22,11 +22,11 @@ import network.RemoteDataClient;
 
 // TODO name?
 public class LocalLogic {
-	// state
+	// state, ui & connection
 	LocalState state;
-	
 	UI ui;
 	DataIfc data_connection; 
+
 	// fonts
 	Font std_font;
 
@@ -40,13 +40,17 @@ public class LocalLogic {
 		this.ui = ui;
 	}
 	
-	public void addDataConnection(DataIfc data_connection) {
+	public void set_data_interface(DataIfc data_connection) {
 		this.data_connection = data_connection;
 	}
 	
 	void init(Font std_font) {
 		this.std_font = std_font;
 
+	}
+
+	public void set_mode(GameMode new_mode) {
+		state.mode  = new_mode;
 	}
 
 	public void update_new_map(Field[][] fields) {
@@ -102,21 +106,5 @@ public class LocalLogic {
 	public void build(int idPlayer, Command buildType, Vector2i position) {
 		// TODO Auto-generated method stub
 
-	}
-
-	public void build_guest_lobby_window() {
-		this.ui.build_guest_lobby_window();
-	}
-
-	public void messageStartGame() {
-		((LocalDataServer) this.data_connection).update_new_map(ui.game.core.getMap().getFields());;
-		((LocalDataServer) this.data_connection).messageToAll(new Packet(Command.START_GAME));
-		startGame();
-		
-	}
-	
-	public void startGame() {
-		state.mode = GameMode.game;
-		ui.build_game_surface();
 	}
 }

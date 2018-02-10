@@ -11,24 +11,28 @@ import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import local.LocalState.GameMode;
+import network.Command;
+import network.DataIfc;
+import network.LocalDataServer;
+import network.Packet;
 
 public class UI {
 	// local state
-	LocalState state;
+	private LocalState state;
 	private LocalLogic logic;
-	Game game;
-	Vector2f window_size;
+	private DataIfc data_connection;
+	private Game game;
+	private Vector2f window_size;
 	
-	
-	private int numGuests = 0;
-	// Start Window
-	//private ArrayList<Button> buttons = new ArrayList<Button>(); TODO
-	private ArrayList<Widget> widgets = new ArrayList<Widget>();
-
-	private TextField activeTF;
-
 	// fonts
 	Font std_font;
+
+	// gui data
+	private ArrayList<Widget> widgets = new ArrayList<Widget>();
+	private TextField activeTF;
+
+	// lobby
+	private int numGuests = 0;
 
 	UI(LocalLogic logic, Game game) {
 		this.logic = logic;
@@ -41,18 +45,18 @@ public class UI {
 	void init(Font std_font) {
 		this.std_font = std_font;
 
-		Button.set_default_font(std_font);
-		Button.set_default_text_color(new Color(100, 70, 100));
-		Button.set_default_outline_color(Color.BLACK);
-		Button.set_default_outline_highlight_color(new Color(200, 140, 200));
-		TextField.set_default_font(std_font);
-		TextField.set_default_text_color(new Color(20, 20, 20));
-		Label.set_default_font(std_font);
-		Label.set_default_text_color(new Color(20, 50, 50));
-		Label.set_default_fill_color(new Color(0,0,0,0));
-		Label.set_default_outline_color(new Color(0, 0, 0, 0));
-		Label.set_default_outline_highlight_color(new Color(200, 140, 200));
+		// Is global for all Widgets! Change them on demand
+		Widget.set_default_font(std_font);
+		Widget.set_default_text_color(new Color(20, 50, 50));
+		Widget.set_default_outline_color(Color.BLACK);
+		Widget.set_default_outline_highlight_color(new Color(200, 140, 200));
+		Widget.set_default_fill_color(new Color(0,0,0,0));
+		
 		build_lobby();
+	}
+
+	void set_data_interface(DataIfc data_connection) {
+		this.data_connection = data_connection;
 	}
 
 	public void destroy_widgets() {
@@ -135,14 +139,6 @@ public class UI {
 
 	public void build_game_menu() {
 		destroy_widgets();
-
-		Button btn = new Button(Language.NO_TEXT.get_text(), new FloatRect(20, 300, 250, 50));
-		btn.set_text_size(30);
-		widgets.add(btn);
-
-		TextField tf = new TextField(new FloatRect(20, 360, 250, 50));
-		tf.set_text_size(30);
-		widgets.add(tf);
 	}
 	
 	public void build_join_menu() {
@@ -230,15 +226,15 @@ public class UI {
 			@Override
 			public void run() {
 				state.mode = GameMode.game;
-				logic.messageStartGame();
+				((LocalDataServer) data_connection).update_new_map(game.core.getMap().getFields());// FIXME this connection should be forbidden
+				((LocalDataServer) data_connection).messageToAll(new Packet(Command.START_GAME));
+				build_game_menu();
+				state.mode = GameMode.game;
 			}			
 		});
 		widgets.add(btnStart);
 	}
-	
-	public void build_game_surface() {
-		destroy_widgets();
-	}
+
 	public void show_guest_at_lobby(String name) {
 		Label lbl = new Label(name, new FloatRect( window_size.x/2 > 200 ? window_size.x/2 : 200, 200 + 110*numGuests, 400, 100));
 		lbl.set_fill_color(new Color(100, 100, 100, 90));
@@ -277,10 +273,6 @@ public class UI {
 		for (Widget widget : widgets) {
 			widget.render(target);
 		}
-	}
-
-	public LocalLogic getLogic() {// TODO rebind LocalDataServer to LocalLogic instead of ui (or both)
-		return logic;
 	}
 
 	// returns true if was on a widget

@@ -1,4 +1,5 @@
 package network;
+
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -20,7 +21,7 @@ public class LocalDataServer extends DataIfc {
 	private static final int PORT = 56789;
 
 	private int numClients = 0;
-	
+
 	private NewClientListener newClientListener;
 	//TODO implement Core with constructor
 	Core core = new Core(this);
@@ -53,6 +54,44 @@ public class LocalDataServer extends DataIfc {
 		this.numClients++;
 	}
 
+	@Override
+	public void closeAllResources() {
+		this.newClientListener.stopListen();
+		for (ClientCommunicator client : clients) {
+			client.stopRunning();
+		}
+		try {
+			this.server.close();
+		} catch (IOException e) {
+			System.err.println("Can�t close Server at LocalDataServer");
+		}
+	}
+
+	//Getter Setter
+	public int getNumClients() {
+		return this.numClients;
+	}
+
+	// TODO merge with update_new_map
+	@Override
+	public void update_new_map_local(Field[][] fields) {
+		local_logic.update_new_map(fields);
+	}
+
+	// commands from the core
+
+	public void update_new_map(Field[][] fields) {
+		try {
+			messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(fields)));
+		} catch (Exception e) {
+			System.err.println("Could not send map");
+		}
+		update_new_map_local(fields);
+	}
+
+	
+	// network management
+
 	public void addNewClient(Socket client) {
 		ClientCommunicator communicator = new ClientCommunicator(this, client);
 		clients.add(communicator);
@@ -78,7 +117,7 @@ public class LocalDataServer extends DataIfc {
 			break;
 		case NAME:
 			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
-			break;	
+			break;
 		default:
 			System.err.println("Unknown Command reached Server");
 		}
@@ -87,43 +126,11 @@ public class LocalDataServer extends DataIfc {
 	public void messageTo(int idxClient, Packet packet) {
 		this.clients.get(idxClient).message(packet);
 	}
-	
+
 	public void messageToAll(Packet packet) {
-		for(ClientCommunicator client: clients) {
+		for (ClientCommunicator client : clients) {
 			client.message(packet);
 		}
 	}
-	//Getter Setter
-	public int getNumClients() {
-		return this.numClients;
-	}
 
-	// commands from the core
-	public void update_new_map(Field[][] fields) {
-		try {
-			messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(fields)));
-		}catch(Exception e) {
-			System.err.println("Could not send map");
-		}
-		update_new_map_local(fields);
-	}
-
-	//
-	@Override
-	public void update_new_map_local(Field[][] fields) {
-		ui.getLogic().update_new_map(fields);
-	}
-
-	@Override
-	public void closeAllResources() {
-		this.newClientListener.stopListen();
-		for(ClientCommunicator client : clients) {
-			client.stopRunning();
-		}
-		try {
-			this.server.close();
-		} catch (IOException e) {
-			System.err.println("Can�t close Server at LocalDataServer");
-		}
-	}
 }

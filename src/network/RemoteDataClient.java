@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 
 import local.Field;
 import local.LocalLogic;
+import local.LocalState.GameMode;
 import local.UI;
 
 //TODO Error handling when Entered a wrong IP address (reentering)
@@ -38,37 +39,52 @@ public class RemoteDataClient extends DataIfc {
 		
 		//Init Output and Input to Server 
 		try {
-			this.output = new ObjectOutputStream(this.server.getOutputStream());
-			this.input = new ObjectInputStream(this.server.getInputStream());
+			output = new ObjectOutputStream(server.getOutputStream());
+			input = new ObjectInputStream(server.getInputStream());
 		}catch(IOException e) {
-			System.err.println("Can´t create input and output streams to server");
+			System.err.println("Canï¿½t create input and output streams to server");
 			e.printStackTrace();
 			return;
 		}
-		this.ui.build_guest_lobby_window();
-		this.clientInputListener = new ClientInputListener(this, input);
-		this.clientInputListener.start();
+		ui.build_guest_lobby_window();
+		clientInputListener = new ClientInputListener(this, input);
+		clientInputListener.start();
 	}
+	
+	@Override
+	public void closeAllResources() {
+		clientInputListener.closeConnectionToServer();
+		try {
+			input.close();
+			output.close();
+			server.close();
+		} catch (IOException e) {
+			System.err.println("Canï¿½t close Listener at ClientCommunicator");
+		}
+	}
+
+	// network management
 
 	public void receivedNewMessage(Packet packet) {
 		switch(packet.getCommand()){
 		case DICE:
-			this.local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceResult());
+			local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceResult());
 			break;
 		case BUILD_VILLAGE:
-			this.local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
+			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_CITY:
-			this.local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_STREET:
-			this.local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
 			break;
 		case STRING:
 			System.out.println("Client reached Message: " + packet.getDebugString());
 			break;
 		case START_GAME:
-			local_logic.startGame();
+			ui.build_game_menu();
+			local_logic.set_mode(GameMode.game);
 			System.out.println("Start game at Client");
 			break;
 		case NEW_MAP:
@@ -81,8 +97,8 @@ public class RemoteDataClient extends DataIfc {
 	
 	public void sendMessage(Packet p) {
 		try {
-			this.output.writeObject(p);
-			this.output.flush();
+			output.writeObject(p);
+			output.flush();
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -91,18 +107,7 @@ public class RemoteDataClient extends DataIfc {
   
 	@Override
 	void update_new_map_local(Field[][] fields) {
-		this.local_logic.update_new_map(fields);
+		local_logic.update_new_map(fields);
 	}
 
-	@Override
-	public void closeAllResources() {
-		this.clientInputListener.closeConnectionToServer();
-		try {
-			this.input.close();
-			this.output.close();
-			this.server.close();
-		} catch (IOException e) {
-			System.err.println("Canï¿½t close Listener at ClientCommunicator");
-		}
-	}
 }

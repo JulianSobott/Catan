@@ -13,8 +13,12 @@ public abstract class DataIfc {
 		this.local_logic = local_logic;
 	}
 
+	public abstract void closeAllResources();
+
+	// messages from the core
+
 	abstract void update_new_map_local(Field[][] fields);
 
-	public abstract void closeAllResources();
+	// messages from the clients
 
 }

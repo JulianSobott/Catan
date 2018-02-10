@@ -161,25 +161,17 @@ public class Game {
 	void init_host_game() {
 		LocalDataServer server = new LocalDataServer(ui, local_logic);
 		data_connection = server;
-		local_logic.addDataConnection(data_connection);
+		local_logic.set_data_interface(data_connection);
+		ui.set_data_interface(data_connection);
 		core = new Core(server);
 	}
 
 	// creates a new game with this machine as client
-	//TODO Maybe delete this duplicate Method
-	void init_guest_game(String ip) {
-		String serverIp = "192.168.2.118";
-		data_connection = new RemoteDataClient(ui, local_logic, serverIp);
-	}
-
 	public void init_guest_game(String ip, String name) {
 		String serverIp = "192.168.2.118";
 		data_connection = new RemoteDataClient(ui, local_logic, serverIp);
-		local_logic.addDataConnection(data_connection);
+		local_logic.set_data_interface(data_connection);
+		ui.set_data_interface(data_connection);
 		((RemoteDataClient) data_connection).sendMessage(new Packet(Command.NAME, new Packet.Name(name)));
-	}
-	
-	public Core getCore() {
-		return this.core;
 	}
 }

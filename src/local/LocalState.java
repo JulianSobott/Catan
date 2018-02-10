@@ -7,7 +7,7 @@ import org.jsfml.system.Vector2f;
 
 public class LocalState {
 	// runtime information
-	enum GameMode {
+	public enum GameMode {
 		main_menu,
 		game,
 

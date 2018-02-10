@@ -29,7 +29,7 @@ public class Core {
 		
 	}
 	
-	public Map getMap() {
+	public Map getMap() {// FIXME should not be needed
 		return this.map;
 	}
 }
