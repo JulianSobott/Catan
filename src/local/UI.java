@@ -150,7 +150,7 @@ public class UI {
 		
 		TextField tfIp = new TextField(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text_size(30);
-		tfIp.setText("192.168.2.118");
+		tfIp.setText("192.168.2.103");
 		widgets.add(tfIp);
 		
 		TextField tfName = new TextField(new FloatRect(0,0, mm_tf_width, mm_tf_height));
