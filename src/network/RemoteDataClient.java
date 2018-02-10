@@ -22,20 +22,12 @@ public class RemoteDataClient extends DataIfc {
 	
 	private ClientInputListener clientInputListener;
 	
-	public RemoteDataClient(UI ui, LocalLogic local_logic, String serverIP) {
+	public RemoteDataClient(UI ui, LocalLogic local_logic, String serverIP) throws UnknownHostException, IOException {
 		super(ui, local_logic);
 		this.serverIP = serverIP;
 		//Init Connection to server
-		try {
-			this.server = new Socket(this.serverIP, PORT);
-		}catch(UnknownHostException e) {
-			System.err.println("Unknown Host! Try to enter a new IP");	
-			e.printStackTrace();
-			return;
-		}catch(IOException e) {
-			e.printStackTrace();
-			return;
-		}
+		this.server = new Socket(this.serverIP, PORT);
+		
 		
 		//Init Output and Input to Server 
 		try {

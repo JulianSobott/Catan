@@ -51,7 +51,7 @@ public class UI {
 		Widget.set_default_outline_color(Color.BLACK);
 		Widget.set_default_outline_highlight_color(new Color(200, 140, 200));
 		Widget.set_default_fill_color(new Color(0,0,0,0));
-		
+		Label.set_default_outline_color(new Color(0,0,0,0));
 		build_lobby();
 	}
 
@@ -186,7 +186,10 @@ public class UI {
 			@Override
 			public void run() {
 				if(tfIp.get_text().length() > 4 && tfName.get_text().length() > 0) {
-					game.init_guest_game(tfIp.get_text().trim(), tfName.get_text().trim());
+					//Entered wrong Ip or server is not online
+					if(!game.init_guest_game(tfIp.get_text().trim(), tfName.get_text().trim())) {
+						tfIp.set_outline_color(Color.RED);
+					}
 				}else {
 					if(tfIp.get_text().length() <= 4) {
 						tfIp.set_outline_color(Color.RED);
@@ -226,7 +229,9 @@ public class UI {
 			@Override
 			public void run() {
 				state.mode = GameMode.game;
-				((LocalDataServer) data_connection).update_new_map(game.core.getMap().getFields());// FIXME this connection should be forbidden
+				int map_size = 6; //TODO get from TF
+				int seed = 42; //TODO random or from Tf
+				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
 				((LocalDataServer) data_connection).messageToAll(new Packet(Command.START_GAME));
 				build_game_menu();
 				state.mode = GameMode.game;

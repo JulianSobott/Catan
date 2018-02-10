@@ -133,4 +133,8 @@ public class LocalDataServer extends DataIfc {
 		}
 	}
 
+	public void create_new_map(int map_size, int seed) {
+		core.create_new_map(map_size, seed);
+	}
+
 }

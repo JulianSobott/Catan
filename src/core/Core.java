@@ -13,13 +13,13 @@ public class Core {
 
 	public Core(LocalDataServer data_server) {
 		this.data_server = data_server;
-
-		// DEBUG
-		map.create_map(Map.map_size, 42);
-		data_server.update_new_map(map.getFields());
-
 	}
-
+	
+	public void create_new_map(int map_size, int seed) {
+		map.create_map(map_size, seed);
+		data_server.update_new_map(map.getFields());
+	}
+	
 	public void dice() {
 		// TODO Auto-generated method stub
 		
