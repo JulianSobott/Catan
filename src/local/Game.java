@@ -1,4 +1,5 @@
 package local;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import network.RemoteDataClient;
 public class Game {
 	//Debugging Stuff
 	boolean startAtLobby = true;
-	
+
 	// windowing & stuff
 	RenderWindow window = new RenderWindow();
 	boolean running = true;
@@ -29,7 +30,7 @@ public class Game {
 
 	// view management
 	View view;
-	float zoom_level = 1.f;
+	float zoom_level = 0.5f;
 	float mouse_value = 3.f;
 	Vector2f mouse_start;
 	ArrayList<Vector2f> mouse_moved;
@@ -62,8 +63,7 @@ public class Game {
 	void run() throws InterruptedException {
 		window.create(new VideoMode(1200, 800), "Catan", RenderWindow.DEFAULT, new ContextSettings(8));
 		view = (View) window.getDefaultView();
-		view.setCenter((Map.field_size + Map.field_distance + 1.f) * (float) Map.map_size * 0.5f,
-				(Map.field_size + Map.field_distance) * (float) Map.map_size * 0.866f * 0.5f);
+		view.setCenter(Map.real_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
 		update_view();
 
 		local_logic.init(std_font);
@@ -129,10 +129,10 @@ public class Game {
 
 	void update_view() {
 		view.setCenter(
-				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size, view.getCenter().x)),
+				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, view.getCenter().x)),
 				Math.max(0.f,
-						Math.min((Map.field_size + Map.field_distance) * Map.map_size * 0.866f, view.getCenter().y)));// constraint
-		zoom_level = Math.max(0.2f, Math.min(Map.map_size * 0.15f, zoom_level));// constraint
+						Math.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER, view.getCenter().y)));// constraint
+		zoom_level = Math.max(0.2f, Math.min(Map.map_size_x * 0.15f, zoom_level));// constraint
 		view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
 		window.setView(view);
 	}

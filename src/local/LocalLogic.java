@@ -1,4 +1,5 @@
 package local;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,7 @@ public class LocalLogic {
 
 	// fonts
 	Font std_font;
-	
-	
+
 	public LocalLogic() {
 		state = new LocalState();
 	}
@@ -42,20 +42,22 @@ public class LocalLogic {
 
 		for (int x = 0; x < fields.length; x++) {
 			for (int y = 0; y < fields[x].length; y++) {
-				float pos_x = x * (Map.field_size+Map.field_distance) + Map.field_offset + (y % 2 != 0 ? (Map.field_size+Map.field_distance) / 2.f : 0),
-						pos_y = y * (Map.field_size+Map.field_distance)* 0.866f + Map.field_offset;
-				state.field_resources.get(fields[x][y].resource).add(new Vector2f(pos_x, pos_y));
-				state.field_numbers.get(fields[x][y].number).add(new Vector2f(pos_x, pos_y));
+				if (fields[x][y] != null) {
+					Vector2f pos = Map.real_position(new Vector2i(x, y));
+					state.field_resources.get(fields[x][y].resource).add(pos);
+					if (fields[x][y].number != 0)
+						state.field_numbers.get(fields[x][y].number).add(pos);
+				}
 			}
 		}
 	}
-	
+
 	void render_map(RenderTarget target) {
 		for (java.util.Map.Entry<Resource, List<Vector2f>> resource : state.field_resources.entrySet()) {
 			CircleShape shape = new CircleShape(Map.field_size * 0.5f, 6);
 			shape.setFillColor(resource.getKey().color);
 			shape.setOrigin(Map.field_size * 0.5f, Map.field_size * 0.5f);
-			shape.setOutlineColor(new Color(150,150,150));
+			shape.setOutlineColor(new Color(150, 150, 150));
 			shape.setOutlineThickness(2.5f);
 
 			for (Vector2f pos : resource.getValue()) {
@@ -73,7 +75,7 @@ public class LocalLogic {
 			}
 		}
 	}
-  
+
 	public void diceResult(byte diceresult) {
 		// TODO Auto-generated method stub
 		System.out.println("Dice result at Client: " + diceresult);
@@ -81,7 +83,7 @@ public class LocalLogic {
 
 	public void build(int idPlayer, Command buildType, Vector2i position) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

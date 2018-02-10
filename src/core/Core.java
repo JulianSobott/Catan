@@ -15,7 +15,7 @@ public class Core {
 		this.data_server = data_server;
 
 		// DEBUG
-		map.create_map(Map.map_size, 42);
+		map.create_map(Map.map_size_x, 42, Map.map_size_x-4, new float[]{0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
 		data_server.update_new_map(map.getFields());
 
 	}

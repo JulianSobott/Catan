@@ -1,34 +1,86 @@
 package core;
+
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import local.Field;
 import local.Resource;
+import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
 public class Map {
+	public final static float MAGIC_HEX_NUMBER = 0.866f;// height of a isosceles triangle with side length 1
 	public final static int number_count = 11;
 	public final static float field_size = 100;
-	public final static float field_offset = field_size*0.5f;
+	public final static float field_offset = field_size * 0.5f;
 	public final static float field_distance = -11;
-	public static int map_size = 5;
+	public static int map_size_x = 9;// must be 5+2*n
+	public static int map_size_y = (int)(map_size_x / MAGIC_HEX_NUMBER);
 
 	private Field[][] fields;
 
-	public void create_map(int size, int seed) {
+	// \p resource_ratio: percentage of a specific resource on the map. The order must be equal to the order in the Resource-class
+	public void create_map(int size, int seed, int island_size, float[] resource_ratio) {
 		Random rand = new Random(seed);
-		map_size = size;
+		if (size % 2 == 0)
+			size++;
+		map_size_x = size;
+		map_size_y = (int) ((float) map_size_x / MAGIC_HEX_NUMBER);
 
-		this.fields = new Field[size][size];
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				this.fields[x][y] = new Field(Resource.values()[rand.nextInt(Resource.values().length)],
-						(byte) (rand.nextInt(number_count) + 2));
+		// pre-calculations
+		float ratio_sum = 0.f;
+		for (float r : resource_ratio)
+			ratio_sum += r;
+		float field_count = island_size;
+		for (int i = 1; i <= island_size / 2; i++)
+			field_count += 2 * (island_size - i);
+		field_count = (float) (Math.PI * Math.pow((float) island_size / 2.f, 2.f) / MAGIC_HEX_NUMBER);
+		System.out.println("field_count: " + field_count);
+
+		LinkedList<Resource> available_resources = new LinkedList<Resource>();
+		for (Resource r : Resource.values()) {
+			if (r != Resource.OCEAN) {
+				int count = (int) ((float) field_count * resource_ratio[r.ordinal()] / ratio_sum) + 1;
+				for (int i = 0; i < count; i++)
+					available_resources.add(0, r);
 			}
 		}
+		for (int i = available_resources.size() - 1; i < field_count; i++)
+			available_resources.add(0, Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
+
+		Vector2f island_center = Map.real_position(new Vector2i(map_size_x / 2, map_size_y / 2));
+		float furthest_field = Map.real_position(new Vector2i(map_size_x - 1, 0)).x;
+
+		this.fields = new Field[map_size_x][map_size_y];
+		for (int x = 0; x < map_size_x; x++) {
+			for (int y = 0; y < map_size_y; y++) {
+				Vector2f pos = Map.real_position(new Vector2i(x, y));
+				if ((int) Math.sqrt(
+						Math.pow(pos.x - island_center.x, 2) + Math.pow(pos.y - island_center.y, 2)) <= island_size
+								* (field_size + field_distance) / 2) {
+					// field is on island
+					if (available_resources.isEmpty())
+						available_resources.add(0, Resource.OCEAN);//HACK
+					int index = rand.nextInt(available_resources.size());
+					this.fields[x][y] = new Field(available_resources.get(index),
+							(byte) (rand.nextInt(number_count) + 2));
+					available_resources.remove(index);
+				} else // is ocean
+					this.fields[x][y] = new Field(Resource.OCEAN, (byte) 0);
+			}
+		}
+		System.out.println("Available resources:" + available_resources.size());
 	}
 
 	public Field[][] getFields() {
 		return fields;
 	}
 
-
+	public static Vector2f real_position(Vector2i pos) {
+		float pos_x = pos.x * (field_size + field_distance) + field_offset
+				+ (pos.y % 2 != 0 ? (field_size + field_distance) / 2.f : 0),
+				pos_y = pos.y * (field_size + field_distance) * Map.MAGIC_HEX_NUMBER + field_offset;
+		return new Vector2f(pos_x, pos_y);
+	}
 }
