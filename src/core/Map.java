@@ -48,7 +48,7 @@ public class Map {
 		for (float r : resource_ratio)
 			ratio_sum += r;
 		float field_count = island_size;
-		for (int i = 1; i <= island_size / 2; i++)
+		for (int i = 1; i <= island_size / 2; i++)// TODO delete?
 			field_count += 2 * (island_size - i);
 		field_count = (float) (Math.PI * Math.pow((float) island_size / 2.f, 2.f) / MAGIC_HEX_NUMBER);
 		System.out.println("field_count: " + field_count);
@@ -58,11 +58,16 @@ public class Map {
 			if (r != Resource.OCEAN) {
 				int count = (int) ((float) field_count * resource_ratio[r.ordinal()] / ratio_sum) + 1;
 				for (int i = 0; i < count; i++)
-					available_resources.add(0, r);
+					available_resources.push(r);
 			}
 		}
 		for (int i = available_resources.size() - 1; i < field_count; i++)
-			available_resources.add(0, Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
+			available_resources.push(Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
+
+		LinkedList<Byte> available_numbers = new LinkedList<Byte>();
+		for (byte i = 2; i <= field_count; i++) {
+			available_numbers.push((byte) (i % (NUMBER_COUNT - 1) + 2));
+		}
 
 		Vector2f island_center = Map.index_to_position(new Vector2i(map_size_x / 2, map_size_y / 2));
 
@@ -76,10 +81,11 @@ public class Map {
 					// field is on island
 					if (available_resources.isEmpty())
 						available_resources.add(0, Resource.OCEAN);//HACK
-					int index = rand.nextInt(available_resources.size());
-					this.fields[x][y] = new Field(available_resources.get(index),
-							(byte) (rand.nextInt(NUMBER_COUNT) + 2));
-					available_resources.remove(index);
+					int index_r = rand.nextInt(available_resources.size());
+					int index_n = rand.nextInt(available_numbers.size());
+					this.fields[x][y] = new Field(available_resources.get(index_r), available_numbers.get(index_n));
+					available_resources.remove(index_r);
+					available_numbers.remove(index_n);
 				} else // is ocean
 					this.fields[x][y] = new Field(Resource.OCEAN, (byte) 0);
 			}
