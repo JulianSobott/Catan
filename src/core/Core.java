@@ -1,15 +1,20 @@
 package core;
 import org.jsfml.system.Vector2i;
-
+import java.util.ArrayList;
+import java.util.List;
 import network.Command;
 import network.LocalDataServer;
 
 public class Core {
+	
 	// data server
 	LocalDataServer data_server;
 
 	// map
 	Map map = new Map();
+
+	// player data
+	List<Player> player = new ArrayList<Player>();
 
 	public Core(LocalDataServer data_server) {
 		this.data_server = data_server;
