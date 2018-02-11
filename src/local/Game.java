@@ -63,7 +63,7 @@ public class Game {
 	void run() throws InterruptedException {
 		window.create(new VideoMode(1200, 800), "Catan", RenderWindow.DEFAULT, new ContextSettings(8));
 		view = (View) window.getDefaultView();
-		view.setCenter(Map.real_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
+		view.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
 		update_view();
 
 		local_logic.init(std_font);
@@ -86,7 +86,10 @@ public class Game {
 						zoom_level *= Math.pow(0.9f, (float) evt.asMouseWheelEvent().delta);
 						update_view();
 					} else if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
-						if (evt.asMouseButtonEvent().button == Mouse.Button.RIGHT) { // reset mouse position
+						if (evt.asMouseButtonEvent().button == Mouse.Button.LEFT) {
+							local_logic.mouse_click_input(reverse_transform_position(
+									evt.asMouseButtonEvent().position.x, evt.asMouseButtonEvent().position.y));
+						} else if (evt.asMouseButtonEvent().button == Mouse.Button.RIGHT) { // reset mouse position
 							mouse_start = new Vector2f((float) evt.asMouseButtonEvent().position.x,
 									(float) evt.asMouseButtonEvent().position.y);
 							mouse_was_moved = true;
@@ -130,14 +133,21 @@ public class Game {
 	void update_view() {
 		view.setCenter(
 				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, view.getCenter().x)),
-				Math.max(0.f,
-						Math.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER, view.getCenter().y)));// constraint
+				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER,
+						view.getCenter().y)));// constraint
 		zoom_level = Math.max(0.2f, Math.min(Map.map_size_x * 0.15f, zoom_level));// constraint
 		view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
 		window.setView(view);
 	}
 
+	Vector2f reverse_transform_position(int x, int y) {
+		return new Vector2f(
+				(float) x / (float) window.getSize().x * view.getSize().x + view.getCenter().x - view.getSize().x / 2,
+				(float) y / (float) window.getSize().y * view.getSize().y + view.getCenter().y - view.getSize().y / 2);
+	}
+
 	public static void main(String[] args) throws InterruptedException {
+		Map.update_constants();
 		Game game = new Game();
 		game.run();
 	}

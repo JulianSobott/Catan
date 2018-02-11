@@ -37,13 +37,13 @@ public class LocalLogic {
 		for (Resource res : Resource.values())
 			state.field_resources.put(res, new ArrayList<Vector2f>());
 		state.field_numbers = new HashMap<>();
-		for (byte i = 2; i < Map.number_count + 2; i++)
+		for (byte i = 2; i < Map.NUMBER_COUNT + 2; i++)
 			state.field_numbers.put(i, new ArrayList<Vector2f>());
 
 		for (int x = 0; x < fields.length; x++) {
 			for (int y = 0; y < fields[x].length; y++) {
 				if (fields[x][y] != null) {
-					Vector2f pos = Map.real_position(new Vector2i(x, y));
+					Vector2f pos = Map.index_to_position(new Vector2i(x, y));
 					state.field_resources.get(fields[x][y].resource).add(pos);
 					if (fields[x][y].number != 0)
 						state.field_numbers.get(fields[x][y].number).add(pos);
@@ -58,7 +58,7 @@ public class LocalLogic {
 			shape.setFillColor(resource.getKey().color);
 			shape.setOrigin(Map.field_size * 0.5f, Map.field_size * 0.5f);
 			shape.setOutlineColor(new Color(150, 150, 150));
-			shape.setOutlineThickness(2.5f);
+			shape.setOutlineThickness(Map.border_size);
 
 			for (Vector2f pos : resource.getValue()) {
 				shape.setPosition(pos);
@@ -74,6 +74,10 @@ public class LocalLogic {
 				target.draw(text);
 			}
 		}
+	}
+
+	void mouse_click_input(Vector2f position) {
+		// TODO
 	}
 
 	public void diceResult(byte diceresult) {
