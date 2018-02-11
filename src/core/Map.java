@@ -2,6 +2,7 @@ package core;
 
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Vector;
 
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
@@ -12,6 +13,10 @@ import local.Resource;
 import math.Vector2fMath;
 
 public class Map {
+	enum GeneratorType {
+		HEXAGON, CIRCLE,
+	}
+
 	public final static float MAGIC_HEX_NUMBER = 0.866f;// height of a isosceles triangle with side length 1
 	public final static int NUMBER_COUNT = 11;
 	public static float border_size = 2.5f;
@@ -21,7 +26,7 @@ public class Map {
 	public static float linear_offset_x;
 	public static float diagonal_offset_x;
 	public static float diagonal_offset_y;
-	public static int map_size_x = 9;// must be 5+2*n
+	public static int map_size_x = 7;// should be 5+2*n
 	public static int map_size_y;
 
 	private Field[][] fields;
@@ -36,10 +41,10 @@ public class Map {
 	}
 
 	// \p resource_ratio: percentage of a specific resource on the map. The order must be equal to the order in the Resource-class
-	public void create_map(int size, int seed, int island_size, float[] resource_ratio) {
+	public void create_map(int size, int seed, int island_size, float[] resource_ratio, GeneratorType type) {
 		Random rand = new Random(seed);
-		if (size % 2 == 0)
-			size++;
+		/*if (size % 2 == 0)
+			size++;*/
 		map_size_x = size;
 		map_size_y = (int) ((float) map_size_x / MAGIC_HEX_NUMBER);
 
@@ -47,10 +52,14 @@ public class Map {
 		float ratio_sum = 0.f;
 		for (float r : resource_ratio)
 			ratio_sum += r;
-		float field_count = island_size;
-		for (int i = 1; i <= island_size / 2; i++)// TODO delete?
-			field_count += 2 * (island_size - i);
-		field_count = (float) (Math.PI * Math.pow((float) island_size / 2.f, 2.f) / MAGIC_HEX_NUMBER);
+		int field_count = island_size;
+		if (type == GeneratorType.HEXAGON) {
+			for (int i = 1; i <= island_size / 2; i++)
+				field_count += 2 * (island_size - i);
+			//field_count = (int) Math.round(Math.pow((float) island_size / 2.f, 2.f) * 2.598f);
+		} else if (type == GeneratorType.CIRCLE) {
+			field_count = (int) (Math.PI * Math.pow((float) island_size / 2.f, 2.f) / MAGIC_HEX_NUMBER);
+		}
 		System.out.println("field_count: " + field_count);
 
 		LinkedList<Resource> available_resources = new LinkedList<Resource>();
@@ -61,11 +70,11 @@ public class Map {
 					available_resources.push(r);
 			}
 		}
-		for (int i = available_resources.size() - 1; i < field_count; i++)
+		for (int i = available_resources.size(); i < field_count; i++)
 			available_resources.push(Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
 
 		LinkedList<Byte> available_numbers = new LinkedList<Byte>();
-		for (byte i = 2; i <= field_count; i++) {
+		for (int i = 0; i < field_count; i++) {
 			available_numbers.push((byte) (i % (NUMBER_COUNT - 1) + 2));
 		}
 
@@ -75,12 +84,22 @@ public class Map {
 		for (int x = 0; x < map_size_x; x++) {
 			for (int y = 0; y < map_size_y; y++) {
 				Vector2f pos = Map.index_to_position(new Vector2i(x, y));
-				if ((int) Math.sqrt(
-						Math.pow(pos.x - island_center.x, 2) + Math.pow(pos.y - island_center.y, 2)) <= island_size
-								* (field_size + field_distance) / 2) {
-					// field is on island
-					if (available_resources.isEmpty())
-						available_resources.add(0, Resource.OCEAN);//HACK
+				boolean is_land = false;
+				if (type == GeneratorType.HEXAGON)
+					is_land = is_inside_hexagon(island_center, island_size * (field_size + field_distance), pos);
+				else if (type == GeneratorType.CIRCLE)
+					is_land = (int) Math.sqrt(
+							Math.pow(pos.x - island_center.x, 2) + Math.pow(pos.y - island_center.y, 2)) <= island_size
+									* (field_size + field_distance) / 2;
+				if (is_land) {
+					if (available_resources.isEmpty()) {//HACK TODO
+						available_resources.push(Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
+						System.out.println("HACK");
+					}
+					if (available_numbers.isEmpty()) {//HACK
+						available_numbers.push((byte) (rand.nextInt(NUMBER_COUNT - 1) + 2));
+						System.out.println("HACK");
+					}
 					int index_r = rand.nextInt(available_resources.size());
 					int index_n = rand.nextInt(available_numbers.size());
 					this.fields[x][y] = new Field(available_resources.get(index_r), available_numbers.get(index_n));
@@ -90,7 +109,14 @@ public class Map {
 					this.fields[x][y] = new Field(Resource.OCEAN, (byte) 0);
 			}
 		}
-		System.out.println("Available resources:" + available_resources.size());
+		System.out.println("Available resources: " + available_resources.size());
+		System.out.println("Available numbers: " + available_numbers.size());
+	}
+
+	public boolean is_inside_hexagon(Vector2f origin, float diameter, Vector2f position) {
+		Vector2f delta = new Vector2f(Math.abs(position.x - origin.x) / diameter,
+				Math.abs(position.y - origin.y) / diameter);
+		return (delta.y <= 0.433f) && (0.433f * delta.x + 0.25f * delta.y <= 0.5f * 0.433f);
 	}
 
 	public Field[][] getFields() {

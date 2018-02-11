@@ -1,6 +1,7 @@
 package core;
 import org.jsfml.system.Vector2i;
 
+import core.Map.GeneratorType;
 import network.Command;
 import network.LocalDataServer;
 
@@ -15,7 +16,7 @@ public class Core {
 		this.data_server = data_server;
 
 		// DEBUG
-		map.create_map(Map.map_size_x, 42, Map.map_size_x-4, new float[]{0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
+		map.create_map(Map.map_size_x, 42, Map.map_size_x-2, new float[]{0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f}, GeneratorType.HEXAGON);
 		data_server.update_new_map(map.getFields());
 
 	}
