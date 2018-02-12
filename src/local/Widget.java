@@ -63,4 +63,6 @@ public abstract class Widget {
 	public abstract void render(RenderTarget target);
 
 	public abstract void do_mouse_click();
+	
+	public abstract void set_text(String t);
 }

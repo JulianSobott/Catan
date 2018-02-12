@@ -177,7 +177,7 @@ public class Game {
 		
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
-		((RemoteDataClient) data_connection).sendMessage(new Packet(Command.NAME, new Packet.Name(name)));
+		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name)));
 		return true;
 	}
 }

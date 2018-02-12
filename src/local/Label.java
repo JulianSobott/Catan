@@ -47,7 +47,10 @@ public class Label extends Widget {
 		shape.setPosition(pos);
 		text.setPosition(bounds.left, bounds.top + bounds.height * 0.5f);
 	}
-
+	
+	public void set_text(String text) {
+		this.text.setString(text);
+	}
 	public void set_text_size(int character_size) {
 		text.setCharacterSize(character_size);
 	}

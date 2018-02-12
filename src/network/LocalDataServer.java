@@ -72,23 +72,6 @@ public class LocalDataServer extends DataIfc {
 		return this.numClients;
 	}
 
-	// TODO merge with update_new_map
-	@Override
-	public void update_new_map_local(Field[][] fields) {
-		local_logic.update_new_map(fields);
-	}
-
-	// commands from the core
-
-	public void update_new_map(Field[][] fields) {
-		try {
-			messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(fields)));
-		} catch (Exception e) {
-			System.err.println("Could not send map");
-		}
-		update_new_map_local(fields);
-	}
-
 	
 	// network management
 
@@ -97,7 +80,42 @@ public class LocalDataServer extends DataIfc {
 		clients.add(communicator);
 		communicator.start();
 	}
+	
+	public void message_from_client(int id, Packet packet) {
+		
+	}
+	
+	public void message_to_client(int id, Packet packet) {
+		this.clients.get(id).message(packet);
+	}
+	
+	@Override
+	public void message_to_core(Packet packet) { //Message from Local UI to Core (host has id 0)
+		switch (packet.getCommand()) {
+		case DICE:
+			core.dice();
+			break;
+		case BUILD_VILLAGE:
+			core.buildRequest(0, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_CITY:
+			core.buildRequest(0, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_STREET:
+			core.buildRequest(0, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			break;
+		case STRING:
+			System.out.println("Server reached Message: " + packet.getDebugString());
+			break;
+		case NAME:
+			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
+			break;
+		default:
+			System.err.println("Unknown Command reached Server");
+		}
+	}
 
+	
 	public void receivedNewPacket(int id, Packet packet) {
 		switch (packet.getCommand()) {
 		case DICE:
@@ -123,18 +141,17 @@ public class LocalDataServer extends DataIfc {
 		}
 	}
 
-	public void messageTo(int idxClient, Packet packet) {
-		this.clients.get(idxClient).message(packet);
-	}
-
 	public void messageToAll(Packet packet) {
 		for (ClientCommunicator client : clients) {
 			client.message(packet);
 		}
+		message_from_core(packet); //message to own UI | localLogoc
 	}
 
 	public void create_new_map(int map_size, int seed) {
 		core.create_new_map(map_size, seed);
 	}
+
+
 
 }

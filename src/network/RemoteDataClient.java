@@ -56,8 +56,8 @@ public class RemoteDataClient extends DataIfc {
 	}
 
 	// network management
-
-	public void receivedNewMessage(Packet packet) {
+	/*@Override
+	public void message_from_core(Packet packet) {
 		switch(packet.getCommand()){
 		case DICE:
 			local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceResult());
@@ -85,9 +85,9 @@ public class RemoteDataClient extends DataIfc {
 		default:
 			System.err.println("Unknown Command reached Client");
 		}
-	}
+	}*/
 	
-	public void sendMessage(Packet p) {
+	public void message_to_core(Packet p) {
 		try {
 			output.writeObject(p);
 			output.flush();
@@ -97,9 +97,7 @@ public class RemoteDataClient extends DataIfc {
 		
 	}
   
-	@Override
-	void update_new_map_local(Field[][] fields) {
-		local_logic.update_new_map(fields);
-	}
+
+	
 
 }

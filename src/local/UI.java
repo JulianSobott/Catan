@@ -1,6 +1,9 @@
 package local;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
@@ -15,6 +18,7 @@ import network.Command;
 import network.DataIfc;
 import network.LocalDataServer;
 import network.Packet;
+import network.RemoteDataClient;
 
 public class UI {
 	// local state
@@ -29,6 +33,7 @@ public class UI {
 
 	// gui data
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
+	private Map<String, Widget> accessibleWidgets = new HashMap<String, Widget>();
 	private TextField activeTF;
 
 	// lobby
@@ -134,14 +139,28 @@ public class UI {
 		}
 
 	}
-
+	
+	public void update_accessibleWidgets(String name, String newText) {
+		accessibleWidgets.get(name).set_text(newText);
+	}
 	public void build_game_menu() {
 		destroy_widgets();
 		//Score board
 		
 		//player resources
 		
+		//dice 
+		Button btnDice = new Button(Language.DICE.get_text(), new FloatRect(10,10,100,200));
+		btnDice.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				data_connection.message_to_core(new Packet(Command.DICE));
+			}	
+		});
+		widgets.add(btnDice);
 		//dice result
+		Label lblDiceResult = new Label("dice result", new FloatRect(100,100,100,300));
+		accessibleWidgets.put("lblDiceResult", lblDiceResult);
 		
 		//build menu
 	}
@@ -155,12 +174,12 @@ public class UI {
 		
 		TextField tfIp = new TextField(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text_size(30);
-		tfIp.setText("192.168.2.103");
+		tfIp.set_text("192.168.2.103");
 		widgets.add(tfIp);
 		
 		TextField tfName = new TextField(new FloatRect(0,0, mm_tf_width, mm_tf_height));
 		tfName.set_text_size(30);
-		tfName.setText("Julian");
+		tfName.set_text("Julian");
 		widgets.add(tfName);
 		
 		for (int i = 0; i < widgets.size(); i++) {
@@ -244,13 +263,10 @@ public class UI {
 		btnStart.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				state.mode = GameMode.game;
 				int map_size = tfMapSize.get_text().length() > 0 ? Integer.parseInt(tfMapSize.get_text()) : 5; //TODO get from TF
 				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text()) : ((int)Math.random()*100)+1; 
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
 				((LocalDataServer) data_connection).messageToAll(new Packet(Command.START_GAME));
-				build_game_menu();
-				state.mode = GameMode.game;
 			}			
 		});
 		widgets.add(btnStart);
@@ -293,6 +309,9 @@ public class UI {
 	void render(RenderTarget target) {
 		for (Widget widget : widgets) {
 			widget.render(target);
+		}
+		for(Object widget : accessibleWidgets.values()) {
+			((Widget) widget).render(target);
 		}
 	}
 

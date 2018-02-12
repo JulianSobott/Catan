@@ -72,7 +72,7 @@ public class TextField extends Widget {
 		text.setFont(font);
 	}
 	
-	public void setText(String string) {
+	public void set_text(String string) {
 		text.setString(string);
 	}
 	public String get_text() {

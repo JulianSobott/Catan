@@ -16,7 +16,9 @@ public enum Language {
 	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
 	MEMBERS("MEMBERS", "Mitspieler"), 
 	MAP_SIZE("Map size", "Karten Größe"),
-	SEED("Seed", "Seed");
+	SEED("Seed", "Seed"),
+	//Ingame
+	DICE("Dice", "Würfeln");
 	;
 
 

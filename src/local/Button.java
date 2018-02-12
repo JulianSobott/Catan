@@ -41,7 +41,10 @@ public class Button extends Widget {
 	public void set_font(Font font) {
 		text.setFont(font);
 	}
-
+	
+	public void set_text(String text) {
+		this.text.setString(text);
+	}
 	public String get_text() {
 		return text.getString();
 	}

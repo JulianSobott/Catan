@@ -23,16 +23,13 @@ public class Core {
 
 	public void create_new_map(int map_size, int seed) {
 		map.create_map(map_size, seed);
-		data_server.update_new_map(map.getFields());
+		data_server.messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(map.getFields())));
+		//data_server.update_new_map(map.getFields());
 	}
 
 	public void dice() {
-		int dice1 = ((int) Math.random()*5) +1;
-		int dice2 = ((int) Math.random()*5) +1;
-		data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte )(dice1 + dice2))));
-		/* TODO Distribute all Resources to the players
-		 *
-		 */
+		int diceResult = (int)(Math.random()*10)+2;
+		data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
 	}
 
 	public void buildRequest(int id, Command buildType, Vector2i position) {
