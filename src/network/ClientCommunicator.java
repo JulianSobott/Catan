@@ -38,7 +38,7 @@ public class ClientCommunicator extends Thread{
 			Packet packet;
 			try {
 				packet = (Packet) input.readObject();
-				this.localDataServer.receivedNewPacket(this.id, packet);
+				this.localDataServer.message_from_client(this.id, packet);
 			}catch(IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
