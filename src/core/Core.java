@@ -1,33 +1,37 @@
 package core;
 import org.jsfml.system.Vector2i;
-
+import java.util.ArrayList;
+import java.util.List;
 import network.Command;
 import network.LocalDataServer;
 import network.Packet;
 
 public class Core {
+
 	// data server
 	LocalDataServer data_server;
 
 	// map
 	Map map = new Map();
-	
-	
+
+	// player data
+	List<Player> player = new ArrayList<Player>();
+
 	public Core(LocalDataServer data_server) {
 		this.data_server = data_server;
 	}
-	
+
 	public void create_new_map(int map_size, int seed) {
 		map.create_map(map_size, seed);
 		data_server.update_new_map(map.getFields());
 	}
-	
+
 	public void dice() {
 		int dice1 = ((int) Math.random()*5) +1;
 		int dice2 = ((int) Math.random()*5) +1;
 		data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte )(dice1 + dice2))));
 		/* TODO Distribute all Resources to the players
-		 * 
+		 *
 		 */
 	}
 
@@ -41,9 +45,9 @@ public class Core {
 		=> build()
 	 */
 	}
-	
+
 	//TODO Just my thoughts about possible methods maybe rename or remove
-	
+
 	public void build() {
 		/*
 		Add building to position
@@ -53,7 +57,7 @@ public class Core {
 		=> update()
 		 */
 	}
-	
+
 	public void update() {
 		/*
 		Player show new resources
@@ -63,6 +67,6 @@ public class Core {
 		Next player dice (automatically?)
 		 */
 	}
-	
-	
+
+
 }

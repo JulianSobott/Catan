@@ -1,6 +1,8 @@
 *.class
-.vscode/settings.json
+.vscode/
 deps/
+.classpath
+.project
 
 .metadata
 bin/
