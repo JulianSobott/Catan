@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 
 import local.Field;
 import local.LocalLogic;
+import local.LocalState.GameMode;
 import local.UI;
 
 //TODO Error handling when Entered a wrong IP address (reentering)
@@ -21,81 +22,82 @@ public class RemoteDataClient extends DataIfc {
 	
 	private ClientInputListener clientInputListener;
 	
-	//TODO implement connection to local Game
-	LocalLogic localLogic = new LocalLogic();
-	
-	public RemoteDataClient(UI ui, String serverIP) {
-    super(ui);
+	public RemoteDataClient(UI ui, LocalLogic local_logic, String serverIP) throws UnknownHostException, IOException {
+		super(ui, local_logic);
 		this.serverIP = serverIP;
 		//Init Connection to server
-		try {
-			this.server = new Socket(this.serverIP, PORT);
-		}catch(UnknownHostException e) {
-			System.err.println("Unknown Host! Try to enter a new IP");
-			e.printStackTrace();
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
+		this.server = new Socket(this.serverIP, PORT);
+		
 		
 		//Init Output and Input to Server 
 		try {
-			this.output = new ObjectOutputStream(this.server.getOutputStream());
-			this.input = new ObjectInputStream(this.server.getInputStream());
+			output = new ObjectOutputStream(server.getOutputStream());
+			input = new ObjectInputStream(server.getInputStream());
 		}catch(IOException e) {
-			System.err.println("CanÂ´t create input and output streams to server");
+			System.err.println("Canï¿½t create input and output streams to server");
 			e.printStackTrace();
+			return;
 		}
-		
-		this.clientInputListener = new ClientInputListener(this, input);
-		this.clientInputListener.start();
+		ui.build_guest_lobby_window();
+		clientInputListener = new ClientInputListener(this, input);
+		clientInputListener.start();
+	}
+	
+	@Override
+	public void closeAllResources() {
+		clientInputListener.closeConnectionToServer();
+		try {
+			input.close();
+			output.close();
+			server.close();
+		} catch (IOException e) {
+			System.err.println("Canï¿½t close Listener at ClientCommunicator");
+		}
 	}
 
-	public void recievedNewMessage(Packet packet) {
+	// network management
+	/*@Override
+	public void message_from_core(Packet packet) {
 		switch(packet.getCommand()){
 		case DICE:
-			this.localLogic.diceResult(((Packet.DiceResult) packet.data).getDiceresult());
+			local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceResult());
 			break;
 		case BUILD_VILLAGE:
-			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
+			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_CITY:
-			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_STREET:
-			this.localLogic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
 			break;
 		case STRING:
 			System.out.println("Client reached Message: " + packet.getDebugString());
 			break;
+		case START_GAME:
+			ui.build_game_menu();
+			local_logic.set_mode(GameMode.game);
+			System.out.println("Start game at Client");
+			break;
+		case NEW_MAP:
+			update_new_map_local(((Packet.New_Map) packet.data).getFields());
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}
-	}
+	}*/
 	
-	public void sendMessage(Packet p) {
+	public void message_to_core(Packet p) {
 		try {
-			this.output.writeObject(p);
-			this.output.flush();
+			output.writeObject(p);
+			output.flush();
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
 		
 	}
   
-	@Override
-	void update_new_map_local(Field[][] fields) {
-    // TODO
-	}
 
-	@Override
-	public void closeAllRessources() {
-		this.clientInputListener.closeConnectionToServer();
-		try {
-			this.input.close();
-			this.output.close();
-			this.server.close();
-		} catch (IOException e) {
-			System.err.println("Can´t close Listener at ClientCommunicator");
-		}
-	}
+	
+
 }

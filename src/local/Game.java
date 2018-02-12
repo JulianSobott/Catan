@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
-import org.jsfml.system.Vector2i;
 import org.jsfml.window.ContextSettings;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.Mouse;
@@ -15,8 +14,10 @@ import org.jsfml.window.event.Event;
 
 import core.Core;
 import core.Map;
+import network.Command;
 import network.DataIfc;
 import network.LocalDataServer;
+import network.Packet;
 import network.RemoteDataClient;
 
 public class Game {
@@ -29,7 +30,8 @@ public class Game {
 	float target_fps = 60.f;
 
 	// view management
-	View view;
+	View game_view;
+	View gui_view;// TODO make gui view aware of window resizing & handle inputs properly
 	float zoom_level = 0.5f;
 	float mouse_value = 3.f;
 	Vector2f mouse_start;
@@ -44,14 +46,15 @@ public class Game {
 	Clock frame_timer = new Clock();
 
 	// local
+	DataIfc data_connection;
 	LocalLogic local_logic = new LocalLogic();
 	UI ui = new UI(local_logic, this);
-	DataIfc data_connection;
 
 	// server
 	Core core;
 
 	Game() {
+		local_logic.addUI(ui);
 		std_font = new Font();
 		try {
 			std_font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
@@ -62,8 +65,9 @@ public class Game {
 
 	void run() throws InterruptedException {
 		window.create(new VideoMode(1200, 800), "Catan", RenderWindow.DEFAULT, new ContextSettings(8));
-		view = (View) window.getDefaultView();
-		view.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
+		game_view = (View) window.getDefaultView();
+		gui_view = new View(game_view.getCenter(), game_view.getSize());
+		game_view.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
 		update_view();
 
 		local_logic.init(std_font);
@@ -74,7 +78,12 @@ public class Game {
 			for (Event evt : window.pollEvents()) {
 				if (evt.type == Event.Type.CLOSED) {
 					running = false;
-					data_connection.closeAllRessources();
+					try {
+						data_connection.closeAllResources();
+					} catch (Exception e) {
+						System.err.println("Closed before all resources closed");
+					}
+
 				}
 				if (!ui.handle_event(evt)) {
 					// not handled by the ui
@@ -101,7 +110,7 @@ public class Game {
 					} else if (evt.type == Event.Type.MOUSE_MOVED) {
 						if (mouse_was_moved) {
 							float x = (float) evt.asMouseEvent().position.x, y = (float) evt.asMouseEvent().position.y;
-							view.move((mouse_start.x - x) * zoom_level, (mouse_start.y - y) * zoom_level);
+							game_view.move((mouse_start.x - x) * zoom_level, (mouse_start.y - y) * zoom_level);
 							mouse_start = new Vector2f(x, y);
 							update_view();
 						}
@@ -117,8 +126,10 @@ public class Game {
 			// rendering
 			window.clear(new Color(12, 145, 255));
 
-			ui.render(window);
+			window.setView(game_view);
 			local_logic.render_map(window);
+			window.setView(gui_view);
+			ui.render(window);
 
 			window.display();
 
@@ -131,13 +142,13 @@ public class Game {
 	}
 
 	void update_view() {
-		view.setCenter(
+		game_view.setCenter(
 				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, view.getCenter().x)),
 				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER,
 						view.getCenter().y)));// constraint
-		zoom_level = Math.max(0.2f, Math.min(Map.map_size_x * 0.15f, zoom_level));// constraint
-		view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
-		window.setView(view);
+		zoom_level = Math.max(0.2f, Math.min(Map.map_size * 0.15f, zoom_level));// constraint
+		game_view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
+		ui.update_window_size(new Vector2f(window.getSize().x, window.getSize().y));
 	}
 
 	Vector2f reverse_transform_position(int x, int y) {
@@ -154,17 +165,25 @@ public class Game {
 
 	// creates a new game with this machine as host
 	void init_host_game() {
-		LocalDataServer server = new LocalDataServer(ui);
+		LocalDataServer server = new LocalDataServer(ui, local_logic);
 		data_connection = server;
-
+		local_logic.set_data_interface(data_connection);
+		ui.set_data_interface(data_connection);
 		core = new Core(server);
 	}
 
 	// creates a new game with this machine as client
-	//TODO Deliver Server IP with Lobby Action
-	void init_guest_game() {
+	public boolean init_guest_game(String ip, String name) {
 		String serverIp = "192.168.2.118";
-		data_connection = new RemoteDataClient(ui, serverIp);
-
+		try {
+			data_connection = new RemoteDataClient(ui, local_logic, serverIp);
+		}catch(IOException e) {
+			return false;
+		}
+		
+		local_logic.set_data_interface(data_connection);
+		ui.set_data_interface(data_connection);
+		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name)));
+		return true;
 	}
 }

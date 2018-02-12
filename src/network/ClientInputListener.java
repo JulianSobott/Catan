@@ -20,7 +20,7 @@ public class ClientInputListener extends Thread{
 			if(input != null) {
 				try {
 					packet = (Packet) input.readObject();
-					this.remoteDataClient.recievedNewMessage(packet);
+					this.remoteDataClient.message_from_core(packet);
 				}catch(IOException e) {
 					System.err.println("Connection to Server closed (ClientInputListener Line 26)");
 					this.connectionToServer = false;
@@ -41,7 +41,7 @@ public class ClientInputListener extends Thread{
 		try {
 			this.input.close();
 		} catch (IOException e) {
-			System.err.println("Can´t close Listener at ClientInputListener");
+			System.err.println("Canï¿½t close Listener at ClientInputListener");
 		}
 	}
 }
