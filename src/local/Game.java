@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.ContextSettings;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.Mouse;
@@ -143,10 +144,10 @@ public class Game {
 
 	void update_view() {
 		game_view.setCenter(
-				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, view.getCenter().x)),
+				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, game_view.getCenter().x)),
 				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER,
-						view.getCenter().y)));// constraint
-		zoom_level = Math.max(0.2f, Math.min(Map.map_size * 0.15f, zoom_level));// constraint
+						game_view.getCenter().y)));// constraint
+		zoom_level = Math.max(0.2f, Math.min(Map.map_size_x * 0.15f, zoom_level));// constraint
 		game_view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
 		ui.update_window_size(new Vector2f(window.getSize().x, window.getSize().y));
 	}
