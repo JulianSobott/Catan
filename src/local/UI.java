@@ -77,10 +77,8 @@ public class UI {
 			@Override
 			public void run() {
 				System.out.println("Start new game");
-				// TODO DEBUG
 				game.init_host_game();
-				state.mode = GameMode.game;
-				build_game_menu();
+				build_host_lobby_window();
 			}
 		});
 		widgets.add(btn);
@@ -139,6 +137,13 @@ public class UI {
 
 	public void build_game_menu() {
 		destroy_widgets();
+		//Score board
+		
+		//player resources
+		
+		//dice result
+		
+		//build menu
 	}
 	
 	public void build_join_menu() {
