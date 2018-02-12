@@ -82,7 +82,28 @@ public class LocalDataServer extends DataIfc {
 	}
 	
 	public void message_from_client(int id, Packet packet) {
-		
+		switch (packet.getCommand()) {
+		case DICE:
+			core.dice(id);
+			break;
+		case BUILD_VILLAGE:
+			core.buildRequest(id, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_CITY:
+			core.buildRequest(id, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_STREET:
+			core.buildRequest(id, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			break;
+		case STRING:
+			System.out.println("Server reached Message: " + packet.getDebugString());
+			break;
+		case NAME:
+			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
+			break;
+		default:
+			System.err.println("Unknown Command reached Server");
+		}
 	}
 	
 	public void message_to_client(int id, Packet packet) {
@@ -93,7 +114,7 @@ public class LocalDataServer extends DataIfc {
 	public void message_to_core(Packet packet) { //Message from Local UI to Core (host has id 0)
 		switch (packet.getCommand()) {
 		case DICE:
-			core.dice();
+			core.dice(0);
 			break;
 		case BUILD_VILLAGE:
 			core.buildRequest(0, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
@@ -115,31 +136,6 @@ public class LocalDataServer extends DataIfc {
 		}
 	}
 
-	
-	public void receivedNewPacket(int id, Packet packet) {
-		switch (packet.getCommand()) {
-		case DICE:
-			core.dice();
-			break;
-		case BUILD_VILLAGE:
-			core.buildRequest(id, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_CITY:
-			core.buildRequest(id, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_STREET:
-			core.buildRequest(id, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
-			break;
-		case STRING:
-			System.out.println("Server reached Message: " + packet.getDebugString());
-			break;
-		case NAME:
-			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
-			break;
-		default:
-			System.err.println("Unknown Command reached Server");
-		}
-	}
 
 	public void messageToAll(Packet packet) {
 		for (ClientCommunicator client : clients) {

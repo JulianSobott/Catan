@@ -102,12 +102,10 @@ public class UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				//TODO transfer this to Start new Game
-				game.init_host_game();
-				build_host_lobby_window();
-				System.out.println("load Game");
+				
 			}
 		});
+		btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
 
 		btn = new Button(Language.OPTIONS.get_text(), new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -117,6 +115,7 @@ public class UI {
 				System.out.println("Options");
 			}
 		});
+		btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
 
 		btn = new Button(Language.EXIT.get_text(), new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -126,6 +125,7 @@ public class UI {
 				System.out.println("Exit game");
 			}
 		});
+		btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
 		
 		
@@ -150,16 +150,18 @@ public class UI {
 		//player resources
 		
 		//dice 
-		Button btnDice = new Button(Language.DICE.get_text(), new FloatRect(10,10,100,200));
+		Button btnDice = new Button(Language.DICE.get_text(), new FloatRect(window_size.x - 100 ,window_size.y - 130 ,100,70));
 		btnDice.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
 				data_connection.message_to_core(new Packet(Command.DICE));
 			}	
 		});
-		widgets.add(btnDice);
+		btnDice.set_enabled(false);
+		accessibleWidgets.put("btnDice", btnDice);
 		//dice result
-		Label lblDiceResult = new Label("dice result", new FloatRect(100,100,100,300));
+		Label lblDiceResult = new Label("-1", new FloatRect(10,10,50,50));
+		lblDiceResult.set_fill_color(new Color(170, 170, 170));
 		accessibleWidgets.put("lblDiceResult", lblDiceResult);
 		
 		//build menu

@@ -12,6 +12,7 @@ public class Button extends Widget {
 	private RectangleShape shape;
 	private Text text;
 	private Runnable click_event;
+	private boolean enabled = true;
 
 	public Button(String text, FloatRect bounds) {
 		super(bounds);
@@ -33,7 +34,7 @@ public class Button extends Widget {
 
 	@Override
 	public void do_mouse_click() {
-		if( click_event != null) click_event.run();
+		if( click_event != null && enabled) click_event.run();
 	}
 
 	// setter
@@ -68,5 +69,10 @@ public class Button extends Widget {
 	}
 	public void set_fill_color(Color color) {
 		shape.setFillColor(color);
+	}
+	
+	public void set_enabled(boolean enabled) {
+		this.enabled = enabled;
+		shape.setFillColor(new Color(100, 100, 100, 150));
 	}
 }
