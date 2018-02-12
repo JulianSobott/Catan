@@ -1,4 +1,5 @@
 package core;
+
 import org.jsfml.system.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class Core {
 	}
 
 	public void dice() {
-		int diceResult = (int)(Math.random()*10)+2;
+		int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
 		data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
 	}
 
@@ -40,7 +41,7 @@ public class Core {
 			Has player enough resources
 			Has player enough buildings (when limited)
 		=> build()
-	 */
+		*/
 	}
 
 	//TODO Just my thoughts about possible methods maybe rename or remove
@@ -60,10 +61,9 @@ public class Core {
 		Player show new resources
 		All show updated map
 		All show updated score
-
+		
 		Next player dice (automatically?)
 		 */
 	}
-
 
 }
