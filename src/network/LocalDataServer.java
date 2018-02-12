@@ -1,4 +1,5 @@
 package network;
+
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 
 import core.Core;
 import local.Field;
+import local.LocalLogic;
 import local.UI;
 
 public class LocalDataServer extends DataIfc {
@@ -19,15 +21,15 @@ public class LocalDataServer extends DataIfc {
 	private static final int PORT = 56789;
 
 	private int numClients = 0;
-	
+
 	private NewClientListener newClientListener;
 	//TODO implement Core with constructor
 	Core core = new Core(this);
 
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
 
-	public LocalDataServer(UI ui) {
-		super(ui);
+	public LocalDataServer(UI ui, LocalLogic local_logic) {
+		super(ui, local_logic);
 		//Getting the local IP Adress
 		DatagramSocket ds;
 		try {
@@ -44,7 +46,7 @@ public class LocalDataServer extends DataIfc {
 		try {
 			server = new ServerSocket(PORT);
 		} catch (IOException e) {
-			System.err.println("CouldnÂ´t create Server Socket");
+			System.err.println("Couldn't create Server Socket");
 			e.printStackTrace();
 		}
 		this.newClientListener = new NewClientListener(this, this.server);
@@ -52,13 +54,69 @@ public class LocalDataServer extends DataIfc {
 		this.numClients++;
 	}
 
+	@Override
+	public void closeAllResources() {
+		this.newClientListener.stopListen();
+		for (ClientCommunicator client : clients) {
+			client.stopRunning();
+		}
+		try {
+			this.server.close();
+		} catch (IOException e) {
+			System.err.println("Canï¿½t close Server at LocalDataServer");
+		}
+	}
+
+	//Getter Setter
+	public int getNumClients() {
+		return this.numClients;
+	}
+
+	
+	// network management
+
 	public void addNewClient(Socket client) {
 		ClientCommunicator communicator = new ClientCommunicator(this, client);
 		clients.add(communicator);
 		communicator.start();
 	}
+	
+	public void message_from_client(int id, Packet packet) {
+		
+	}
+	
+	public void message_to_client(int id, Packet packet) {
+		this.clients.get(id).message(packet);
+	}
+	
+	@Override
+	public void message_to_core(Packet packet) { //Message from Local UI to Core (host has id 0)
+		switch (packet.getCommand()) {
+		case DICE:
+			core.dice();
+			break;
+		case BUILD_VILLAGE:
+			core.buildRequest(0, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_CITY:
+			core.buildRequest(0, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			break;
+		case BUILD_STREET:
+			core.buildRequest(0, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			break;
+		case STRING:
+			System.out.println("Server reached Message: " + packet.getDebugString());
+			break;
+		case NAME:
+			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
+			break;
+		default:
+			System.err.println("Unknown Command reached Server");
+		}
+	}
 
-	public void recievedNewPacket(int id, Packet packet) {
+	
+	public void receivedNewPacket(int id, Packet packet) {
 		switch (packet.getCommand()) {
 		case DICE:
 			core.dice();
@@ -75,43 +133,25 @@ public class LocalDataServer extends DataIfc {
 		case STRING:
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;
+		case NAME:
+			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
+			break;
 		default:
 			System.err.println("Unknown Command reached Server");
 		}
 	}
 
-	public void messageTo(int idxClient, Packet packet) {
-		this.clients.get(idxClient).message(packet);
-	}
-
-	//Getter Setter
-	public int getNumClients() {
-		return this.numClients;
-	}
-
-	// commands from the core
-	public void update_new_map(Field[][] fields) {
-		// TODO push to other clients
-
-		update_new_map_local(fields);
-	}
-
-	//
-	@Override
-	public void update_new_map_local(Field[][] fields) {
-		ui.getLogic().update_new_map(fields);
-	}
-
-	@Override
-	public void closeAllRessources() {
-		this.newClientListener.stopListen();
-		for(ClientCommunicator client : clients) {
-			client.stopRunning();
+	public void messageToAll(Packet packet) {
+		for (ClientCommunicator client : clients) {
+			client.message(packet);
 		}
-		try {
-			this.server.close();
-		} catch (IOException e) {
-			System.err.println("Can´t close Server at LocalDataServer");
-		}
+		message_from_core(packet); //message to own UI | localLogoc
 	}
+
+	public void create_new_map(int map_size, int seed) {
+		core.create_new_map(map_size, seed);
+	}
+
+
+
 }

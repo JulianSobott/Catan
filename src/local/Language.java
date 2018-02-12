@@ -1,7 +1,25 @@
 package local;
 public enum Language {
 
-	HELLO_WORLD("Hello world", "Hallo Welt");
+	NO_TEXT("NO TEXT FOUND", "KEIN TEXT GEFUNDEN"),
+	//Start Window
+	CREATE_NEW_GAME("Create new Game", "Neues Spiel erstellen"),
+	JOIN_GAME("Join game", "Spiel beitreten"),
+	LOAD_GAME("Load game", "Spiel laden"),
+	OPTIONS("Options", "Einstellungen"),
+	EXIT("Exit game", "Spiel beenden"),
+	//Create game window 
+	START("Start game", "Spiel starten"),
+	//Join game window
+	JOIN("Join game", "Spiel beitreten"),
+	//Lobby Window
+	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
+	MEMBERS("MEMBERS", "Mitspieler"), 
+	MAP_SIZE("Map size", "Karten Größe"),
+	SEED("Seed", "Seed"),
+	//Ingame
+	DICE("Dice", "Würfeln");
+	;
 
 
 	

@@ -27,10 +27,10 @@ public class ClientCommunicator extends Thread{
 			this.output = new ObjectOutputStream(this.client.getOutputStream());
 			this.input = new ObjectInputStream(this.client.getInputStream());
 		}catch(IOException e) {
-			System.err.println("Can´t create input and output streams to client");
+			System.err.println("Can't create input and output streams to client");
 			e.printStackTrace();
 		}catch (Exception e) {
-			System.err.println("Can´t initilize listener at ClientCommunicator");
+			System.err.println("Can't initialize listener at ClientCommunicator");
 		}
 		
 		//Listen for Input from Client
@@ -38,7 +38,7 @@ public class ClientCommunicator extends Thread{
 			Packet packet;
 			try {
 				packet = (Packet) input.readObject();
-				this.localDataServer.recievedNewPacket(this.id, packet);
+				this.localDataServer.receivedNewPacket(this.id, packet);
 			}catch(IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -54,7 +54,7 @@ public class ClientCommunicator extends Thread{
 			this.output.writeObject(p);
 			this.output.flush();
 		}catch(IOException e) {
-			System.err.println("Can´t send Packet to Client with the Code:" + p.getCommand());
+			System.err.println("Canï¿½t send Packet to Client with the Code:" + p.getCommand());
 		}
 		
 	}
@@ -65,7 +65,7 @@ public class ClientCommunicator extends Thread{
 			this.input.close();
 			this.output.close();
 		} catch (IOException e) {
-			System.err.println("Can´t close Listener at ClientCommunicator");
+			System.err.println("Canï¿½t close Listener at ClientCommunicator");
 		}
 	}
 }
