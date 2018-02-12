@@ -1,4 +1,5 @@
 package core;
+
 import org.jsfml.system.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class Core {
 		if(id == actualPlayer) {
 			int diceResult = (int)(Math.random()*10)+2;
 			data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
-		}	
+		}
 	}
 
 	public void buildRequest(int id, Command buildType, Vector2i position) {
@@ -44,7 +45,7 @@ public class Core {
 			Has player enough resources
 			Has player enough buildings (when limited)
 		=> build()
-	 */
+		*/
 	}
 
 	//TODO Just my thoughts about possible methods maybe rename or remove
@@ -68,6 +69,5 @@ public class Core {
 		Next player dice (automatically?)
 		 */
 	}
-
 
 }
