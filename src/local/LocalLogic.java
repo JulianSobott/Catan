@@ -58,16 +58,17 @@ public class LocalLogic {
 		for (Resource res : Resource.values())
 			state.field_resources.put(res, new ArrayList<Vector2f>());
 		state.field_numbers = new HashMap<>();
-		for (byte i = 2; i < Map.number_count + 2; i++)
+		for (byte i = 2; i < Map.NUMBER_COUNT + 2; i++)
 			state.field_numbers.put(i, new ArrayList<Vector2f>());
 
 		for (int x = 0; x < fields.length; x++) {
 			for (int y = 0; y < fields[x].length; y++) {
-				float pos_x = x * (Map.field_size + Map.field_distance) + Map.field_offset
-						+ (y % 2 != 0 ? (Map.field_size + Map.field_distance) / 2.f : 0),
-						pos_y = y * (Map.field_size + Map.field_distance) * 0.866f + Map.field_offset;
-				state.field_resources.get(fields[x][y].resource).add(new Vector2f(pos_x, pos_y));
-				state.field_numbers.get(fields[x][y].number).add(new Vector2f(pos_x, pos_y));
+				if (fields[x][y] != null) {
+					Vector2f pos = Map.index_to_position(new Vector2i(x, y));
+					state.field_resources.get(fields[x][y].resource).add(pos);
+					if (fields[x][y].number != 0)
+						state.field_numbers.get(fields[x][y].number).add(pos);
+				}
 			}
 		}
 	}
@@ -79,7 +80,7 @@ public class LocalLogic {
 				shape.setFillColor(resource.getKey().color);
 				shape.setOrigin(Map.field_size * 0.5f, Map.field_size * 0.5f);
 				shape.setOutlineColor(new Color(150, 150, 150));
-				shape.setOutlineThickness(2.5f);
+				shape.setOutlineThickness(Map.border_size);
 
 				for (Vector2f pos : resource.getValue()) {
 					shape.setPosition(pos);
@@ -88,6 +89,7 @@ public class LocalLogic {
 			}
 			for (java.util.Map.Entry<Byte, List<Vector2f>> number : state.field_numbers.entrySet()) {
 				Text text = new Text("" + number.getKey(), std_font);
+			  text.setCharacterSize(40 - Math.abs(number.getKey()-(Map.NUMBER_COUNT+4)/2)*4);
 				text.setOrigin(text.getGlobalBounds().width * 0.5f, text.getGlobalBounds().height * 0.5f);
 
 				for (Vector2f pos : number.getValue()) {
@@ -98,6 +100,10 @@ public class LocalLogic {
 		}
 	}
 
+	void mouse_click_input(Vector2f position) {
+		// TODO
+	}
+  
 	public void diceResult(byte diceresult) {
 		// TODO Auto-generated method stub
 		System.out.println("Dice result at Client: " + diceresult);
@@ -105,6 +111,5 @@ public class LocalLogic {
 
 	public void build(int idPlayer, Command buildType, Vector2i position) {
 		// TODO Auto-generated method stub
-
 	}
 }

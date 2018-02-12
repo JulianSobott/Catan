@@ -1,5 +1,6 @@
 package core;
 
+import core.Map.GeneratorType;
 import org.jsfml.system.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,8 @@ public class Core {
 	}
 
 	public void create_new_map(int map_size, int seed) {
-		map.create_map(map_size, seed);
+		map.create_map(map_size + 2, seed, map_size, new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
+				GeneratorType.HEXAGON);
 		data_server.messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(map.getFields())));
 		//data_server.update_new_map(map.getFields());
 	}
