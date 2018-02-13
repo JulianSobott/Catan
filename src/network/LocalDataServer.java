@@ -147,6 +147,10 @@ public class LocalDataServer extends DataIfc {
 		core.create_new_map(map_size, seed);
 	}
 
+	public void init_game() {
+		core.init_game();
+	}
+
 
 
 }

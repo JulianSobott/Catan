@@ -2,6 +2,7 @@ package local;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jsfml.graphics.Color;
@@ -13,7 +14,9 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
+import core.Player;
 import data.Language;
+import data.Resource;
 import local.LocalState.GameMode;
 import local.gui.Button;
 import local.gui.Label;
@@ -46,13 +49,21 @@ public class UI {
 
 	// gui data
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
-	private Map<String, Widget> accessibleWidgets = new HashMap<String, Widget>();
 	private TextField activeTF;
 
 
 	// lobby
 	private int numGuests = 0;
-
+	
+	//widgets Just widgets which may be changed
+	private Button btnDice;
+	private Label lblDiceResult;
+	private Label lblWoodCards;
+	private Label lblWoolCards;
+	private Label lblGrainCards;
+	private Label lblClayCards;
+	private Label lblOreCards;
+	
 	UI(LocalLogic logic, Game game) {
 		this.state = logic.state;
 		this.game = game;
@@ -166,22 +177,32 @@ public class UI {
 		}
 
 	}
-
-	public void update_accessibleWidgets(String name, String newText) {
-		accessibleWidgets.get(name).set_text(newText);
-	}
-
+	
 	public void build_game_menu() {
 		destroy_widgets();
 		mode = GUIMode.GAME;
 
 		//Score board
-
+		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0 , 250, 300)); //TODO add all players at init
+		widgets.add(lblScoreBoard);
 		//player resources
-
+		lblClayCards = new Label("Clay", new FloatRect((window_size.x/5)*3 - 70, window_size.y - 95, 70, 90));
+		lblClayCards.set_fill_color(Resource.CLAY.get_color());
+		widgets.add(lblClayCards);
+		lblGrainCards = new Label("Grain", new FloatRect((window_size.x/5)*3 - 140, window_size.y - 95, 70, 90));
+		lblGrainCards.set_fill_color(Resource.GRAIN.get_color());
+		widgets.add(lblGrainCards);
+		lblOreCards = new Label("Ore", new FloatRect((window_size.x/5)*3 - 210, window_size.y - 95, 70, 90));
+		lblOreCards.set_fill_color(Resource.ORE.get_color());
+		widgets.add(lblOreCards);
+		lblWoodCards = new Label("WOOD", new FloatRect((window_size.x/5)*3 - 280, window_size.y - 95, 70, 90));
+		lblWoodCards.set_fill_color(Resource.WOOD.get_color());
+		widgets.add(lblWoodCards);
+		lblWoolCards = new Label("Wool", new FloatRect((window_size.x/5)*3 - 350, window_size.y - 95, 70, 90));
+		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
+		widgets.add(lblWoolCards);
 		//dice 
-		Button btnDice = new Button(Language.DICE.get_text(),
-				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
+		btnDice = new Button(Language.DICE.get_text(), new FloatRect(window_size.x - 100 ,window_size.y - 130 ,100,70));
 		btnDice.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -189,13 +210,38 @@ public class UI {
 			}
 		});
 		btnDice.set_enabled(false);
-		accessibleWidgets.put("btnDice", btnDice);
+		widgets.add(btnDice);
 		//dice result
-		Label lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
+		lblDiceResult = new Label("-1", new FloatRect(10,10,50,50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
-		accessibleWidgets.put("lblDiceResult", lblDiceResult);
-
+		widgets.add(lblDiceResult);
+		
 		//build menu
+		Button btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new FloatRect((window_size.x/5)*3, window_size.y - 80, 110, 70));
+		btnBuildVillage.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				
+			}
+		});
+		widgets.add(btnBuildVillage);
+		Button btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new FloatRect((window_size.x/5)*3 + 120, window_size.y - 80, 110, 70));
+		btnBuildCity.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				
+			}
+		});
+		widgets.add(btnBuildCity);
+		Button btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new FloatRect((window_size.x/5)*3 + 240, window_size.y - 80, 110, 70));
+		btnBuildStreet.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				
+			}
+		});
+		widgets.add(btnBuildStreet);
+		
 	}
 
 	public void build_join_menu() {
@@ -299,11 +345,10 @@ public class UI {
 			@Override
 			public void run() {
 				int map_size = tfMapSize.get_text().length() > 0 ? Integer.parseInt(tfMapSize.get_text()) : 5; //TODO get from TF
-				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text())
-						: ((int) Math.random() * 100) + 1;
+				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text()) : ((int)Math.random()*100)+1; 				
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
-				((LocalDataServer) data_connection).messageToAll(new Packet(Command.START_GAME));
-			}
+				((LocalDataServer) data_connection).init_game();
+			}			
 		});
 		widgets.add(btnStart);
 	}
@@ -347,9 +392,6 @@ public class UI {
 		for (Widget widget : widgets) {
 			widget.render(target);
 		}
-		for (Object widget : accessibleWidgets.values()) {
-			((Widget) widget).render(target);
-		}
 	}
 
 	// returns true if was on a widget
@@ -386,5 +428,19 @@ public class UI {
 		this.view = view;
 		rebuild_gui();
 	}
+	
+	
+	//Access to the widgets
+	public void show_dice_result(byte result) {
+		lblDiceResult.set_text(Integer.toString((int)result));
+	}
 
+	public void init_scoreboard(List<Player> player) {
+		int i = 0;
+		for(Player tempPlayer : player) {
+			Label lblPlayerScore = new Label(tempPlayer.getName() + ": " + tempPlayer.getScore(), new FloatRect(window_size.x - 250, 50*i , 250, 50));
+			widgets.add(lblPlayerScore);
+			i++;
+		}
+	}
 }
