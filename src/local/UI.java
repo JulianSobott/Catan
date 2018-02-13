@@ -59,7 +59,12 @@ public class UI {
 	private Label lblGrainCards;
 	private Label lblClayCards;
 	private Label lblOreCards;
+
 	private List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
+	private String tf_value_ip = "192.168.2.103";
+	private String tf_value_name = "Julian";
+	private String tf_value_seed = "";
+	private String tf_value_size = "";
 
 	UI(LocalLogic logic, Game game) {
 		this.state = logic.state;
@@ -261,12 +266,28 @@ public class UI {
 
 		TextField tfIp = new TextField(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text_size(30);
-		tfIp.set_text("192.168.2.103");
+		tfIp.set_text(tf_value_ip);
+		tfIp.set_input_callback(new Runnable() {
+			TextField textField = tfIp;
+
+			@Override
+			public void run() {
+				tf_value_ip = textField.get_text();
+			}
+		});
 		widgets.add(tfIp);
 
 		TextField tfName = new TextField(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		tfName.set_text_size(30);
-		tfName.set_text("Julian");
+		tfName.set_text(tf_value_name);
+		tfName.set_input_callback(new Runnable() {
+			TextField textField = tfName;
+
+			@Override
+			public void run() {
+				tf_value_name = textField.get_text();
+			}
+		});
 		widgets.add(tfName);
 
 		for (int i = 0; i < widgets.size(); i++) {
@@ -292,16 +313,16 @@ public class UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				if (tfIp.get_text().length() > 4 && tfName.get_text().length() > 0) {
+				if (tf_value_ip.length() > 4 && tf_value_name.length() > 0) {
 					//Entered wrong Ip or server is not online
-					if (!game.init_guest_game(tfIp.get_text().trim(), tfName.get_text().trim())) {
+					if (!game.init_guest_game(tf_value_ip, tf_value_name.trim())) {
 						tfIp.set_outline_color(Color.RED);
 					}
 				} else {
-					if (tfIp.get_text().length() <= 4) {
+					if (tf_value_ip.length() <= 4) {
 						tfIp.set_outline_color(Color.RED);
 					}
-					if (tfName.get_text().length() == 0) {
+					if (tf_value_name.length() == 0) {
 						tfName.set_outline_color(Color.RED);
 					}
 				}
@@ -334,18 +355,45 @@ public class UI {
 		widgets.add(lbl);
 		TextField tfMapSize = new TextField(new FloatRect(row0 + 120, 110, 200, 35));
 		tfMapSize.set_text_color(new Color(20, 20, 20));
+		tfMapSize.set_text(tf_value_size);
+		tfMapSize.set_input_callback(new Runnable() {
+			TextField textField = tfMapSize;
+
+			@Override
+			public void run() {
+				tf_value_size = textField.get_text();
+			}
+		});
 		widgets.add(tfMapSize);
 
 		lbl = new Label(Language.SEED.get_text() + ": ", new FloatRect(row0, 150, 100, 35));
 		widgets.add(lbl);
 		TextField tfSeed = new TextField(new FloatRect(row0 + 120, 150, 200, 35));
 		tfSeed.set_text_color(new Color(20, 20, 20));
+		tfSeed.set_text(tf_value_seed);
+		tfSeed.set_input_callback(new Runnable() {
+			TextField textField = tfSeed;
+
+			@Override
+			public void run() {
+				tf_value_seed = textField.get_text();
+			}
+		});
 		widgets.add(tfSeed);
 
 		lbl = new Label(Language.YOUR_NAME.get_text() + ": ", new FloatRect(row0, 290, 100, 35));
 		widgets.add(lbl);
 		TextField tfName = new TextField(new FloatRect(row0 + 120, 290, 200, 35));
 		tfName.set_text_color(new Color(20, 20, 20));
+		tfName.set_text(tf_value_name);
+		tfName.set_input_callback(new Runnable() {
+			TextField textField = tfName;
+
+			@Override
+			public void run() {
+				tf_value_name = textField.get_text();
+			}
+		});
 		widgets.add(tfName);
 
 		//Row1 ==> members
@@ -364,13 +412,14 @@ public class UI {
 		btnStart.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				int map_size = tfMapSize.get_text().length() > 0 ? Integer.parseInt(tfMapSize.get_text()) : 5; //TODO get from TF
-				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text())
+				int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5; //TODO get from TF
+				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
-				String user_name = tfName.get_text().length() > 0 ? tfName.get_text() : "Anonymous";
+				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
 
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
-				((LocalDataServer) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
+				((LocalDataServer) data_connection)
+						.message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
 				((LocalDataServer) data_connection).init_game();
 			}
 		});

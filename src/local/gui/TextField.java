@@ -17,6 +17,8 @@ public class TextField extends Widget {
 	private Text text;
 	private boolean is_active = false;
 	private Color outline_color = Color.BLACK;
+	private Runnable input_event;
+
 	public TextField(FloatRect bounds) {
 		super(bounds);
 
@@ -51,16 +53,22 @@ public class TextField extends Widget {
 	}
 
 	public void text_input(char character) {
-		if (character != '\n' && character != '\r' && character != '\b' && character != '\t')
+		if (character != '\n' && character != '\r' && character != '\b' && character != '\t') {
 			text.setString(text.getString() + character);
+			if (input_event != null)
+				input_event.run();
+		}
 	}
 
 	// returns true if the key was handled
 	public boolean special_input(Keyboard.Key key) {
 		if (key == Keyboard.Key.BACKSPACE) {
 			String str = text.getString();
-			if (!str.isEmpty())
+			if (!str.isEmpty()) {
 				text.setString(str.substring(0, str.length() - 1));
+				if (input_event != null)
+					input_event.run();
+			}
 			return true;
 		}
 		return false;
@@ -71,10 +79,13 @@ public class TextField extends Widget {
 	public void set_font(Font font) {
 		text.setFont(font);
 	}
-	
+
 	public void set_text(String string) {
 		text.setString(string);
+		if (input_event != null)
+			input_event.run();
 	}
+
 	public String get_text() {
 		return text.getString();
 	}
@@ -97,6 +108,10 @@ public class TextField extends Widget {
 
 	public void set_text_size(int character_size) {
 		text.setCharacterSize(character_size);
+	}
+
+	public void set_input_callback(Runnable input_event) {
+		this.input_event = input_event;
 	}
 
 }
