@@ -305,7 +305,7 @@ public class UI {
 		tfSeed.set_text_color(new Color(20, 20, 20));
 		widgets.add(tfSeed);
 		
-		//Row1 ==> members
+		//Row1 ==> members+
 		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(row1, 10, 100, 100));
 		widgets.add(lbl);
 		
@@ -328,7 +328,7 @@ public class UI {
 		widgets.add(lbl);
 		numGuests++;
 	}
-
+	
 	// returns true if event was handled
 	boolean handle_event(Event evt) {
 		if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
@@ -405,7 +405,7 @@ public class UI {
 		int i = 0;
 		for(Player tempPlayer : player) {
 			Label lblPlayerScore = new Label(tempPlayer.getName() + ": " + tempPlayer.getScore(), new FloatRect(window_size.x - 250, 50*i , 250, 50));
-			widgets.add(lblPlayerScore);
+			this.widgets.add(lblPlayerScore);
 			i++;
 		}
 	}

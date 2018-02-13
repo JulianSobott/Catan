@@ -40,7 +40,8 @@ public class ClientCommunicator extends Thread{
 				packet = (Packet) input.readObject();
 				this.localDataServer.message_from_client(this.id, packet);
 			}catch(IOException e) {
-				e.printStackTrace();
+				System.err.println("End of File Exception at ClientCommunicator => stopped running");
+				this.running = false;
 			} catch (ClassNotFoundException e) {
 				System.err.println("Object is from unknown Class");
 				e.printStackTrace();

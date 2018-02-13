@@ -98,6 +98,7 @@ public class LocalDataServer extends DataIfc {
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;
 		case NAME:
+			core.add_player(((Packet.Name) packet.data).getName());
 			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
 			break;
 		default:
@@ -128,6 +129,7 @@ public class LocalDataServer extends DataIfc {
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;
 		case NAME:
+			core.add_player(((Packet.Name) packet.data).getName());
 			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
 			break;
 		default:

@@ -35,6 +35,7 @@ public class Core {
 	public void init_game() {
 		data_server.messageToAll(new Packet(Command.START_GAME));
 		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(player)));
+		System.out.println(player.get(0).getName());
 	}
 	
 	public void dice(int id) {
@@ -75,6 +76,12 @@ public class Core {
 
 		Next player dice (automatically?)
 		 */
+	}
+
+	public void add_player(String name) {
+		Player tempPlayer = new Player();
+		tempPlayer.setName(name);
+		player.add(tempPlayer);
 	}
 
 	

@@ -20,6 +20,8 @@ public abstract class DataIfc {
 		switch(packet.getCommand()) {
 		case INIT_SCOREBOARD:
 			this.ui.init_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
+			System.out.println("init scoreboard");
+			break;
 		case START_GAME:
 			this.local_logic.set_mode(LocalState.GameMode.game);
 			this.ui.build_game_menu();
