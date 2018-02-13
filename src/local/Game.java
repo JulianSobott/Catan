@@ -96,8 +96,9 @@ public class Game {
 						update_view();
 					} else if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
 						if (evt.asMouseButtonEvent().button == Mouse.Button.LEFT) {
-							local_logic.mouse_click_input(reverse_transform_position(
-									evt.asMouseButtonEvent().position.x, evt.asMouseButtonEvent().position.y));
+							local_logic
+									.mouse_click_input(reverse_transform_position(evt.asMouseButtonEvent().position.x,
+											evt.asMouseButtonEvent().position.y, game_view));
 						} else if (evt.asMouseButtonEvent().button == Mouse.Button.RIGHT) { // reset mouse position
 							mouse_start = new Vector2f((float) evt.asMouseButtonEvent().position.x,
 									(float) evt.asMouseButtonEvent().position.y);
@@ -143,18 +144,22 @@ public class Game {
 
 	void update_view() {
 		game_view.setCenter(
-				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, game_view.getCenter().x)),
+				Math.max(0.f,
+						Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, game_view.getCenter().x)),
 				Math.max(0.f, Math.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER,
 						game_view.getCenter().y)));// constraint
 		zoom_level = Math.max(0.2f, Math.min(Map.map_size_x * 0.15f, zoom_level));// constraint
 		game_view.setSize((float) window.getSize().x * zoom_level, (float) window.getSize().y * zoom_level);
-		ui.update_window_size(new Vector2f(window.getSize().x, window.getSize().y));
+		gui_view.move(-(gui_view.getSize().x - window.getSize().x) * 0.5f,
+				-(gui_view.getSize().y - window.getSize().y) * 0.5f);
+		gui_view.setSize((float) window.getSize().x, (float) window.getSize().y);
+		ui.update_window_size(new Vector2f(window.getSize().x, window.getSize().y), gui_view);
 	}
 
-	Vector2f reverse_transform_position(int x, int y) {
+	Vector2f reverse_transform_position(int x, int y, View view) {
 		return new Vector2f(
-				(float) x / (float) window.getSize().x * game_view.getSize().x + game_view.getCenter().x - game_view.getSize().x / 2,
-				(float) y / (float) window.getSize().y * game_view.getSize().y + game_view.getCenter().y - game_view.getSize().y / 2);
+				(float) x / (float) window.getSize().x * view.getSize().x + view.getCenter().x - view.getSize().x / 2,
+				(float) y / (float) window.getSize().y * view.getSize().y + view.getCenter().y - view.getSize().y / 2);
 	}
 
 	// creates a new game with this machine as host
@@ -168,13 +173,13 @@ public class Game {
 
 	// creates a new game with this machine as client
 	public boolean init_guest_game(String ip, String name) {
-		String serverIp = "192.168.2.118";
+		String serverIp = ip;
 		try {
 			data_connection = new RemoteDataClient(ui, local_logic, serverIp);
-		}catch(IOException e) {
+		} catch (IOException e) {
 			return false;
 		}
-		
+
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
 		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name)));

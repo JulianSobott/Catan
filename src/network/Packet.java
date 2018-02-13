@@ -8,19 +8,22 @@ import org.jsfml.system.Vector2i;
 
 import data.Field;
 
-import core.Player;
+import local.LocalPlayer;
 
 public class Packet implements Serializable {
-	
-	public static class Scoreboard implements Serializable{
-		List<Player> player = new ArrayList<Player>();
-		public Scoreboard(List<Player> player2) {
+
+	public static class Scoreboard implements Serializable {
+		List<LocalPlayer> player = new ArrayList<LocalPlayer>();
+
+		public Scoreboard(List<LocalPlayer> player2) {
 			this.player = player2;
 		}
-		public List<Player> getPlayer(){
+
+		public List<LocalPlayer> getPlayer() {
 			return this.player;
 		}
 	}
+
 	public static class DiceResult implements Serializable {
 		private byte result;
 
@@ -60,22 +63,26 @@ public class Packet implements Serializable {
 		public Trade() {
 		}
 	}
-	
-	public static class Name implements Serializable{
+
+	public static class Name implements Serializable {
 		private String name;
+
 		public Name(String name) {
 			this.name = name;
 		}
+
 		public String getName() {
 			return this.name;
 		}
 	}
-	
-	public static class New_Map implements Serializable{
+
+	public static class New_Map implements Serializable {
 		private Field[][] fields;
+
 		public New_Map(Field[][] fields) {
 			this.fields = fields;
 		}
+
 		public Field[][] getFields() {
 			return this.fields;
 		}

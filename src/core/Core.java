@@ -1,6 +1,8 @@
 package core;
 
 import core.Map.GeneratorType;
+import local.LocalPlayer;
+
 import org.jsfml.system.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +36,23 @@ public class Core {
 
 	public void init_game() {
 		data_server.messageToAll(new Packet(Command.START_GAME));
-		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(player)));
-		System.out.println(player.get(0).getName());
+
+		// translate into a more silent data structure
+		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
+		for (Player p : player)
+			scoreboard_data.add(scoreboard_data.size(), new LocalPlayer(p.getName(), p.getScore()));
+		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(scoreboard_data)));
 	}
-	
+
+	public void register_new_user(String name) {
+		player.add(player.size(), new Player(name));
+	}
+
+	// USER ACTIONS
+
 	public void dice(int id) {
-		if(id == actualPlayer) {
-			int diceResult = (int)(Math.random()*10)+2;
+		if (id == actualPlayer) {
+			int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
 			data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
 		}
 	}
@@ -77,13 +89,5 @@ public class Core {
 		Next player dice (automatically?)
 		 */
 	}
-
-	public void add_player(String name) {
-		Player tempPlayer = new Player();
-		tempPlayer.setName(name);
-		player.add(tempPlayer);
-	}
-
-	
 
 }

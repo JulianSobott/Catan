@@ -15,13 +15,14 @@ public enum Language {
 	//Lobby Window
 	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
 	MEMBERS("MEMBERS", "Mitspieler"), 
-	MAP_SIZE("Map size", "Karten Größe"),
+	MAP_SIZE("Map size", "Karten Größe"), 
 	SEED("Seed", "Seed"),
+	YOUR_NAME("Your name", "Dein Name"),
 	//In game
 	DICE("Dice", "Würfeln"),
 	BUILD_VILLAGE("Build village", "Siedlung bauen"),
 	BUILD_CITY("Build city", "Stadt bauen"),
-	BUILD_STREET("Build street", "Stra�e bauen");
+	BUILD_STREET("Build street", "Stra�e bauen");
 
 
 	

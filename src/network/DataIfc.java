@@ -1,4 +1,5 @@
 package network;
+
 import local.LocalLogic;
 import local.LocalState;
 import local.UI;
@@ -20,7 +21,6 @@ public abstract class DataIfc {
 		switch(packet.getCommand()) {
 		case INIT_SCOREBOARD:
 			this.ui.init_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
-			System.out.println("init scoreboard");
 			break;
 		case START_GAME:
 			this.local_logic.set_mode(LocalState.GameMode.game);
@@ -31,12 +31,12 @@ public abstract class DataIfc {
 			break;
 		case DICE_RESULT:
 			this.ui.show_dice_result(((Packet.DiceResult) packet.data).getDiceResult());
-			break;	
+			break;
 		default:
 			System.err.println("Not yet implemented Command: " + packet.getCommand());
 		}
 	}
-	
+
 	// messages from the clients
 	public abstract void message_to_core(Packet packet);
 }

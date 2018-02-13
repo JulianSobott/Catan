@@ -9,6 +9,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
@@ -27,22 +28,29 @@ import network.LocalDataServer;
 import network.Packet;
 
 public class UI {
+	enum GUIMode {
+		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
+	}
+
+	private GUIMode mode;
+
 	// local state
 	private LocalState state;
 	private DataIfc data_connection;
 	private Game game;
 	private Vector2f window_size;
-	
+	private View view;
+
 	// fonts
-	Font std_font;
+	private Font std_font;
 
 	// gui data
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
 	private TextField activeTF;
 
 	// lobby
-	private int numGuests = 0;
-	
+	private List<String> guests = new ArrayList<String>();
+
 	//widgets Just widgets which may be changed
 	private Button btnDice;
 	private Label lblDiceResult;
@@ -51,7 +59,8 @@ public class UI {
 	private Label lblGrainCards;
 	private Label lblClayCards;
 	private Label lblOreCards;
-	
+	private List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
+
 	UI(LocalLogic logic, Game game) {
 		this.state = logic.state;
 		this.game = game;
@@ -65,9 +74,9 @@ public class UI {
 		// Is global for all Widgets! Change them on demand
 		Widget.set_default_font(std_font);
 		Widget.set_default_text_color(new Color(20, 50, 50));
-		Widget.set_default_outline_color(Color.BLACK);
+		Widget.set_default_outline_color(Color.TRANSPARENT);
 		Widget.set_default_outline_highlight_color(new Color(200, 140, 200));
-		Widget.set_default_fill_color(new Color(0,0,0,0));
+		Widget.set_default_fill_color(new Color(0, 0, 0, 0));
 		build_lobby();
 	}
 
@@ -80,8 +89,25 @@ public class UI {
 		activeTF = null;
 	}
 
+	// this method is called when the window gets resized
+	public void rebuild_gui() {
+		destroy_widgets();
+		if (mode == GUIMode.LOBBY) {
+			build_lobby();
+		} else if (mode == GUIMode.JOIN) {
+			build_join_menu();
+		} else if (mode == GUIMode.GUEST_LOBBY) {
+			build_guest_lobby_window();
+		} else if (mode == GUIMode.HOST_LOBBY) {
+			build_host_lobby_window();
+		} else if (mode == GUIMode.GAME) {
+			build_game_menu();
+		}
+	}
+
 	public void build_lobby() {
 		destroy_widgets();
+		mode = GUIMode.LOBBY;
 
 		float mm_button_width = 400;
 		float mm_button_height = 100;
@@ -113,7 +139,7 @@ public class UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		btn.set_enabled(false); //TODO remove when implemented
@@ -134,12 +160,10 @@ public class UI {
 			@Override
 			public void run() {
 				System.out.println("Exit game");
+				game.running = false;
 			}
 		});
-		btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
-		
-		
 
 		// rearrange buttons TODO
 		for (int i = 0; i < widgets.size(); i++) {
@@ -150,191 +174,215 @@ public class UI {
 		}
 
 	}
-	
+
 	public void build_game_menu() {
 		destroy_widgets();
+		mode = GUIMode.GAME;
+
 		//Score board
-		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0 , 250, 300)); //TODO add all players at init
+		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0, 250, 300)); //TODO add all players at init
 		widgets.add(lblScoreBoard);
 		//player resources
-		lblClayCards = new Label("Clay", new FloatRect((window_size.x/5)*3 - 70, window_size.y - 95, 70, 90));
+		lblClayCards = new Label("Clay", new FloatRect((window_size.x / 5) * 3 - 70, window_size.y - 95, 70, 90));
 		lblClayCards.set_fill_color(Resource.CLAY.get_color());
 		widgets.add(lblClayCards);
-		lblGrainCards = new Label("Grain", new FloatRect((window_size.x/5)*3 - 140, window_size.y - 95, 70, 90));
+		lblGrainCards = new Label("Grain", new FloatRect((window_size.x / 5) * 3 - 140, window_size.y - 95, 70, 90));
 		lblGrainCards.set_fill_color(Resource.GRAIN.get_color());
 		widgets.add(lblGrainCards);
-		lblOreCards = new Label("Ore", new FloatRect((window_size.x/5)*3 - 210, window_size.y - 95, 70, 90));
+		lblOreCards = new Label("Ore", new FloatRect((window_size.x / 5) * 3 - 210, window_size.y - 95, 70, 90));
 		lblOreCards.set_fill_color(Resource.ORE.get_color());
 		widgets.add(lblOreCards);
-		lblWoodCards = new Label("WOOD", new FloatRect((window_size.x/5)*3 - 280, window_size.y - 95, 70, 90));
+		lblWoodCards = new Label("WOOD", new FloatRect((window_size.x / 5) * 3 - 280, window_size.y - 95, 70, 90));
 		lblWoodCards.set_fill_color(Resource.WOOD.get_color());
 		widgets.add(lblWoodCards);
-		lblWoolCards = new Label("Wool", new FloatRect((window_size.x/5)*3 - 350, window_size.y - 95, 70, 90));
+		lblWoolCards = new Label("Wool", new FloatRect((window_size.x / 5) * 3 - 350, window_size.y - 95, 70, 90));
 		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
 		widgets.add(lblWoolCards);
-		//dice 
-		btnDice = new Button(Language.DICE.get_text(), new FloatRect(window_size.x - 100 ,window_size.y - 130 ,100,70));
+		//dice
+		btnDice = new Button(Language.DICE.get_text(),
+				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
 		btnDice.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
 				data_connection.message_to_core(new Packet(Command.DICE));
-			}	
+			}
 		});
 		btnDice.set_enabled(false);
 		widgets.add(btnDice);
 		//dice result
-		lblDiceResult = new Label("-1", new FloatRect(10,10,50,50));
+		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
 		widgets.add(lblDiceResult);
-		
+
 		//build menu
-		Button btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new FloatRect((window_size.x/5)*3, window_size.y - 80, 110, 70));
+		Button btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(),
+				new FloatRect((window_size.x / 5) * 3, window_size.y - 80, 110, 70));
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		widgets.add(btnBuildVillage);
-		Button btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new FloatRect((window_size.x/5)*3 + 120, window_size.y - 80, 110, 70));
+		Button btnBuildCity = new Button(Language.BUILD_CITY.get_text(),
+				new FloatRect((window_size.x / 5) * 3 + 120, window_size.y - 80, 110, 70));
 		btnBuildCity.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		widgets.add(btnBuildCity);
-		Button btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new FloatRect((window_size.x/5)*3 + 240, window_size.y - 80, 110, 70));
+		Button btnBuildStreet = new Button(Language.BUILD_STREET.get_text(),
+				new FloatRect((window_size.x / 5) * 3 + 240, window_size.y - 80, 110, 70));
 		btnBuildStreet.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		widgets.add(btnBuildStreet);
-		
+
+		// score board
+		for (int i = 0; i < player_data.size(); i++) {
+			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
+					new FloatRect(window_size.x - 250, 50 * i, 250, 50));
+			widgets.add(lblPlayerScore);
+		}
 	}
-	
+
 	public void build_join_menu() {
 		destroy_widgets();
-		
+		mode = GUIMode.JOIN;
+
 		float mm_tf_width = 400;
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
-		
+
 		TextField tfIp = new TextField(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text_size(30);
 		tfIp.set_text("192.168.2.103");
 		widgets.add(tfIp);
-		
-		TextField tfName = new TextField(new FloatRect(0,0, mm_tf_width, mm_tf_height));
+
+		TextField tfName = new TextField(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		tfName.set_text_size(30);
 		tfName.set_text("Julian");
 		widgets.add(tfName);
-		
+
 		for (int i = 0; i < widgets.size(); i++) {
 			TextField temp_tf = (TextField) widgets.get(i);
 			temp_tf.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f + 200,
 					(window_size.y - (mm_tf_height + mm_tf_spacing) * widgets.size()) * 0.5f
 							+ (mm_tf_height + mm_tf_spacing) * i));
 		}
-		
-		
-		Label lbl = new Label("Enter IP: ", new FloatRect(0,0, mm_tf_width, mm_tf_height));
+
+		Label lbl = new Label("Enter IP: ", new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		lbl.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f,
-					(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f
-							+ (mm_tf_height + mm_tf_spacing) * 0));
+				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 0));
 		widgets.add(lbl);
-		lbl = new Label("Enter Name: ", new FloatRect(0,0, mm_tf_width, mm_tf_height));
+		lbl = new Label("Enter Name: ", new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		lbl.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f,
-				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f
-						+ (mm_tf_height + mm_tf_spacing) * 1));
+				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 1));
 		widgets.add(lbl);
-		
+
 		Button btn = new Button(Language.JOIN.get_text(), new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		btn.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f + 200,
-				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f
-						+ (mm_tf_height + mm_tf_spacing) * 2));
+				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 2));
 		btn.set_fill_color(new Color(60, 255, 60, 100));
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				if(tfIp.get_text().length() > 4 && tfName.get_text().length() > 0) {
+				if (tfIp.get_text().length() > 4 && tfName.get_text().length() > 0) {
 					//Entered wrong Ip or server is not online
-					if(!game.init_guest_game(tfIp.get_text().trim(), tfName.get_text().trim())) {
+					if (!game.init_guest_game(tfIp.get_text().trim(), tfName.get_text().trim())) {
 						tfIp.set_outline_color(Color.RED);
 					}
-				}else {
-					if(tfIp.get_text().length() <= 4) {
+				} else {
+					if (tfIp.get_text().length() <= 4) {
 						tfIp.set_outline_color(Color.RED);
 					}
-					if(tfName.get_text().length() == 0) {
+					if (tfName.get_text().length() == 0) {
 						tfName.set_outline_color(Color.RED);
 					}
 				}
 			}
-			
+
 		});
 		widgets.add(btn);
 	}
-	
+
 	public void build_guest_lobby_window() {
 		destroy_widgets();
-		Label lbl = new Label("Succesfully joined Lobby", new FloatRect(0,0,100,100));
+		mode = GUIMode.GUEST_LOBBY;
+
+		Label lbl = new Label("Succesfully joined Lobby", new FloatRect(0, 0, 100, 100));
 		widgets.add(lbl);
 	}
-	
+
 	public void build_host_lobby_window() {
 		destroy_widgets();
+		mode = GUIMode.HOST_LOBBY;
+
 		float row0 = 0;
-		float row1 = window_size.x/2 > 200 ? window_size.x/2 : 200 ;
-		
+		float row1 = window_size.x / 2 > 200 ? window_size.x / 2 : 200;
+
 		Label lbl;
 		//Row0 ==> Settings
-		lbl = new Label(Language.SETTINGS.get_text()+": ", new FloatRect(row0, 10, 100, 100));
+		lbl = new Label(Language.SETTINGS.get_text() + ": ", new FloatRect(row0, 10, 100, 100));
 		widgets.add(lbl);
-		lbl = new Label(Language.MAP_SIZE.get_text()+": ", new FloatRect(row0, 110, 100, 35));
+		lbl = new Label(Language.MAP_SIZE.get_text() + ": ", new FloatRect(row0, 110, 100, 35));
 		widgets.add(lbl);
-		TextField tfMapSize = new TextField(new FloatRect(row0 + 100, 110, 200, 35));
+		TextField tfMapSize = new TextField(new FloatRect(row0 + 120, 110, 200, 35));
 		tfMapSize.set_text_color(new Color(20, 20, 20));
 		widgets.add(tfMapSize);
-		
-		lbl = new Label(Language.SEED.get_text()+": ", new FloatRect(row0, 150, 100, 35));
+
+		lbl = new Label(Language.SEED.get_text() + ": ", new FloatRect(row0, 150, 100, 35));
 		widgets.add(lbl);
-		TextField tfSeed = new TextField(new FloatRect(row0 + 100, 150, 200, 35));
+		TextField tfSeed = new TextField(new FloatRect(row0 + 120, 150, 200, 35));
 		tfSeed.set_text_color(new Color(20, 20, 20));
 		widgets.add(tfSeed);
-		
-		//Row1 ==> members+
+
+		lbl = new Label(Language.YOUR_NAME.get_text() + ": ", new FloatRect(row0, 290, 100, 35));
+		widgets.add(lbl);
+		TextField tfName = new TextField(new FloatRect(row0 + 120, 290, 200, 35));
+		tfName.set_text_color(new Color(20, 20, 20));
+		widgets.add(tfName);
+
+		//Row1 ==> members
 		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(row1, 10, 100, 100));
 		widgets.add(lbl);
-		
-		Button btnStart = new Button(Language.START.get_text(), new FloatRect(window_size.x - 300,window_size.y - 200,200,100));
+
+		for (int i = 0; i < guests.size(); i++) {
+			lbl = new Label(guests.get(i),
+					new FloatRect(view.getSize().x / 2 > 200 ? view.getSize().x / 2 : 200, 200 + 110 * i, 400, 100));
+			lbl.set_fill_color(new Color(100, 100, 100, 90));
+			widgets.add(lbl);
+		}
+
+		Button btnStart = new Button(Language.START.get_text(),
+				new FloatRect(view.getSize().x - 300, view.getSize().y - 200, 200, 100));
 		btnStart.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
 				int map_size = tfMapSize.get_text().length() > 0 ? Integer.parseInt(tfMapSize.get_text()) : 5; //TODO get from TF
-				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text()) : ((int)Math.random()*100)+1; 				
+				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text())
+						: ((int) Math.random() * 100) + 1;
+				String user_name = tfName.get_text().length() > 0 ? tfName.get_text() : "Anonymous";
+
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
+				((LocalDataServer) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
 				((LocalDataServer) data_connection).init_game();
-			}			
+			}
 		});
 		widgets.add(btnStart);
 	}
 
-	public void show_guest_at_lobby(String name) {
-		Label lbl = new Label(name, new FloatRect( window_size.x/2 > 200 ? window_size.x/2 : 200, 200 + 110*numGuests, 400, 100));
-		lbl.set_fill_color(new Color(100, 100, 100, 90));
-		widgets.add(lbl);
-		numGuests++;
-	}
-	
 	// returns true if event was handled
 	boolean handle_event(Event evt) {
 		if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
 			if (evt.asMouseButtonEvent().button == Mouse.Button.LEFT) { // reset mouse position
-				return check_on_click_widgets(new Vector2f((float) evt.asMouseButtonEvent().position.x,
-						(float) evt.asMouseButtonEvent().position.y));
+				return check_on_click_widgets(game.reverse_transform_position(evt.asMouseButtonEvent().position.x,
+						evt.asMouseButtonEvent().position.y, view));
 			} else
 				return false;
 		} else if (evt.type == Event.Type.TEXT_ENTERED) {
@@ -391,22 +439,28 @@ public class UI {
 		}
 	}
 
-	public void update_window_size(Vector2f size) {
+	public void update_window_size(Vector2f size, View view) {
 		window_size = size;
-	}
-	
-	
-	//Access to the widgets
-	public void show_dice_result(byte result) {
-		lblDiceResult.set_text(Integer.toString((int)result));
+		this.view = view;
+		rebuild_gui();
 	}
 
-	public void init_scoreboard(List<Player> player) {
-		int i = 0;
-		for(Player tempPlayer : player) {
-			Label lblPlayerScore = new Label(tempPlayer.getName() + ": " + tempPlayer.getScore(), new FloatRect(window_size.x - 250, 50*i , 250, 50));
-			this.widgets.add(lblPlayerScore);
-			i++;
-		}
+	// change the gui layout
+
+	public void show_guest_at_lobby(String name) {
+		guests.add(guests.size(), name);
+		rebuild_gui();
 	}
+
+	public void init_scoreboard(List<LocalPlayer> player) {
+		player_data = player;
+		rebuild_gui();
+	}
+
+	//Access to the widgets
+
+	public void show_dice_result(byte result) {
+		lblDiceResult.set_text(Integer.toString((int) result));
+	}
+
 }

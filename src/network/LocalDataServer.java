@@ -41,7 +41,7 @@ public class LocalDataServer extends DataIfc {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		//Open Server at Port 
+		//Open Server at Port
 		try {
 			server = new ServerSocket(PORT);
 		} catch (IOException e) {
@@ -71,7 +71,6 @@ public class LocalDataServer extends DataIfc {
 		return this.numClients;
 	}
 
-	
 	// network management
 
 	public void addNewClient(Socket client) {
@@ -79,7 +78,7 @@ public class LocalDataServer extends DataIfc {
 		clients.add(communicator);
 		communicator.start();
 	}
-	
+
 	public void message_from_client(int id, Packet packet) {
 		switch (packet.getCommand()) {
 		case DICE:
@@ -98,18 +97,19 @@ public class LocalDataServer extends DataIfc {
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;
 		case NAME:
-			core.add_player(((Packet.Name) packet.data).getName());
-			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
+			String name = ((Packet.Name) packet.data).getName();
+			ui.show_guest_at_lobby(name);
+			core.register_new_user(name);
 			break;
 		default:
 			System.err.println("Unknown Command reached Server");
 		}
 	}
-	
+
 	public void message_to_client(int id, Packet packet) {
 		this.clients.get(id).message(packet);
 	}
-	
+
 	@Override
 	public void message_to_core(Packet packet) { //Message from Local UI to Core (host has id 0)
 		switch (packet.getCommand()) {
@@ -129,14 +129,14 @@ public class LocalDataServer extends DataIfc {
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;
 		case NAME:
-			core.add_player(((Packet.Name) packet.data).getName());
-			ui.show_guest_at_lobby(((Packet.Name) packet.data).getName());
+			String name = ((Packet.Name) packet.data).getName();
+			ui.show_guest_at_lobby(name);
+			core.register_new_user(name);
 			break;
 		default:
 			System.err.println("Unknown Command reached Server");
 		}
 	}
-
 
 	public void messageToAll(Packet packet) {
 		for (ClientCommunicator client : clients) {
@@ -152,7 +152,5 @@ public class LocalDataServer extends DataIfc {
 	public void init_game() {
 		core.init_game();
 	}
-
-
 
 }
