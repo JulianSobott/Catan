@@ -74,7 +74,7 @@ public class UI {
 		// Is global for all Widgets! Change them on demand
 		Widget.set_default_font(std_font);
 		Widget.set_default_text_color(new Color(20, 50, 50));
-		Widget.set_default_outline_color(Color.BLACK);
+		Widget.set_default_outline_color(Color.TRANSPARENT);
 		Widget.set_default_outline_highlight_color(new Color(200, 140, 200));
 		Widget.set_default_fill_color(new Color(0, 0, 0, 0));
 		build_lobby();
@@ -332,15 +332,21 @@ public class UI {
 		widgets.add(lbl);
 		lbl = new Label(Language.MAP_SIZE.get_text() + ": ", new FloatRect(row0, 110, 100, 35));
 		widgets.add(lbl);
-		TextField tfMapSize = new TextField(new FloatRect(row0 + 100, 110, 200, 35));
+		TextField tfMapSize = new TextField(new FloatRect(row0 + 120, 110, 200, 35));
 		tfMapSize.set_text_color(new Color(20, 20, 20));
 		widgets.add(tfMapSize);
 
 		lbl = new Label(Language.SEED.get_text() + ": ", new FloatRect(row0, 150, 100, 35));
 		widgets.add(lbl);
-		TextField tfSeed = new TextField(new FloatRect(row0 + 100, 150, 200, 35));
+		TextField tfSeed = new TextField(new FloatRect(row0 + 120, 150, 200, 35));
 		tfSeed.set_text_color(new Color(20, 20, 20));
 		widgets.add(tfSeed);
+		
+		lbl = new Label(Language.YOUR_NAME.get_text() + ": ", new FloatRect(row0, 290, 100, 35));
+		widgets.add(lbl);
+		TextField tfName = new TextField(new FloatRect(row0 + 120, 290, 200, 35));
+		tfName.set_text_color(new Color(20, 20, 20));
+		widgets.add(tfName);
 
 		//Row1 ==> members
 		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(row1, 10, 100, 100));
@@ -361,7 +367,10 @@ public class UI {
 				int map_size = tfMapSize.get_text().length() > 0 ? Integer.parseInt(tfMapSize.get_text()) : 5; //TODO get from TF
 				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text())
 						: ((int) Math.random() * 100) + 1;
+				String user_name = tfName.get_text().length() > 0 ? tfName.get_text() : "Anonymous";
+
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
+				((LocalDataServer) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
 				((LocalDataServer) data_connection).init_game();
 			}
 		});

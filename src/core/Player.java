@@ -13,7 +13,8 @@ public class Player implements Serializable{
 	Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	List<Building> buildings = new LinkedList<Building>();
 
-	Player() {
+	Player(String name) {
+		this.name = name;
 		for( Resource r : Resource.values()) {
 			resources.put(r, 0);
 		}

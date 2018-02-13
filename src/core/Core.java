@@ -44,6 +44,12 @@ public class Core {
 		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(scoreboard_data)));
 	}
 
+	public void register_new_user(String name) {
+		player.add(player.size(), new Player(name));
+	}
+
+	// USER ACTIONS
+
 	public void dice(int id) {
 		if (id == actualPlayer) {
 			int diceResult = (int) (Math.random() * 10) + 2;
