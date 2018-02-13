@@ -1,6 +1,8 @@
 package core;
 
 import core.Map.GeneratorType;
+import local.LocalPlayer;
+
 import org.jsfml.system.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +36,17 @@ public class Core {
 
 	public void init_game() {
 		data_server.messageToAll(new Packet(Command.START_GAME));
-		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(player)));
+
+		// translate into a more silent data structure
+		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
+		for (Player p : player)
+			scoreboard_data.add(scoreboard_data.size(), new LocalPlayer(p.getName(), p.getScore()));
+		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(scoreboard_data)));
 	}
-	
+
 	public void dice(int id) {
-		if(id == actualPlayer) {
-			int diceResult = (int)(Math.random()*10)+2;
+		if (id == actualPlayer) {
+			int diceResult = (int) (Math.random() * 10) + 2;
 			data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
 		}
 	}
@@ -72,11 +79,9 @@ public class Core {
 		Player show new resources
 		All show updated map
 		All show updated score
-
+		
 		Next player dice (automatically?)
 		 */
 	}
-
-	
 
 }

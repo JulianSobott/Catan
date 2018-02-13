@@ -29,13 +29,10 @@ import network.Packet;
 
 public class UI {
 	enum GUIMode {
-		LOBBY,
-		JOIN,
-		GUEST_LOBBY,
-		HOST_LOBBY,
-		GAME,
+		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
 	}
-	GUIMode mode;
+
+	private GUIMode mode;
 
 	// local state
 	private LocalState state;
@@ -45,16 +42,15 @@ public class UI {
 	private View view;
 
 	// fonts
-	Font std_font;
+	private Font std_font;
 
 	// gui data
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
 	private TextField activeTF;
 
-
 	// lobby
-	private int numGuests = 0;
-	
+	private List<String> guests = new ArrayList<String>();
+
 	//widgets Just widgets which may be changed
 	private Button btnDice;
 	private Label lblDiceResult;
@@ -63,7 +59,8 @@ public class UI {
 	private Label lblGrainCards;
 	private Label lblClayCards;
 	private Label lblOreCards;
-	
+	private List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
+
 	UI(LocalLogic logic, Game game) {
 		this.state = logic.state;
 		this.game = game;
@@ -177,32 +174,33 @@ public class UI {
 		}
 
 	}
-	
+
 	public void build_game_menu() {
 		destroy_widgets();
 		mode = GUIMode.GAME;
 
 		//Score board
-		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0 , 250, 300)); //TODO add all players at init
+		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0, 250, 300)); //TODO add all players at init
 		widgets.add(lblScoreBoard);
 		//player resources
-		lblClayCards = new Label("Clay", new FloatRect((window_size.x/5)*3 - 70, window_size.y - 95, 70, 90));
+		lblClayCards = new Label("Clay", new FloatRect((window_size.x / 5) * 3 - 70, window_size.y - 95, 70, 90));
 		lblClayCards.set_fill_color(Resource.CLAY.get_color());
 		widgets.add(lblClayCards);
-		lblGrainCards = new Label("Grain", new FloatRect((window_size.x/5)*3 - 140, window_size.y - 95, 70, 90));
+		lblGrainCards = new Label("Grain", new FloatRect((window_size.x / 5) * 3 - 140, window_size.y - 95, 70, 90));
 		lblGrainCards.set_fill_color(Resource.GRAIN.get_color());
 		widgets.add(lblGrainCards);
-		lblOreCards = new Label("Ore", new FloatRect((window_size.x/5)*3 - 210, window_size.y - 95, 70, 90));
+		lblOreCards = new Label("Ore", new FloatRect((window_size.x / 5) * 3 - 210, window_size.y - 95, 70, 90));
 		lblOreCards.set_fill_color(Resource.ORE.get_color());
 		widgets.add(lblOreCards);
-		lblWoodCards = new Label("WOOD", new FloatRect((window_size.x/5)*3 - 280, window_size.y - 95, 70, 90));
+		lblWoodCards = new Label("WOOD", new FloatRect((window_size.x / 5) * 3 - 280, window_size.y - 95, 70, 90));
 		lblWoodCards.set_fill_color(Resource.WOOD.get_color());
 		widgets.add(lblWoodCards);
-		lblWoolCards = new Label("Wool", new FloatRect((window_size.x/5)*3 - 350, window_size.y - 95, 70, 90));
+		lblWoolCards = new Label("Wool", new FloatRect((window_size.x / 5) * 3 - 350, window_size.y - 95, 70, 90));
 		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
 		widgets.add(lblWoolCards);
 		//dice 
-		btnDice = new Button(Language.DICE.get_text(), new FloatRect(window_size.x - 100 ,window_size.y - 130 ,100,70));
+		btnDice = new Button(Language.DICE.get_text(),
+				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
 		btnDice.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -212,36 +210,45 @@ public class UI {
 		btnDice.set_enabled(false);
 		widgets.add(btnDice);
 		//dice result
-		lblDiceResult = new Label("-1", new FloatRect(10,10,50,50));
+		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
 		widgets.add(lblDiceResult);
-		
+
 		//build menu
-		Button btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new FloatRect((window_size.x/5)*3, window_size.y - 80, 110, 70));
+		Button btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(),
+				new FloatRect((window_size.x / 5) * 3, window_size.y - 80, 110, 70));
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		widgets.add(btnBuildVillage);
-		Button btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new FloatRect((window_size.x/5)*3 + 120, window_size.y - 80, 110, 70));
+		Button btnBuildCity = new Button(Language.BUILD_CITY.get_text(),
+				new FloatRect((window_size.x / 5) * 3 + 120, window_size.y - 80, 110, 70));
 		btnBuildCity.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		widgets.add(btnBuildCity);
-		Button btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new FloatRect((window_size.x/5)*3 + 240, window_size.y - 80, 110, 70));
+		Button btnBuildStreet = new Button(Language.BUILD_STREET.get_text(),
+				new FloatRect((window_size.x / 5) * 3 + 240, window_size.y - 80, 110, 70));
 		btnBuildStreet.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		widgets.add(btnBuildStreet);
-		
+
+		// score board
+		for (int i = 0; i < player_data.size(); i++) {
+			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
+					new FloatRect(window_size.x - 250, 50 * i, 250, 50));
+			widgets.add(lblPlayerScore);
+		}
 	}
 
 	public void build_join_menu() {
@@ -339,26 +346,26 @@ public class UI {
 		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(row1, 10, 100, 100));
 		widgets.add(lbl);
 
+		for (int i = 0; i < guests.size(); i++) {
+			lbl = new Label(guests.get(i),
+					new FloatRect(view.getSize().x / 2 > 200 ? view.getSize().x / 2 : 200, 200 + 110 * i, 400, 100));
+			lbl.set_fill_color(new Color(100, 100, 100, 90));
+			widgets.add(lbl);
+		}
+
 		Button btnStart = new Button(Language.START.get_text(),
 				new FloatRect(view.getSize().x - 300, view.getSize().y - 200, 200, 100));
 		btnStart.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
 				int map_size = tfMapSize.get_text().length() > 0 ? Integer.parseInt(tfMapSize.get_text()) : 5; //TODO get from TF
-				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text()) : ((int)Math.random()*100)+1; 				
+				int seed = tfSeed.get_text().length() > 0 ? Integer.parseInt(tfSeed.get_text())
+						: ((int) Math.random() * 100) + 1;
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
 				((LocalDataServer) data_connection).init_game();
-			}			
+			}
 		});
 		widgets.add(btnStart);
-	}
-
-	public void show_guest_at_lobby(String name) {
-		Label lbl = new Label(name, new FloatRect(view.getSize().x / 2 > 200 ? view.getSize().x / 2 : 200,
-				200 + 110 * numGuests, 400, 100));
-		lbl.set_fill_color(new Color(100, 100, 100, 90));
-		widgets.add(lbl);
-		numGuests++;
 	}
 
 	// returns true if event was handled
@@ -428,19 +435,23 @@ public class UI {
 		this.view = view;
 		rebuild_gui();
 	}
-	
-	
-	//Access to the widgets
-	public void show_dice_result(byte result) {
-		lblDiceResult.set_text(Integer.toString((int)result));
+
+	// change the gui layout
+
+	public void show_guest_at_lobby(String name) {
+		guests.add(guests.size(), name);
+		rebuild_gui();
 	}
 
-	public void init_scoreboard(List<Player> player) {
-		int i = 0;
-		for(Player tempPlayer : player) {
-			Label lblPlayerScore = new Label(tempPlayer.getName() + ": " + tempPlayer.getScore(), new FloatRect(window_size.x - 250, 50*i , 250, 50));
-			widgets.add(lblPlayerScore);
-			i++;
-		}
+	public void init_scoreboard(List<LocalPlayer> player) {
+		player_data = player;
+		rebuild_gui();
 	}
+
+	//Access to the widgets
+
+	public void show_dice_result(byte result) {
+		lblDiceResult.set_text(Integer.toString((int) result));
+	}
+
 }

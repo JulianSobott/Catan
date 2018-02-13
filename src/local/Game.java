@@ -173,7 +173,7 @@ public class Game {
 
 	// creates a new game with this machine as client
 	public boolean init_guest_game(String ip, String name) {
-		String serverIp = "192.168.2.118";
+		String serverIp = ip;
 		try {
 			data_connection = new RemoteDataClient(ui, local_logic, serverIp);
 		} catch (IOException e) {
