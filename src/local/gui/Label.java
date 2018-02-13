@@ -14,6 +14,8 @@ public class Label extends Widget {
 	private RectangleShape shape;
 	private Text text;
 	
+	private boolean visible = true;
+	
 	public Label(String text, FloatRect bounds) {
 		super(bounds);
 		shape = new RectangleShape(new Vector2f(bounds.width, bounds.height));
@@ -31,8 +33,10 @@ public class Label extends Widget {
 
 	@Override
 	public void render(RenderTarget target) {
-		target.draw(shape);
-		target.draw(text);
+		if(this.visible) {
+			target.draw(shape);
+			target.draw(text);
+		}		
 	}
 
 	@Override
@@ -54,5 +58,9 @@ public class Label extends Widget {
 	}
 	public void set_fill_color(Color color) {
 		shape.setFillColor(color);
+	}
+
+	public void set_visible(boolean visible) {
+		this.visible = visible;
 	}
 }

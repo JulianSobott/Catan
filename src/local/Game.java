@@ -177,6 +177,7 @@ public class Game {
 		try {
 			data_connection = new RemoteDataClient(ui, local_logic, serverIp);
 		} catch (IOException e) {
+			System.err.println("Wrong IP or server is not online");
 			return false;
 		}
 

@@ -284,7 +284,10 @@ public class UI {
 		lbl.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f,
 				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 1));
 		widgets.add(lbl);
-
+		
+		Label lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(), new FloatRect(window_size.x/2, window_size.y - 200, 100, 50));
+		lblConnecting.set_visible(false);
+		widgets.add(lblConnecting);
 		Button btn = new Button(Language.JOIN.get_text(), new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		btn.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f + 200,
 				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 2));
@@ -292,11 +295,18 @@ public class UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
+				lblConnecting.set_visible(true);
 				if (tfIp.get_text().length() > 4 && tfName.get_text().length() > 0) {
 					//Entered wrong Ip or server is not online
-					if (!game.init_guest_game(tfIp.get_text().trim(), tfName.get_text().trim())) {
-						tfIp.set_outline_color(Color.RED);
-					}
+					new Thread(new Runnable() {
+						public void run() {
+							if (!game.init_guest_game(tfIp.get_text().trim(), tfName.get_text().trim())) {
+								System.out.println("Not accepted");
+								tfIp.set_outline_color(Color.RED);
+								lblConnecting.set_text("Entered wrong IP or the server is not online");
+							}
+						}
+					}).start();
 				} else {
 					if (tfIp.get_text().length() <= 4) {
 						tfIp.set_outline_color(Color.RED);
