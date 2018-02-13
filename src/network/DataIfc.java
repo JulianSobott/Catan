@@ -18,6 +18,8 @@ public abstract class DataIfc {
 	// messages from the core
 	public void message_from_core(Packet packet) {
 		switch(packet.getCommand()) {
+		case INIT_SCOREBOARD:
+			this.ui.init_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
 		case START_GAME:
 			this.local_logic.set_mode(LocalState.GameMode.game);
 			this.ui.build_game_menu();
@@ -26,17 +28,13 @@ public abstract class DataIfc {
 			this.local_logic.update_new_map(((Packet.New_Map) packet.data).getFields());
 			break;
 		case DICE_RESULT:
-			this.ui.update_accessibleWidgets("lblDiceResult", Integer.toString((int)((Packet.DiceResult) packet.data).getDiceResult()));
+			this.ui.show_dice_result(((Packet.DiceResult) packet.data).getDiceResult());
 			break;	
 		default:
 			System.err.println("Not yet implemented Command: " + packet.getCommand());
 		}
 	}
 	
-	public void update_widget_text(String name, String text) {
-		this.ui.update_accessibleWidgets(name, text);
-	}
-
 	// messages from the clients
 	public abstract void message_to_core(Packet packet);
 }

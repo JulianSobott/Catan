@@ -12,6 +12,7 @@ public enum Command {
 	//Pre Game Stuff
 	NEW_MAP,
 	NAME,
-	START_GAME;
+	START_GAME, 
+	INIT_SCOREBOARD;
 	
 }

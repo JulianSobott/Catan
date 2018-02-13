@@ -1,13 +1,26 @@
 package network;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jsfml.system.Vector2i;
 
 import data.Field;
 
-public class Packet implements Serializable {
+import core.Player;
 
+public class Packet implements Serializable {
+	
+	public static class Scoreboard implements Serializable{
+		List<Player> player = new ArrayList<Player>();
+		public Scoreboard(List<Player> player2) {
+			this.player = player2;
+		}
+		public List<Player> getPlayer(){
+			return this.player;
+		}
+	}
 	public static class DiceResult implements Serializable {
 		private byte result;
 

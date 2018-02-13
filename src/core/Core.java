@@ -32,6 +32,11 @@ public class Core {
 		//data_server.update_new_map(map.getFields());
 	}
 
+	public void init_game() {
+		data_server.messageToAll(new Packet(Command.START_GAME));
+		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(player)));
+	}
+	
 	public void dice(int id) {
 		if(id == actualPlayer) {
 			int diceResult = (int)(Math.random()*10)+2;
@@ -71,5 +76,7 @@ public class Core {
 		Next player dice (automatically?)
 		 */
 	}
+
+	
 
 }

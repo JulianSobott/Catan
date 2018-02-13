@@ -18,8 +18,10 @@ public enum Language {
 	MAP_SIZE("Map size", "Karten Größe"),
 	SEED("Seed", "Seed"),
 	//In game
-	DICE("Dice", "Würfeln");
-	;
+	DICE("Dice", "Würfeln"),
+	BUILD_VILLAGE("Build village", "Siedlung bauen"),
+	BUILD_CITY("Build city", "Stadt bauen"),
+	BUILD_STREET("Build street", "Stra�e bauen");
 
 
 	
