@@ -2,7 +2,6 @@ package local;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jsfml.graphics.Color;
@@ -13,17 +12,20 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
+import data.Language;
 import local.LocalState.GameMode;
+import local.gui.Button;
+import local.gui.Label;
+import local.gui.TextField;
+import local.gui.Widget;
 import network.Command;
 import network.DataIfc;
 import network.LocalDataServer;
 import network.Packet;
-import network.RemoteDataClient;
 
 public class UI {
 	// local state
 	private LocalState state;
-	private LocalLogic logic;
 	private DataIfc data_connection;
 	private Game game;
 	private Vector2f window_size;
@@ -40,7 +42,6 @@ public class UI {
 	private int numGuests = 0;
 
 	UI(LocalLogic logic, Game game) {
-		this.logic = logic;
 		this.state = logic.state;
 		this.game = game;
 
@@ -56,7 +57,6 @@ public class UI {
 		Widget.set_default_outline_color(Color.BLACK);
 		Widget.set_default_outline_highlight_color(new Color(200, 140, 200));
 		Widget.set_default_fill_color(new Color(0,0,0,0));
-		Label.set_default_outline_color(new Color(0,0,0,0));
 		build_lobby();
 	}
 

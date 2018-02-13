@@ -1,4 +1,4 @@
-package local;
+package local.gui;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
@@ -13,8 +13,6 @@ public class Label extends Widget {
 	
 	private RectangleShape shape;
 	private Text text;
-	private boolean is_active = false;
-	private Color outline_color = Color.BLACK;
 	
 	public Label(String text, FloatRect bounds) {
 		super(bounds);

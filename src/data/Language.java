@@ -1,4 +1,4 @@
-package local;
+package data;
 public enum Language {
 
 	NO_TEXT("NO TEXT FOUND", "KEIN TEXT GEFUNDEN"),
@@ -13,12 +13,12 @@ public enum Language {
 	//Join game window
 	JOIN("Join game", "Spiel beitreten"),
 	//Lobby Window
-	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
+	SETTINGS("Settings for the Game: ", "Einstellungen fÃ¼r das Spiel"),
 	MEMBERS("MEMBERS", "Mitspieler"), 
-	MAP_SIZE("Map size", "Karten Größe"),
+	MAP_SIZE("Map size", "Karten GrÃ¶ÃŸe"),
 	SEED("Seed", "Seed"),
-	//Ingame
-	DICE("Dice", "Würfeln");
+	//In game
+	DICE("Dice", "WÃ¼rfeln");
 	;
 
 

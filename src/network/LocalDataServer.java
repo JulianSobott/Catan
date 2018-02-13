@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import core.Core;
-import local.Field;
 import local.LocalLogic;
 import local.UI;
 
@@ -141,7 +140,7 @@ public class LocalDataServer extends DataIfc {
 		for (ClientCommunicator client : clients) {
 			client.message(packet);
 		}
-		message_from_core(packet); //message to own UI | localLogoc
+		message_from_core(packet); //message to own UI | localLogic
 	}
 
 	public void create_new_map(int map_size, int seed) {

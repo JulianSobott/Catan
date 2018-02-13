@@ -1,4 +1,4 @@
-package local;
+package data;
 import org.jsfml.graphics.Color;
 
 public enum Resource {
@@ -10,9 +10,13 @@ public enum Resource {
 	ORE(new Color(120, 120, 120));
 
 	// data
-	Color color;
+	private Color color;
 
 	Resource(Color color) {
 		this.color = color;
+	}
+
+	public Color get_color() {
+		return color;
 	}
 }

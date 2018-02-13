@@ -1,17 +1,20 @@
 package local;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jsfml.system.Vector2f;
 
+import data.Resource;
+
 public class LocalState {
 	// runtime information
 	public enum GameMode {
-		main_menu,
-		game,
+		main_menu, game,
 
 	}
+
 	GameMode mode;
 
 	Map<Resource, List<Vector2f>> field_resources = new HashMap<>();// maps resource fields to their positions on the board

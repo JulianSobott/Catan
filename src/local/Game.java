@@ -54,8 +54,7 @@ public class Game {
 	// server
 	Core core;
 
-	Game() {
-		local_logic.addUI(ui);
+	public Game() {
 		std_font = new Font();
 		try {
 			std_font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
@@ -64,7 +63,7 @@ public class Game {
 		}
 	}
 
-	void run() throws InterruptedException {
+	public void run() throws InterruptedException {
 		window.create(new VideoMode(1200, 800), "Catan", RenderWindow.DEFAULT, new ContextSettings(8));
 		game_view = (View) window.getDefaultView();
 		gui_view = new View(game_view.getCenter(), game_view.getSize());
@@ -154,14 +153,8 @@ public class Game {
 
 	Vector2f reverse_transform_position(int x, int y) {
 		return new Vector2f(
-				(float) x / (float) window.getSize().x * view.getSize().x + view.getCenter().x - view.getSize().x / 2,
-				(float) y / (float) window.getSize().y * view.getSize().y + view.getCenter().y - view.getSize().y / 2);
-	}
-
-	public static void main(String[] args) throws InterruptedException {
-		Map.update_constants();
-		Game game = new Game();
-		game.run();
+				(float) x / (float) window.getSize().x * game_view.getSize().x + game_view.getCenter().x - game_view.getSize().x / 2,
+				(float) y / (float) window.getSize().y * game_view.getSize().y + game_view.getCenter().y - game_view.getSize().y / 2);
 	}
 
 	// creates a new game with this machine as host

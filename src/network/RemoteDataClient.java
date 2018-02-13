@@ -6,9 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import local.Field;
 import local.LocalLogic;
-import local.LocalState.GameMode;
 import local.UI;
 
 //TODO Error handling when Entered a wrong IP address (reentering)

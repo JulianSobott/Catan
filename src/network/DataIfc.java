@@ -1,5 +1,4 @@
 package network;
-import local.Field;
 import local.LocalLogic;
 import local.LocalState;
 import local.UI;

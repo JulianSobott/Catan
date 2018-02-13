@@ -2,14 +2,13 @@ package core;
 
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.Vector;
 
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
 
-import local.Field;
-import local.Resource;
+import data.Field;
+import data.Resource;
 import math.Vector2fMath;
 
 public class Map {

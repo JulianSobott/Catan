@@ -1,10 +1,10 @@
-package local;
+package data;
 
 import java.io.Serializable;
 
 public class Field implements Serializable{
-	Resource resource;
-	byte number;
+	public Resource resource;
+	public byte number;
 
 	public Field(Resource resource, byte number ){
 		this.resource = resource;

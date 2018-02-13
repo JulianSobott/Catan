@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.jsfml.system.Vector2i;
 
-import local.Field;
+import data.Field;
 
 public class Packet implements Serializable {
 

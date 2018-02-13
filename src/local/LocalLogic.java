@@ -13,18 +13,16 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import core.Map;
+import data.Field;
+import data.Resource;
 import local.LocalState.GameMode;
 import network.Command;
 import network.DataIfc;
-import network.LocalDataServer;
-import network.Packet;
-import network.RemoteDataClient;
 
 // TODO name?
 public class LocalLogic {
 	// state, ui & connection
 	LocalState state;
-	UI ui;
 	DataIfc data_connection; 
 
 	// fonts
@@ -33,11 +31,6 @@ public class LocalLogic {
 	public LocalLogic() {
 		state = new LocalState();
 
-	}
-	
-
-	public void addUI(UI ui) {
-		this.ui = ui;
 	}
 	
 	public void set_data_interface(DataIfc data_connection) {
@@ -77,7 +70,7 @@ public class LocalLogic {
 		if (state.mode == GameMode.game) {
 			for (java.util.Map.Entry<Resource, List<Vector2f>> resource : state.field_resources.entrySet()) {
 				CircleShape shape = new CircleShape(Map.field_size * 0.5f, 6);
-				shape.setFillColor(resource.getKey().color);
+				shape.setFillColor(resource.getKey().get_color());
 				shape.setOrigin(Map.field_size * 0.5f, Map.field_size * 0.5f);
 				shape.setOutlineColor(new Color(150, 150, 150));
 				shape.setOutlineThickness(Map.border_size);
@@ -104,9 +97,9 @@ public class LocalLogic {
 		// TODO
 	}
   
-	public void diceResult(byte diceresult) {
+	public void diceResult(byte dice_result) {
 		// TODO Auto-generated method stub
-		System.out.println("Dice result at Client: " + diceresult);
+		System.out.println("Dice result at Client: " + dice_result);
 	}
 
 	public void build(int idPlayer, Command buildType, Vector2i position) {

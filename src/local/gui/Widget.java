@@ -1,4 +1,4 @@
-package local;
+package local.gui;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
