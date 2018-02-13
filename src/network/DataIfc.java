@@ -26,8 +26,14 @@ public abstract class DataIfc {
 			this.local_logic.set_mode(LocalState.GameMode.game);
 			this.ui.build_game_menu();
 			break;
+		case PLAYER_DATA:
+			this.ui.update_player_data(((Packet.PlayerData) packet.data).getPlayer());
+			break;
 		case NEW_MAP:
 			this.local_logic.update_new_map(((Packet.New_Map) packet.data).getFields());
+			break;
+		case UPDATE_BUILDINGS:
+			this.local_logic.update_buildings(((Packet.UpdateBuildings) packet.data).getBuildings());
 			break;
 		case DICE_RESULT:
 			this.ui.show_dice_result(((Packet.DiceResult) packet.data).getDiceResult());

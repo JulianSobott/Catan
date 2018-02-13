@@ -22,7 +22,13 @@ public enum Language {
 	DICE("Dice", "Würfeln"),
 	BUILD_VILLAGE("Build village", "Siedlung bauen"),
 	BUILD_CITY("Build city", "Stadt bauen"),
-	BUILD_STREET("Build street", "Stra�e bauen");
+	BUILD_STREET("Build street", "Straße bauen"),
+	OF("of", "von"),
+	WOOD("of", "von"),
+	WOOL("of", "von"),
+	GRAIN("of", "von"),
+	CLAY("of", "von"),
+	ORE("of", "von");
 
 
 	

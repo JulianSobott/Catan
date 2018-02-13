@@ -427,9 +427,9 @@ public class UI {
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
 
-				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
 				((LocalDataServer) data_connection)
 						.message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
+				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
 				((LocalDataServer) data_connection).init_game();
 			}
 		});
@@ -520,6 +520,20 @@ public class UI {
 
 	public void show_dice_result(byte result) {
 		lblDiceResult.set_text(Integer.toString((int) result));
+	}
+
+	public void update_player_data(Player player) {
+		lblClayCards.set_text(
+				player.get_resources(Resource.WOOD) + " " + Language.OF.get_text() + " " + Language.CLAY.get_text());
+		lblClayCards.set_text(
+				player.get_resources(Resource.WOOL) + " " + Language.OF.get_text() + " " + Language.WOOL.get_text());
+		lblClayCards.set_text(
+				player.get_resources(Resource.GRAIN) + " " + Language.OF.get_text() + " " + Language.GRAIN.get_text());
+		lblClayCards.set_text(
+				player.get_resources(Resource.CLAY) + " " + Language.OF.get_text() + " " + Language.CLAY.get_text());
+		lblClayCards.set_text(
+				player.get_resources(Resource.ORE) + " " + Language.OF.get_text() + " " + Language.ORE.get_text());
+				
 	}
 
 }

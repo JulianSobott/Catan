@@ -1,6 +1,8 @@
 package core;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import org.jsfml.system.Vector2f;
@@ -29,6 +31,8 @@ public class Map {
 	public static int map_size_y;
 
 	private Field[][] fields;
+	private List<Vector2i> available_city_places = new LinkedList<Vector2i>();
+	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 
 	public static void update_constants() {
 		field_offset = field_size * 0.5f;
@@ -116,6 +120,46 @@ public class Map {
 		Vector2f delta = new Vector2f(Math.abs(position.x - origin.x) / diameter,
 				Math.abs(position.y - origin.y) / diameter);
 		return (delta.y <= 0.433f) && (0.433f * delta.x + 0.25f * delta.y <= 0.5f * 0.433f);
+	}
+
+	List<Vector2i> get_surrounding_fields(Vector2i city_pos) {
+		List<Vector2i> ret = new ArrayList<Vector2i>();
+		if (fields[city_pos.x][city_pos.y].resource != Resource.OCEAN)
+			ret.add(new Vector2i(city_pos.x, city_pos.y));
+		int upper_left_x = city_pos.y % 2 == 0 ? city_pos.x - 1 : city_pos.x;
+		if (city_pos.y > 0 && (city_pos.y % 2 != 0 || city_pos.x > 0)
+				&& fields[upper_left_x][city_pos.y - 1].resource != Resource.OCEAN) {
+			available_city_places.add(new Vector2i(upper_left_x, city_pos.y - 1));
+		}
+		if (city_pos.y > 0 && (city_pos.y % 2 == 0 || city_pos.x < map_size_x - 1)
+				&& fields[upper_left_x + 1][city_pos.y - 1].resource != Resource.OCEAN) {
+			available_city_places.add(new Vector2i(upper_left_x + 1, city_pos.y - 1));
+		}
+		return ret;
+	}
+
+	// creates internal list of available houses after the map was created
+	void calculate_available_places() {
+		for (int x = 0; x < fields.length; x++) {
+			for (int y = 0; y < fields[x].length; y++) {
+				if (!get_surrounding_fields(new Vector2i(x, y)).isEmpty()) {
+					available_city_places.add(new Vector2i(x, y));
+				}
+			}
+		}
+		// TODO calculate streets
+	}
+
+	List<Vector2i> add_random_cities(int seed, int house_count) {
+		Random rand = new Random(seed);
+
+		List<Vector2i> new_cities = new ArrayList<Vector2i>();
+		for (int i = 0; i < house_count; i++) {
+			int index = rand.nextInt(available_city_places.size());
+			new_cities.add(available_city_places.get(index));
+			available_city_places.remove(index);
+		}
+		return new_cities;
 	}
 
 	public Field[][] getFields() {

@@ -3,9 +3,10 @@ package network;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 import org.jsfml.system.Vector2i;
-
+import core.Building;
+import core.Player;
 import data.Field;
 
 import local.LocalPlayer;
@@ -85,6 +86,30 @@ public class Packet implements Serializable {
 
 		public Field[][] getFields() {
 			return this.fields;
+		}
+	}
+
+	public static class PlayerData implements Serializable {
+		private Player player;
+
+		public PlayerData(Player player) {
+			this.player = player;
+		}
+
+		public Player getPlayer() {
+			return this.player;
+		}
+	}
+
+	public static class UpdateBuildings implements Serializable {
+		private Map<Integer, List<Building>> buildings;
+
+		public UpdateBuildings(Map<Integer, List<Building>> buildings) {
+			this.buildings = buildings;
+		}
+
+		public Map<Integer, List<Building>> getBuildings() {
+			return this.buildings;
 		}
 	}
 
