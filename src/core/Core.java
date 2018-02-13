@@ -52,7 +52,7 @@ public class Core {
 
 	public void dice(int id) {
 		if (id == actualPlayer) {
-			int diceResult = (int) (Math.random() * 10) + 2;
+			int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
 			data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
 		}
 	}
