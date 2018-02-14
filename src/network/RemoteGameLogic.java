@@ -16,12 +16,12 @@ public class RemoteGameLogic extends GameLogic {
 
 	@Override
 	public void update_new_map(Field[][] fields) {
-		server.messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(fields)));
+		server.message_to_client(id, new Packet(Command.NEW_MAP, new Packet.New_Map(fields)));
 	}
 
 	@Override
 	public void set_mode(GameMode mode) {
-		server.messageToAll(new Packet(Command.SET_MODE, new Packet.NEW_MODE(mode)));
+		server.message_to_client(id, new Packet(Command.SET_MODE, new Packet.NEW_MODE(mode)));
 	}
 
 	@Override

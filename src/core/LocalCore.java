@@ -107,19 +107,13 @@ public class LocalCore extends Core {
 		ui.setID(id);
 		uis.add(ui);
 		GameLogic logic = new RemoteGameLogic(data_server);
+		logic.setID(id);
 		logics.add(logic);
 		uis.get(0).show_guest_at_lobby(name);
+		data_server.set_id_last_joined(id);
 	}
 
 	// USER ACTIONS
-
-	// TODO?
-	/*public void dice(int id) {
-		if (id == current_player) {
-			int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
-			data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
-		}
-	}*/
 
 	public void buildRequest(int id, Command buildType, Vector2i position) {
 		/*

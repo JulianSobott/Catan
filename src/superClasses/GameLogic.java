@@ -6,7 +6,8 @@ import java.util.List;
 import local.LocalState.GameMode;
 
 public abstract class GameLogic {
-
+	protected int id;
+	
 	public GameLogic() {
 		
 	}
@@ -16,5 +17,8 @@ public abstract class GameLogic {
 	public abstract void update_buildings(java.util.Map<Integer, List<Building>> buildings);
 
 	public abstract void update_new_map(Field[][] fields);
-
+	
+	public void setID(int id) {
+		this.id = id;
+	}
 }

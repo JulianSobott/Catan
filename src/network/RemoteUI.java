@@ -16,18 +16,18 @@ public class RemoteUI extends UI {
 
 	@Override
 	public void show_dice_result(byte diceResult) {
-		server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult(diceResult)));
+		server.message_to_client(id, new Packet(Command.DICE_RESULT, new Packet.DiceResult(diceResult)));
 	}
 
 	@Override
 	public void init_scoreboard(List<LocalPlayer> player) {
 		System.out.println("init Scoreboard communicator");
-		server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(player)));
+		server.message_to_client(id, new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(player)));
 	}
 
 	@Override
 	public void build_game_menu() {
-		server.messageToAll(new Packet(Command.START_GAME));
+		server.message_to_client(id, new Packet(Command.START_GAME));
 	}
 
 	@Override

@@ -75,6 +75,7 @@ public class Server extends Networkmanager{
 	// network management
 
 	public void addNewClient(Socket client) {
+		//TODO maybe add setting ID communicator here
 		ClientCommunicator communicator = new ClientCommunicator(this, client);
 		clients.add(communicator);
 		communicator.start();
@@ -111,21 +112,17 @@ public class Server extends Networkmanager{
 	}
 
 	public void message_to_client(int id, Packet packet) {
-		this.clients.get(id).message(packet);
-	}
-
-	public void messageToAll(Packet packet) {
-		for (ClientCommunicator client : clients) {
-			client.message(packet);
+		for(ClientCommunicator client : clients) {
+			if(client.getID() == id) {
+				client.message(packet);
+				break;
+			}
 		}
 	}
 
-	public void create_new_map(int map_size, int seed) {
-		core.create_new_map(map_size, seed);
-	}
 
-	public void init_game() {
-		core.init_game();
+	public void set_id_last_joined(int id) {
+		this.clients.get(clients.size()-1).setID(id);
 	}
 
 }

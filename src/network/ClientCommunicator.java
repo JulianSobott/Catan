@@ -69,4 +69,11 @@ public class ClientCommunicator extends Thread{
 			System.err.println("Can�t close Listener at ClientCommunicator");
 		}
 	}
+
+	public void setID(int id) {
+		this.id = id;
+	}
+	public int getID() {
+		return this.id;
+	}
 }
