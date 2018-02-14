@@ -42,6 +42,6 @@ public class RemoteUI extends UI {
 
 	@Override
 	public void update_player_data(Player player) {
-		
+		server.messageToAll(new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player)));
 	}
 }

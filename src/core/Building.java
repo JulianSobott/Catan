@@ -1,9 +1,11 @@
 package core;
 
+import java.io.Serializable;
+
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
 
-public class Building {
+public class Building implements Serializable {
 	public enum Type {
 		STREET,
 		VILLAGE,

@@ -26,7 +26,7 @@ public class RemoteGameLogic extends GameLogic {
 
 	@Override
 	public void update_buildings(Map<Integer, List<Building>> buildings) {
-		//TODO
+		server.messageToAll(new Packet(Command.UPDATE_BUILDINGS, new Packet.UpdateBuildings(buildings)));
 	}
 
 }

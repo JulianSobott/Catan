@@ -79,8 +79,14 @@ public class Client extends Networkmanager{
 			local_logic.set_mode(GameMode.game);
 			System.out.println("Start game at Client");
 			break;
+		case PLAYER_DATA:
+			this.ui.update_player_data(((Packet.PlayerData) packet.data).getPlayer());
+			break;
 		case NEW_MAP:
 			local_logic.update_new_map(((Packet.New_Map) packet.data).getFields());
+			break;
+		case UPDATE_BUILDINGS:
+			this.local_logic.update_buildings(((Packet.UpdateBuildings) packet.data).getBuildings());
 			break;
 		case SET_MODE:
 			local_logic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());

@@ -24,7 +24,8 @@ public class RemoteCore extends Core {
 
 	@Override
 	public void create_new_map(int map_size, int seed) {
-		this.client.sendMessage(new Packet(Command.NEW_MAP, new Packet.CreateNewMap(map_size, seed)));
+		//this.client.sendMessage(new Packet(Command.NEW_MAP, new Packet.CreateNewMap(map_size, seed)));
+		// TODO only enable this call if core runs on a external server and you are authorized
 	}
 
 	public void addUI(UI ui) {
