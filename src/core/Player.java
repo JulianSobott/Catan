@@ -18,9 +18,10 @@ public class Player implements Serializable {
 	Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	List<Building> buildings = new LinkedList<Building>();
 
-	public Player(String name, Color color) {
+	public Player(String name, int id, Color color) {
 		this.name = name;
 		this.color = color;
+		this.id = id;
 		for (Resource r : Resource.values()) {
 			resources.put(r, 0);
 		}

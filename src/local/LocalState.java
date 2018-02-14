@@ -29,7 +29,7 @@ public class LocalState {
 	Action curr_action = Action.idle;// describes the current action of the user;
 
 	List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
-	Player my_player_data = new Player("Anonymous", Color.BLUE);
+	Player my_player_data = new Player("Anonymous", 0, Color.BLUE);
 
 	Map<Resource, List<Vector2f>> field_resources = new HashMap<>();// maps resource fields to their positions on the board
 	Map<Byte, List<Vector2f>> field_numbers = new HashMap<>();// maps field numbers to their positions on the board

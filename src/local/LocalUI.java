@@ -15,6 +15,7 @@ import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import core.Player;
+import core.LocalCore;
 import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
@@ -23,21 +24,24 @@ import local.gui.Label;
 import local.gui.TextField;
 import local.gui.Widget;
 import network.Command;
-import network.DataIfc;
-import network.LocalDataServer;
+import network.Networkmanager;
+import network.Server;
 import network.Packet;
+import superClasses.Core;
+import superClasses.UI;
 
-public class UI {
+public class LocalUI extends UI{
 	enum GUIMode {
 		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
 	}
 
 	private GUIMode mode;
-
+	
+	private Core core;
 	// local state
 	private LocalState state;
-	private DataIfc data_connection;
-	private Game game;
+	private Networkmanager data_connection;
+	private Framework framework;
 	private Vector2f window_size;
 	private View view;
 
@@ -52,7 +56,7 @@ public class UI {
 	private List<String> guests = new ArrayList<String>();
 
 	//widgets Just widgets which may be changed
-	private Button btnDice;
+	private Button btnFinishedTurn;
 	private Label lblDiceResult;
 	private Label lblWoodCards;
 	private Label lblWoolCards;
@@ -67,9 +71,9 @@ public class UI {
 	private String tf_value_size = "";
 	private String lbl_value_info = "";
 
-	UI(LocalLogic logic, Game game) {
+	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
-		this.game = game;
+		this.framework = framework;
 
 		state.mode = GameMode.main_menu;
 	}
@@ -86,8 +90,12 @@ public class UI {
 		build_lobby();
 	}
 
-	void set_data_interface(DataIfc data_connection) {
+	void set_data_interface(Networkmanager data_connection) {
 		this.data_connection = data_connection;
+	}
+
+	public void setCore(Core core) {
+		this.core = core;
 	}
 
 	public void destroy_widgets() {
@@ -125,7 +133,7 @@ public class UI {
 			@Override
 			public void run() {
 				System.out.println("Start new game");
-				game.init_host_game();
+				framework.init_host_game();
 				build_host_lobby_window();
 			}
 		});
@@ -166,7 +174,7 @@ public class UI {
 			@Override
 			public void run() {
 				System.out.println("Exit game");
-				game.running = false;
+				framework.running = false;
 			}
 		});
 		widgets.add(btn);
@@ -228,6 +236,16 @@ public class UI {
 		widgets.add(lblWoolCards);
 		Widget.set_default_outline_color(Color.TRANSPARENT);
 		//dice
+		btnFinishedTurn = new Button(Language.FINISHED_TURN.get_text(),
+				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
+		btnFinishedTurn.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				core.nextTurn(id);
+			}
+		});
+		//btnDice.set_enabled(false);
+		widgets.add(btnFinishedTurn);
 
 		//build menu
 		pos_count = 0;
@@ -263,16 +281,6 @@ public class UI {
 		});
 		widgets.add(btnBuildStreet);
 
-		btnDice = new Button(Language.DICE.get_text(),
-				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
-		btnDice.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				data_connection.message_to_core(new Packet(Command.DICE));
-			}
-		});
-		btnDice.set_enabled(false);
-		widgets.add(btnDice);
 		//dice result
 		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
@@ -349,7 +357,7 @@ public class UI {
 					//Entered wrong Ip or server is not online
 					new Thread(new Runnable() {
 						public void run() {
-							if (!game.init_guest_game(tf_value_ip.trim(), tf_value_name.trim())) {
+							if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim())) {
 								System.out.println("Not accepted");
 								tfIp.set_outline_color(Color.RED);
 								lblConnecting.set_text("Entered wrong IP or the server is not online");
@@ -471,10 +479,9 @@ public class UI {
 				Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
 						(int) (Math.random() * 170. + 50));// TODO implement color picker
 
-				((LocalDataServer) data_connection)
-						.message_to_core(new Packet(Command.NAME, new Packet.Name(user_name, user_color)));
-				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
-				((LocalDataServer) data_connection).init_game();
+				((LocalCore)core).changePlayerName(0, user_name);
+				((LocalCore)core).create_new_map(map_size, seed);
+				((LocalCore)core).init_game();
 			}
 		});
 		widgets.add(btnStart);
@@ -484,7 +491,7 @@ public class UI {
 	boolean handle_event(Event evt) {
 		if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
 			if (evt.asMouseButtonEvent().button == Mouse.Button.LEFT) { // reset mouse position
-				return check_on_click_widgets(game.reverse_transform_position(evt.asMouseButtonEvent().position.x,
+				return check_on_click_widgets(framework.reverse_transform_position(evt.asMouseButtonEvent().position.x,
 						evt.asMouseButtonEvent().position.y, view));
 			} else
 				return false;
@@ -550,11 +557,13 @@ public class UI {
 
 	// change the gui layout
 
+	@Override
 	public void show_guest_at_lobby(String name) {
 		guests.add(guests.size(), name);
 		rebuild_gui();
 	}
 
+	@Override
 	public void init_scoreboard(List<LocalPlayer> player) {
 		state.player_data = player;
 		rebuild_gui();
@@ -562,15 +571,18 @@ public class UI {
 
 	//Access to the widgets
 
+	@Override
 	public void show_informative_hint(Language text) {
 		lblInfo.set_text(text.get_text());
 		lbl_value_info = text.get_text();
 	}
 
+	@Override
 	public void show_dice_result(byte result) {
 		lblDiceResult.set_text(Integer.toString((int) result));
 	}
 
+	@Override
 	public void update_player_data(Player player) {
 		state.my_player_data = player;
 		if (lblClayCards != null) {

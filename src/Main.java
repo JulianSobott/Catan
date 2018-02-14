@@ -1,5 +1,5 @@
 import core.Map;
-import local.Game;
+import local.Framework;
 
 // new main class 
 public class Main {
@@ -10,7 +10,7 @@ public class Main {
 
 
 		Map.update_constants();
-		Game game = new Game();
-		game.run();
+		Framework framework = new Framework();
+		framework.run();
 	}
 }

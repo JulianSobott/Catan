@@ -9,12 +9,12 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import core.Core;
-import local.LocalLogic;
-import local.UI;
 import org.jsfml.graphics.Color;
+import core.LocalCore;
+import local.LocalGameLogic;
+import local.LocalUI;
 
-public class LocalDataServer extends DataIfc {
+public class Server extends Networkmanager{
 
 	private ServerSocket server;
 	private String localServerIP;
@@ -23,13 +23,14 @@ public class LocalDataServer extends DataIfc {
 	private int numClients = 0;
 
 	private NewClientListener newClientListener;
-	//TODO implement Core with constructor
-	Core core = new Core(this);
 
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
 
-	public LocalDataServer(UI ui, LocalLogic local_logic) {
-		super(ui, local_logic);
+	private LocalCore core;
+
+	public Server(LocalCore core) {
+
+		this.core = core;
 		//Getting the local IP Adress
 		DatagramSocket ds;
 		try {
@@ -54,7 +55,6 @@ public class LocalDataServer extends DataIfc {
 		this.numClients++;
 	}
 
-	@Override
 	public void closeAllResources() {
 		this.newClientListener.stopListen();
 		for (ClientCommunicator client : clients) {
@@ -100,11 +100,13 @@ public class LocalDataServer extends DataIfc {
 		case NAME:
 			String name = ((Packet.Name) packet.data).getName();
 			Color color = ((Packet.Name) packet.data).getColor();
-			ui.show_guest_at_lobby(name);
 			core.register_new_user(name, color);
 			break;
+		case NEXT_TURN:
+			core.nextTurn(id);
+			break;
 		default:
-			System.err.println("Unknown Command reached Server");
+			System.err.println("Unknown Command reached Server: "+ packet.getCommand());
 		}
 	}
 
@@ -112,40 +114,10 @@ public class LocalDataServer extends DataIfc {
 		this.clients.get(id).message(packet);
 	}
 
-	@Override
-	public void message_to_core(Packet packet) { //Message from Local UI to Core (host has id 0)
-		switch (packet.getCommand()) {
-		case DICE:
-			core.dice(0);
-			break;
-		case BUILD_VILLAGE:
-			core.buildRequest(0, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_CITY:
-			core.buildRequest(0, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_STREET:
-			core.buildRequest(0, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
-			break;
-		case STRING:
-			System.out.println("Server reached Message: " + packet.getDebugString());
-			break;
-		case NAME:
-			String name = ((Packet.Name) packet.data).getName();
-			Color color = ((Packet.Name) packet.data).getColor();
-			ui.show_guest_at_lobby(name);
-			core.register_new_user(name, color);
-			break;
-		default:
-			System.err.println("Unknown Command reached Server");
-		}
-	}
-
 	public void messageToAll(Packet packet) {
 		for (ClientCommunicator client : clients) {
 			client.message(packet);
 		}
-		message_from_core(packet); //message to own UI | localLogic
 	}
 
 	public void create_new_map(int map_size, int seed) {

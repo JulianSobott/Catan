@@ -13,15 +13,18 @@ import org.jsfml.window.VideoMode;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
-import core.Core;
+import superClasses.Core;
+import superClasses.GameLogic;
 import core.Map;
+import core.LocalCore;
 import network.Command;
-import network.DataIfc;
-import network.LocalDataServer;
+import network.RemoteCore;
+import network.Networkmanager;
+import network.Server;
 import network.Packet;
-import network.RemoteDataClient;
+import network.Client;
 
-public class Game {
+public class Framework {
 	//Debugging Stuff
 	boolean startAtLobby = true;
 
@@ -47,14 +50,14 @@ public class Game {
 	Clock frame_timer = new Clock();
 
 	// local
-	DataIfc data_connection;
-	LocalLogic local_logic = new LocalLogic();
-	UI ui = new UI(local_logic, this);
+	Networkmanager data_connection;
+	LocalGameLogic local_logic = new LocalGameLogic();
+	LocalUI ui = new LocalUI((LocalGameLogic) local_logic, this);
 
 	// server
 	Core core;
 
-	public Game() {
+	public Framework() {
 		std_font = new Font();
 		try {
 			std_font.loadFromFile(Paths.get("res/Canterbury.ttf"));
@@ -80,10 +83,9 @@ public class Game {
 					running = false;
 					try {
 						data_connection.closeAllResources();
-					} catch (Exception e) {
-						System.err.println("Closed before all resources closed");
+					}catch(Exception e) {
+						e.printStackTrace();
 					}
-
 				}
 				if (!ui.handle_event(evt)) {
 					// not handled by the ui
@@ -164,28 +166,33 @@ public class Game {
 
 	// creates a new game with this machine as host
 	void init_host_game() {
-		LocalDataServer server = new LocalDataServer(ui, local_logic);
-		data_connection = server;
-		local_logic.set_data_interface(data_connection);
-		ui.set_data_interface(data_connection);
-		core = new Core(server);
+		core = new LocalCore();
+		ui.setCore(core);
+		((LocalCore)core).addUI(ui);
+		((LocalCore)core).addLogic(local_logic);
+		data_connection = new Server((LocalCore) core);
+		((LocalCore)core).setServer((Server) data_connection);
 	}
 
 	// creates a new game with this machine as client
 	public boolean init_guest_game(String ip, String name) {
 		String serverIp = ip;
 		try {
-			data_connection = new RemoteDataClient(ui, local_logic, serverIp);
+			data_connection = new Client(ui, local_logic, serverIp);
 		} catch (IOException e) {
 			System.err.println("Wrong IP or server is not online");
 			return false;
 		}
-
+		core = new RemoteCore();
+		ui.setCore(core);
+		((RemoteCore)core).setClientConnection((Client) data_connection);
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
+		
 		Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
 				(int) (Math.random() * 170.+50));// TODO implement color picker
-		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name, user_color)));
+		core.register_new_user(name, user_color);
+		
 		return true;
 	}
 }
