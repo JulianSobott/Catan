@@ -186,6 +186,10 @@ public class Map {
 		return new Vector2i(x, y);
 	}
 
+	public static float layer_to_street_rotation(int layer) {
+		return layer == 2 ? 60 : layer == 3 ? 120 : 0;
+	}
+
 	public static Vector2f index_to_city_position(Vector2i index) {
 		return index_to_building_position(new Vector3i(index.x, index.y, 0));
 	}

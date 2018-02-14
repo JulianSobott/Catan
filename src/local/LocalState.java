@@ -25,6 +25,8 @@ public class LocalState {
 
 	Map<Resource, List<Vector2f>> field_resources = new HashMap<>();// maps resource fields to their positions on the board
 	Map<Byte, List<Vector2f>> field_numbers = new HashMap<>();// maps field numbers to their positions on the board
-	Map<Integer, Map<Building.Type, List<Vector2f>>> buildings = new HashMap<>();// maps players to building types to positions
+	Map<Integer, List<Vector2f>> villages = new HashMap<>();// maps players to building types to positions
+	Map<Integer, List<Vector2f>> cities = new HashMap<>();// maps players to building types to positions
+	Map<Integer, List<AbstractStreet>> streets = new HashMap<>();// maps players to building types to positions
 
 }

@@ -1,14 +1,19 @@
 package local;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Text;
+import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import core.Building;
@@ -29,6 +34,11 @@ public class LocalLogic {
 	// fonts
 	Font std_font;
 
+	// textures
+	Texture village_txtr = new Texture();
+	Texture city_txtr = new Texture();
+	Texture street_txtr = new Texture();
+
 	public LocalLogic() {
 		state = new LocalState();
 
@@ -41,6 +51,16 @@ public class LocalLogic {
 	void init(Font std_font) {
 		this.std_font = std_font;
 
+		try {
+			village_txtr.loadFromFile(Paths.get("res/village.png"));
+			village_txtr.setSmooth(true);
+			city_txtr.loadFromFile(Paths.get("res/city.png"));
+			city_txtr.setSmooth(true);
+			street_txtr.loadFromFile(Paths.get("res/street.png"));
+			street_txtr.setSmooth(true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void set_mode(GameMode new_mode) {
@@ -69,18 +89,27 @@ public class LocalLogic {
 
 	public void update_buildings(java.util.Map<Integer, List<Building>> buildings) {
 		for (java.util.Map.Entry<Integer, List<Building>> ub : buildings.entrySet()) {
-			java.util.Map<Building.Type, List<Vector2f>> users_buildings = new HashMap<>();
-			for (Building.Type t : Building.Type.values())
-				users_buildings.put(t, new ArrayList<>());
+			//java.util.Map<Building.Type, List<Vector2f>> users_buildings = new HashMap<>();
+			List<Vector2f> villages = new LinkedList<>();
+			List<Vector2f> cities = new LinkedList<>();
+			List<AbstractStreet> streets = new LinkedList<>();
 			for (Building b : ub.getValue()) {
-				users_buildings.get(b.get_type()).add(Map.index_to_building_position(b.get_position()));
+				if (b.get_type() == Building.Type.VILLAGE)
+					villages.add(Map.index_to_building_position(b.get_position()));
+				else if (b.get_type() == Building.Type.CITY)
+					cities.add(Map.index_to_building_position(b.get_position()));
+				else if (b.get_type() == Building.Type.STREET)
+					streets.add(new AbstractStreet(Map.index_to_building_position(b.get_position()), Map.layer_to_street_rotation(b.get_position().z)));
 			}
-			state.buildings.put(ub.getKey(), users_buildings);
+			state.villages.put(ub.getKey(), villages);
+			state.cities.put(ub.getKey(), cities);
+			state.streets.put(ub.getKey(), streets);
 		}
 	}
 
 	void render_map(RenderTarget target) {
 		if (state.mode == GameMode.game) {
+			// render fields
 			for (java.util.Map.Entry<Resource, List<Vector2f>> resource : state.field_resources.entrySet()) {
 				CircleShape shape = new CircleShape(Map.field_size * 0.5f, 6);
 				shape.setFillColor(resource.getKey().get_color());
@@ -93,6 +122,7 @@ public class LocalLogic {
 					target.draw(shape);
 				}
 			}
+			// render field numbers
 			for (java.util.Map.Entry<Byte, List<Vector2f>> number : state.field_numbers.entrySet()) {
 				Text text = new Text("" + number.getKey(), std_font);
 				text.setCharacterSize((40 - Math.abs(number.getKey() - (Map.NUMBER_COUNT + 4) / 2) * 4) * 4);
@@ -104,17 +134,41 @@ public class LocalLogic {
 					target.draw(text);
 				}
 			}
-			CircleShape shape = new CircleShape(10, 5);
-			shape.setOrigin(10, 10);
-			for (java.util.Map.Entry<Integer, java.util.Map<Building.Type, List<Vector2f>>> ub : state.buildings
-					.entrySet()) {
-				shape.setFillColor(state.player_data.get(ub.getKey()).getColor());
-				for (java.util.Map.Entry<Building.Type, List<Vector2f>> b : ub.getValue().entrySet()) {
 
-					for (Vector2f pos : b.getValue()) {
-						shape.setPosition(pos);
-						target.draw(shape);
-					}
+			// render buildings
+			Sprite village_sprite = new Sprite(village_txtr);
+			village_sprite.setOrigin(village_sprite.getLocalBounds().width * 0.5f,
+					village_sprite.getLocalBounds().height * 0.8f);
+			village_sprite.setScale(0.1f, 0.1f);
+			Sprite city_Sprite = new Sprite(city_txtr);
+			city_Sprite.setOrigin(city_Sprite.getLocalBounds().width * 0.5f,
+					city_Sprite.getLocalBounds().height * 0.8f);
+			city_Sprite.setScale(0.1f, 0.1f);
+			Sprite street_Sprite = new Sprite(street_txtr);
+			street_Sprite.setOrigin(street_Sprite.getLocalBounds().width * 0.5f,
+					street_Sprite.getLocalBounds().height * 0.5f);
+			street_Sprite.setScale(0.1f, 0.1f);
+
+			for (java.util.Map.Entry<Integer, List<Vector2f>> ub : state.villages.entrySet()) {
+				village_sprite.setColor(state.player_data.get(ub.getKey()).getColor());
+				for (Vector2f pos : ub.getValue()) {
+					village_sprite.setPosition(pos);
+					target.draw(village_sprite);
+				}
+			}
+			for (java.util.Map.Entry<Integer, List<Vector2f>> ub : state.cities.entrySet()) {
+				city_Sprite.setColor(state.player_data.get(ub.getKey()).getColor());
+				for (Vector2f pos : ub.getValue()) {
+					city_Sprite.setPosition(pos);
+					target.draw(city_Sprite);
+				}
+			}
+			for (java.util.Map.Entry<Integer, List<AbstractStreet>> ub : state.streets.entrySet()) {
+				village_sprite.setColor(state.player_data.get(ub.getKey()).getColor());
+				for (AbstractStreet street : ub.getValue()) {
+					street_Sprite.setPosition(street.position);
+					street_Sprite.setRotation(street.rotation);
+					target.draw(street_Sprite);
 				}
 			}
 		}
