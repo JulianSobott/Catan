@@ -37,7 +37,7 @@ public class Core {
 		data_server.messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(map.getFields())));
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
-			create_initial_resources(player.get(i), map.add_random_cities(seed, 10));
+			create_initial_resources(player.get(i), map.add_random_cities(seed, 2));
 			for (int j = 0; j < player.get(i).buildings.size(); j++) {
 				new_buildings.put(i, player.get(i).buildings);
 			}

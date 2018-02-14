@@ -129,11 +129,11 @@ public class Map {
 		int upper_left_x = city_pos.y % 2 == 0 ? city_pos.x - 1 : city_pos.x;
 		if (city_pos.y > 0 && (city_pos.y % 2 != 0 || city_pos.x > 0)
 				&& fields[upper_left_x][city_pos.y - 1].resource != Resource.OCEAN) {
-			available_city_places.add(new Vector2i(upper_left_x, city_pos.y - 1));
+			ret.add(new Vector2i(upper_left_x, city_pos.y - 1));
 		}
 		if (city_pos.y > 0 && (city_pos.y % 2 == 0 || city_pos.x < map_size_x - 1)
 				&& fields[upper_left_x + 1][city_pos.y - 1].resource != Resource.OCEAN) {
-			available_city_places.add(new Vector2i(upper_left_x + 1, city_pos.y - 1));
+			ret.add(new Vector2i(upper_left_x + 1, city_pos.y - 1));
 		}
 		return ret;
 	}
