@@ -88,14 +88,14 @@ public class LocalCore extends Core {
 		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
 		for (Player p : player) {
 			scoreboard_data.add(new LocalPlayer(p.getName(), p.getScore(), p.getColor()));
-			for (UI ui : uis) {
-				ui.init_scoreboard(scoreboard_data);
-				ui.build_game_menu();
+		}
+		for (UI ui : uis) {
+			ui.init_scoreboard(scoreboard_data);
+			ui.build_game_menu();
 
-			}
-			for (GameLogic logic : logics) {
-				logic.set_mode(GameMode.game);
-			}
+		}
+		for (GameLogic logic : logics) {
+			logic.set_mode(GameMode.game);
 		}
 	}
 
