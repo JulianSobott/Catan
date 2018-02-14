@@ -132,4 +132,12 @@ public class LocalCore extends Core{
 	public void changePlayerName(int id, String newName) {
 		player.get(id).setName(newName);
 	}
+
+	@Override
+	public void nextTurn(int id) {
+		if(id == actualPlayer) {
+			dice(id);
+			actualPlayer = actualPlayer + 1 >= player.size() ? 0 : actualPlayer + 1; 
+		}
+	}
 }

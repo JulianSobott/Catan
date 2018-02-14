@@ -41,13 +41,13 @@ public class Packet implements Serializable {
 		}
 	}
 	public static class DiceResult implements Serializable {
-		private byte result;
+		private int result;
 
-		public DiceResult(byte result) {
-			this.result = result;
+		public DiceResult(int diceResult) {
+			this.result = diceResult;
 		}
 
-		public byte getDiceResult() {
+		public int getDiceResult() {
 			return this.result;
 		}
 	}

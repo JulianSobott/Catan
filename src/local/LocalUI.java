@@ -56,7 +56,7 @@ public class LocalUI extends UI{
 	private List<String> guests = new ArrayList<String>();
 
 	//widgets Just widgets which may be changed
-	private Button btnDice;
+	private Button btnFinishedTurn;
 	private Label lblDiceResult;
 	private Label lblWoodCards;
 	private Label lblWoolCards;
@@ -189,7 +189,7 @@ public class LocalUI extends UI{
 		mode = GUIMode.GAME;
 
 		//Score board
-		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0, 250, 300)); //TODO add all players at init
+		Label lblScoreBoard = new Label("", new FloatRect(window_size.x - 250, 0, 250, 300));
 		widgets.add(lblScoreBoard);
 		for (int i = 0; i < player_data.size(); i++) {
 			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
@@ -213,16 +213,16 @@ public class LocalUI extends UI{
 		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
 		widgets.add(lblWoolCards);
 		//dice
-		btnDice = new Button(Language.DICE.get_text(),
+		btnFinishedTurn = new Button(Language.FINISHED_TURN.get_text(),
 				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
-		btnDice.set_click_callback(new Runnable() {
+		btnFinishedTurn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				core.dice(id);
+				core.nextTurn(id);
 			}
 		});
 		//btnDice.set_enabled(false);
-		widgets.add(btnDice);
+		widgets.add(btnFinishedTurn);
 		//dice result
 		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));

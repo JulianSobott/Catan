@@ -14,8 +14,7 @@ public class RemoteUI extends UI {
 
 	@Override
 	public void show_dice_result(int diceResult) {
-		// TODO Auto-generated method stub
-
+		server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult(diceResult)));
 	}
 
 	@Override

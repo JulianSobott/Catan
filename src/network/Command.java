@@ -8,6 +8,8 @@ public enum Command {
 	TRADE,
 	FIELD,
 	SCORE,
+	NEXT_TURN,
+	SHOW_ACTUAL_PLAYER,
 	STRING,
 	//Pre Game Stuff
 	NEW_MAP,

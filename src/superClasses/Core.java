@@ -25,5 +25,7 @@ public abstract class Core {
 	}
 
 	public abstract void dice(int id);
+
+	public abstract void nextTurn(int id);
 	
 }

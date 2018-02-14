@@ -100,8 +100,11 @@ public class Server extends Networkmanager{
 			String name = ((Packet.Name) packet.data).getName();
 			core.register_new_user(name);
 			break;
+		case NEXT_TURN:
+			core.nextTurn(id);
+			break;
 		default:
-			System.err.println("Unknown Command reached Server");
+			System.err.println("Unknown Command reached Server: "+ packet.getCommand());
 		}
 	}
 

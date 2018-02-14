@@ -44,4 +44,9 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.DICE));
 	}
 
+	@Override
+	public void nextTurn(int id) {
+		this.client.sendMessage(new Packet(Command.NEXT_TURN));
+	}
+
 }

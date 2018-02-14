@@ -59,8 +59,8 @@ public class Client extends Networkmanager{
 
 	public void message_from_core(Packet packet) {
 		switch(packet.getCommand()){
-		case DICE:
-			local_logic.diceResult(((Packet.DiceResult) packet.data).getDiceResult());
+		case DICE_RESULT:
+			ui.show_dice_result(((Packet.DiceResult) packet.data).getDiceResult());
 			break;
 		case BUILD_VILLAGE:
 			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());

@@ -22,7 +22,8 @@ public enum Language {
 	DICE("Dice", "Würfeln"),
 	BUILD_VILLAGE("Build village", "Siedlung bauen"),
 	BUILD_CITY("Build city", "Stadt bauen"),
-	BUILD_STREET("Build street", "Stra�e bauen");
+	BUILD_STREET("Build street", "Stra�e bauen"), 
+	FINISHED_TURN("Finish turn", "Zug beenden");
 
 
 	
