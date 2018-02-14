@@ -59,11 +59,13 @@ public class UI {
 	private Label lblGrainCards;
 	private Label lblClayCards;
 	private Label lblOreCards;
+	private Label lblInfo;
 
 	private String tf_value_ip = "192.168.2.103";
 	private String tf_value_name = "Julian";
 	private String tf_value_seed = "";
 	private String tf_value_size = "";
+	private String lbl_value_info = "";
 
 	UI(LocalLogic logic, Game game) {
 		this.state = logic.state;
@@ -235,7 +237,8 @@ public class UI {
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-
+				state.curr_action = LocalState.Action.build_village;
+				show_informative_hint(Language.SELECT_BUILD_PLACE);
 			}
 		});
 		widgets.add(btnBuildVillage);
@@ -244,7 +247,8 @@ public class UI {
 		btnBuildCity.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-
+				state.curr_action = LocalState.Action.build_city;
+				show_informative_hint(Language.SELECT_BUILD_PLACE);
 			}
 		});
 		widgets.add(btnBuildCity);
@@ -253,7 +257,8 @@ public class UI {
 		btnBuildStreet.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-
+				state.curr_action = LocalState.Action.build_street;
+				show_informative_hint(Language.SELECT_BUILD_PLACE);
 			}
 		});
 		widgets.add(btnBuildStreet);
@@ -272,6 +277,10 @@ public class UI {
 		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
 		widgets.add(lblDiceResult);
+
+		// info label
+		lblInfo = new Label(lbl_value_info, new FloatRect(10, window_size.y - 50, 100, 50));
+		widgets.add(lblInfo);
 	}
 
 	public void build_join_menu() {
@@ -365,7 +374,7 @@ public class UI {
 		destroy_widgets();
 		mode = GUIMode.GUEST_LOBBY;
 
-		Label lbl = new Label("Succesfully joined Lobby", new FloatRect(0, 0, 100, 100));
+		Label lbl = new Label("Successfully joined Lobby", new FloatRect(0, 0, 100, 100));
 		widgets.add(lbl);
 	}
 
@@ -552,6 +561,11 @@ public class UI {
 	}
 
 	//Access to the widgets
+
+	public void show_informative_hint(Language text) {
+		lblInfo.set_text(text.get_text());
+		lbl_value_info = text.get_text();
+	}
 
 	public void show_dice_result(byte result) {
 		lblDiceResult.set_text(Integer.toString((int) result));

@@ -20,6 +20,14 @@ public class LocalState {
 
 	GameMode mode;
 
+	public enum Action {
+		idle,
+		build_village,
+		build_city,
+		build_street,
+	}
+	Action curr_action = Action.idle;// describes the current action of the user;
+
 	List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
 	Player my_player_data = new Player("Anonymous", Color.BLUE);
 

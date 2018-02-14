@@ -23,6 +23,7 @@ public enum Language {
 	BUILD_VILLAGE("Village", "Siedlung"),
 	BUILD_CITY("City", "Stadt"),
 	BUILD_STREET("Street", "Straße"),
+	SELECT_BUILD_PLACE("Select a building site", "Wähle den Bauplatz aus"),
 	OF("of", "von"),
 	WOOD("Wood", "Holz"),
 	WOOL("Wool", "Wolle"),

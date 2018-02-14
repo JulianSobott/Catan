@@ -16,11 +16,14 @@ import org.jsfml.graphics.Text;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
+import org.jsfml.system.Vector3i;
+
 import core.Building;
 import core.Map;
 import core.Player;
 import data.Field;
 import data.Resource;
+import local.LocalState.Action;
 import local.LocalState.GameMode;
 import network.Command;
 import network.DataIfc;
@@ -99,7 +102,8 @@ public class LocalLogic {
 				else if (b.get_type() == Building.Type.CITY)
 					cities.add(Map.index_to_building_position(b.get_position()));
 				else if (b.get_type() == Building.Type.STREET)
-					streets.add(new AbstractStreet(Map.index_to_building_position(b.get_position()), Map.layer_to_street_rotation(b.get_position().z)));
+					streets.add(new AbstractStreet(Map.index_to_building_position(b.get_position()),
+							Map.layer_to_street_rotation(b.get_position().z)));
 			}
 			state.villages.put(ub.getKey(), villages);
 			state.cities.put(ub.getKey(), cities);
@@ -175,7 +179,13 @@ public class LocalLogic {
 	}
 
 	void mouse_click_input(Vector2f position) {
-		// TODO
+		if (state.curr_action == Action.build_village) {
+			Vector2i pos = Map.position_to_city_index(position);
+			state.villages.get(state.my_player_data.getId())
+					.add(Map.index_to_building_position(new Vector3i(pos.x, pos.y, 0)));
+			state.curr_action = Action.idle;
+			// TODO call core
+		}
 	}
 
 	public void diceResult(byte dice_result) {
