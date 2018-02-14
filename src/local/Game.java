@@ -183,7 +183,9 @@ public class Game {
 
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
-		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name)));
+		Color user_color = new Color((int) (Math.random() * 255.), (int) (Math.random() * 255.),
+				(int) (Math.random() * 255.));// TODO implement color picker
+		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name, user_color)));
 		return true;
 	}
 }
