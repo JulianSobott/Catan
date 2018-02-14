@@ -1,6 +1,7 @@
 package core;
 
 import org.jsfml.system.Vector2i;
+import org.jsfml.system.Vector3i;
 
 public class Building {
 	public enum Type {
@@ -9,22 +10,18 @@ public class Building {
 		CITY,
 	};
 	private Type type;
-	private int map_layer; // defines to which map layer the building belongs
-	private Vector2i position;// 2D index in the layer
+	private Vector3i position;// 2D index in the layer
 
-	Building(Type type, int map_layer, Vector2i position) {
+	Building(Type type, Vector3i position) {
 		this.type = type;
-		this.map_layer = map_layer;
 		this.position = position;
 	}
 
-	Type get_type() {
+	public Type get_type() {
 		return type;
 	}
-	int get_map_layer() {
-		return map_layer;
-	}
-	Vector2i get_position() {
+	
+	public Vector3i get_position() {
 		return position;
 	}
 }

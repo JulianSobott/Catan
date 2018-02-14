@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import org.jsfml.graphics.Color;
 import core.LocalCore;
 import local.LocalGameLogic;
 import local.LocalUI;
@@ -98,7 +99,8 @@ public class Server extends Networkmanager{
 			break;
 		case NAME:
 			String name = ((Packet.Name) packet.data).getName();
-			core.register_new_user(name);
+			Color color = ((Packet.Name) packet.data).getColor();
+			core.register_new_user(name, color);
 			break;
 		case NEXT_TURN:
 			core.nextTurn(id);

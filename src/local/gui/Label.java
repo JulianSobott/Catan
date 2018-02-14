@@ -10,12 +10,12 @@ import org.jsfml.system.Vector2f;
 public class Label extends Widget {
 	private static final int DEFAULT_MENU_TEXTFIELD_OUTLINE_THICKNESS = 3;
 	private static final int DEFAULT_MENU_TEXTFIELD_LEFT_SPACING = 5;
-	
+
 	private RectangleShape shape;
 	private Text text;
-	
+
 	private boolean visible = true;
-	
+
 	public Label(String text, FloatRect bounds) {
 		super(bounds);
 		shape = new RectangleShape(new Vector2f(bounds.width, bounds.height));
@@ -24,7 +24,7 @@ public class Label extends Widget {
 		shape.setOutlineThickness(DEFAULT_MENU_TEXTFIELD_OUTLINE_THICKNESS);
 		shape.setFillColor(default_fill_color);
 		this.text = new Text("", default_font);
-		this.text.setString("XOW");// needed to properly calculate bounds
+		this.text.setString(text.isEmpty() ? "XOW" : text);// needed to properly calculate bounds
 		this.text.setOrigin(-DEFAULT_MENU_TEXTFIELD_LEFT_SPACING, this.text.getGlobalBounds().height * 0.5f);
 		this.text.setString(text);
 		this.text.setPosition(bounds.left, bounds.top + bounds.height * 0.5f);
@@ -33,15 +33,15 @@ public class Label extends Widget {
 
 	@Override
 	public void render(RenderTarget target) {
-		if(this.visible) {
+		if (this.visible) {
 			target.draw(shape);
 			target.draw(text);
-		}		
+		}
 	}
 
 	@Override
 	public void do_mouse_click() {
-		
+
 	}
 
 	public void set_position(Vector2f pos) {
@@ -49,13 +49,15 @@ public class Label extends Widget {
 		shape.setPosition(pos);
 		text.setPosition(bounds.left, bounds.top + bounds.height * 0.5f);
 	}
-	
+
 	public void set_text(String text) {
 		this.text.setString(text);
 	}
+
 	public void set_text_size(int character_size) {
 		text.setCharacterSize(character_size);
 	}
+
 	public void set_fill_color(Color color) {
 		shape.setFillColor(color);
 	}

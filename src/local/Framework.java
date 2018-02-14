@@ -60,7 +60,7 @@ public class Framework {
 	public Framework() {
 		std_font = new Font();
 		try {
-			std_font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
+			std_font.loadFromFile(Paths.get("res/Canterbury.ttf"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -188,7 +188,11 @@ public class Framework {
 		((RemoteCore)core).setClientConnection((Client) data_connection);
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
-		core.register_new_user(name);
+		
+		Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
+				(int) (Math.random() * 170.+50));// TODO implement color picker
+		core.register_new_user(name, user_color);
+		
 		return true;
 	}
 }

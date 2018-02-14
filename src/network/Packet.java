@@ -3,9 +3,11 @@ package network;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
+import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
-
+import core.Building;
+import core.Player;
 import data.Field;
 
 import local.LocalPlayer;
@@ -41,13 +43,13 @@ public class Packet implements Serializable {
 		}
 	}
 	public static class DiceResult implements Serializable {
-		private int result;
+		private byte result;
 
-		public DiceResult(int diceResult) {
+		public DiceResult(byte diceResult) {
 			this.result = diceResult;
 		}
 
-		public int getDiceResult() {
+		public byte getDiceResult() {
 			return this.result;
 		}
 	}
@@ -82,13 +84,19 @@ public class Packet implements Serializable {
 
 	public static class Name implements Serializable {
 		private String name;
+		private Color color;
 
-		public Name(String name) {
+		public Name(String name, Color color) {
 			this.name = name;
+			this.color = color;
 		}
 
 		public String getName() {
 			return this.name;
+		}
+
+		public Color getColor() {
+			return this.color;
 		}
 	}
 
@@ -104,6 +112,29 @@ public class Packet implements Serializable {
 		}
 	}
 	
+	public static class PlayerData implements Serializable {
+		private Player player;
+
+		public PlayerData(Player player) {
+			this.player = player;
+		}
+
+		public Player getPlayer() {
+			return this.player;
+		}
+	}
+
+	public static class UpdateBuildings implements Serializable {
+		private Map<Integer, List<Building>> buildings;
+
+		public UpdateBuildings(Map<Integer, List<Building>> buildings) {
+			this.buildings = buildings;
+		}
+
+		public Map<Integer, List<Building>> getBuildings() {
+			return this.buildings;
+		}
+	}
 	public static class NEW_MODE implements Serializable {
 		private GameMode mode;
 
@@ -115,6 +146,7 @@ public class Packet implements Serializable {
 			return this.mode;
 		}
 	}
+	
 	private Command cmd;
 	Serializable data;
 

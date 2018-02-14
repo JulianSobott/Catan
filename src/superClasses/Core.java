@@ -1,5 +1,7 @@
 package superClasses;
 
+import org.jsfml.graphics.Color;
+
 import local.LocalGameLogic;
 import local.LocalUI;
 
@@ -14,7 +16,7 @@ public abstract class Core {
 	
 	public abstract void create_new_map(int map_size, int seed);
 
-	public abstract void register_new_user(String name);
+	public abstract void register_new_user(String name, Color color);
 	
 	public void setLogic(GameLogic logic) {
 		this.logic = logic;

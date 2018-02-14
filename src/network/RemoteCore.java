@@ -1,5 +1,7 @@
 package network;
 
+import org.jsfml.graphics.Color;
+
 import superClasses.Core;
 import superClasses.GameLogic;
 import superClasses.UI;
@@ -30,8 +32,8 @@ public class RemoteCore extends Core {
 	}
 
 	@Override
-	public void register_new_user(String name) {
-		this.client.sendMessage(new Packet(Command.NAME, new Packet.Name(name)));
+	public void register_new_user(String name, Color color) {
+		this.client.sendMessage(new Packet(Command.NAME, new Packet.Name(name, color)));
 	}
 
 	public void addLogic(GameLogic local_logic) {

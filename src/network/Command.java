@@ -12,7 +12,9 @@ public enum Command {
 	SHOW_ACTUAL_PLAYER,
 	STRING,
 	//Pre Game Stuff
+	PLAYER_DATA,
 	NEW_MAP,
+	UPDATE_BUILDINGS,
 	NAME,
 	START_GAME, 
 	INIT_SCOREBOARD, 
