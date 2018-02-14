@@ -7,13 +7,13 @@ import java.net.Socket;
 
 public class NewClientListener extends Thread{
 	
-	private LocalDataServer localDataServer;
+	private Server localDataServer;
 	private ServerSocket server;
 	private Socket client;
 	
 	private boolean listenForNewClients = true;
 
-	public NewClientListener(LocalDataServer localDataServer, ServerSocket server) {
+	public NewClientListener(Server localDataServer, ServerSocket server) {
 		this.localDataServer = localDataServer;
 		this.server = server;
 	}

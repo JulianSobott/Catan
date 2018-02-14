@@ -15,6 +15,7 @@ import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import core.Player;
+import core.RealCore;
 import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
@@ -24,16 +25,19 @@ import local.gui.TextField;
 import local.gui.Widget;
 import network.Command;
 import network.DataIfc;
-import network.LocalDataServer;
+import network.Server;
 import network.Packet;
+import superClasses.Core;
+import superClasses.UI;
 
-public class UI {
+public class RealUI extends UI{
 	enum GUIMode {
 		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
 	}
 
 	private GUIMode mode;
-
+	
+	private Core core;
 	// local state
 	private LocalState state;
 	private DataIfc data_connection;
@@ -66,7 +70,7 @@ public class UI {
 	private String tf_value_seed = "";
 	private String tf_value_size = "";
 
-	UI(LocalLogic logic, Game game) {
+	RealUI(RealLocalLogic logic, Game game) {
 		this.state = logic.state;
 		this.game = game;
 
@@ -209,7 +213,7 @@ public class UI {
 		btnDice.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				data_connection.message_to_core(new Packet(Command.DICE));
+				//data_connection.message_to_core(new Packet(Command.DICE));
 			}
 		});
 		btnDice.set_enabled(false);
@@ -426,11 +430,8 @@ public class UI {
 				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
-
-				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
-				((LocalDataServer) data_connection)
-						.message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
-				((LocalDataServer) data_connection).init_game();
+				((RealCore)core).create_new_map(map_size, seed);
+				((RealCore)core).init_game();
 			}
 		});
 		widgets.add(btnStart);
@@ -516,10 +517,12 @@ public class UI {
 		rebuild_gui();
 	}
 
-	//Access to the widgets
-
-	public void show_dice_result(byte result) {
-		lblDiceResult.set_text(Integer.toString((int) result));
+	@Override
+	public void show_dice_result(int diceResult) {
+		lblDiceResult.set_text(Integer.toString(diceResult));
 	}
-
+	
+	public void setCore(Core core) {
+		this.core = core;
+	}
 }

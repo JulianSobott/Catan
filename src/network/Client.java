@@ -6,11 +6,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import local.LocalLogic;
-import local.UI;
+import local.LocalState.GameMode;
+import local.RealLocalLogic;
+import local.RealUI;
 
 //TODO Error handling when Entered a wrong IP address (reentering)
-public class RemoteDataClient extends DataIfc {
+public class Client extends DataIfc{
 	private Socket server;
 	private static final int PORT = 56789;
 	private String serverIP;
@@ -20,8 +21,12 @@ public class RemoteDataClient extends DataIfc {
 	
 	private ClientInputListener clientInputListener;
 	
-	public RemoteDataClient(UI ui, LocalLogic local_logic, String serverIP) throws UnknownHostException, IOException {
-		super(ui, local_logic);
+	private RealUI ui;
+	private RealLocalLogic local_logic;
+	
+	public Client(RealUI ui, RealLocalLogic local_logic, String serverIP) throws UnknownHostException, IOException {
+		this.ui = ui;
+		this.local_logic = local_logic;
 		this.serverIP = serverIP;
 		//Init Connection to server
 		this.server = new Socket(this.serverIP, PORT);
@@ -41,7 +46,6 @@ public class RemoteDataClient extends DataIfc {
 		clientInputListener.start();
 	}
 	
-	@Override
 	public void closeAllResources() {
 		clientInputListener.closeConnectionToServer();
 		try {
@@ -53,8 +57,6 @@ public class RemoteDataClient extends DataIfc {
 		}
 	}
 
-	// network management
-	/*@Override
 	public void message_from_core(Packet packet) {
 		switch(packet.getCommand()){
 		case DICE:
@@ -78,14 +80,16 @@ public class RemoteDataClient extends DataIfc {
 			System.out.println("Start game at Client");
 			break;
 		case NEW_MAP:
-			update_new_map_local(((Packet.New_Map) packet.data).getFields());
+			local_logic.update_new_map(((Packet.New_Map) packet.data).getFields());
 			break;
+		case SET_MODE:
+			local_logic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
 		default:
 			System.err.println("Unknown Command reached Client");
 		}
-	}*/
+	}
 	
-	public void message_to_core(Packet p) {
+	public void sendMessage(Packet p) {
 		try {
 			output.writeObject(p);
 			output.flush();
@@ -95,7 +99,6 @@ public class RemoteDataClient extends DataIfc {
 		
 	}
   
-
 	
 
 }

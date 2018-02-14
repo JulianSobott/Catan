@@ -9,6 +9,7 @@ import org.jsfml.system.Vector2i;
 import data.Field;
 
 import local.LocalPlayer;
+import local.LocalState.GameMode;
 
 public class Packet implements Serializable {
 
@@ -23,7 +24,22 @@ public class Packet implements Serializable {
 			return this.player;
 		}
 	}
-
+	
+	public static class CreateNewMap implements Serializable{
+		private int mapSize;
+		private int seed;
+		
+		public CreateNewMap(int mapSize, int seed) {
+			this.mapSize = mapSize;
+			this.seed = seed;
+		}
+		public int getMapSize() {
+			return this.mapSize;
+		}
+		public int getSeed() {
+			return this.seed;
+		}
+	}
 	public static class DiceResult implements Serializable {
 		private byte result;
 
@@ -87,24 +103,47 @@ public class Packet implements Serializable {
 			return this.fields;
 		}
 	}
+	
+	public static class NEW_MODE implements Serializable {
+		private GameMode mode;
 
+		public NEW_MODE(GameMode mode) {
+			this.mode = mode;
+		}
+
+		public GameMode getgameMode() {
+			return this.mode;
+		}
+	}
 	private Command cmd;
+	private Receiver receiver;
 	Serializable data;
 
 	String debugString;
 
-	public Packet(Command cmd) {
+	public Packet(Receiver receiver, Command cmd) {
 		this.cmd = cmd;
 		this.data = new Build(new Vector2i(1, 1));
 	}
 
+	public Packet(Receiver receiver, Command cmd, Serializable data) {
+		this.cmd = cmd;
+		this.data = data;
+		this.receiver = receiver;
+	}
+	
 	public Packet(Command cmd, Serializable data) {
 		this.cmd = cmd;
 		this.data = data;
+		this.receiver = receiver;
 	}
 
 	public Command getCommand() {
 		return this.cmd;
+	}
+	
+	public Receiver getReceiver() {
+		return this.receiver;
 	}
 
 	public Packet(String str) {

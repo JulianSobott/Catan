@@ -13,13 +13,16 @@ import org.jsfml.window.VideoMode;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
-import core.Core;
+import superClasses.Core;
+import superClasses.LocalLogic;
 import core.Map;
+import core.RealCore;
 import network.Command;
+import network.CoreCommunicator;
 import network.DataIfc;
-import network.LocalDataServer;
+import network.Server;
 import network.Packet;
-import network.RemoteDataClient;
+import network.Client;
 
 public class Game {
 	//Debugging Stuff
@@ -48,8 +51,8 @@ public class Game {
 
 	// local
 	DataIfc data_connection;
-	LocalLogic local_logic = new LocalLogic();
-	UI ui = new UI(local_logic, this);
+	RealLocalLogic local_logic = new RealLocalLogic();
+	RealUI ui = new RealUI((RealLocalLogic) local_logic, this);
 
 	// server
 	Core core;
@@ -80,10 +83,9 @@ public class Game {
 					running = false;
 					try {
 						data_connection.closeAllResources();
-					} catch (Exception e) {
-						System.err.println("Closed before all resources closed");
+					}catch(Exception e) {
+						e.printStackTrace();
 					}
-
 				}
 				if (!ui.handle_event(evt)) {
 					// not handled by the ui
@@ -164,26 +166,29 @@ public class Game {
 
 	// creates a new game with this machine as host
 	void init_host_game() {
-		LocalDataServer server = new LocalDataServer(ui, local_logic);
-		data_connection = server;
-		local_logic.set_data_interface(data_connection);
-		ui.set_data_interface(data_connection);
-		core = new Core(server);
+		core = new RealCore();
+		ui.setCore(core);
+		((RealCore)core).addUI(ui);
+		((RealCore)core).addLogic(local_logic);
+		data_connection = new Server((RealCore) core);
+		((RealCore)core).setServer((Server) data_connection);
 	}
 
 	// creates a new game with this machine as client
 	public boolean init_guest_game(String ip, String name) {
 		String serverIp = ip;
 		try {
-			data_connection = new RemoteDataClient(ui, local_logic, serverIp);
+			data_connection = new Client(ui, local_logic, serverIp);
 		} catch (IOException e) {
 			System.err.println("Wrong IP or server is not online");
 			return false;
 		}
-
+		core = new CoreCommunicator();
+		ui.setCore(core);
+		((CoreCommunicator)core).setClientConnection((Client) data_connection);
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
-		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name)));
+		core.register_new_user(name);
 		return true;
 	}
 }

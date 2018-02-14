@@ -18,9 +18,10 @@ import data.Resource;
 import local.LocalState.GameMode;
 import network.Command;
 import network.DataIfc;
+import superClasses.LocalLogic;
 
 // TODO name?
-public class LocalLogic {
+public class RealLocalLogic extends LocalLogic{
 	// state, ui & connection
 	LocalState state;
 	DataIfc data_connection; 
@@ -28,9 +29,8 @@ public class LocalLogic {
 	// fonts
 	Font std_font;
 
-	public LocalLogic() {
+	public RealLocalLogic() {
 		state = new LocalState();
-
 	}
 	
 	public void set_data_interface(DataIfc data_connection) {
@@ -39,13 +39,13 @@ public class LocalLogic {
 	
 	void init(Font std_font) {
 		this.std_font = std_font;
-
 	}
 
 	public void set_mode(GameMode new_mode) {
 		state.mode  = new_mode;
 	}
-
+	
+	@Override
 	public void update_new_map(Field[][] fields) {
 		state.field_resources = new HashMap<>();
 		for (Resource res : Resource.values())
@@ -105,4 +105,6 @@ public class LocalLogic {
 	public void build(int idPlayer, Command buildType, Vector2i position) {
 		// TODO Auto-generated method stub
 	}
+
+
 }

@@ -13,6 +13,7 @@ public enum Command {
 	NEW_MAP,
 	NAME,
 	START_GAME, 
-	INIT_SCOREBOARD;
+	INIT_SCOREBOARD, 
+	SET_MODE;
 	
 }
