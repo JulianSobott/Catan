@@ -15,7 +15,7 @@ import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import core.Player;
-import core.RealCore;
+import core.LocalCore;
 import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
@@ -24,13 +24,13 @@ import local.gui.Label;
 import local.gui.TextField;
 import local.gui.Widget;
 import network.Command;
-import network.DataIfc;
+import network.Networkmanager;
 import network.Server;
 import network.Packet;
 import superClasses.Core;
 import superClasses.UI;
 
-public class RealUI extends UI{
+public class LocalUI extends UI{
 	enum GUIMode {
 		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
 	}
@@ -40,8 +40,8 @@ public class RealUI extends UI{
 	private Core core;
 	// local state
 	private LocalState state;
-	private DataIfc data_connection;
-	private Game game;
+	private Networkmanager data_connection;
+	private Framework framework;
 	private Vector2f window_size;
 	private View view;
 
@@ -70,9 +70,9 @@ public class RealUI extends UI{
 	private String tf_value_seed = "";
 	private String tf_value_size = "";
 
-	RealUI(RealLocalLogic logic, Game game) {
+	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
-		this.game = game;
+		this.framework = framework;
 
 		state.mode = GameMode.main_menu;
 	}
@@ -89,7 +89,7 @@ public class RealUI extends UI{
 		build_lobby();
 	}
 
-	void set_data_interface(DataIfc data_connection) {
+	void set_data_interface(Networkmanager data_connection) {
 		this.data_connection = data_connection;
 	}
 
@@ -128,7 +128,7 @@ public class RealUI extends UI{
 			@Override
 			public void run() {
 				System.out.println("Start new game");
-				game.init_host_game();
+				framework.init_host_game();
 				build_host_lobby_window();
 			}
 		});
@@ -169,7 +169,7 @@ public class RealUI extends UI{
 			@Override
 			public void run() {
 				System.out.println("Exit game");
-				game.running = false;
+				framework.running = false;
 			}
 		});
 		widgets.add(btn);
@@ -191,6 +191,11 @@ public class RealUI extends UI{
 		//Score board
 		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0, 250, 300)); //TODO add all players at init
 		widgets.add(lblScoreBoard);
+		for (int i = 0; i < player_data.size(); i++) {
+			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
+					new FloatRect(window_size.x - 250, 50 * i, 250, 50));
+			widgets.add(lblPlayerScore);
+		}
 		//player resources
 		lblClayCards = new Label("Clay", new FloatRect((window_size.x / 5) * 3 - 70, window_size.y - 95, 70, 90));
 		lblClayCards.set_fill_color(Resource.CLAY.get_color());
@@ -213,10 +218,10 @@ public class RealUI extends UI{
 		btnDice.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				//data_connection.message_to_core(new Packet(Command.DICE));
+				core.dice(id);
 			}
 		});
-		btnDice.set_enabled(false);
+		//btnDice.set_enabled(false);
 		widgets.add(btnDice);
 		//dice result
 		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
@@ -251,13 +256,6 @@ public class RealUI extends UI{
 			}
 		});
 		widgets.add(btnBuildStreet);
-
-		// score board
-		for (int i = 0; i < player_data.size(); i++) {
-			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
-					new FloatRect(window_size.x - 250, 50 * i, 250, 50));
-			widgets.add(lblPlayerScore);
-		}
 	}
 
 	public void build_join_menu() {
@@ -325,7 +323,7 @@ public class RealUI extends UI{
 					//Entered wrong Ip or server is not online
 					new Thread(new Runnable() {
 						public void run() {
-							if (!game.init_guest_game(tf_value_ip.trim(), tf_value_name.trim())) {
+							if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim())) {
 								System.out.println("Not accepted");
 								tfIp.set_outline_color(Color.RED);
 								lblConnecting.set_text("Entered wrong IP or the server is not online");
@@ -430,8 +428,9 @@ public class RealUI extends UI{
 				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
-				((RealCore)core).create_new_map(map_size, seed);
-				((RealCore)core).init_game();
+				((LocalCore)core).changePlayerName(0, user_name);
+				((LocalCore)core).create_new_map(map_size, seed);
+				((LocalCore)core).init_game();
 			}
 		});
 		widgets.add(btnStart);
@@ -441,7 +440,7 @@ public class RealUI extends UI{
 	boolean handle_event(Event evt) {
 		if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
 			if (evt.asMouseButtonEvent().button == Mouse.Button.LEFT) { // reset mouse position
-				return check_on_click_widgets(game.reverse_transform_position(evt.asMouseButtonEvent().position.x,
+				return check_on_click_widgets(framework.reverse_transform_position(evt.asMouseButtonEvent().position.x,
 						evt.asMouseButtonEvent().position.y, view));
 			} else
 				return false;

@@ -14,17 +14,17 @@ import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import superClasses.Core;
-import superClasses.LocalLogic;
+import superClasses.GameLogic;
 import core.Map;
-import core.RealCore;
+import core.LocalCore;
 import network.Command;
-import network.CoreCommunicator;
-import network.DataIfc;
+import network.RemoteCore;
+import network.Networkmanager;
 import network.Server;
 import network.Packet;
 import network.Client;
 
-public class Game {
+public class Framework {
 	//Debugging Stuff
 	boolean startAtLobby = true;
 
@@ -50,14 +50,14 @@ public class Game {
 	Clock frame_timer = new Clock();
 
 	// local
-	DataIfc data_connection;
-	RealLocalLogic local_logic = new RealLocalLogic();
-	RealUI ui = new RealUI((RealLocalLogic) local_logic, this);
+	Networkmanager data_connection;
+	LocalGameLogic local_logic = new LocalGameLogic();
+	LocalUI ui = new LocalUI((LocalGameLogic) local_logic, this);
 
 	// server
 	Core core;
 
-	public Game() {
+	public Framework() {
 		std_font = new Font();
 		try {
 			std_font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
@@ -166,12 +166,12 @@ public class Game {
 
 	// creates a new game with this machine as host
 	void init_host_game() {
-		core = new RealCore();
+		core = new LocalCore();
 		ui.setCore(core);
-		((RealCore)core).addUI(ui);
-		((RealCore)core).addLogic(local_logic);
-		data_connection = new Server((RealCore) core);
-		((RealCore)core).setServer((Server) data_connection);
+		((LocalCore)core).addUI(ui);
+		((LocalCore)core).addLogic(local_logic);
+		data_connection = new Server((LocalCore) core);
+		((LocalCore)core).setServer((Server) data_connection);
 	}
 
 	// creates a new game with this machine as client
@@ -183,9 +183,9 @@ public class Game {
 			System.err.println("Wrong IP or server is not online");
 			return false;
 		}
-		core = new CoreCommunicator();
+		core = new RemoteCore();
 		ui.setCore(core);
-		((CoreCommunicator)core).setClientConnection((Client) data_connection);
+		((RemoteCore)core).setClientConnection((Client) data_connection);
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
 		core.register_new_user(name);

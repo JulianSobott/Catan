@@ -17,23 +17,23 @@ import data.Field;
 import data.Resource;
 import local.LocalState.GameMode;
 import network.Command;
-import network.DataIfc;
-import superClasses.LocalLogic;
+import network.Networkmanager;
+import superClasses.GameLogic;
 
 // TODO name?
-public class RealLocalLogic extends LocalLogic{
+public class LocalGameLogic extends GameLogic{
 	// state, ui & connection
 	LocalState state;
-	DataIfc data_connection; 
+	Networkmanager data_connection; 
 
 	// fonts
 	Font std_font;
 
-	public RealLocalLogic() {
+	public LocalGameLogic() {
 		state = new LocalState();
 	}
 	
-	public void set_data_interface(DataIfc data_connection) {
+	public void set_data_interface(Networkmanager data_connection) {
 		this.data_connection = data_connection;
 	}
 	

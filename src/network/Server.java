@@ -9,11 +9,11 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import core.RealCore;
-import local.RealLocalLogic;
-import local.RealUI;
+import core.LocalCore;
+import local.LocalGameLogic;
+import local.LocalUI;
 
-public class Server extends DataIfc{
+public class Server extends Networkmanager{
 
 	private ServerSocket server;
 	private String localServerIP;
@@ -25,9 +25,9 @@ public class Server extends DataIfc{
 
 	private ArrayList<ClientCommunicator> clients = new ArrayList<ClientCommunicator>();
 
-	private RealCore core;
+	private LocalCore core;
 
-	public Server(RealCore core) {
+	public Server(LocalCore core) {
 
 		this.core = core;
 		//Getting the local IP Adress

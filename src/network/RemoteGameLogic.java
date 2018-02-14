@@ -2,19 +2,18 @@ package network;
 
 import data.Field;
 import local.LocalState.GameMode;
-import superClasses.LocalLogic;
+import superClasses.GameLogic;
 
-public class LogicCummunicator extends LocalLogic {
+public class RemoteGameLogic extends GameLogic {
 	private Server server;
 	
-	public LogicCummunicator(Server server) {
+	public RemoteGameLogic(Server server) {
 		this.server = server;
 	}
 
 	@Override
 	public void update_new_map(Field[][] fields) {
-		// TODO Auto-generated method stub
-
+		server.messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(fields)));
 	}
 
 	@Override

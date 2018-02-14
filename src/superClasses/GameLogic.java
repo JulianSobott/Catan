@@ -3,9 +3,9 @@ package superClasses;
 import data.Field;
 import local.LocalState.GameMode;
 
-public abstract class LocalLogic {
+public abstract class GameLogic {
 
-	public LocalLogic() {
+	public GameLogic() {
 		
 	}
 

@@ -8,17 +8,17 @@ import org.jsfml.system.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
 import network.Command;
-import network.LogicCummunicator;
+import network.RemoteGameLogic;
 import network.Server;
-import network.UICommunicator;
+import network.RemoteUI;
 import network.Packet;
 import superClasses.Core;
-import superClasses.LocalLogic;
+import superClasses.GameLogic;
 import superClasses.UI;
 
-public class RealCore extends Core{
+public class LocalCore extends Core{
 	List<UI> uis = new ArrayList<UI>();
-	List<LocalLogic> logics = new ArrayList<LocalLogic>();
+	List<GameLogic> logics = new ArrayList<GameLogic>();
 	// data server
 	Server data_server;
 
@@ -30,8 +30,9 @@ public class RealCore extends Core{
 	List<Player> player = new ArrayList<Player>();
 	
 	
-	public RealCore() {
-		
+	public LocalCore() {
+		Player hostPlayer = new Player("Host", 0);
+		player.add(hostPlayer);		
 	}
 	
 	public void dice(int id) {
@@ -40,43 +41,43 @@ public class RealCore extends Core{
 			for(UI ui: uis) {
 				ui.show_dice_result(diceResult);
 			}
-			//data_server.messageToAll(new Packet(Command.DICE_RESULT, new Packet.DiceResult((byte) diceResult)));
+		}else {
+			System.out.println(id + "is not allowed to Dice");
 		}
 	}
 
 	public void create_new_map(int map_size, int seed) {
 		map.create_map(map_size + 2, seed, map_size, new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
 				GeneratorType.HEXAGON);
-		for(LocalLogic logic : logics) {
+		for(GameLogic logic : logics) {
 			logic.update_new_map(map.getFields());
 		}
 	}
 
 	public void init_game() {
-		//data_server.messageToAll(new Packet(Command.START_GAME));
-
-		// translate into a more silent data structure
 		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
 		for (Player p : player)
 			scoreboard_data.add(scoreboard_data.size(), new LocalPlayer(p.getName(), p.getScore()));
 		for(UI ui : uis) {
-			ui.build_game_menu();
 			ui.init_scoreboard(scoreboard_data);
+			ui.build_game_menu();
+			
 		}
-		for(LocalLogic logic : logics) {
+		for(GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-		//data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(scoreboard_data)));
 	}
 	
 	@Override
 	public void register_new_user(String name) {
-		player.add(player.size(), new Player(name));
-		UI ui = new UICommunicator(data_server);
+		int id = player.size();
+		player.add(new Player(name, id));
+		UI ui = new RemoteUI(data_server);
+		ui.setID(id);
 		uis.add(ui);
-		LocalLogic logic = new LogicCummunicator(data_server);
-		logics.add(logic);
-		
+		GameLogic logic = new RemoteGameLogic(data_server);
+		logics.add(logic);	
+		uis.get(0).show_guest_at_lobby(name);
 	}
 
 	// USER ACTIONS
@@ -116,7 +117,7 @@ public class RealCore extends Core{
 		 */
 	}
 	
-	public void addLogic(LocalLogic logic) {
+	public void addLogic(GameLogic logic) {
 		logics.add(logic);
 	}
 	
@@ -126,5 +127,9 @@ public class RealCore extends Core{
 	
 	public void setServer(Server server) {
 		this.data_server = server;
+	}
+	
+	public void changePlayerName(int id, String newName) {
+		player.get(id).setName(newName);
 	}
 }

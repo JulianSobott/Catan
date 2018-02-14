@@ -116,34 +116,23 @@ public class Packet implements Serializable {
 		}
 	}
 	private Command cmd;
-	private Receiver receiver;
 	Serializable data;
 
 	String debugString;
 
-	public Packet(Receiver receiver, Command cmd) {
+	public Packet(Command cmd) {
 		this.cmd = cmd;
 		this.data = new Build(new Vector2i(1, 1));
 	}
 
-	public Packet(Receiver receiver, Command cmd, Serializable data) {
-		this.cmd = cmd;
-		this.data = data;
-		this.receiver = receiver;
-	}
-	
 	public Packet(Command cmd, Serializable data) {
 		this.cmd = cmd;
 		this.data = data;
-		this.receiver = receiver;
 	}
+	
 
 	public Command getCommand() {
 		return this.cmd;
-	}
-	
-	public Receiver getReceiver() {
-		return this.receiver;
 	}
 
 	public Packet(String str) {

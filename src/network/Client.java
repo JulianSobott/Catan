@@ -7,11 +7,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import local.LocalState.GameMode;
-import local.RealLocalLogic;
-import local.RealUI;
+import local.LocalGameLogic;
+import local.LocalUI;
 
 //TODO Error handling when Entered a wrong IP address (reentering)
-public class Client extends DataIfc{
+public class Client extends Networkmanager{
 	private Socket server;
 	private static final int PORT = 56789;
 	private String serverIP;
@@ -21,10 +21,10 @@ public class Client extends DataIfc{
 	
 	private ClientInputListener clientInputListener;
 	
-	private RealUI ui;
-	private RealLocalLogic local_logic;
+	private LocalUI ui;
+	private LocalGameLogic local_logic;
 	
-	public Client(RealUI ui, RealLocalLogic local_logic, String serverIP) throws UnknownHostException, IOException {
+	public Client(LocalUI ui, LocalGameLogic local_logic, String serverIP) throws UnknownHostException, IOException {
 		this.ui = ui;
 		this.local_logic = local_logic;
 		this.serverIP = serverIP;
@@ -84,6 +84,11 @@ public class Client extends DataIfc{
 			break;
 		case SET_MODE:
 			local_logic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
+			break;
+		case INIT_SCOREBOARD:
+			System.out.println("init Scoreboard");
+			ui.init_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}

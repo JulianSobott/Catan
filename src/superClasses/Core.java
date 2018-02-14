@@ -1,12 +1,12 @@
 package superClasses;
 
-import local.RealLocalLogic;
-import local.RealUI;
+import local.LocalGameLogic;
+import local.LocalUI;
 
 public abstract class Core {
 	
-	private UI ui;
-	private LocalLogic logic;
+	protected UI ui;
+	protected GameLogic logic;
 	
 	public Core() {
 		// TODO Auto-generated constructor stub
@@ -16,12 +16,14 @@ public abstract class Core {
 
 	public abstract void register_new_user(String name);
 	
-	public void setLogic(LocalLogic logic) {
+	public void setLogic(GameLogic logic) {
 		this.logic = logic;
 	}
 	
-	public void setUI(RealUI ui) {
+	public void setUI(LocalUI ui) {
 		this.ui = ui;
 	}
+
+	public abstract void dice(int id);
 	
 }

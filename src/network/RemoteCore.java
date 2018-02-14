@@ -1,17 +1,17 @@
 package network;
 
 import superClasses.Core;
-import superClasses.LocalLogic;
+import superClasses.GameLogic;
 import superClasses.UI;
 
-public class CoreCommunicator extends Core {
+public class RemoteCore extends Core {
 	Client client;
 	
-	public CoreCommunicator() {
+	public RemoteCore() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void setServer(DataIfc data_connection) {
+	public void setServer(Networkmanager data_connection) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -34,9 +34,14 @@ public class CoreCommunicator extends Core {
 		this.client.sendMessage(new Packet(Command.NAME, new Packet.Name(name)));
 	}
 
-	public void addLogic(LocalLogic local_logic) {
+	public void addLogic(GameLogic local_logic) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void dice(int id) {
+		this.client.sendMessage(new Packet(Command.DICE));
 	}
 
 }

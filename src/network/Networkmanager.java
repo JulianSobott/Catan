@@ -1,6 +1,6 @@
 package network;
 
-public abstract class DataIfc {
+public abstract class Networkmanager {
 	
 	public abstract void closeAllResources();
 }
