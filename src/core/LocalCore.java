@@ -1,6 +1,7 @@
 package core;
 
 import core.Map.GeneratorType;
+import data.Field;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 
@@ -40,13 +41,31 @@ public class LocalCore extends Core {
 	}
 
 	public void dice(int id) {
+		int diceResult = -1;
 		if (id == current_player) {
-			int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
+			diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
 			for (UI ui : uis) {
 				ui.show_dice_result((byte) diceResult);
 			}
 		} else {
 			System.out.println(id + "is not allowed to Dice");
+		}
+		//distributing resources
+		//TODO differ between city and Villages
+		for(Player p : player) {
+			List<Building> villages = p.buildings;
+			List<Field> allSorroundingFields = new ArrayList<Field>();
+			for(Building building : villages) {
+				allSorroundingFields.addAll(map.get_surrounding_fields_objects(building));
+			}
+			for(Field field : allSorroundingFields) {
+				if(field.number == (byte) diceResult) {
+					p.add_resource(field.resource, 1);
+				}
+			}
+		}
+		for(UI ui : uis) {
+			ui.update_player_data(player.get(ui.getID()));
 		}
 	}
 
