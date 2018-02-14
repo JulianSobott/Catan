@@ -69,6 +69,7 @@ public class LocalUI extends UI{
 	private String tf_value_seed = "";
 	private String tf_value_size = "";
 	private String lbl_value_info = "";
+	private String lbl_value_dice = "0";
 
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
@@ -278,7 +279,7 @@ public class LocalUI extends UI{
 		widgets.add(btnBuildStreet);
 
 		//dice result
-		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
+		lblDiceResult = new Label(lbl_value_dice, new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
 		widgets.add(lblDiceResult);
 
@@ -575,18 +576,19 @@ public class LocalUI extends UI{
 
 	@Override
 	public void show_dice_result(byte result) {
-		lblDiceResult.set_text(Integer.toString((int) result));
+		lbl_value_dice = Integer.toString((int) result);
+		lblDiceResult.set_text(lbl_value_dice);
 	}
 
 	@Override
 	public void update_player_data(Player player) {
 		state.my_player_data = player;
 		if (lblClayCards != null) {
-			lblClayCards.set_text(Language.WOOD.get_text() + "\n" + player.get_resources(Resource.WOOD));
-			lblClayCards.set_text(Language.WOOL.get_text() + "\n" + player.get_resources(Resource.WOOL));
-			lblClayCards.set_text(Language.GRAIN.get_text() + "\n" + player.get_resources(Resource.GRAIN));
+			lblWoodCards.set_text(Language.WOOD.get_text() + "\n" + player.get_resources(Resource.WOOD));
+			lblWoolCards.set_text(Language.WOOL.get_text() + "\n" + player.get_resources(Resource.WOOL));
+			lblGrainCards.set_text(Language.GRAIN.get_text() + "\n" + player.get_resources(Resource.GRAIN));
 			lblClayCards.set_text(Language.CLAY.get_text() + "\n" + player.get_resources(Resource.CLAY));
-			lblClayCards.set_text(Language.ORE.get_text() + "\n" + player.get_resources(Resource.ORE));
+			lblOreCards.set_text(Language.ORE.get_text() + "\n" + player.get_resources(Resource.ORE));
 		}
 	}
 

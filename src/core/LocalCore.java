@@ -1,6 +1,8 @@
 package core;
 
 import core.Map.GeneratorType;
+import data.Field;
+import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 
@@ -40,13 +42,32 @@ public class LocalCore extends Core {
 	}
 
 	public void dice(int id) {
+		int diceResult = -1;
 		if (id == current_player) {
-			int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
+			diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
 			for (UI ui : uis) {
 				ui.show_dice_result((byte) diceResult);
 			}
 		} else {
 			System.out.println(id + "is not allowed to Dice");
+		}
+		//distributing resources
+		for (Player p : player) {
+			List<Building> villages = p.buildings;
+			for (Building building : villages) {
+				List<Field> sorroundingFields = new ArrayList<Field>();
+				sorroundingFields.addAll(map.get_surrounding_fields_objects(building));
+				for (Field field : sorroundingFields) {
+					if (field.number == (byte) diceResult) {
+						int addCount = building.get_type() == Building.Type.VILLAGE ? 1 : 2;
+						p.add_resource(field.resource, addCount);
+					}
+				}
+			}
+
+		}
+		for (UI ui : uis) {
+			ui.update_player_data(player.get(ui.getID()));
 		}
 	}
 
@@ -97,6 +118,7 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
+		// buildRequest(0, Building.Type.VILLAGE, new Vector2i(1, 3)); TODO delete?
 	}
 
 	@Override
@@ -117,38 +139,51 @@ public class LocalCore extends Core {
 
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
-		boolean build_sth = false;
-		if (buildType == Building.Type.VILLAGE || buildType == Building.Type.CITY) {
-			Vector2i pos = new Vector2i(position.x, position.y);
-			if (map.is_city_place_available(pos)) {
-				map.build_city(pos);
-				// TODO check resources
-				build_sth = true;
+		//TODO Check if city is too close to other city
+		if (id == current_player) {
+			boolean build_sth = false;
+			if (buildType == Building.Type.VILLAGE || buildType == Building.Type.CITY) {
+				Vector2i pos = new Vector2i(position.x, position.y);
+				if (map.is_city_place_available(pos)) {
+					map.build_city(pos);
+					// TODO check resources
+					build_sth = true;
+					if (buildType == Building.Type.VILLAGE) {
+						player.get(id).buildings
+								.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
+						player.get(id).take_resource(Resource.WOOD, 1);
+						player.get(id).take_resource(Resource.CLAY, 1);
+						player.get(id).take_resource(Resource.GRAIN, 1);
+						player.get(id).take_resource(Resource.WOOL, 1);
+					} else if (buildType == Building.Type.CITY) {
+						player.get(id).buildings
+								.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
+						player.get(id).take_resource(Resource.ORE, 3);
+						player.get(id).take_resource(Resource.GRAIN, 2);
+					}
+				}
+			} else if (buildType == Building.Type.STREET) {
+				if (map.is_street_place_available(position)) {
+					map.build_street(position);
+					// TODO check resources
+					build_sth = true;
+					player.get(id).buildings
+							.add(new Building(Building.Type.STREET, new Vector3i(position.x, position.y, 0)));
+					player.get(id).take_resource(Resource.WOOD, 1);
+					player.get(id).take_resource(Resource.CLAY, 1);
+				}
 			}
-		} else if (buildType == Building.Type.STREET) {
-			if (map.is_street_place_available(position)) {
-				map.build_street(position);
-				// TODO check resources
-				build_sth = true;
+			if (build_sth) {
+				for (GameLogic logic : logics) {
+					logic.add_building(id, new Building(buildType, position));
+				}
 			}
+			uis.get(id).update_player_data(player.get(id));
 		}
-		if (build_sth) {
-			for (GameLogic logic : logics) {
-				logic.add_building(id, new Building(buildType, position));
-			}
-		}
-		/*
-			Is wanted place free
-				No buildings on this place
-				No buildings too close
-			Has player enough resources
-			Has player enough buildings (when limited)
-		=> build()
-		*/
 	}
 
 	//TODO Just my thoughts about possible methods maybe rename or remove
-
+	//TODO Either delete this methods or transfer code from build_request()
 	public void build() {
 		/*
 		Add building to position
