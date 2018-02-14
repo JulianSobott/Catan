@@ -29,4 +29,9 @@ public class RemoteGameLogic extends GameLogic {
 		server.message_to_client(id, new Packet(Command.UPDATE_BUILDINGS, new Packet.UpdateBuildings(buildings)));
 	}
 
+	@Override
+	public void add_building(int user, Building building) {
+		
+	}
+
 }

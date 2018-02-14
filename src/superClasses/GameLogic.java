@@ -17,7 +17,9 @@ public abstract class GameLogic {
 	public abstract void update_buildings(java.util.Map<Integer, List<Building>> buildings);
 
 	public abstract void update_new_map(Field[][] fields);
-	
+
+	public abstract void add_building(int user, Building building);
+
 	public void setID(int id) {
 		this.id = id;
 	}

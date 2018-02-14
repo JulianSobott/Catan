@@ -23,6 +23,7 @@ import core.Map;
 import core.Player;
 import core.Building.Type;
 import data.Field;
+import data.Language;
 import data.Resource;
 import local.LocalState.Action;
 import local.LocalState.GameMode;
@@ -32,10 +33,11 @@ import superClasses.Core;
 import superClasses.GameLogic;
 
 // TODO name?
-public class LocalGameLogic extends GameLogic{
+public class LocalGameLogic extends GameLogic {
 	// state, ui & connection
 	LocalState state;
 	private Core core;
+	private LocalUI ui;
 
 	// fonts
 	Font std_font;
@@ -44,13 +46,16 @@ public class LocalGameLogic extends GameLogic{
 	Texture village_txtr = new Texture();
 	Texture city_txtr = new Texture();
 	Texture street_txtr = new Texture();
-	
+
 	public LocalGameLogic() {
 		state = new LocalState();
 	}
-	
+
 	public void setCore(Core core) {
 		this.core = core;
+	}
+	public void setUI( LocalUI ui) {
+		this.ui = ui;
 	}
 
 	void init(Font std_font) {
@@ -71,7 +76,7 @@ public class LocalGameLogic extends GameLogic{
 	public void set_mode(GameMode new_mode) {
 		state.mode = new_mode;
 	}
-	
+
 	@Override
 	public void update_new_map(Field[][] fields) {
 		state.field_resources = new HashMap<>();
@@ -115,6 +120,18 @@ public class LocalGameLogic extends GameLogic{
 		}
 	}
 
+	@Override
+	public void add_building(int user, Building building) {
+		if (building.get_type() == Building.Type.VILLAGE) {
+			state.villages.get(user).add(Map.index_to_building_position(building.get_position()));
+		} else if (building.get_type() == Building.Type.CITY) {
+			state.cities.get(user).add(Map.index_to_building_position(building.get_position()));
+		} else if (building.get_type() == Building.Type.STREET) {
+			state.streets.get(user).add(new AbstractStreet(Map.index_to_building_position(building.get_position()),
+					Map.layer_to_street_rotation(building.get_position().z)));
+		}
+	}
+
 	void render_map(RenderTarget target) {
 		if (state.mode == GameMode.game) {
 			// render fields
@@ -146,17 +163,25 @@ public class LocalGameLogic extends GameLogic{
 			// render buildings
 			Sprite village_sprite = new Sprite(village_txtr);
 			village_sprite.setOrigin(village_sprite.getLocalBounds().width * 0.5f,
-					village_sprite.getLocalBounds().height * 0.8f);
+					village_sprite.getLocalBounds().height * 0.7f);
 			village_sprite.setScale(0.1f, 0.1f);
 			Sprite city_Sprite = new Sprite(city_txtr);
 			city_Sprite.setOrigin(city_Sprite.getLocalBounds().width * 0.5f,
-					city_Sprite.getLocalBounds().height * 0.8f);
+					city_Sprite.getLocalBounds().height * 0.6f);
 			city_Sprite.setScale(0.1f, 0.1f);
 			Sprite street_Sprite = new Sprite(street_txtr);
 			street_Sprite.setOrigin(street_Sprite.getLocalBounds().width * 0.5f,
 					street_Sprite.getLocalBounds().height * 0.5f);
-			street_Sprite.setScale(0.1f, 0.1f);
+			street_Sprite.setScale(0.08f, 0.08f);
 
+			for (java.util.Map.Entry<Integer, List<AbstractStreet>> ub : state.streets.entrySet()) {
+				street_Sprite.setColor(state.player_data.get(ub.getKey()).getColor());
+				for (AbstractStreet street : ub.getValue()) {
+					street_Sprite.setPosition(street.position);
+					street_Sprite.setRotation(street.rotation);
+					target.draw(street_Sprite);
+				}
+			}
 			for (java.util.Map.Entry<Integer, List<Vector2f>> ub : state.villages.entrySet()) {
 				village_sprite.setColor(state.player_data.get(ub.getKey()).getColor());
 				for (Vector2f pos : ub.getValue()) {
@@ -171,29 +196,30 @@ public class LocalGameLogic extends GameLogic{
 					target.draw(city_Sprite);
 				}
 			}
-			for (java.util.Map.Entry<Integer, List<AbstractStreet>> ub : state.streets.entrySet()) {
-				village_sprite.setColor(state.player_data.get(ub.getKey()).getColor());
-				for (AbstractStreet street : ub.getValue()) {
-					street_Sprite.setPosition(street.position);
-					street_Sprite.setRotation(street.rotation);
-					target.draw(street_Sprite);
-				}
-			}
 		}
 	}
 
 	void mouse_click_input(Vector2f position) {
 		if (state.curr_action == Action.build_village) {
 			Vector2i pos = Map.position_to_city_index(position);
-			//state.villages.get(id).add(Map.index_to_building_position(new Vector3i(pos.x, pos.y, 0)));
-			core.buildRequest(id, Type.VILLAGE, pos);
+			core.buildRequest(id, Type.VILLAGE, new Vector3i(pos.x, pos.y, 0));
 			state.curr_action = Action.idle;
+			ui.show_informative_hint(Language.DO_MOVE);
+		} else if (state.curr_action == Action.build_city) {
+			Vector2i pos = Map.position_to_city_index(position);
+			core.buildRequest(id, Type.CITY, new Vector3i(pos.x, pos.y, 0));
+			state.curr_action = Action.idle;
+			ui.show_informative_hint(Language.DO_MOVE);
+		} else if (state.curr_action == Action.build_street) {
+			Vector3i pos = Map.position_to_street_index(position);
+			core.buildRequest(id, Type.STREET, pos);
+			state.curr_action = Action.idle;
+			ui.show_informative_hint(Language.DO_MOVE);
 		}
 	}
 
 	public void build(int idPlayer, Command buildType, Vector2i position) {
 		// TODO Auto-generated method stub
 	}
-
 
 }

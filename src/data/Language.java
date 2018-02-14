@@ -23,6 +23,7 @@ public enum Language {
 	BUILD_VILLAGE("Village", "Siedlung"),
 	BUILD_CITY("City", "Stadt"),
 	BUILD_STREET("Street", "Straße"),
+	DO_MOVE("Make your move", "Mache deinen Zug"),
 	SELECT_BUILD_PLACE("Select a building site", "Wähle den Bauplatz aus"),
 	FINISHED_MOVE("Finish move", "Zug beenden"),
 	OF("of", "von"),

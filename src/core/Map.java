@@ -147,7 +147,26 @@ public class Map {
 				}
 			}
 		}
-		// TODO calculate streets
+
+		for (int x = 0; x < fields.length; x++) {
+			for (int y = 0; y < fields[x].length; y++) {
+				// north
+				if (fields[x][y].resource != Resource.OCEAN
+						|| y > 0 && (y % 2 == 1 || x > 0) && fields[y % 2 == 0 ? x - 1 : x][y - 1].resource != Resource.OCEAN) {
+					available_street_places.add(new Vector3i(x, y, 1));
+				}
+				// east
+				if (fields[x][y].resource != Resource.OCEAN || y > 0 && (y % 2 == 0 || x < fields.length-1)
+						&& fields[y % 2 == 1 ? x + 1 : x][y - 1].resource != Resource.OCEAN) {
+					available_street_places.add(new Vector3i(x, y, 2));
+				}
+				// west
+				if (fields[x][y].resource != Resource.OCEAN
+						|| (x > 0) && fields[x - 1][y].resource != Resource.OCEAN) {
+					available_street_places.add(new Vector3i(x, y, 3));
+				}
+			}
+		}
 	}
 
 	List<Vector2i> add_random_cities(int seed, int house_count) {
@@ -162,18 +181,37 @@ public class Map {
 		return new_cities;
 	}
 
-	public boolean is_city_place_available(Vector2i pos){
-		for( Vector2i ap: available_city_places) {
-			if( ap.x == pos.x && ap.y == pos.y){
+	public boolean is_city_place_available(Vector2i pos) {
+		for (Vector2i ap : available_city_places) {
+			if (ap.x == pos.x && ap.y == pos.y) {
 				return true;
 			}
 		}
 		return false;
 	}
+
+	public boolean is_street_place_available(Vector3i pos) {
+		for (Vector3i ap : available_street_places) {
+			if (ap.x == pos.x && ap.y == pos.y && ap.z == pos.z) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void build_city(Vector2i pos) {
 		for (Vector2i ap : available_city_places) {
 			if (ap.equals(pos)) {
 				available_city_places.remove(ap);
+				return;
+			}
+		}
+	}
+
+	public void build_street(Vector3i pos) {
+		for (Vector3i ap : available_street_places) {
+			if (ap.equals(pos)) {
+				available_street_places.remove(ap);
 				return;
 			}
 		}
@@ -204,7 +242,7 @@ public class Map {
 	}
 
 	public static float layer_to_street_rotation(int layer) {
-		return layer == 2 ? 60 : layer == 3 ? 120 : 0;
+		return layer == 1? -30 : layer == 2 ? 30 : layer == 3 ? 90 : 0;
 	}
 
 	public static Vector2f index_to_city_position(Vector2i index) {

@@ -2,8 +2,9 @@ package network;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
-
+import org.jsfml.system.Vector3i;
 import core.Building;
+import core.Building.Type;
 import superClasses.Core;
 import superClasses.GameLogic;
 import superClasses.UI;
@@ -55,8 +56,8 @@ public class RemoteCore extends Core {
 	}
 
 	@Override
-	public void buildRequest(int id, Building.Type buildType, Vector2i position) {
-		//TODO
+	public void buildRequest(int id, Type buildType, Vector3i position) {
+		// TODO		
 	}
 
 }

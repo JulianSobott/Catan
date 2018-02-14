@@ -2,6 +2,7 @@ package superClasses;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
+import org.jsfml.system.Vector3i;
 import core.Building;
 import local.LocalGameLogic;
 import local.LocalUI;
@@ -19,7 +20,7 @@ public abstract class Core {
 	
 	public abstract void dice(int id);
 
-	public abstract void buildRequest(int id, Building.Type buildType, Vector2i position);
+	public abstract void buildRequest(int id, Building.Type buildType, Vector3i position);
 
 	public abstract void nextTurn(int id);
 	

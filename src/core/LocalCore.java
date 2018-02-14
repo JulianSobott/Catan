@@ -116,16 +116,27 @@ public class LocalCore extends Core {
 	// USER ACTIONS
 
 	@Override
-	public void buildRequest(int id, Building.Type buildType, Vector2i position) {
-		if (buildType == Building.Type.VILLAGE) {
-			if (map.is_city_place_available(position)) {
-				map.build_city(position);
-
-				// TODO check resources 
-				// TODO publish new buildings to other users
+	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
+		boolean build_sth = false;
+		if (buildType == Building.Type.VILLAGE || buildType == Building.Type.CITY) {
+			Vector2i pos = new Vector2i(position.x, position.y);
+			if (map.is_city_place_available(pos)) {
+				map.build_city(pos);
+				// TODO check resources
+				build_sth = true;
+			}
+		} else if (buildType == Building.Type.STREET) {
+			if (map.is_street_place_available(position)) {
+				map.build_street(position);
+				// TODO check resources
+				build_sth = true;
 			}
 		}
-
+		if (build_sth) {
+			for (GameLogic logic : logics) {
+				logic.add_building(id, new Building(buildType, position));
+			}
+		}
 		/*
 			Is wanted place free
 				No buildings on this place
