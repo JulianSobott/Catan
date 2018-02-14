@@ -44,8 +44,8 @@ public class Core {
 			}
 			// TODO send message to client
 			//data_server.message_to_client(i, new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player.get(i))));
-			//if (i == 0)
-			//	data_server.message_from_core(new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player.get(i))));
+			if (i == 0)
+				data_server.message_from_core(new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player.get(i))));
 		}
 		data_server.messageToAll(new Packet(Command.UPDATE_BUILDINGS, new Packet.UpdateBuildings(new_buildings)));
 		//data_server.update_new_map(map.getFields());

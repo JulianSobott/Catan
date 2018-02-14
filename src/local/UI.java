@@ -198,26 +198,33 @@ public class UI {
 		int pos_count = 1;
 		float cards_width = 100;
 		float orientation_anchor = (window_size.x / 5) * 3;
-		lblClayCards = new Label(Language.CLAY.get_text() + "\n0", new FloatRect(
-				orientation_anchor - (cards_width + 5) * pos_count++, window_size.y - 85, cards_width, 80));
+		Widget.set_default_outline_color(Color.WHITE);
+		lblClayCards = new Label(Language.CLAY.get_text() + "\n" + state.my_player_data.get_resources(Resource.CLAY),
+				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
+						80));
 		lblClayCards.set_fill_color(Resource.CLAY.get_color());
 		widgets.add(lblClayCards);
-		lblGrainCards = new Label(Language.GRAIN.get_text() + "\n0", new FloatRect(
-				orientation_anchor - (cards_width + 5) * pos_count++, window_size.y - 85, cards_width, 80));
+		lblGrainCards = new Label(Language.GRAIN.get_text() + "\n" + state.my_player_data.get_resources(Resource.GRAIN),
+				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
+						80));
 		lblGrainCards.set_fill_color(Resource.GRAIN.get_color());
 		widgets.add(lblGrainCards);
-		lblOreCards = new Label(Language.ORE.get_text() + "\n0", new FloatRect(
-				orientation_anchor - (cards_width + 5) * pos_count++, window_size.y - 85, cards_width, 80));
+		lblOreCards = new Label(Language.ORE.get_text() + "\n" + state.my_player_data.get_resources(Resource.ORE),
+				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
+						80));
 		lblOreCards.set_fill_color(Resource.ORE.get_color());
 		widgets.add(lblOreCards);
-		lblWoodCards = new Label(Language.WOOD.get_text() + "\n0", new FloatRect(
-				orientation_anchor - (cards_width + 5) * pos_count++, window_size.y - 85, cards_width, 80));
+		lblWoodCards = new Label(Language.WOOD.get_text() + "\n" + state.my_player_data.get_resources(Resource.WOOD),
+				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
+						80));
 		lblWoodCards.set_fill_color(Resource.WOOD.get_color());
 		widgets.add(lblWoodCards);
-		lblWoolCards = new Label(Language.WOOL.get_text() + "\n0", new FloatRect(
-				orientation_anchor - (cards_width + 5) * pos_count++, window_size.y - 85, cards_width, 80));
+		lblWoolCards = new Label(Language.WOOL.get_text() + "\n" + state.my_player_data.get_resources(Resource.WOOL),
+				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
+						80));
 		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
 		widgets.add(lblWoolCards);
+		Widget.set_default_outline_color(Color.TRANSPARENT);
 		//dice
 
 		//build menu
@@ -432,7 +439,6 @@ public class UI {
 		});
 		widgets.add(tfName);
 
-
 		//Row1 ==> members
 		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(column1, 10, 100, 100));
 		widgets.add(lbl);
@@ -552,17 +558,14 @@ public class UI {
 	}
 
 	public void update_player_data(Player player) {
-		lblClayCards.set_text(
-				player.get_resources(Resource.WOOD) + " " + Language.OF.get_text() + " " + Language.CLAY.get_text());
-		lblClayCards.set_text(
-				player.get_resources(Resource.WOOL) + " " + Language.OF.get_text() + " " + Language.WOOL.get_text());
-		lblClayCards.set_text(
-				player.get_resources(Resource.GRAIN) + " " + Language.OF.get_text() + " " + Language.GRAIN.get_text());
-		lblClayCards.set_text(
-				player.get_resources(Resource.CLAY) + " " + Language.OF.get_text() + " " + Language.CLAY.get_text());
-		lblClayCards.set_text(
-				player.get_resources(Resource.ORE) + " " + Language.OF.get_text() + " " + Language.ORE.get_text());
-
+		state.my_player_data = player;
+		if (lblClayCards != null) {
+			lblClayCards.set_text(Language.WOOD.get_text() + "\n" + player.get_resources(Resource.WOOD));
+			lblClayCards.set_text(Language.WOOL.get_text() + "\n" + player.get_resources(Resource.WOOL));
+			lblClayCards.set_text(Language.GRAIN.get_text() + "\n" + player.get_resources(Resource.GRAIN));
+			lblClayCards.set_text(Language.CLAY.get_text() + "\n" + player.get_resources(Resource.CLAY));
+			lblClayCards.set_text(Language.ORE.get_text() + "\n" + player.get_resources(Resource.ORE));
+		}
 	}
 
 }
