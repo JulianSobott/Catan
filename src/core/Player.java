@@ -58,7 +58,10 @@ public class Player implements Serializable {
 	public void add_resource(Resource r, int count) {
 		resources.put(r, resources.get(r) + count);
 	}
-
+	public void take_resource(Resource r, int count) {
+		resources.put(r, resources.get(r) - count);
+	}
+	
 	public void update_score() {
 		score = 0;
 		for (Building b : buildings) {

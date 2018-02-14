@@ -187,6 +187,7 @@ public class Map {
 		}
 		return false;
 	}
+	
 	public void build_city(Vector2i pos) {
 		for (Vector2i ap : available_city_places) {
 			if (ap.equals(pos)) {
@@ -195,6 +196,18 @@ public class Map {
 			}
 		}
 	}
+	
+	public boolean is_street_place_available(Vector2i position) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public void build_street(Vector2i position) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 
 	public Field[][] getFields() {
 		return fields;
@@ -280,4 +293,8 @@ public class Map {
 	public static Vector2i position_to_city_index(Vector2f position) {
 		return Map.position_to_index(new Vector2f(position.x, position.y + Map.field_size / 2.f));
 	}
+
+	
+
+	
 }

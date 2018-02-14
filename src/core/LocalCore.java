@@ -2,6 +2,7 @@ package core;
 
 import core.Map.GeneratorType;
 import data.Field;
+import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 
@@ -51,18 +52,19 @@ public class LocalCore extends Core {
 			System.out.println(id + "is not allowed to Dice");
 		}
 		//distributing resources
-		//TODO differ between city and Villages
 		for(Player p : player) {
-			List<Building> villages = p.buildings;
-			List<Field> allSorroundingFields = new ArrayList<Field>();
+			List<Building> villages = p.buildings;		
 			for(Building building : villages) {
-				allSorroundingFields.addAll(map.get_surrounding_fields_objects(building));
-			}
-			for(Field field : allSorroundingFields) {
-				if(field.number == (byte) diceResult) {
-					p.add_resource(field.resource, 1);
+				List<Field> sorroundingFields = new ArrayList<Field>();
+				sorroundingFields.addAll(map.get_surrounding_fields_objects(building));
+				for(Field field : sorroundingFields) {
+					if(field.number == (byte) diceResult) {
+						int addCount = building.get_type() == Building.Type.VILLAGE ? 1 : 2;
+						p.add_resource(field.resource, addCount);
+					}
 				}
 			}
+			
 		}
 		for(UI ui : uis) {
 			ui.update_player_data(player.get(ui.getID()));
@@ -116,6 +118,7 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
+		buildRequest(0, Building.Type.VILLAGE, new Vector2i(1,3));
 	}
 
 	@Override
@@ -136,27 +139,58 @@ public class LocalCore extends Core {
 
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector2i position) {
-		if (buildType == Building.Type.VILLAGE) {
-			if (map.is_city_place_available(position)) {
-				map.build_city(position);
-
-				// TODO check resources 
-				// TODO publish new buildings to other users
+		//TODO Check if city is too close to other city
+		if(id == current_player) {
+			java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
+			//Resources: 0-ORE, 1-WOOL, 2-Clay, 3-Wood, 4-grain, 5-ocean
+			java.util.Map<Resource, Integer> resources = player.get(id).resources;
+			if (buildType == Building.Type.VILLAGE) {
+				//Village: 1-Wood, 1-Clay, 1-grain, 1-wool 
+				if (map.is_city_place_available(position)) {
+					if(resources.get(Resource.WOOD) >=1 && resources.get(Resource.CLAY) >=1 && resources.get(Resource.GRAIN) >=1 && resources.get(Resource.WOOL) >=1) {
+						map.build_city(position);
+						player.get(id).buildings.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
+						new_buildings.put(id, player.get(id).buildings);
+						player.get(id).take_resource(Resource.WOOD, 1);
+						player.get(id).take_resource(Resource.CLAY, 1);
+						player.get(id).take_resource(Resource.GRAIN, 1);
+						player.get(id).take_resource(Resource.WOOL, 1);
+					}
+				}
+			}else if(buildType == Building.Type.CITY) {
+				//City: 3-Ore,  2-grain
+				if (map.is_city_place_available(position)) {
+					if(resources.get(Resource.ORE) >=3 && resources.get(Resource.GRAIN) >=2) {
+						map.build_city(position);
+						player.get(id).buildings.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
+						new_buildings.put(id, player.get(id).buildings);
+						player.get(id).take_resource(Resource.ORE, 3);
+						player.get(id).take_resource(Resource.GRAIN, 2);
+					}
+				}
+			}else if(buildType == Building.Type.STREET) {
+				//Street: 1-Wood, 1-Clay
+				//TODO implement street methods in Map 
+				//FIXME buildRequest is only for vector2i => change to vector3i or make new method for Street
+				if(map.is_street_place_available(position)) {
+					if(resources.get(Resource.WOOD) >=1 && resources.get(Resource.CLAY) >=1) {
+						map.build_street(position);
+						player.get(id).buildings.add(new Building(Building.Type.STREET, new Vector3i(position.x, position.y, 0)));
+						new_buildings.put(id, player.get(id).buildings);
+						player.get(id).take_resource(Resource.WOOD, 1);
+						player.get(id).take_resource(Resource.CLAY, 1);
+					}
+				}
 			}
+			for(GameLogic logic : logics) {
+				logic.update_buildings(new_buildings);
+			}
+			uis.get(id).update_player_data(player.get(id));
 		}
-
-		/*
-			Is wanted place free
-				No buildings on this place
-				No buildings too close
-			Has player enough resources
-			Has player enough buildings (when limited)
-		=> build()
-		*/
 	}
 
 	//TODO Just my thoughts about possible methods maybe rename or remove
-
+	//TODO Either delete this methods or transfer code from build_request()
 	public void build() {
 		/*
 		Add building to position
