@@ -56,7 +56,7 @@ public class LocalUI extends UI{
 	private List<String> guests = new ArrayList<String>();
 
 	//widgets Just widgets which may be changed
-	private Button btnFinishedTurn;
+	private Button btnFinishedMove;
 	private Label lblDiceResult;
 	private Label lblWoodCards;
 	private Label lblWoolCards;
@@ -235,17 +235,18 @@ public class LocalUI extends UI{
 		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
 		widgets.add(lblWoolCards);
 		Widget.set_default_outline_color(Color.TRANSPARENT);
-		//dice
-		btnFinishedTurn = new Button(Language.FINISHED_TURN.get_text(),
-				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
-		btnFinishedTurn.set_click_callback(new Runnable() {
+
+		// finished move button
+		btnFinishedMove = new Button(Language.FINISHED_MOVE.get_text(),
+				new FloatRect(window_size.x - 155, window_size.y - 130, 150, 70));
+		btnFinishedMove.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
 				core.nextTurn(id);
 			}
 		});
 		//btnDice.set_enabled(false);
-		widgets.add(btnFinishedTurn);
+		widgets.add(btnFinishedMove);
 
 		//build menu
 		pos_count = 0;
