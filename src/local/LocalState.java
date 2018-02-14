@@ -1,5 +1,6 @@
 package local;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ public class LocalState {
 	}
 
 	GameMode mode;
+	
+	List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
 
 	Map<Resource, List<Vector2f>> field_resources = new HashMap<>();// maps resource fields to their positions on the board
 	Map<Byte, List<Vector2f>> field_numbers = new HashMap<>();// maps field numbers to their positions on the board

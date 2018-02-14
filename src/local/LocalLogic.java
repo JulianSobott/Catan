@@ -103,12 +103,12 @@ public class LocalLogic {
 					target.draw(text);
 				}
 			}
+			CircleShape shape = new CircleShape(10, 5);
+			shape.setOrigin(10, 10);
 			for (java.util.Map.Entry<Integer, java.util.Map<Building.Type, List<Vector2f>>> ub : state.buildings
 					.entrySet()) {
+				shape.setFillColor(state.player_data.get(ub.getKey()).getColor());
 				for (java.util.Map.Entry<Building.Type, List<Vector2f>> b : ub.getValue().entrySet()) {
-					CircleShape shape = new CircleShape(10, 5);
-					shape.setOrigin(10, 10);
-					// TODO set color
 
 					for (Vector2f pos : b.getValue()) {
 						shape.setPosition(pos);

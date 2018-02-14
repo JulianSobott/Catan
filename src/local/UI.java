@@ -60,7 +60,6 @@ public class UI {
 	private Label lblClayCards;
 	private Label lblOreCards;
 
-	private List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
 	private String tf_value_ip = "192.168.2.103";
 	private String tf_value_name = "Julian";
 	private String tf_value_seed = "";
@@ -249,9 +248,10 @@ public class UI {
 		widgets.add(btnBuildStreet);
 
 		// score board
-		for (int i = 0; i < player_data.size(); i++) {
-			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
+		for (int i = 0; i < state.player_data.size(); i++) {
+			Label lblPlayerScore = new Label(state.player_data.get(i).getName() + ": " + state.player_data.get(i).getScore(),
 					new FloatRect(window_size.x - 250, 50 * i, 250, 50));
+			lblPlayerScore.set_fill_color(state.player_data.get(i).getColor());
 			widgets.add(lblPlayerScore);
 		}
 	}
@@ -305,8 +305,9 @@ public class UI {
 		lbl.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f,
 				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 1));
 		widgets.add(lbl);
-		
-		Label lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(), new FloatRect(window_size.x/2, window_size.y - 200, 100, 50));
+
+		Label lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(),
+				new FloatRect(window_size.x / 2, window_size.y - 200, 100, 50));
 		lblConnecting.set_visible(false);
 		widgets.add(lblConnecting);
 		Button btn = new Button(Language.JOIN.get_text(), new FloatRect(0, 0, mm_tf_width, mm_tf_height));
@@ -426,9 +427,11 @@ public class UI {
 				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
+				Color user_color = new Color((int) (Math.random() * 255.), (int) (Math.random() * 255.),
+						(int) (Math.random() * 255.));// TODO implement color picker
 
 				((LocalDataServer) data_connection)
-						.message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
+						.message_to_core(new Packet(Command.NAME, new Packet.Name(user_name, user_color)));
 				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
 				((LocalDataServer) data_connection).init_game();
 			}
@@ -512,7 +515,7 @@ public class UI {
 	}
 
 	public void init_scoreboard(List<LocalPlayer> player) {
-		player_data = player;
+		state.player_data = player;
 		rebuild_gui();
 	}
 
@@ -533,7 +536,7 @@ public class UI {
 				player.get_resources(Resource.CLAY) + " " + Language.OF.get_text() + " " + Language.CLAY.get_text());
 		lblClayCards.set_text(
 				player.get_resources(Resource.ORE) + " " + Language.OF.get_text() + " " + Language.ORE.get_text());
-				
+
 	}
 
 }

@@ -5,16 +5,21 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.jsfml.graphics.Color;
+
 import data.Resource;
 
 public class Player implements Serializable {
 	private String name;
 	private int score = 0;
+	private Color color;
 	Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	List<Building> buildings = new LinkedList<Building>();
 
-	Player(String name) {
+	Player(String name, Color color) {
 		this.name = name;
+		this.color = color;
 		for (Resource r : Resource.values()) {
 			resources.put(r, 0);
 		}
@@ -34,6 +39,10 @@ public class Player implements Serializable {
 
 	public int getScore() {
 		return this.score;
+	}
+
+	public Color getColor() {
+		return color;
 	}
 
 	public int get_resources(Resource r) {

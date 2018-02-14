@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
 import core.Building;
 import core.Player;
@@ -67,13 +68,19 @@ public class Packet implements Serializable {
 
 	public static class Name implements Serializable {
 		private String name;
+		private Color color;
 
-		public Name(String name) {
+		public Name(String name,Color color) {
 			this.name = name;
+			this.color = color;
 		}
 
 		public String getName() {
 			return this.name;
+		}
+
+		public Color getColor() {
+			return this.color;
 		}
 	}
 

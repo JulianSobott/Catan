@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import core.Core;
 import local.LocalLogic;
 import local.UI;
+import org.jsfml.graphics.Color;
 
 public class LocalDataServer extends DataIfc {
 
@@ -98,8 +99,9 @@ public class LocalDataServer extends DataIfc {
 			break;
 		case NAME:
 			String name = ((Packet.Name) packet.data).getName();
+			Color color = ((Packet.Name) packet.data).getColor();
 			ui.show_guest_at_lobby(name);
-			core.register_new_user(name);
+			core.register_new_user(name, color);
 			break;
 		default:
 			System.err.println("Unknown Command reached Server");
@@ -130,8 +132,9 @@ public class LocalDataServer extends DataIfc {
 			break;
 		case NAME:
 			String name = ((Packet.Name) packet.data).getName();
+			Color color = ((Packet.Name) packet.data).getColor();
 			ui.show_guest_at_lobby(name);
-			core.register_new_user(name);
+			core.register_new_user(name, color);
 			break;
 		default:
 			System.err.println("Unknown Command reached Server");

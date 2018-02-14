@@ -3,6 +3,7 @@ package core;
 import core.Map.GeneratorType;
 import local.LocalPlayer;
 
+import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
 import java.util.ArrayList;
@@ -68,12 +69,12 @@ public class Core {
 		// translate into a more silent data structure
 		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
 		for (Player p : player)
-			scoreboard_data.add(new LocalPlayer(p.getName(), p.getScore()));
+			scoreboard_data.add(new LocalPlayer(p.getName(), p.getScore(), p.getColor()));
 		data_server.messageToAll(new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(scoreboard_data)));
 	}
 
-	public void register_new_user(String name) {
-		player.add(new Player(name));
+	public void register_new_user(String name, Color color) {
+		player.add(new Player(name, color));
 	}
 
 	// USER ACTIONS
