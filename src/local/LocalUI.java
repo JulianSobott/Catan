@@ -15,6 +15,7 @@ import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import core.Player;
+import core.LocalCore;
 import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
@@ -23,21 +24,24 @@ import local.gui.Label;
 import local.gui.TextField;
 import local.gui.Widget;
 import network.Command;
-import network.DataIfc;
-import network.LocalDataServer;
+import network.Networkmanager;
+import network.Server;
 import network.Packet;
+import superClasses.Core;
+import superClasses.UI;
 
-public class UI {
+public class LocalUI extends UI{
 	enum GUIMode {
 		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
 	}
 
 	private GUIMode mode;
-
+	
+	private Core core;
 	// local state
 	private LocalState state;
-	private DataIfc data_connection;
-	private Game game;
+	private Networkmanager data_connection;
+	private Framework framework;
 	private Vector2f window_size;
 	private View view;
 
@@ -52,7 +56,7 @@ public class UI {
 	private List<String> guests = new ArrayList<String>();
 
 	//widgets Just widgets which may be changed
-	private Button btnDice;
+	private Button btnFinishedTurn;
 	private Label lblDiceResult;
 	private Label lblWoodCards;
 	private Label lblWoolCards;
@@ -66,9 +70,9 @@ public class UI {
 	private String tf_value_seed = "";
 	private String tf_value_size = "";
 
-	UI(LocalLogic logic, Game game) {
+	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
-		this.game = game;
+		this.framework = framework;
 
 		state.mode = GameMode.main_menu;
 	}
@@ -85,7 +89,7 @@ public class UI {
 		build_lobby();
 	}
 
-	void set_data_interface(DataIfc data_connection) {
+	void set_data_interface(Networkmanager data_connection) {
 		this.data_connection = data_connection;
 	}
 
@@ -124,7 +128,7 @@ public class UI {
 			@Override
 			public void run() {
 				System.out.println("Start new game");
-				game.init_host_game();
+				framework.init_host_game();
 				build_host_lobby_window();
 			}
 		});
@@ -165,7 +169,7 @@ public class UI {
 			@Override
 			public void run() {
 				System.out.println("Exit game");
-				game.running = false;
+				framework.running = false;
 			}
 		});
 		widgets.add(btn);
@@ -185,8 +189,13 @@ public class UI {
 		mode = GUIMode.GAME;
 
 		//Score board
-		Label lblScoreBoard = new Label("Score Board (implement)", new FloatRect(window_size.x - 250, 0, 250, 300)); //TODO add all players at init
+		Label lblScoreBoard = new Label("", new FloatRect(window_size.x - 250, 0, 250, 300));
 		widgets.add(lblScoreBoard);
+		for (int i = 0; i < player_data.size(); i++) {
+			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
+					new FloatRect(window_size.x - 250, 50 * i, 250, 50));
+			widgets.add(lblPlayerScore);
+		}
 		//player resources
 		lblClayCards = new Label("Clay", new FloatRect((window_size.x / 5) * 3 - 70, window_size.y - 95, 70, 90));
 		lblClayCards.set_fill_color(Resource.CLAY.get_color());
@@ -204,16 +213,16 @@ public class UI {
 		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
 		widgets.add(lblWoolCards);
 		//dice
-		btnDice = new Button(Language.DICE.get_text(),
+		btnFinishedTurn = new Button(Language.FINISHED_TURN.get_text(),
 				new FloatRect(window_size.x - 100, window_size.y - 130, 100, 70));
-		btnDice.set_click_callback(new Runnable() {
+		btnFinishedTurn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				data_connection.message_to_core(new Packet(Command.DICE));
+				core.nextTurn(id);
 			}
 		});
-		btnDice.set_enabled(false);
-		widgets.add(btnDice);
+		//btnDice.set_enabled(false);
+		widgets.add(btnFinishedTurn);
 		//dice result
 		lblDiceResult = new Label("-1", new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
@@ -247,13 +256,6 @@ public class UI {
 			}
 		});
 		widgets.add(btnBuildStreet);
-
-		// score board
-		for (int i = 0; i < player_data.size(); i++) {
-			Label lblPlayerScore = new Label(player_data.get(i).getName() + ": " + player_data.get(i).getScore(),
-					new FloatRect(window_size.x - 250, 50 * i, 250, 50));
-			widgets.add(lblPlayerScore);
-		}
 	}
 
 	public void build_join_menu() {
@@ -321,7 +323,7 @@ public class UI {
 					//Entered wrong Ip or server is not online
 					new Thread(new Runnable() {
 						public void run() {
-							if (!game.init_guest_game(tf_value_ip.trim(), tf_value_name.trim())) {
+							if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim())) {
 								System.out.println("Not accepted");
 								tfIp.set_outline_color(Color.RED);
 								lblConnecting.set_text("Entered wrong IP or the server is not online");
@@ -426,11 +428,9 @@ public class UI {
 				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
-
-				((LocalDataServer) data_connection).create_new_map(map_size, seed); //TODO add settings from lobby
-				((LocalDataServer) data_connection)
-						.message_to_core(new Packet(Command.NAME, new Packet.Name(user_name)));
-				((LocalDataServer) data_connection).init_game();
+				((LocalCore)core).changePlayerName(0, user_name);
+				((LocalCore)core).create_new_map(map_size, seed);
+				((LocalCore)core).init_game();
 			}
 		});
 		widgets.add(btnStart);
@@ -440,7 +440,7 @@ public class UI {
 	boolean handle_event(Event evt) {
 		if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
 			if (evt.asMouseButtonEvent().button == Mouse.Button.LEFT) { // reset mouse position
-				return check_on_click_widgets(game.reverse_transform_position(evt.asMouseButtonEvent().position.x,
+				return check_on_click_widgets(framework.reverse_transform_position(evt.asMouseButtonEvent().position.x,
 						evt.asMouseButtonEvent().position.y, view));
 			} else
 				return false;
@@ -516,10 +516,12 @@ public class UI {
 		rebuild_gui();
 	}
 
-	//Access to the widgets
-
-	public void show_dice_result(byte result) {
-		lblDiceResult.set_text(Integer.toString((int) result));
+	@Override
+	public void show_dice_result(int diceResult) {
+		lblDiceResult.set_text(Integer.toString(diceResult));
 	}
-
+	
+	public void setCore(Core core) {
+		this.core = core;
+	}
 }

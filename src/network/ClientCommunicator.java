@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class ClientCommunicator extends Thread{
 	
-	private LocalDataServer localDataServer;
+	private Server localDataServer;
 	private Socket client;
 	private int id; 
 	private ObjectOutputStream output;
@@ -16,7 +16,7 @@ public class ClientCommunicator extends Thread{
 	
 	private boolean running = true;
 	
-	public ClientCommunicator(LocalDataServer localDataServer, Socket client) {
+	public ClientCommunicator(Server localDataServer, Socket client) {
 		this.localDataServer = localDataServer;
 		this.client = client;
 		this.id = this.localDataServer.getNumClients();

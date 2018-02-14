@@ -4,13 +4,13 @@ import java.io.ObjectInputStream;
 
 public class ClientInputListener extends Thread{
 	
-	private RemoteDataClient remoteDataClient;
+	private Client client;
 	private ObjectInputStream input;
 	
 	private boolean connectionToServer = true;
 	
-	public ClientInputListener(RemoteDataClient remoteDataClient, ObjectInputStream input) {
-		this.remoteDataClient = remoteDataClient;
+	public ClientInputListener(Client client, ObjectInputStream input) {
+		this.client = client;
 		this.input = input;
 	}
 	
@@ -20,7 +20,7 @@ public class ClientInputListener extends Thread{
 			if(input != null) {
 				try {
 					packet = (Packet) input.readObject();
-					this.remoteDataClient.message_from_core(packet);
+					this.client.message_from_core(packet);
 				}catch(IOException e) {
 					System.err.println("Connection to Server closed (ClientInputListener Line 26)");
 					this.connectionToServer = false;

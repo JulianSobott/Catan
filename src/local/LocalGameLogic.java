@@ -17,35 +17,35 @@ import data.Field;
 import data.Resource;
 import local.LocalState.GameMode;
 import network.Command;
-import network.DataIfc;
+import network.Networkmanager;
+import superClasses.GameLogic;
 
 // TODO name?
-public class LocalLogic {
+public class LocalGameLogic extends GameLogic{
 	// state, ui & connection
 	LocalState state;
-	DataIfc data_connection; 
+	Networkmanager data_connection; 
 
 	// fonts
 	Font std_font;
 
-	public LocalLogic() {
+	public LocalGameLogic() {
 		state = new LocalState();
-
 	}
 	
-	public void set_data_interface(DataIfc data_connection) {
+	public void set_data_interface(Networkmanager data_connection) {
 		this.data_connection = data_connection;
 	}
 	
 	void init(Font std_font) {
 		this.std_font = std_font;
-
 	}
 
 	public void set_mode(GameMode new_mode) {
 		state.mode  = new_mode;
 	}
-
+	
+	@Override
 	public void update_new_map(Field[][] fields) {
 		state.field_resources = new HashMap<>();
 		for (Resource res : Resource.values())
@@ -105,4 +105,6 @@ public class LocalLogic {
 	public void build(int idPlayer, Command buildType, Vector2i position) {
 		// TODO Auto-generated method stub
 	}
+
+
 }

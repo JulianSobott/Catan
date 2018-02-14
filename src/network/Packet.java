@@ -9,6 +9,7 @@ import org.jsfml.system.Vector2i;
 import data.Field;
 
 import local.LocalPlayer;
+import local.LocalState.GameMode;
 
 public class Packet implements Serializable {
 
@@ -23,15 +24,30 @@ public class Packet implements Serializable {
 			return this.player;
 		}
 	}
-
+	
+	public static class CreateNewMap implements Serializable{
+		private int mapSize;
+		private int seed;
+		
+		public CreateNewMap(int mapSize, int seed) {
+			this.mapSize = mapSize;
+			this.seed = seed;
+		}
+		public int getMapSize() {
+			return this.mapSize;
+		}
+		public int getSeed() {
+			return this.seed;
+		}
+	}
 	public static class DiceResult implements Serializable {
-		private byte result;
+		private int result;
 
-		public DiceResult(byte result) {
-			this.result = result;
+		public DiceResult(int diceResult) {
+			this.result = diceResult;
 		}
 
-		public byte getDiceResult() {
+		public int getDiceResult() {
 			return this.result;
 		}
 	}
@@ -87,7 +103,18 @@ public class Packet implements Serializable {
 			return this.fields;
 		}
 	}
+	
+	public static class NEW_MODE implements Serializable {
+		private GameMode mode;
 
+		public NEW_MODE(GameMode mode) {
+			this.mode = mode;
+		}
+
+		public GameMode getgameMode() {
+			return this.mode;
+		}
+	}
 	private Command cmd;
 	Serializable data;
 
@@ -102,6 +129,7 @@ public class Packet implements Serializable {
 		this.cmd = cmd;
 		this.data = data;
 	}
+	
 
 	public Command getCommand() {
 		return this.cmd;
