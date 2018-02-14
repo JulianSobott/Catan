@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.jsfml.graphics.Color;
+import core.Building;
 import core.LocalCore;
 import local.LocalGameLogic;
 import local.LocalUI;
@@ -87,13 +88,13 @@ public class Server extends Networkmanager{
 			core.dice(id);
 			break;
 		case BUILD_VILLAGE:
-			core.buildRequest(id, Command.BUILD_VILLAGE, ((Packet.Build) packet.data).getPosition());
+			core.buildRequest(id, Building.Type.VILLAGE, ((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_CITY:
-			core.buildRequest(id, Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
+			core.buildRequest(id, Building.Type.CITY, ((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_STREET:
-			core.buildRequest(id, Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
+			core.buildRequest(id, Building.Type.STREET, ((Packet.Build) packet.data).getPosition());
 			break;
 		case STRING:
 			System.out.println("Server reached Message: " + packet.getDebugString());

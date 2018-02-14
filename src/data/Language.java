@@ -24,7 +24,7 @@ public enum Language {
 	BUILD_CITY("City", "Stadt"),
 	BUILD_STREET("Street", "Straße"),
 	SELECT_BUILD_PLACE("Select a building site", "Wähle den Bauplatz aus"),
-	FINISHED_TURN("Finish move", "Zug beenden"),
+	FINISHED_MOVE("Finish move", "Zug beenden"),
 	OF("of", "von"),
 	WOOD("Wood", "Holz"),
 	WOOL("Wool", "Wolle"),

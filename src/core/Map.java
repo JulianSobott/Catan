@@ -179,6 +179,23 @@ public class Map {
 		return new_cities;
 	}
 
+	public boolean is_city_place_available(Vector2i pos){
+		for( Vector2i ap: available_city_places) {
+			if( ap.x == pos.x && ap.y == pos.y){
+				return true;
+			}
+		}
+		return false;
+	}
+	public void build_city(Vector2i pos) {
+		for (Vector2i ap : available_city_places) {
+			if (ap.equals(pos)) {
+				available_city_places.remove(ap);
+				return;
+			}
+		}
+	}
+
 	public Field[][] getFields() {
 		return fields;
 	}
