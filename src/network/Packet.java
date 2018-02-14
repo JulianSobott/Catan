@@ -70,7 +70,7 @@ public class Packet implements Serializable {
 		private String name;
 		private Color color;
 
-		public Name(String name,Color color) {
+		public Name(String name, Color color) {
 			this.name = name;
 			this.color = color;
 		}

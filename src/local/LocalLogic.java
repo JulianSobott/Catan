@@ -95,8 +95,9 @@ public class LocalLogic {
 			}
 			for (java.util.Map.Entry<Byte, List<Vector2f>> number : state.field_numbers.entrySet()) {
 				Text text = new Text("" + number.getKey(), std_font);
-				text.setCharacterSize(40 - Math.abs(number.getKey() - (Map.NUMBER_COUNT + 4) / 2) * 4);
+				text.setCharacterSize((40 - Math.abs(number.getKey() - (Map.NUMBER_COUNT + 4) / 2) * 4) * 4);
 				text.setOrigin(text.getGlobalBounds().width * 0.5f, text.getGlobalBounds().height * 0.5f);
+				text.setScale(0.25f, 0.25f);
 
 				for (Vector2f pos : number.getValue()) {
 					text.setPosition(pos);

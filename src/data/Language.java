@@ -14,21 +14,21 @@ public enum Language {
 	JOIN("Join game", "Spiel beitreten"),
 	//Lobby Window
 	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
-	MEMBERS("MEMBERS", "Mitspieler"), 
+	MEMBERS("Members", "Mitspieler"), 
 	MAP_SIZE("Map size", "Karten Größe"), 
 	SEED("Seed", "Seed"),
 	YOUR_NAME("Your name", "Dein Name"),
 	//In game
 	DICE("Dice", "Würfeln"),
-	BUILD_VILLAGE("Build village", "Siedlung bauen"),
-	BUILD_CITY("Build city", "Stadt bauen"),
-	BUILD_STREET("Build street", "Straße bauen"),
+	BUILD_VILLAGE("Village", "Siedlung"),
+	BUILD_CITY("City", "Stadt"),
+	BUILD_STREET("Street", "Straße"),
 	OF("of", "von"),
-	WOOD("of", "von"),
-	WOOL("of", "von"),
-	GRAIN("of", "von"),
-	CLAY("of", "von"),
-	ORE("of", "von");
+	WOOD("Wood", "Holz"),
+	WOOL("Wool", "Wolle"),
+	GRAIN("Grain", "Getreide"),
+	CLAY("Clay", "Ton"),
+	ORE("Ore", "Erz");
 
 
 	

@@ -57,7 +57,7 @@ public class Game {
 	public Game() {
 		std_font = new Font();
 		try {
-			std_font.loadFromFile(Paths.get("res/Ancient Modern Tales.otf"));
+			std_font.loadFromFile(Paths.get("res/Canterbury.ttf"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -183,8 +183,8 @@ public class Game {
 
 		local_logic.set_data_interface(data_connection);
 		ui.set_data_interface(data_connection);
-		Color user_color = new Color((int) (Math.random() * 255.), (int) (Math.random() * 255.),
-				(int) (Math.random() * 255.));// TODO implement color picker
+		Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
+				(int) (Math.random() * 170.+50));// TODO implement color picker
 		((RemoteDataClient) data_connection).message_to_core(new Packet(Command.NAME, new Packet.Name(name, user_color)));
 		return true;
 	}
