@@ -65,6 +65,7 @@ public class LocalGameLogic extends GameLogic{
 		}
 	}
 
+	@Override
 	public void set_mode(GameMode new_mode) {
 		state.mode = new_mode;
 	}
@@ -90,6 +91,7 @@ public class LocalGameLogic extends GameLogic{
 		}
 	}
 
+	@Override
 	public void update_buildings(java.util.Map<Integer, List<Building>> buildings) {
 		for (java.util.Map.Entry<Integer, List<Building>> ub : buildings.entrySet()) {
 			//java.util.Map<Building.Type, List<Vector2f>> users_buildings = new HashMap<>();
@@ -186,11 +188,6 @@ public class LocalGameLogic extends GameLogic{
 			state.curr_action = Action.idle;
 			// TODO call core
 		}
-	}
-
-	public void diceResult(byte dice_result) {
-		// TODO Auto-generated method stub
-		System.out.println("Dice result at Client: " + dice_result);
 	}
 
 	public void build(int idPlayer, Command buildType, Vector2i position) {

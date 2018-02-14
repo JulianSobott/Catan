@@ -1,6 +1,9 @@
 package network;
 
+import core.Building;
 import data.Field;
+import java.util.List;
+import java.util.Map;
 import local.LocalState.GameMode;
 import superClasses.GameLogic;
 
@@ -19,6 +22,11 @@ public class RemoteGameLogic extends GameLogic {
 	@Override
 	public void set_mode(GameMode mode) {
 		server.messageToAll(new Packet(Command.SET_MODE, new Packet.NEW_MODE(mode)));
+	}
+
+	@Override
+	public void update_buildings(Map<Integer, List<Building>> buildings) {
+		//TODO
 	}
 
 }

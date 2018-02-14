@@ -54,7 +54,6 @@ public class LocalCore extends Core {
 		map.create_map(map_size + 2, seed, map_size, new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
 				GeneratorType.HEXAGON);
 		map.calculate_available_places();
-		data_server.messageToAll(new Packet(Command.NEW_MAP, new Packet.New_Map(map.getFields())));
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
 			create_initial_resources(player.get(i), map.add_random_cities(seed, 2));
@@ -63,12 +62,13 @@ public class LocalCore extends Core {
 			}
 			// TODO send message to client
 			//data_server.message_to_client(i, new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player.get(i))));
-			//ui.update_player_data(player.get(i));
+			uis.get(i).update_player_data(player.get(i));
 		}
-		data_server.messageToAll(new Packet(Command.UPDATE_BUILDINGS, new Packet.UpdateBuildings(new_buildings)));
+		//data_server.messageToAll(new Packet(Command.UPDATE_BUILDINGS, new Packet.UpdateBuildings(new_buildings)));
 		//data_server.update_new_map(map.getFields());
 		for (GameLogic logic : logics) {
 			logic.update_new_map(map.getFields());
+			logic.update_buildings(new_buildings);
 		}
 	}
 
