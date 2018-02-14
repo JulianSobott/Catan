@@ -115,7 +115,17 @@ public class LocalCore extends Core {
 
 	// USER ACTIONS
 
-	public void buildRequest(int id, Command buildType, Vector2i position) {
+	@Override
+	public void buildRequest(int id, Building.Type buildType, Vector2i position) {
+		if (buildType == Building.Type.VILLAGE) {
+			if (map.is_city_place_available(position)) {
+				map.build_city(position);
+
+				// TODO check resources 
+				// TODO publish new buildings to other users
+			}
+		}
+
 		/*
 			Is wanted place free
 				No buildings on this place

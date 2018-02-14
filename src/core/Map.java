@@ -164,7 +164,7 @@ public class Map {
 
 	public boolean is_city_place_available(Vector2i pos){
 		for( Vector2i ap: available_city_places) {
-			if( ap.equals(pos)){
+			if( ap.x == pos.x && ap.y == pos.y){
 				return true;
 			}
 		}

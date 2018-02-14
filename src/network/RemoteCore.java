@@ -1,7 +1,9 @@
 package network;
 
 import org.jsfml.graphics.Color;
+import org.jsfml.system.Vector2i;
 
+import core.Building;
 import superClasses.Core;
 import superClasses.GameLogic;
 import superClasses.UI;
@@ -50,6 +52,11 @@ public class RemoteCore extends Core {
 	@Override
 	public void nextTurn(int id) {
 		this.client.sendMessage(new Packet(Command.NEXT_TURN));
+	}
+
+	@Override
+	public void buildRequest(int id, Building.Type buildType, Vector2i position) {
+		//TODO
 	}
 
 }

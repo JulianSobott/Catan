@@ -40,7 +40,6 @@ public class LocalUI extends UI{
 	private Core core;
 	// local state
 	private LocalState state;
-	private Networkmanager data_connection;
 	private Framework framework;
 	private Vector2f window_size;
 	private View view;
@@ -88,10 +87,6 @@ public class LocalUI extends UI{
 		Widget.set_default_outline_highlight_color(new Color(200, 140, 200));
 		Widget.set_default_fill_color(new Color(0, 0, 0, 0));
 		build_lobby();
-	}
-
-	void set_data_interface(Networkmanager data_connection) {
-		this.data_connection = data_connection;
 	}
 
 	public void setCore(Core core) {

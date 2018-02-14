@@ -21,19 +21,21 @@ import org.jsfml.system.Vector3i;
 import core.Building;
 import core.Map;
 import core.Player;
+import core.Building.Type;
 import data.Field;
 import data.Resource;
 import local.LocalState.Action;
 import local.LocalState.GameMode;
 import network.Command;
 import network.Networkmanager;
+import superClasses.Core;
 import superClasses.GameLogic;
 
 // TODO name?
 public class LocalGameLogic extends GameLogic{
 	// state, ui & connection
 	LocalState state;
-	Networkmanager data_connection; 
+	private Core core;
 
 	// fonts
 	Font std_font;
@@ -47,8 +49,8 @@ public class LocalGameLogic extends GameLogic{
 		state = new LocalState();
 	}
 	
-	public void set_data_interface(Networkmanager data_connection) {
-		this.data_connection = data_connection;
+	public void setCore(Core core) {
+		this.core = core;
 	}
 
 	void init(Font std_font) {
@@ -183,10 +185,9 @@ public class LocalGameLogic extends GameLogic{
 	void mouse_click_input(Vector2f position) {
 		if (state.curr_action == Action.build_village) {
 			Vector2i pos = Map.position_to_city_index(position);
-			state.villages.get(state.my_player_data.getId())
-					.add(Map.index_to_building_position(new Vector3i(pos.x, pos.y, 0)));
+			//state.villages.get(id).add(Map.index_to_building_position(new Vector3i(pos.x, pos.y, 0)));
+			core.buildRequest(id, Type.VILLAGE, pos);
 			state.curr_action = Action.idle;
-			// TODO call core
 		}
 	}
 

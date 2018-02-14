@@ -172,6 +172,7 @@ public class Framework {
 		((LocalCore)core).addLogic(local_logic);
 		data_connection = new Server((LocalCore) core);
 		((LocalCore)core).setServer((Server) data_connection);
+		local_logic.setCore(core);
 	}
 
 	// creates a new game with this machine as client
@@ -186,8 +187,7 @@ public class Framework {
 		core = new RemoteCore();
 		ui.setCore(core);
 		((RemoteCore)core).setClientConnection((Client) data_connection);
-		local_logic.set_data_interface(data_connection);
-		ui.set_data_interface(data_connection);
+		local_logic.setCore(core);
 		
 		Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
 				(int) (Math.random() * 170.+50));// TODO implement color picker
