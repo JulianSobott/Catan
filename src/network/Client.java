@@ -62,7 +62,7 @@ public class Client extends Networkmanager{
 		case DICE_RESULT:
 			ui.show_dice_result(((Packet.DiceResult) packet.data).getDiceResult());
 			break;
-		case BUILD_VILLAGE:
+		/*case BUILD_VILLAGE: TODO delete
 			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
 			break;
 		case BUILD_CITY:
@@ -70,7 +70,7 @@ public class Client extends Networkmanager{
 			break;
 		case BUILD_STREET:
 			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
-			break;
+			break;*/
 		case STRING:
 			System.out.println("Client reached Message: " + packet.getDebugString());
 			break;

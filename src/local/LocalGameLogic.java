@@ -218,8 +218,8 @@ public class LocalGameLogic extends GameLogic {
 		}
 	}
 
-	public void build(int idPlayer, Command buildType, Vector2i position) {
+	/*public void build(int idPlayer, Command buildType, Vector2i position) {
 		// TODO Auto-generated method stub
-	}
+	}*/
 
 }

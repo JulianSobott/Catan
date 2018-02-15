@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
+import org.jsfml.system.Vector3i;
 import core.Building;
 import core.Player;
 import data.Field;
@@ -55,19 +56,19 @@ public class Packet implements Serializable {
 	}
 
 	public static class Build implements Serializable {
-		private Vector2i position;
+		private Vector3i position;
 		private int idPlayer = 0;
 
-		public Build(Vector2i position) {
+		public Build(Vector3i position) {
 			this.position = position;
 		}
 
-		public Build(int idPlayer, Vector2i position) {
+		public Build(int idPlayer, Vector3i position) {
 			this.position = position;
 			this.idPlayer = idPlayer;
 		}
 
-		public Vector2i getPosition() {
+		public Vector3i getPosition() {
 			return this.position;
 		}
 
@@ -154,7 +155,7 @@ public class Packet implements Serializable {
 
 	public Packet(Command cmd) {
 		this.cmd = cmd;
-		this.data = new Build(new Vector2i(1, 1));
+		//this.data = new Build(new Vector2i(1, 1)); TODO delet?
 	}
 
 	public Packet(Command cmd, Serializable data) {
