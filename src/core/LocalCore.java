@@ -58,7 +58,7 @@ public class LocalCore extends Core {
 				List<Field> surroundingFields = map.get_surrounding_fields_objects(building);
 				for (Field field : surroundingFields) {
 					if (field.number == (byte) diceResult) {
-						int addCount = building.get_type() == Building.Type.VILLAGE ? 1 : 2;
+						int addCount = building.get_type() == Building.Type.VILLAGE ? 1 : building.get_type() == Building.Type.CITY ? 2 : 0;
 						p.add_resource(field.resource, addCount);
 					}
 				}
