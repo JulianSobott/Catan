@@ -51,8 +51,8 @@ public class Framework {
 
 	// local
 	Networkmanager data_connection;
-	LocalGameLogic local_logic = new LocalGameLogic();
-	LocalUI ui = new LocalUI((LocalGameLogic) local_logic, this);
+	LocalGameLogic gameLogic = new LocalGameLogic();
+	LocalUI ui = new LocalUI((LocalGameLogic) gameLogic, this);
 
 	// server
 	Core core;
@@ -73,7 +73,7 @@ public class Framework {
 		game_view.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
 		update_view();
 
-		local_logic.init(std_font);
+		gameLogic.init(std_font);
 		ui.init(std_font);
 
 		std_timer.restart();
@@ -98,7 +98,7 @@ public class Framework {
 						update_view();
 					} else if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {
 						if (evt.asMouseButtonEvent().button == Mouse.Button.LEFT) {
-							local_logic
+							gameLogic
 									.mouse_click_input(reverse_transform_position(evt.asMouseButtonEvent().position.x,
 											evt.asMouseButtonEvent().position.y, game_view));
 						} else if (evt.asMouseButtonEvent().button == Mouse.Button.RIGHT) { // reset mouse position
@@ -130,7 +130,7 @@ public class Framework {
 			window.clear(new Color(12, 145, 255));
 
 			window.setView(game_view);
-			local_logic.render_map(window);
+			gameLogic.render_map(window);
 			window.setView(gui_view);
 			ui.render(window);
 
@@ -169,18 +169,18 @@ public class Framework {
 		core = new LocalCore();
 		ui.setCore(core);
 		((LocalCore)core).addUI(ui);
-		((LocalCore)core).addLogic(local_logic);
+		((LocalCore)core).addLogic(gameLogic);
 		data_connection = new Server((LocalCore) core);
 		((LocalCore)core).setServer((Server) data_connection);
-		local_logic.setCore(core);
-		local_logic.setUI(ui);
+		gameLogic.setCore(core);
+		gameLogic.setUI(ui);
 	}
 
 	// creates a new game with this machine as client
 	public boolean init_guest_game(String ip, String name) {
 		String serverIp = ip;
 		try {
-			data_connection = new Client(ui, local_logic, serverIp);
+			data_connection = new Client(ui, gameLogic, serverIp);
 		} catch (IOException e) {
 			System.err.println("Wrong IP or server is not online");
 			return false;
@@ -188,8 +188,8 @@ public class Framework {
 		core = new RemoteCore();
 		ui.setCore(core);
 		((RemoteCore)core).setClientConnection((Client) data_connection);
-		local_logic.setCore(core);
-		local_logic.setUI(ui);
+		gameLogic.setCore(core);
+		gameLogic.setUI(ui);
 		
 		Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
 				(int) (Math.random() * 170.+50));// TODO implement color picker

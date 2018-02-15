@@ -22,11 +22,11 @@ public class Client extends Networkmanager{
 	private ClientInputListener clientInputListener;
 	
 	private LocalUI ui;
-	private LocalGameLogic local_logic;
+	private LocalGameLogic gameLogic;
 	
-	public Client(LocalUI ui, LocalGameLogic local_logic, String serverIP) throws UnknownHostException, IOException {
+	public Client(LocalUI ui, LocalGameLogic gameLogic, String serverIP) throws UnknownHostException, IOException {
 		this.ui = ui;
-		this.local_logic = local_logic;
+		this.gameLogic = gameLogic;
 		this.serverIP = serverIP;
 		//Init Connection to server
 		this.server = new Socket(this.serverIP, PORT);
@@ -67,23 +67,23 @@ public class Client extends Networkmanager{
 			break;
 		case START_GAME:
 			ui.build_game_menu();
-			local_logic.set_mode(GameMode.game);
+			gameLogic.set_mode(GameMode.game);
 			System.out.println("Start game at Client");
 			break;
 		case PLAYER_DATA:
 			this.ui.update_player_data(((Packet.PlayerData) packet.data).getPlayer());
 			break;
 		case NEW_MAP:
-			local_logic.update_new_map(((Packet.New_Map) packet.data).getFields());
+			gameLogic.update_new_map(((Packet.New_Map) packet.data).getFields());
 			break;
 		case UPDATE_BUILDINGS:
-			this.local_logic.update_buildings(((Packet.UpdateBuildings) packet.data).getBuildings());
+			this.gameLogic.update_buildings(((Packet.UpdateBuildings) packet.data).getBuildings());
 			break;
 		case NEW_BUILDING:
-			local_logic.add_building(((Packet.NewBuilding) packet.data).getID(), ((Packet.NewBuilding) packet.data).getBuilding());
+			gameLogic.add_building(((Packet.NewBuilding) packet.data).getID(), ((Packet.NewBuilding) packet.data).getBuilding());
 			break;
 		case SET_MODE:
-			local_logic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
+			gameLogic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
 			break;
 		case INIT_SCOREBOARD:
 			ui.update_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());

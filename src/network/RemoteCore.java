@@ -40,7 +40,7 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.NAME, new Packet.Name(name, color)));
 	}
 
-	public void addLogic(GameLogic local_logic) {
+	public void addLogic(GameLogic gameLogic) {
 		// TODO Auto-generated method stub
 
 	}
