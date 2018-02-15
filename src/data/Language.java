@@ -10,6 +10,7 @@ public enum Language {
 	EXIT("Exit game", "Spiel beenden"),
 	//Create game window 
 	START("Start game", "Spiel starten"),
+	RANDOM("Random", "Zufällig"),
 	//Join game window
 	JOIN("Join game", "Spiel beitreten"),
 	//Lobby Window

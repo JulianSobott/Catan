@@ -71,8 +71,8 @@ public class LocalUI extends UI {
 
 	private String tf_value_ip = "127.0.0.1";
 	private String tf_value_name = "Julian";
-	private String tf_value_seed = "";
-	private String tf_value_size = "";
+	private String tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
+	private String tf_value_size = "5";
 	private String lbl_value_info = "";
 	private String lbl_value_dice = "0";
 	private float color_pkr_hue = (float) Math.random();
@@ -434,7 +434,7 @@ public class LocalUI extends UI {
 		widgets.add(tfMapSize);
 
 		TextField tfSeed = new TextField(new FloatRect(column0 + 200,
-				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+				height_anchor + (textfield_height + 10) * row_count, textfield_width, textfield_height));
 		tfSeed.set_text_color(new Color(20, 20, 20));
 		tfSeed.set_text(tf_value_seed);
 		tfSeed.set_input_callback(new Runnable() {
@@ -446,6 +446,16 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(tfSeed);
+		Button btnRandom = new Button(Language.RANDOM.get_text(), new FloatRect(column0 + 205 + textfield_width,
+				height_anchor + (textfield_height + 10) * row_count++, 100, textfield_height));
+		btnRandom.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				tf_value_seed = "" + (int)(Math.random() * Integer.MAX_VALUE);
+				tfSeed.set_text(tf_value_seed);
+			}
+		});
+		widgets.add(btnRandom);
 
 		TextField tfName = new TextField(new FloatRect(column0 + 200,
 				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
@@ -629,8 +639,7 @@ public class LocalUI extends UI {
 		state.curr_player = player;
 		switch_to_idle();
 	}
-	
-	
+
 	@Override
 	public void update_player_data(Player player) {
 		state.my_player_data = player;

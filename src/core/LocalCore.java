@@ -110,7 +110,8 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-		buildRequest(0, Building.Type.VILLAGE, new Vector3i(1, 3, 0));// TODO delete (Just shows that buidRequest works)
+		
+		// DEBUG
 		player.get(0).add_resource(Resource.CLAY, 10);
 		player.get(0).add_resource(Resource.GRAIN, 10);
 		player.get(0).add_resource(Resource.ORE, 10);

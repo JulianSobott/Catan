@@ -1,14 +1,10 @@
 package local.gui;
 
-import java.util.Vector;
-
 import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
-import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderTarget;
-import org.jsfml.graphics.Text;
 import org.jsfml.system.Vector2f;
 
 public class ColorPicker extends Widget {
