@@ -34,7 +34,7 @@ import superClasses.UI;
 
 public class LocalUI extends UI {
 	enum GUIMode {
-		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
+		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR;
 	}
 
 	private GUIMode mode;
@@ -118,6 +118,10 @@ public class LocalUI extends UI {
 			build_host_lobby_window();
 		} else if (mode == GUIMode.GAME) {
 			build_game_menu();
+		} else if(mode == GUIMode.TRADE_DEMAND) {
+			build__demander_trade_window();
+		} else if(mode == GUIMode.TRADE_VENDOR) {
+			build_vendor_trade_window();
 		}
 	}
 
@@ -155,10 +159,11 @@ public class LocalUI extends UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-
+				mode = GUIMode.TRADE_DEMAND;
+				rebuild_gui();
 			}
 		});
-		btn.set_enabled(false); //TODO remove when implemented
+		//btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
 
 		btn = new Button(Language.OPTIONS.get_text(), new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -291,6 +296,53 @@ public class LocalUI extends UI {
 		// info label
 		lblInfo = new Label(lbl_value_info, new FloatRect(10, window_size.y - 50, 100, 50));
 		widgets.add(lblInfo);
+		
+		//Trade Button
+		Button btnTrade = new Button(Language.TRADE.get_text(), new FloatRect(100, 10,70,40));
+		btnTrade.set_text_size(25);
+		btnTrade.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				mode = GUIMode.TRADE_DEMAND;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnTrade);
+	}
+	
+	public void build__demander_trade_window() {
+		
+		Label lblWindow = new Label("", new FloatRect(30, 30, window_size.x -60, window_size.y-60));
+		lblWindow.set_fill_color(new Color(50, 50 , 50, 150));
+		widgets.add(lblWindow);
+		Button btnClose = new Button("X", new FloatRect(window_size.x - 70, 25, 20, 20));
+		btnClose.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				mode = GUIMode.GAME;
+				rebuild_gui();
+			}
+		});
+		Button btnAskBank = new Button("Bank", new FloatRect(40, 40, 70, 40));
+		btnAskBank.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				
+			}
+		});
+		widgets.add(btnAskBank);
+		Button btnAskPlayer = new Button("Player", new FloatRect(120, 40, 70, 40));
+		btnAskBank.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				
+			}
+		});
+		widgets.add(btnAskPlayer);
+	}
+	
+	public void build_vendor_trade_window() {
+		
 	}
 
 	public void build_join_menu() {

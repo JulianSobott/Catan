@@ -23,7 +23,7 @@ public class ClientInputListener extends Thread{
 					this.client.message_from_core(packet);
 				}catch(IOException e) {
 					System.err.println("Connection to Server closed (ClientInputListener Line 26)");
-					this.connectionToServer = false;
+					//this.connectionToServer = false;
 				}catch(ClassNotFoundException e) {
 					System.err.println("Object is from unknown Class");
 					e.printStackTrace();

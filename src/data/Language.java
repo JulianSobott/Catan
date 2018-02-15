@@ -33,7 +33,8 @@ public enum Language {
 	WOOL("Wool", "Wolle"),
 	GRAIN("Grain", "Getreide"),
 	CLAY("Clay", "Ton"),
-	ORE("Ore", "Erz");
+	ORE("Ore", "Erz"), 
+	TRADE("Trade", "Handeln");
 
 
 	
