@@ -21,7 +21,7 @@ public class RemoteGameLogic extends GameLogic {
 
 	@Override
 	public void set_mode(GameMode mode) {
-		server.message_to_client(id, new Packet(Command.SET_MODE, new Packet.NEW_MODE(mode)));
+		server.message_to_client(id, new Packet(Command.SET_MODE, new Packet.NewMode(mode)));
 	}
 
 	@Override

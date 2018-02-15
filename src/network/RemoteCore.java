@@ -1,9 +1,8 @@
 package network;
 
 import org.jsfml.graphics.Color;
-import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
-import core.Building;
+
 import core.Building.Type;
 import superClasses.Core;
 import superClasses.GameLogic;
@@ -13,12 +12,6 @@ public class RemoteCore extends Core {
 	Client client;
 
 	public RemoteCore() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public void setServer(Networkmanager data_connection) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void setClientConnection(Client client) {
@@ -41,7 +34,7 @@ public class RemoteCore extends Core {
 	}
 
 	public void addLogic(GameLogic gameLogic) {
-		// TODO Auto-generated method stub
+		// TODO delete?
 
 	}
 

@@ -36,7 +36,7 @@ public class Client extends Networkmanager {
 			output = new ObjectOutputStream(server.getOutputStream());
 			input = new ObjectInputStream(server.getInputStream());
 		} catch (IOException e) {
-			System.err.println("Can�t create input and output streams to server");
+			System.err.println("Can't create input and output streams to server");
 			e.printStackTrace();
 			return;
 		}
@@ -52,7 +52,7 @@ public class Client extends Networkmanager {
 			output.close();
 			server.close();
 		} catch (IOException e) {
-			System.err.println("Can�t close Listener at ClientCommunicator");
+			System.err.println("Can't close Listener at ClientCommunicator");
 		}
 	}
 
@@ -86,7 +86,7 @@ public class Client extends Networkmanager {
 			ui.set_current_player(((Packet.SetCurrUser) packet.data).getPlayer());
 			break;
 		case SET_MODE:
-			gameLogic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
+			gameLogic.set_mode(((Packet.NewMode) packet.data).getGameMode());
 			break;
 		case INIT_SCOREBOARD:
 			ui.update_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());

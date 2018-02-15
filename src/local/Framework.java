@@ -4,25 +4,25 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import org.jsfml.graphics.*;
+import org.jsfml.graphics.Color;
+import org.jsfml.graphics.Font;
+import org.jsfml.graphics.RenderWindow;
+import org.jsfml.graphics.View;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.ContextSettings;
-import org.jsfml.window.VideoMode;
 import org.jsfml.window.Mouse;
+import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
-import superClasses.Core;
-import superClasses.GameLogic;
-import core.Map;
 import core.LocalCore;
-import network.Command;
-import network.RemoteCore;
-import network.Networkmanager;
-import network.Server;
-import network.Packet;
+import core.Map;
 import network.Client;
+import network.Networkmanager;
+import network.RemoteCore;
+import network.Server;
+import superClasses.Core;
 
 public class Framework {
 	//Debugging Stuff
@@ -35,7 +35,7 @@ public class Framework {
 
 	// view management
 	View game_view;
-	View gui_view;// TODO make gui view aware of window resizing & handle inputs properly
+	View gui_view;
 	float zoom_level = 0.5f;
 	float mouse_value = 3.f;
 	Vector2f mouse_start;
@@ -123,8 +123,7 @@ public class Framework {
 
 			// updating
 			float whole_time = std_timer.getElapsedTime().asSeconds();
-			float delta_time = frame_timer.restart().asSeconds();
-			ui.update();
+			// float delta_time = frame_timer.restart().asSeconds(); TODO delete?
 
 			// rendering
 			window.clear(new Color(12, 145, 255));

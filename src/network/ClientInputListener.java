@@ -41,7 +41,7 @@ public class ClientInputListener extends Thread{
 		try {
 			this.input.close();
 		} catch (IOException e) {
-			System.err.println("Can�t close Listener at ClientInputListener");
+			System.err.println("Can't close Listener at ClientInputListener");
 		}
 	}
 }

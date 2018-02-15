@@ -10,10 +10,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.jsfml.graphics.Color;
-import core.Building;
+
 import core.LocalCore;
-import local.LocalGameLogic;
-import local.LocalUI;
 
 public class Server extends Networkmanager {
 
@@ -64,7 +62,7 @@ public class Server extends Networkmanager {
 		try {
 			this.server.close();
 		} catch (IOException e) {
-			System.err.println("Can�t close Server at LocalDataServer");
+			System.err.println("Can't close Server at LocalDataServer");
 		}
 	}
 

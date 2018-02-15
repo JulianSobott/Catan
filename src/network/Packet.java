@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.jsfml.graphics.Color;
-import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
+
 import core.Building;
 import core.Player;
 import data.Field;
-
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 
@@ -167,14 +167,14 @@ public class Packet implements Serializable {
 		}
 	}
 
-	public static class NEW_MODE implements Serializable {
+	public static class NewMode implements Serializable {
 		private GameMode mode;
 
-		public NEW_MODE(GameMode mode) {
+		public NewMode(GameMode mode) {
 			this.mode = mode;
 		}
 
-		public GameMode getgameMode() {
+		public GameMode getGameMode() {
 			return this.mode;
 		}
 	}
@@ -186,7 +186,6 @@ public class Packet implements Serializable {
 
 	public Packet(Command cmd) {
 		this.cmd = cmd;
-		//this.data = new Build(new Vector2i(1, 1)); TODO delet?
 	}
 
 	public Packet(Command cmd, Serializable data) {

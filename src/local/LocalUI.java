@@ -1,9 +1,7 @@
 package local;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
@@ -11,12 +9,12 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
-import org.jsfml.window.Mouse;
 import org.jsfml.window.Keyboard.Key;
+import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
-import core.Player;
 import core.LocalCore;
+import core.Player;
 import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
@@ -25,10 +23,6 @@ import local.gui.ColorPicker;
 import local.gui.Label;
 import local.gui.TextField;
 import local.gui.Widget;
-import network.Command;
-import network.Networkmanager;
-import network.Server;
-import network.Packet;
 import superClasses.Core;
 import superClasses.UI;
 
@@ -71,8 +65,8 @@ public class LocalUI extends UI {
 
 	private String tf_value_ip = "127.0.0.1";
 	private String tf_value_name = "Julian";
-	private String tf_value_seed = "";
-	private String tf_value_size = "";
+	private String tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
+	private String tf_value_size = "5";
 	private String lbl_value_info = "";
 	private String lbl_value_dice = "0";
 	private float color_pkr_hue = (float) Math.random();
@@ -131,7 +125,7 @@ public class LocalUI extends UI {
 
 		float mm_button_width = 400;
 		float mm_button_height = 100;
-		float mm_button_spacing = 20;
+		float mm_button_spacing = 10;
 
 		Button btn = new Button(Language.CREATE_NEW_GAME.get_text(),
 				new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -186,7 +180,7 @@ public class LocalUI extends UI {
 		});
 		widgets.add(btn);
 
-		// rearrange buttons TODO
+		// rearrange buttons
 		for (int i = 0; i < widgets.size(); i++) {
 			Button button = (Button) widgets.get(i);
 			button.set_position(new Vector2f((window_size.x - mm_button_width) * 0.5f,
@@ -201,8 +195,6 @@ public class LocalUI extends UI {
 		mode = GUIMode.GAME;
 
 		//Score board
-		/*Label lblScoreBoard = new Label("", new FloatRect(window_size.x - 250, 0, 250, 300)); //TODO add all players at init
-		widgets.add(lblScoreBoard);*///TODO delete
 		for (int i = 0; i < state.player_data.size(); i++) {
 			Label lblPlayerScore = new Label(
 					state.player_data.get(i).getName() + ": " + state.player_data.get(i).getScore(),
@@ -486,7 +478,7 @@ public class LocalUI extends UI {
 		widgets.add(tfMapSize);
 
 		TextField tfSeed = new TextField(new FloatRect(column0 + 200,
-				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+				height_anchor + (textfield_height + 10) * row_count, textfield_width, textfield_height));
 		tfSeed.set_text_color(new Color(20, 20, 20));
 		tfSeed.set_text(tf_value_seed);
 		tfSeed.set_input_callback(new Runnable() {
@@ -498,6 +490,16 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(tfSeed);
+		Button btnRandom = new Button(Language.RANDOM.get_text(), new FloatRect(column0 + 205 + textfield_width,
+				height_anchor + (textfield_height + 10) * row_count++, 100, textfield_height));
+		btnRandom.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				tf_value_seed = "" + (int)(Math.random() * Integer.MAX_VALUE);
+				tfSeed.set_text(tf_value_seed);
+			}
+		});
+		widgets.add(btnRandom);
 
 		TextField tfName = new TextField(new FloatRect(column0 + 200,
 				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
@@ -542,7 +544,7 @@ public class LocalUI extends UI {
 		btnStart.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5; //TODO get from TF
+				int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
 				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
@@ -583,10 +585,6 @@ public class LocalUI extends UI {
 				return false;
 		} else
 			return false;
-	}
-
-	void update() {
-
 	}
 
 	void render(RenderTarget target) {
@@ -681,8 +679,7 @@ public class LocalUI extends UI {
 		state.curr_player = player;
 		switch_to_idle();
 	}
-	
-	
+
 	@Override
 	public void update_player_data(Player player) {
 		state.my_player_data = player;

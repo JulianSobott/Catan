@@ -55,7 +55,7 @@ public class ClientCommunicator extends Thread{
 			this.output.writeObject(p);
 			this.output.flush();
 		}catch(IOException e) {
-			System.err.println("Can�t send Packet to Client with the Code:" + p.getCommand());
+			System.err.println("Can't send Packet to Client with the Code:" + p.getCommand());
 		}
 		
 	}
@@ -66,7 +66,7 @@ public class ClientCommunicator extends Thread{
 			this.input.close();
 			this.output.close();
 		} catch (IOException e) {
-			System.err.println("Can�t close Listener at ClientCommunicator");
+			System.err.println("Can't close Listener at ClientCommunicator");
 		}
 	}
 
