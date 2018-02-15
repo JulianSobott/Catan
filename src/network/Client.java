@@ -11,32 +11,31 @@ import local.LocalGameLogic;
 import local.LocalUI;
 
 //TODO Error handling when Entered a wrong IP address (reentering)
-public class Client extends Networkmanager{
+public class Client extends Networkmanager {
 	private Socket server;
 	private static final int PORT = 56789;
 	private String serverIP;
-	
+
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	
+
 	private ClientInputListener clientInputListener;
-	
+
 	private LocalUI ui;
 	private LocalGameLogic gameLogic;
-	
+
 	public Client(LocalUI ui, LocalGameLogic gameLogic, String serverIP) throws UnknownHostException, IOException {
 		this.ui = ui;
 		this.gameLogic = gameLogic;
 		this.serverIP = serverIP;
 		//Init Connection to server
 		this.server = new Socket(this.serverIP, PORT);
-		
-		
+
 		//Init Output and Input to Server 
 		try {
 			output = new ObjectOutputStream(server.getOutputStream());
 			input = new ObjectInputStream(server.getInputStream());
-		}catch(IOException e) {
+		} catch (IOException e) {
 			System.err.println("Can�t create input and output streams to server");
 			e.printStackTrace();
 			return;
@@ -45,7 +44,7 @@ public class Client extends Networkmanager{
 		clientInputListener = new ClientInputListener(this, input);
 		clientInputListener.start();
 	}
-	
+
 	public void closeAllResources() {
 		clientInputListener.closeConnectionToServer();
 		try {
@@ -58,7 +57,7 @@ public class Client extends Networkmanager{
 	}
 
 	public void message_from_core(Packet packet) {
-		switch(packet.getCommand()){
+		switch (packet.getCommand()) {
 		case DICE_RESULT:
 			ui.show_dice_result(((Packet.DiceResult) packet.data).getDiceResult());
 			break;
@@ -80,7 +79,11 @@ public class Client extends Networkmanager{
 			this.gameLogic.update_buildings(((Packet.UpdateBuildings) packet.data).getBuildings());
 			break;
 		case NEW_BUILDING:
-			gameLogic.add_building(((Packet.NewBuilding) packet.data).getID(), ((Packet.NewBuilding) packet.data).getBuilding());
+			gameLogic.add_building(((Packet.NewBuilding) packet.data).getID(),
+					((Packet.NewBuilding) packet.data).getBuilding());
+			break;
+		case SET_CURR_USER:
+			ui.set_current_player(((Packet.SetCurrUser) packet.data).getPlayer());
 			break;
 		case SET_MODE:
 			gameLogic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
@@ -92,17 +95,15 @@ public class Client extends Networkmanager{
 			System.err.println("Unknown Command reached Client");
 		}
 	}
-	
+
 	public void sendMessage(Packet p) {
 		try {
 			output.writeObject(p);
 			output.flush();
-		}catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-  
-	
 
 }

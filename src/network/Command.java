@@ -17,6 +17,7 @@ public enum Command {
 	NAME,
 	START_GAME, 
 	INIT_SCOREBOARD, 
+	SET_CURR_USER,
 	SET_MODE;
 	
 }

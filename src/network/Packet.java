@@ -155,6 +155,18 @@ public class Packet implements Serializable {
 		}
 	}
 
+	public static class SetCurrUser implements Serializable {
+		private String player;
+
+		public SetCurrUser(String player) {
+			this.player = player;
+		}
+
+		public String getPlayer() {
+			return player;
+		}
+	}
+
 	public static class NEW_MODE implements Serializable {
 		private GameMode mode;
 

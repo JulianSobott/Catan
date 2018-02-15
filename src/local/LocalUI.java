@@ -12,6 +12,7 @@ import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.Mouse;
+import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
 import core.Player;
@@ -30,13 +31,13 @@ import network.Packet;
 import superClasses.Core;
 import superClasses.UI;
 
-public class LocalUI extends UI{
+public class LocalUI extends UI {
 	enum GUIMode {
 		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME,
 	}
 
 	private GUIMode mode;
-	
+
 	private Core core;
 	// local state
 	private LocalState state;
@@ -253,7 +254,7 @@ public class LocalUI extends UI{
 			@Override
 			public void run() {
 				state.curr_action = LocalState.Action.build_village;
-				show_informative_hint(Language.SELECT_BUILD_PLACE);
+				show_informative_hint(Language.SELECT_BUILD_PLACE, "");
 			}
 		});
 		widgets.add(btnBuildVillage);
@@ -263,7 +264,7 @@ public class LocalUI extends UI{
 			@Override
 			public void run() {
 				state.curr_action = LocalState.Action.build_city;
-				show_informative_hint(Language.SELECT_BUILD_PLACE);
+				show_informative_hint(Language.SELECT_BUILD_PLACE, "");
 			}
 		});
 		widgets.add(btnBuildCity);
@@ -273,7 +274,7 @@ public class LocalUI extends UI{
 			@Override
 			public void run() {
 				state.curr_action = LocalState.Action.build_street;
-				show_informative_hint(Language.SELECT_BUILD_PLACE);
+				show_informative_hint(Language.SELECT_BUILD_PLACE, "");
 			}
 		});
 		widgets.add(btnBuildStreet);
@@ -476,9 +477,9 @@ public class LocalUI extends UI{
 				Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
 						(int) (Math.random() * 170. + 50));// TODO implement color picker
 
-				((LocalCore)core).changePlayerName(0, user_name);
-				((LocalCore)core).create_new_map(map_size, seed);
-				((LocalCore)core).init_game();
+				((LocalCore) core).changePlayerName(0, user_name);
+				((LocalCore) core).create_new_map(map_size, seed);
+				((LocalCore) core).init_game();
 			}
 		});
 		widgets.add(btnStart);
@@ -501,6 +502,12 @@ public class LocalUI extends UI{
 		} else if (evt.type == Event.Type.KEY_PRESSED) {
 			if (activeTF != null) {
 				return activeTF.special_input(evt.asKeyEvent().key);
+			} else if (evt.asKeyEvent().key == Key.ESCAPE) {
+				if (state.curr_action != LocalState.Action.idle) {
+					switch_to_idle();
+					return true;
+				} else
+					return false;
 			} else
 				return false;
 		} else
@@ -552,6 +559,17 @@ public class LocalUI extends UI{
 		rebuild_gui();
 	}
 
+	// mode switching functions
+	public void switch_to_idle() {
+		state.curr_action = LocalState.Action.idle;
+		if (state.curr_player.equals(state.my_player_data.getName())) {
+			show_informative_hint(Language.DO_MOVE, "");
+		}
+		else {
+			show_informative_hint(Language.OTHERS_MOVE, state.curr_player);
+		}
+	}
+
 	// change the gui layout
 
 	@Override
@@ -560,24 +578,33 @@ public class LocalUI extends UI{
 		rebuild_gui();
 	}
 
-	@Override
-	public void update_scoreboard(List<LocalPlayer> player) {
-		state.player_data = player;
-		rebuild_gui();
-	}
-
 	//Access to the widgets
 
 	@Override
-	public void show_informative_hint(Language text) {
-		lblInfo.set_text(text.get_text());
-		lbl_value_info = text.get_text();
+	public void update_scoreboard(List<LocalPlayer> player) {
+		state.player_data = player;
+		rebuild_gui();// TODO only rebuild at begin
+	}
+
+	@Override
+	public void show_informative_hint(Language text, String replacementStr) {
+		if (!replacementStr.isEmpty())
+			lbl_value_info = text.get_text(replacementStr);
+		else
+			lbl_value_info = text.get_text();
+		lblInfo.set_text(lbl_value_info);
 	}
 
 	@Override
 	public void show_dice_result(byte result) {
 		lbl_value_dice = Integer.toString((int) result);
 		lblDiceResult.set_text(lbl_value_dice);
+	}
+
+	@Override
+	public void set_current_player(String player) {
+		state.curr_player = player;
+		switch_to_idle();
 	}
 
 	@Override

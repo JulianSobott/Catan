@@ -104,6 +104,7 @@ public class LocalCore extends Core {
 		update_scoreboard_data();
 		for (UI ui : uis) {
 			ui.build_game_menu();
+			ui.set_current_player(player.get(current_player).getName());
 		}
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
@@ -227,6 +228,12 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			dice(id);
 			current_player = current_player + 1 >= player.size() ? 0 : current_player + 1;
+		}
+
+		// notify others about player change
+		String name = player.get(current_player).getName();
+		for (UI ui : uis) {
+			ui.set_current_player(name);
 		}
 	}
 }

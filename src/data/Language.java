@@ -24,6 +24,7 @@ public enum Language {
 	BUILD_CITY("City", "Stadt"),
 	BUILD_STREET("Street", "Straße"),
 	DO_MOVE("Make your move", "Mache deinen Zug"),
+	OTHERS_MOVE("It's {}s move", "{} ist am Zug"),
 	SELECT_BUILD_PLACE("Select a building site", "Wähle den Bauplatz aus"),
 	FINISHED_MOVE("Finish move", "Zug beenden"),
 	OF("of", "von"),
@@ -58,5 +59,11 @@ public enum Language {
 
 	public String get_text() {
 		return curr_language == Type.english ? english : german;
+	}
+
+	// replaces "{}" with \p replacements
+	public String get_text(String replacement) {
+		String txt = curr_language == Type.english ? english : german;
+		return txt.replace("{}", replacement);
 	}
 }

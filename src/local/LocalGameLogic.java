@@ -203,18 +203,15 @@ public class LocalGameLogic extends GameLogic {
 		if (state.curr_action == Action.build_village) {
 			Vector2i pos = Map.position_to_city_index(position);
 			core.buildRequest(id, Type.VILLAGE, new Vector3i(pos.x, pos.y, 0));
-			state.curr_action = Action.idle;
-			ui.show_informative_hint(Language.DO_MOVE);
+			ui.switch_to_idle();
 		} else if (state.curr_action == Action.build_city) {
 			Vector2i pos = Map.position_to_city_index(position);
 			core.buildRequest(id, Type.CITY, new Vector3i(pos.x, pos.y, 0));
-			state.curr_action = Action.idle;
-			ui.show_informative_hint(Language.DO_MOVE);
+			ui.switch_to_idle();
 		} else if (state.curr_action == Action.build_street) {
 			Vector3i pos = Map.position_to_street_index(position);
 			core.buildRequest(id, Type.STREET, pos);
-			state.curr_action = Action.idle;
-			ui.show_informative_hint(Language.DO_MOVE);
+			ui.switch_to_idle();
 		}
 	}
 

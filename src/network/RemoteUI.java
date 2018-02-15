@@ -9,7 +9,7 @@ import superClasses.UI;
 
 public class RemoteUI extends UI {
 	private Server server;
-	
+
 	public RemoteUI(Server server) {
 		this.server = server;
 	}
@@ -32,16 +32,21 @@ public class RemoteUI extends UI {
 
 	@Override
 	public void show_guest_at_lobby(String name) {
-		//server.message_to_client(0, new Packet());
+		// TODO really needed for remote?
 	}
 
 	@Override
-	public void show_informative_hint(Language text) {
-		
+	public void show_informative_hint(Language text, String replacement) {
+		// TODO really needed for remote?
 	}
 
 	@Override
 	public void update_player_data(Player player) {
 		server.message_to_client(id, new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player)));
+	}
+
+	@Override
+	public void set_current_player(String player) {
+		server.message_to_client(id, new Packet(Command.SET_CURR_USER, new Packet.SetCurrUser(player)));
 	}
 }
