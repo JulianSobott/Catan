@@ -33,6 +33,7 @@ public class Map {
 	private Field[][] fields;
 	private List<Vector2i> available_city_places = new LinkedList<Vector2i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
+	private List<Vector2i> built_villages = new LinkedList<Vector2i>();
 
 	public static void update_constants() {
 		field_offset = field_size * 0.5f;
@@ -185,13 +186,23 @@ public class Map {
 		for (int i = 0; i < house_count; i++) {
 			int index = rand.nextInt(available_city_places.size());
 			new_cities.add(available_city_places.get(index));
+			built_villages.add(available_city_places.get(index));
 			available_city_places.remove(index);
 		}
 		return new_cities;
 	}
 
-	public boolean is_city_place_available(Vector2i pos) {
+	public boolean is_village_place_available(Vector2i pos) {
 		for (Vector2i ap : available_city_places) {
+			if (ap.x == pos.x && ap.y == pos.y) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean is_city_place_available(Vector2i pos) {
+		for (Vector2i ap : built_villages) {
 			if (ap.x == pos.x && ap.y == pos.y) {
 				return true;
 			}
@@ -208,13 +219,17 @@ public class Map {
 		return false;
 	}
 
-	public void build_city(Vector2i pos) {
+	public void build_village(Vector2i pos) {
 		for (Vector2i ap : available_city_places) {
 			if (ap.x == pos.x && ap.y == pos.y) {
 				available_city_places.remove(ap);
+				built_villages.add(pos);
 				return;
 			}
 		}
+	}
+	public void build_city(Vector2i pos) {
+		build_village(pos);
 	}
 
 	public void build_street(Vector3i pos) {

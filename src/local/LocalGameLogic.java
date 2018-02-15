@@ -125,7 +125,17 @@ public class LocalGameLogic extends GameLogic {
 		if (building.get_type() == Building.Type.VILLAGE) {
 			state.villages.get(user).add(Map.index_to_building_position(building.get_position()));
 		} else if (building.get_type() == Building.Type.CITY) {
-			state.cities.get(user).add(Map.index_to_building_position(building.get_position()));
+			// remove old village
+			Vector2f building_pos = Map.index_to_building_position(building.get_position());
+			for( int i = 0 ; i < state.villages.get(user).size() ; i++ ){
+				Vector2f pos = state.villages.get(user).get(i);
+				if( building_pos.x == pos.x && building_pos.y == pos.y){
+					state.villages.get(user).remove(i);
+					break;
+				}
+			}
+
+			state.cities.get(user).add(building_pos);
 		} else if (building.get_type() == Building.Type.STREET) {
 			state.streets.get(user).add(new AbstractStreet(Map.index_to_building_position(building.get_position()),
 					Map.layer_to_street_rotation(building.get_position().z)));
@@ -214,9 +224,4 @@ public class LocalGameLogic extends GameLogic {
 			ui.switch_to_idle();
 		}
 	}
-
-	/*public void build(int idPlayer, Command buildType, Vector2i position) {
-		// TODO Auto-generated method stub
-	}*/
-
 }

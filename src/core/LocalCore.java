@@ -58,7 +58,8 @@ public class LocalCore extends Core {
 				List<Field> surroundingFields = map.get_surrounding_fields_objects(building);
 				for (Field field : surroundingFields) {
 					if (field.number == (byte) diceResult) {
-						int addCount = building.get_type() == Building.Type.VILLAGE ? 1 : building.get_type() == Building.Type.CITY ? 2 : 0;
+						int addCount = building.get_type() == Building.Type.VILLAGE ? 1
+								: building.get_type() == Building.Type.CITY ? 2 : 0;
 						p.add_resource(field.resource, addCount);
 					}
 				}
@@ -117,8 +118,6 @@ public class LocalCore extends Core {
 		player.get(0).add_resource(Resource.WOOL, 10);
 	}
 
-	
-
 	@Override
 	public void register_new_user(String name, Color color) {
 		int id = player.size();
@@ -137,42 +136,59 @@ public class LocalCore extends Core {
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
 		//TODO Check if city is too close to other city
+		Player this_player = player.get(id);
 		if (id == current_player) {
 			boolean build_sth = false;
-			java.util.Map<Resource, Integer> resources = player.get(id).resources;
-			if (buildType == Building.Type.VILLAGE || buildType == Building.Type.CITY) {
-				Vector2i pos = new Vector2i(position.x, position.y);
+			java.util.Map<Resource, Integer> resources = this_player.resources;
+			Vector2i pos = new Vector2i(position.x, position.y);
+			if (buildType == Building.Type.VILLAGE) {
+				if (map.is_village_place_available(pos)) {
+					// TODO extract all building costs into a database to make them configurable
+					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1
+							&& resources.get(Resource.GRAIN) >= 1 && resources.get(Resource.WOOL) >= 1) {
+						map.build_village(pos);
+						build_sth = true;
+						this_player.buildings
+								.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
+						this_player.take_resource(Resource.WOOD, 1);
+						this_player.take_resource(Resource.CLAY, 1);
+						this_player.take_resource(Resource.GRAIN, 1);
+						this_player.take_resource(Resource.WOOL, 1);
+					}
+				}
+			} else if (buildType == Building.Type.CITY) {
 				if (map.is_city_place_available(pos)) {
-					if (buildType == Building.Type.VILLAGE) {
-						if(resources.get(Resource.WOOD) >=1 && resources.get(Resource.CLAY) >=1 && resources.get(Resource.GRAIN) >=1 && resources.get(Resource.WOOL) >=1) {
-							map.build_city(pos);
-							build_sth = true;
-							player.get(id).buildings
-									.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
-							player.get(id).take_resource(Resource.WOOD, 1);
-							player.get(id).take_resource(Resource.CLAY, 1);
-							player.get(id).take_resource(Resource.GRAIN, 1);
-							player.get(id).take_resource(Resource.WOOL, 1);
+					if (resources.get(Resource.ORE) >= 3 && resources.get(Resource.GRAIN) >= 2) {
+						// find & remove old village
+						int village_index = -1;
+						for (int i = 0; i < this_player.buildings.size(); i++) {
+							if (this_player.buildings.get(i).equals(new Building(Building.Type.VILLAGE, position))) {
+								village_index = i;
+								break;
+							}
 						}
-					} else if (buildType == Building.Type.CITY) {
-						if(resources.get(Resource.ORE) >=3 && resources.get(Resource.GRAIN) >=2) {
+						if( village_index >= 0) {// the selected building is another player's
+							this_player.buildings.remove(village_index);
+
 							map.build_city(pos);
 							build_sth = true;
-							player.get(id).buildings.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
-							player.get(id).take_resource(Resource.ORE, 3);
-							player.get(id).take_resource(Resource.GRAIN, 2);
+
+							this_player.buildings
+									.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
+							this_player.take_resource(Resource.ORE, 3);
+							this_player.take_resource(Resource.GRAIN, 2);
 						}
 					}
 				}
 			} else if (buildType == Building.Type.STREET) {
 				if (map.is_street_place_available(position)) {
-					if(resources.get(Resource.WOOD) >=1 && resources.get(Resource.CLAY) >=1) {
+					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1) {
 						map.build_street(position);
 						build_sth = true;
-						player.get(id).buildings
+						this_player.buildings
 								.add(new Building(Building.Type.STREET, new Vector3i(position.x, position.y, 0)));
-						player.get(id).take_resource(Resource.WOOD, 1);
-						player.get(id).take_resource(Resource.CLAY, 1);
+						this_player.take_resource(Resource.WOOD, 1);
+						this_player.take_resource(Resource.CLAY, 1);
 					}
 				}
 			}
@@ -180,11 +196,11 @@ public class LocalCore extends Core {
 				for (GameLogic logic : logics) {
 					logic.add_building(id, new Building(buildType, position));
 				}
-				player.get(id).update_score();
+				this_player.update_score();
 				update_scoreboard_data();
-				uis.get(id).update_player_data(player.get(id));
+				uis.get(id).update_player_data(this_player);
 			}
-			
+
 		}
 	}
 
@@ -250,5 +266,5 @@ public class LocalCore extends Core {
 			ui.set_current_player(name);
 		}
 	}
-	
+
 }
