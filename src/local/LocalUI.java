@@ -589,8 +589,8 @@ public class LocalUI extends UI {
 
 	void render(RenderTarget target) {
 		ArrayList<Widget> currWidgets = widgets;
-		for (Widget widget : currWidgets) {
-			widget.render(target);
+		for(int i = 0; i< currWidgets.size(); i++) {
+			currWidgets.get(i).render(target);
 		}
 	}
 
