@@ -11,7 +11,7 @@ import org.jsfml.graphics.Color;
 import data.Resource;
 
 public class Player implements Serializable {
-	private int id = 0;// TODO set id at registration
+	private int id = 0;
 	private String name;
 	private int score = 0;
 	private Color color;

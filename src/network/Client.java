@@ -36,7 +36,7 @@ public class Client extends Networkmanager {
 			output = new ObjectOutputStream(server.getOutputStream());
 			input = new ObjectInputStream(server.getInputStream());
 		} catch (IOException e) {
-			System.err.println("Can�t create input and output streams to server");
+			System.err.println("Can't create input and output streams to server");
 			e.printStackTrace();
 			return;
 		}
@@ -52,7 +52,7 @@ public class Client extends Networkmanager {
 			output.close();
 			server.close();
 		} catch (IOException e) {
-			System.err.println("Can�t close Listener at ClientCommunicator");
+			System.err.println("Can't close Listener at ClientCommunicator");
 		}
 	}
 

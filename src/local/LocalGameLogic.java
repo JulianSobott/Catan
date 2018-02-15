@@ -32,7 +32,6 @@ import network.Networkmanager;
 import superClasses.Core;
 import superClasses.GameLogic;
 
-// TODO name?
 public class LocalGameLogic extends GameLogic {
 	// state, ui & connection
 	LocalState state;

@@ -36,7 +36,7 @@ public class LocalCore extends Core {
 	List<Player> player = new ArrayList<Player>();
 
 	public LocalCore() {
-		Player hostPlayer = new Player("Host", 0, Color.RED);// TODO color
+		Player hostPlayer = new Player("Host", 0, Color.BLACK);
 		player.add(hostPlayer);
 		current_player = 0;
 	}
@@ -213,28 +213,6 @@ public class LocalCore extends Core {
 		for (UI ui : uis) {
 			ui.update_scoreboard(scoreboard_data);
 		}
-	}
-
-	//TODO Just my thoughts about possible methods maybe rename or remove
-	//TODO Either delete this methods or transfer code from build_request()
-	public void build() {
-		/*
-		Add building to position
-		Take resources from player
-		Add score for player
-		Check for win
-		=> update()
-		 */
-	}
-
-	public void update() {
-		/*
-		Player show new resources
-		All show updated map
-		All show updated score
-		
-		Next player dice (automatically?)
-		 */
 	}
 
 	public void addLogic(GameLogic logic) {

@@ -35,7 +35,7 @@ public class Framework {
 
 	// view management
 	View game_view;
-	View gui_view;// TODO make gui view aware of window resizing & handle inputs properly
+	View gui_view;
 	float zoom_level = 0.5f;
 	float mouse_value = 3.f;
 	Vector2f mouse_start;
@@ -124,7 +124,6 @@ public class Framework {
 			// updating
 			float whole_time = std_timer.getElapsedTime().asSeconds();
 			float delta_time = frame_timer.restart().asSeconds();
-			ui.update();
 
 			// rendering
 			window.clear(new Color(12, 145, 255));

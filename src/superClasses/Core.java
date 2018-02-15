@@ -11,7 +11,6 @@ import network.Command;
 public abstract class Core {
 	
 	public Core() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public abstract void create_new_map(int map_size, int seed);

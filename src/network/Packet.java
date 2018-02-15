@@ -186,7 +186,6 @@ public class Packet implements Serializable {
 
 	public Packet(Command cmd) {
 		this.cmd = cmd;
-		//this.data = new Build(new Vector2i(1, 1)); TODO delet?
 	}
 
 	public Packet(Command cmd, Serializable data) {

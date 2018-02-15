@@ -127,7 +127,7 @@ public class LocalUI extends UI {
 
 		float mm_button_width = 400;
 		float mm_button_height = 100;
-		float mm_button_spacing = 20;
+		float mm_button_spacing = 10;
 
 		Button btn = new Button(Language.CREATE_NEW_GAME.get_text(),
 				new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -181,7 +181,7 @@ public class LocalUI extends UI {
 		});
 		widgets.add(btn);
 
-		// rearrange buttons TODO
+		// rearrange buttons
 		for (int i = 0; i < widgets.size(); i++) {
 			Button button = (Button) widgets.get(i);
 			button.set_position(new Vector2f((window_size.x - mm_button_width) * 0.5f,
@@ -196,8 +196,6 @@ public class LocalUI extends UI {
 		mode = GUIMode.GAME;
 
 		//Score board
-		/*Label lblScoreBoard = new Label("", new FloatRect(window_size.x - 250, 0, 250, 300)); //TODO add all players at init
-		widgets.add(lblScoreBoard);*///TODO delete
 		for (int i = 0; i < state.player_data.size(); i++) {
 			Label lblPlayerScore = new Label(
 					state.player_data.get(i).getName() + ": " + state.player_data.get(i).getScore(),
@@ -500,7 +498,7 @@ public class LocalUI extends UI {
 		btnStart.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5; //TODO get from TF
+				int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
 				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
@@ -541,10 +539,6 @@ public class LocalUI extends UI {
 				return false;
 		} else
 			return false;
-	}
-
-	void update() {
-
 	}
 
 	void render(RenderTarget target) {

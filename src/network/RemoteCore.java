@@ -13,12 +13,6 @@ public class RemoteCore extends Core {
 	Client client;
 
 	public RemoteCore() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public void setServer(Networkmanager data_connection) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void setClientConnection(Client client) {
@@ -41,7 +35,7 @@ public class RemoteCore extends Core {
 	}
 
 	public void addLogic(GameLogic gameLogic) {
-		// TODO Auto-generated method stub
+		// TODO delete?
 
 	}
 
