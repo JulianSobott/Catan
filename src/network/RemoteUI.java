@@ -49,4 +49,5 @@ public class RemoteUI extends UI {
 	public void set_current_player(String player) {
 		server.message_to_client(id, new Packet(Command.SET_CURR_USER, new Packet.SetCurrUser(player)));
 	}
+
 }

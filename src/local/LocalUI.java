@@ -58,6 +58,9 @@ public class LocalUI extends UI {
 
 	//widgets Just widgets which may be changed
 	private Button btnFinishedMove;
+	private Button btnBuildVillage;
+	private Button btnBuildCity;
+	private Button btnBuildStreet;
 	private Label lblDiceResult;
 	private Label lblWoodCards;
 	private Label lblWoolCards;
@@ -244,13 +247,12 @@ public class LocalUI extends UI {
 				core.nextTurn(id);
 			}
 		});
-		//btnDice.set_enabled(false);
 		widgets.add(btnFinishedMove);
 
 		//build menu
 		pos_count = 0;
 		float buttons_width = 110;
-		Button btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new FloatRect(
+		btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new FloatRect(
 				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
@@ -260,7 +262,7 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(btnBuildVillage);
-		Button btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new FloatRect(
+		btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new FloatRect(
 				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildCity.set_click_callback(new Runnable() {
 			@Override
@@ -270,7 +272,7 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(btnBuildCity);
-		Button btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new FloatRect(
+		btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new FloatRect(
 				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildStreet.set_click_callback(new Runnable() {
 			@Override
@@ -581,8 +583,13 @@ public class LocalUI extends UI {
 		state.curr_action = LocalState.Action.idle;
 		if (state.curr_player.equals(state.my_player_data.getName())) {
 			show_informative_hint(Language.DO_MOVE, "");
+			rebuild_gui();
 		} else {
 			show_informative_hint(Language.OTHERS_MOVE, state.curr_player);
+			btnFinishedMove.set_enabled(false);
+			btnBuildCity.set_enabled(false);
+			btnBuildStreet.set_enabled(false);
+			btnBuildVillage.set_enabled(false);
 		}
 	}
 
@@ -622,7 +629,8 @@ public class LocalUI extends UI {
 		state.curr_player = player;
 		switch_to_idle();
 	}
-
+	
+	
 	@Override
 	public void update_player_data(Player player) {
 		state.my_player_data = player;
