@@ -17,7 +17,8 @@ public enum Language {
 	MEMBERS("Members", "Mitspieler"), 
 	MAP_SIZE("Map size", "Karten Größe"), 
 	SEED("Seed", "Seed"),
-	YOUR_NAME("Your name", "Dein Name"),
+	YOUR_NAME("Your name", "Dein Name"), 
+	YOUR_COLOR("Your color", "Deine Farbe"),
 	//In game
 	DICE("Dice", "Würfeln"),
 	BUILD_VILLAGE("Village", "Siedlung"),

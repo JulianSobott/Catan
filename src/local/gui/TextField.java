@@ -42,7 +42,7 @@ public class TextField extends Widget {
 	}
 
 	@Override
-	public void do_mouse_click() {
+	public void do_mouse_click(Vector2f pos) {
 		is_active = true;
 		shape.setOutlineColor(default_outline_highlight_color);
 	}

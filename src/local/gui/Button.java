@@ -33,7 +33,7 @@ public class Button extends Widget {
 	}
 
 	@Override
-	public void do_mouse_click() {
+	public void do_mouse_click(Vector2f pos) {
 		if( click_event != null && enabled) click_event.run();
 	}
 

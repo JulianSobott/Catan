@@ -40,8 +40,7 @@ public class Label extends Widget {
 	}
 
 	@Override
-	public void do_mouse_click() {
-
+	public void do_mouse_click(Vector2f pos) {
 	}
 
 	public void set_position(Vector2f pos) {

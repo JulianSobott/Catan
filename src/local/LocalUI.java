@@ -21,6 +21,7 @@ import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
 import local.gui.Button;
+import local.gui.ColorPicker;
 import local.gui.Label;
 import local.gui.TextField;
 import local.gui.Widget;
@@ -71,6 +72,7 @@ public class LocalUI extends UI {
 	private String tf_value_size = "";
 	private String lbl_value_info = "";
 	private String lbl_value_dice = "0";
+	private float color_pkr_hue = (float) Math.random();
 
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
@@ -410,6 +412,9 @@ public class LocalUI extends UI {
 		lbl = new Label(Language.YOUR_NAME.get_text() + ": ", new FloatRect(column0,
 				height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 		widgets.add(lbl);
+		lbl = new Label(Language.YOUR_COLOR.get_text() + ": ", new FloatRect(column0,
+				height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+		widgets.add(lbl);
 
 		row_count = 2;
 		TextField tfMapSize = new TextField(new FloatRect(column0 + 200,
@@ -454,6 +459,19 @@ public class LocalUI extends UI {
 		});
 		widgets.add(tfName);
 
+		ColorPicker colorPicker = new ColorPicker(new FloatRect(column0 + 200,
+				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+		colorPicker.set_color(color_pkr_hue, 1.f, 0.8f);
+		colorPicker.set_select_callback(new Runnable() {
+			ColorPicker cp = colorPicker;
+
+			@Override
+			public void run() {
+				color_pkr_hue = cp.get_hue();
+			}
+		});
+		widgets.add(colorPicker);
+
 		//Row1 ==> members
 		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(column1, 10, 100, 100));
 		widgets.add(lbl);
@@ -474,10 +492,9 @@ public class LocalUI extends UI {
 				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 						: ((int) Math.random() * 100) + 1;
 				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
-				Color user_color = new Color((int) (Math.random() * 170. + 50), (int) (Math.random() * 170. + 50),
-						(int) (Math.random() * 170. + 50));// TODO implement color picker
+				Color user_color = colorPicker.get_color();
 
-				((LocalCore) core).changePlayerName(0, user_name);
+				((LocalCore) core).changePlayerProps(0, user_name, user_color);
 				((LocalCore) core).create_new_map(map_size, seed);
 				((LocalCore) core).init_game();
 			}
@@ -538,7 +555,7 @@ public class LocalUI extends UI {
 				if (widget instanceof TextField) {
 					activeTF = (TextField) widget;
 				}
-				widget.do_mouse_click();
+				widget.do_mouse_click(cursor_position);
 				break;
 			}
 		}
@@ -564,8 +581,7 @@ public class LocalUI extends UI {
 		state.curr_action = LocalState.Action.idle;
 		if (state.curr_player.equals(state.my_player_data.getName())) {
 			show_informative_hint(Language.DO_MOVE, "");
-		}
-		else {
+		} else {
 			show_informative_hint(Language.OTHERS_MOVE, state.curr_player);
 		}
 	}

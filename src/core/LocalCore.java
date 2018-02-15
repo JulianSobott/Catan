@@ -219,8 +219,9 @@ public class LocalCore extends Core {
 		this.data_server = server;
 	}
 
-	public void changePlayerName(int id, String newName) {
+	public void changePlayerProps(int id, String newName, Color color) {
 		player.get(id).setName(newName);
+		player.get(id).setColor(color);
 	}
 
 	@Override
