@@ -109,8 +109,15 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-		// buildRequest(0, Building.Type.VILLAGE, new Vector2i(1, 3)); TODO delete?
+		buildRequest(0, Building.Type.VILLAGE, new Vector3i(1, 3, 0));// TODO delete (Just shows that buidRequest works)
+		player.get(0).add_resource(Resource.CLAY, 10);
+		player.get(0).add_resource(Resource.GRAIN, 10);
+		player.get(0).add_resource(Resource.ORE, 10);
+		player.get(0).add_resource(Resource.WOOD, 10);
+		player.get(0).add_resource(Resource.WOOL, 10);
 	}
+
+	
 
 	@Override
 	public void register_new_user(String name, Color color) {
@@ -126,42 +133,47 @@ public class LocalCore extends Core {
 		data_server.set_id_last_joined(id);
 	}
 
-	// USER ACTIONS
-
+	// USER ACTIONS		
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
 		//TODO Check if city is too close to other city
 		if (id == current_player) {
 			boolean build_sth = false;
+			java.util.Map<Resource, Integer> resources = player.get(id).resources;
 			if (buildType == Building.Type.VILLAGE || buildType == Building.Type.CITY) {
 				Vector2i pos = new Vector2i(position.x, position.y);
 				if (map.is_city_place_available(pos)) {
-					map.build_city(pos);
-					// TODO check resources
-					build_sth = true;
 					if (buildType == Building.Type.VILLAGE) {
-						player.get(id).buildings
-								.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
-						player.get(id).take_resource(Resource.WOOD, 1);
-						player.get(id).take_resource(Resource.CLAY, 1);
-						player.get(id).take_resource(Resource.GRAIN, 1);
-						player.get(id).take_resource(Resource.WOOL, 1);
+						if(resources.get(Resource.WOOD) >=1 && resources.get(Resource.CLAY) >=1 && resources.get(Resource.GRAIN) >=1 && resources.get(Resource.WOOL) >=1) {
+							map.build_city(pos);
+							build_sth = true;
+							player.get(id).buildings
+									.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
+							player.get(id).take_resource(Resource.WOOD, 1);
+							player.get(id).take_resource(Resource.CLAY, 1);
+							player.get(id).take_resource(Resource.GRAIN, 1);
+							player.get(id).take_resource(Resource.WOOL, 1);
+						}
 					} else if (buildType == Building.Type.CITY) {
-						player.get(id).buildings
-								.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
-						player.get(id).take_resource(Resource.ORE, 3);
-						player.get(id).take_resource(Resource.GRAIN, 2);
+						if(resources.get(Resource.ORE) >=3 && resources.get(Resource.GRAIN) >=2) {
+							map.build_city(pos);
+							build_sth = true;
+							player.get(id).buildings.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
+							player.get(id).take_resource(Resource.ORE, 3);
+							player.get(id).take_resource(Resource.GRAIN, 2);
+						}
 					}
 				}
 			} else if (buildType == Building.Type.STREET) {
 				if (map.is_street_place_available(position)) {
-					map.build_street(position);
-					// TODO check resources
-					build_sth = true;
-					player.get(id).buildings
-							.add(new Building(Building.Type.STREET, new Vector3i(position.x, position.y, 0)));
-					player.get(id).take_resource(Resource.WOOD, 1);
-					player.get(id).take_resource(Resource.CLAY, 1);
+					if(resources.get(Resource.WOOD) >=1 && resources.get(Resource.CLAY) >=1) {
+						map.build_street(position);
+						build_sth = true;
+						player.get(id).buildings
+								.add(new Building(Building.Type.STREET, new Vector3i(position.x, position.y, 0)));
+						player.get(id).take_resource(Resource.WOOD, 1);
+						player.get(id).take_resource(Resource.CLAY, 1);
+					}
 				}
 			}
 			if (build_sth) {
@@ -170,8 +182,9 @@ public class LocalCore extends Core {
 				}
 				player.get(id).update_score();
 				update_scoreboard_data();
+				uis.get(id).update_player_data(player.get(id));
 			}
-			uis.get(id).update_player_data(player.get(id));
+			
 		}
 	}
 
@@ -237,4 +250,5 @@ public class LocalCore extends Core {
 			ui.set_current_player(name);
 		}
 	}
+	
 }

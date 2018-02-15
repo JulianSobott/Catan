@@ -73,6 +73,7 @@ public class Button extends Widget {
 	
 	public void set_enabled(boolean enabled) {
 		this.enabled = enabled;
-		shape.setFillColor(new Color(100, 100, 100, 150));
+		if(!enabled)
+			shape.setFillColor(new Color(100, 100, 100, 150));
 	}
 }
