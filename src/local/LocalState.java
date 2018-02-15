@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2f;
-import core.Building;
+
 import core.Player;
 import data.Resource;
 

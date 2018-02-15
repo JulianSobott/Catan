@@ -86,7 +86,7 @@ public class Client extends Networkmanager {
 			ui.set_current_player(((Packet.SetCurrUser) packet.data).getPlayer());
 			break;
 		case SET_MODE:
-			gameLogic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
+			gameLogic.set_mode(((Packet.NewMode) packet.data).getGameMode());
 			break;
 		case INIT_SCOREBOARD:
 			ui.update_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());

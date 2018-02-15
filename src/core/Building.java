@@ -2,7 +2,6 @@ package core;
 
 import java.io.Serializable;
 
-import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
 
 public class Building implements Serializable {

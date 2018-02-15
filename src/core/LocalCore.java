@@ -1,23 +1,21 @@
 package core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.jsfml.graphics.Color;
+import org.jsfml.system.Vector2i;
+import org.jsfml.system.Vector3i;
+
 import core.Map.GeneratorType;
 import data.Field;
 import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
-
-import org.jsfml.graphics.Color;
-import org.jsfml.system.Vector2i;
-import org.jsfml.system.Vector3i;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import network.Command;
 import network.RemoteGameLogic;
-import network.Server;
 import network.RemoteUI;
-import network.Packet;
+import network.Server;
 import superClasses.Core;
 import superClasses.GameLogic;
 import superClasses.UI;

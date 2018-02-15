@@ -1,12 +1,9 @@
 package superClasses;
 
 import org.jsfml.graphics.Color;
-import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
+
 import core.Building;
-import local.LocalGameLogic;
-import local.LocalUI;
-import network.Command;
 
 public abstract class Core {
 	

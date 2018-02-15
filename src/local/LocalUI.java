@@ -1,9 +1,7 @@
 package local;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
@@ -11,12 +9,12 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
-import org.jsfml.window.Mouse;
 import org.jsfml.window.Keyboard.Key;
+import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
-import core.Player;
 import core.LocalCore;
+import core.Player;
 import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
@@ -25,10 +23,6 @@ import local.gui.ColorPicker;
 import local.gui.Label;
 import local.gui.TextField;
 import local.gui.Widget;
-import network.Command;
-import network.Networkmanager;
-import network.Server;
-import network.Packet;
 import superClasses.Core;
 import superClasses.UI;
 

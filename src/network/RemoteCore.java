@@ -1,9 +1,8 @@
 package network;
 
 import org.jsfml.graphics.Color;
-import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
-import core.Building;
+
 import core.Building.Type;
 import superClasses.Core;
 import superClasses.GameLogic;
