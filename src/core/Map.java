@@ -137,12 +137,12 @@ public class Map {
 		}
 		return ret;
 	}
-	
-	public List<Field> get_surrounding_fields_objects(Building building){
+
+	public List<Field> get_surrounding_fields_objects(Building building) {
 		Vector2i city_pos = new Vector2i(building.get_position().x, building.get_position().y);
 		List<Vector2i> field_positions = get_surrounding_fields(city_pos);
 		List<Field> surrounding_fields = new ArrayList<Field>();
-		for( Vector2i f: field_positions ) {
+		for (Vector2i f : field_positions) {
 			surrounding_fields.add(fields[f.x][f.y]);
 		}
 		return surrounding_fields;
@@ -161,18 +161,17 @@ public class Map {
 		for (int x = 0; x < fields.length; x++) {
 			for (int y = 0; y < fields[x].length; y++) {
 				// north
-				if (fields[x][y].resource != Resource.OCEAN
-						|| y > 0 && (y % 2 == 1 || x > 0) && fields[y % 2 == 0 ? x - 1 : x][y - 1].resource != Resource.OCEAN) {
+				if (fields[x][y].resource != Resource.OCEAN || y > 0 && (y % 2 == 1 || x > 0)
+						&& fields[y % 2 == 0 ? x - 1 : x][y - 1].resource != Resource.OCEAN) {
 					available_street_places.add(new Vector3i(x, y, 1));
 				}
 				// east
-				if (fields[x][y].resource != Resource.OCEAN || y > 0 && (y % 2 == 0 || x < fields.length-1)
+				if (fields[x][y].resource != Resource.OCEAN || y > 0 && (y % 2 == 0 || x < fields.length - 1)
 						&& fields[y % 2 == 1 ? x + 1 : x][y - 1].resource != Resource.OCEAN) {
 					available_street_places.add(new Vector3i(x, y, 2));
 				}
 				// west
-				if (fields[x][y].resource != Resource.OCEAN
-						|| (x > 0) && fields[x - 1][y].resource != Resource.OCEAN) {
+				if (fields[x][y].resource != Resource.OCEAN || (x > 0) && fields[x - 1][y].resource != Resource.OCEAN) {
 					available_street_places.add(new Vector3i(x, y, 3));
 				}
 			}
@@ -208,10 +207,10 @@ public class Map {
 		}
 		return false;
 	}
-	
+
 	public void build_city(Vector2i pos) {
 		for (Vector2i ap : available_city_places) {
-			if (ap.equals(pos)) {
+			if (ap.x == pos.x && ap.y == pos.y) {
 				available_city_places.remove(ap);
 				return;
 			}
@@ -219,9 +218,10 @@ public class Map {
 	}
 
 	public void build_street(Vector3i pos) {
-		for (Vector3i ap : available_street_places) {
-			if (ap.equals(pos)) {
-				available_street_places.remove(ap);
+		for (int i = 0; i < available_street_places.size(); i++) {
+			Vector3i ap = available_street_places.get(i);
+			if (ap.x == pos.x && ap.y == pos.y && ap.z == pos.z) {
+				available_street_places.remove(i);
 				return;
 			}
 		}
@@ -252,7 +252,7 @@ public class Map {
 	}
 
 	public static float layer_to_street_rotation(int layer) {
-		return layer == 1? -30 : layer == 2 ? 30 : layer == 3 ? 90 : 0;
+		return layer == 1 ? -30 : layer == 2 ? 30 : layer == 3 ? 90 : 0;
 	}
 
 	public static Vector2f index_to_city_position(Vector2i index) {
@@ -312,7 +312,4 @@ public class Map {
 		return Map.position_to_index(new Vector2f(position.x, position.y + Map.field_size / 2.f));
 	}
 
-	
-
-	
 }
