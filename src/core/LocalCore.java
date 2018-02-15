@@ -55,9 +55,8 @@ public class LocalCore extends Core {
 		for (Player p : player) {
 			List<Building> villages = p.buildings;
 			for (Building building : villages) {
-				List<Field> sorroundingFields = new ArrayList<Field>();
-				sorroundingFields.addAll(map.get_surrounding_fields_objects(building));
-				for (Field field : sorroundingFields) {
+				List<Field> surroundingFields = map.get_surrounding_fields_objects(building);
+				for (Field field : surroundingFields) {
 					if (field.number == (byte) diceResult) {
 						int addCount = building.get_type() == Building.Type.VILLAGE ? 1 : 2;
 						p.add_resource(field.resource, addCount);
