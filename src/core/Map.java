@@ -78,7 +78,7 @@ public class Map {
 
 		LinkedList<Byte> available_numbers = new LinkedList<Byte>();
 		for (int i = 0; i < field_count; i++) {
-			available_numbers.push((byte) (i % (NUMBER_COUNT - 1) + 2));
+			available_numbers.push((byte) (i % (NUMBER_COUNT) + 2));
 		}
 
 		Vector2f island_center = Map.index_to_position(new Vector2i(map_size_x / 2, map_size_y / 2));
@@ -100,7 +100,7 @@ public class Map {
 						System.out.println("HACK");
 					}
 					if (available_numbers.isEmpty()) {//HACK
-						available_numbers.push((byte) (rand.nextInt(NUMBER_COUNT - 1) + 2));
+						available_numbers.push((byte) (rand.nextInt(NUMBER_COUNT) + 2));
 						System.out.println("HACK");
 					}
 					int index_r = rand.nextInt(available_resources.size());
