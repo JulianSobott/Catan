@@ -31,7 +31,7 @@ public class RemoteGameLogic extends GameLogic {
 
 	@Override
 	public void add_building(int user, Building building) {
-		
+		server.message_to_client(id, new Packet(Command.NEW_BUILDING, new Packet.NewBuilding(user, building)));
 	}
 
 }

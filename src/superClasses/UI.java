@@ -13,7 +13,7 @@ public abstract class UI {
 	public UI() {
 	}
 
-	public abstract void init_scoreboard(List<LocalPlayer> player);
+	public abstract void update_scoreboard(List<LocalPlayer> player);
 	public abstract void show_guest_at_lobby(String name);
 
 	public abstract void show_informative_hint(Language text);

@@ -20,7 +20,7 @@ public class RemoteUI extends UI {
 	}
 
 	@Override
-	public void init_scoreboard(List<LocalPlayer> player) {
+	public void update_scoreboard(List<LocalPlayer> player) {
 		System.out.println("init Scoreboard communicator");
 		server.message_to_client(id, new Packet(Command.INIT_SCOREBOARD, new Packet.Scoreboard(player)));
 	}

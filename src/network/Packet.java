@@ -27,22 +27,25 @@ public class Packet implements Serializable {
 			return this.player;
 		}
 	}
-	
-	public static class CreateNewMap implements Serializable{
+
+	public static class CreateNewMap implements Serializable {
 		private int mapSize;
 		private int seed;
-		
+
 		public CreateNewMap(int mapSize, int seed) {
 			this.mapSize = mapSize;
 			this.seed = seed;
 		}
+
 		public int getMapSize() {
 			return this.mapSize;
 		}
+
 		public int getSeed() {
 			return this.seed;
 		}
 	}
+
 	public static class DiceResult implements Serializable {
 		private byte result;
 
@@ -55,26 +58,23 @@ public class Packet implements Serializable {
 		}
 	}
 
-	public static class Build implements Serializable {
+	public static class BuildRequest implements Serializable {
+		private Building.Type buildingType;
 		private Vector3i position;
-		private int idPlayer = 0;
 
-		public Build(Vector3i position) {
+		public BuildRequest(Building.Type buildingType, Vector3i position) {
+			this.buildingType = buildingType;
 			this.position = position;
 		}
 
-		public Build(int idPlayer, Vector3i position) {
-			this.position = position;
-			this.idPlayer = idPlayer;
+		public Building.Type getBuildingType() {
+			return buildingType;
 		}
 
 		public Vector3i getPosition() {
 			return this.position;
 		}
 
-		public int getIdPlayer() {
-			return this.idPlayer;
-		}
 	}
 
 	public static class Trade implements Serializable {
@@ -112,7 +112,7 @@ public class Packet implements Serializable {
 			return this.fields;
 		}
 	}
-	
+
 	public static class PlayerData implements Serializable {
 		private Player player;
 
@@ -136,6 +136,25 @@ public class Packet implements Serializable {
 			return this.buildings;
 		}
 	}
+
+	public static class NewBuilding implements Serializable {
+		private int id;
+		private Building building;
+
+		public NewBuilding(int id, Building building) {
+			this.id = id;
+			this.building = building;
+		}
+
+		public int getID() {
+			return id;
+		}
+
+		public Building getBuilding() {
+			return building;
+		}
+	}
+
 	public static class NEW_MODE implements Serializable {
 		private GameMode mode;
 
@@ -147,7 +166,7 @@ public class Packet implements Serializable {
 			return this.mode;
 		}
 	}
-	
+
 	private Command cmd;
 	Serializable data;
 
@@ -162,7 +181,6 @@ public class Packet implements Serializable {
 		this.cmd = cmd;
 		this.data = data;
 	}
-	
 
 	public Command getCommand() {
 		return this.cmd;

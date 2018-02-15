@@ -15,7 +15,7 @@ import core.LocalCore;
 import local.LocalGameLogic;
 import local.LocalUI;
 
-public class Server extends Networkmanager{
+public class Server extends Networkmanager {
 
 	private ServerSocket server;
 	private String localServerIP;
@@ -87,15 +87,6 @@ public class Server extends Networkmanager{
 		case DICE:
 			core.dice(id);
 			break;
-		case BUILD_VILLAGE:
-			core.buildRequest(id, Building.Type.VILLAGE, ((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_CITY:
-			core.buildRequest(id, Building.Type.CITY, ((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_STREET:
-			core.buildRequest(id, Building.Type.STREET, ((Packet.Build) packet.data).getPosition());
-			break;
 		case STRING:
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;
@@ -104,26 +95,29 @@ public class Server extends Networkmanager{
 			Color color = ((Packet.Name) packet.data).getColor();
 			core.register_new_user(name, color);
 			break;
+		case BUILD_REQUEST:
+			core.buildRequest(id, ((Packet.BuildRequest) packet.data).getBuildingType(),
+					((Packet.BuildRequest) packet.data).getPosition());
+			break;
 		case NEXT_TURN:
 			core.nextTurn(id);
 			break;
 		default:
-			System.err.println("Unknown Command reached Server: "+ packet.getCommand());
+			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}
 	}
 
 	public void message_to_client(int id, Packet packet) {
-		for(ClientCommunicator client : clients) {
-			if(client.getID() == id) {
+		for (ClientCommunicator client : clients) {
+			if (client.getID() == id) {
 				client.message(packet);
 				break;
 			}
 		}
 	}
 
-
 	public void set_id_last_joined(int id) {
-		this.clients.get(clients.size()-1).setID(id);
+		this.clients.get(clients.size() - 1).setID(id);
 	}
 
 }

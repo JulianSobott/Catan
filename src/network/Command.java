@@ -2,9 +2,6 @@ package network;
 public enum Command {
 	DICE,
 	DICE_RESULT,
-	BUILD_VILLAGE,
-	BUILD_CITY,
-	BUILD_STREET,
 	TRADE,
 	FIELD,
 	SCORE,
@@ -14,7 +11,9 @@ public enum Command {
 	//Pre Game Stuff
 	PLAYER_DATA,
 	NEW_MAP,
+	BUILD_REQUEST,
 	UPDATE_BUILDINGS,
+	NEW_BUILDING,
 	NAME,
 	START_GAME, 
 	INIT_SCOREBOARD, 

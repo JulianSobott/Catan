@@ -80,12 +80,8 @@ public class LocalCore extends Core {
 			for (int j = 0; j < player.get(i).buildings.size(); j++) {
 				new_buildings.put(i, player.get(i).buildings);
 			}
-			// TODO send message to client
-			//data_server.message_to_client(i, new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player.get(i))));
 			uis.get(i).update_player_data(player.get(i));
 		}
-		//data_server.messageToAll(new Packet(Command.UPDATE_BUILDINGS, new Packet.UpdateBuildings(new_buildings)));
-		//data_server.update_new_map(map.getFields());
 		for (GameLogic logic : logics) {
 			logic.update_new_map(map.getFields());
 			logic.update_buildings(new_buildings);
@@ -105,14 +101,9 @@ public class LocalCore extends Core {
 	}
 
 	public void init_game() {
-		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
-		for (Player p : player) {
-			scoreboard_data.add(new LocalPlayer(p.getName(), p.getScore(), p.getColor()));
-		}
+		update_scoreboard_data();
 		for (UI ui : uis) {
-			ui.init_scoreboard(scoreboard_data);
 			ui.build_game_menu();
-
 		}
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
@@ -176,8 +167,20 @@ public class LocalCore extends Core {
 				for (GameLogic logic : logics) {
 					logic.add_building(id, new Building(buildType, position));
 				}
+				player.get(id).update_score();
+				update_scoreboard_data();
 			}
 			uis.get(id).update_player_data(player.get(id));
+		}
+	}
+
+	public void update_scoreboard_data() {
+		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
+		for (Player p : player) {
+			scoreboard_data.add(new LocalPlayer(p.getName(), p.getScore(), p.getColor()));
+		}
+		for (UI ui : uis) {
+			ui.update_scoreboard(scoreboard_data);
 		}
 	}
 

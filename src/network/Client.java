@@ -62,15 +62,6 @@ public class Client extends Networkmanager{
 		case DICE_RESULT:
 			ui.show_dice_result(((Packet.DiceResult) packet.data).getDiceResult());
 			break;
-		/*case BUILD_VILLAGE: TODO delete
-			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_VILLAGE,((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_CITY:
-			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_CITY, ((Packet.Build) packet.data).getPosition());
-			break;
-		case BUILD_STREET:
-			local_logic.build(((Packet.Build) packet.data).getIdPlayer(), Command.BUILD_STREET, ((Packet.Build) packet.data).getPosition());
-			break;*/
 		case STRING:
 			System.out.println("Client reached Message: " + packet.getDebugString());
 			break;
@@ -88,12 +79,14 @@ public class Client extends Networkmanager{
 		case UPDATE_BUILDINGS:
 			this.local_logic.update_buildings(((Packet.UpdateBuildings) packet.data).getBuildings());
 			break;
+		case NEW_BUILDING:
+			local_logic.add_building(((Packet.NewBuilding) packet.data).getID(), ((Packet.NewBuilding) packet.data).getBuilding());
+			break;
 		case SET_MODE:
 			local_logic.set_mode(((Packet.NEW_MODE) packet.data).getgameMode());
 			break;
 		case INIT_SCOREBOARD:
-			System.out.println("init Scoreboard");
-			ui.init_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
+			ui.update_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
 			break;
 		default:
 			System.err.println("Unknown Command reached Client");

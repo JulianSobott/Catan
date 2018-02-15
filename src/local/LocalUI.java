@@ -64,7 +64,7 @@ public class LocalUI extends UI{
 	private Label lblOreCards;
 	private Label lblInfo;
 
-	private String tf_value_ip = "192.168.2.103";
+	private String tf_value_ip = "127.0.0.1";
 	private String tf_value_name = "Julian";
 	private String tf_value_seed = "";
 	private String tf_value_size = "";
@@ -561,7 +561,7 @@ public class LocalUI extends UI{
 	}
 
 	@Override
-	public void init_scoreboard(List<LocalPlayer> player) {
+	public void update_scoreboard(List<LocalPlayer> player) {
 		state.player_data = player;
 		rebuild_gui();
 	}

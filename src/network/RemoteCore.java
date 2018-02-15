@@ -11,14 +11,14 @@ import superClasses.UI;
 
 public class RemoteCore extends Core {
 	Client client;
-	
+
 	public RemoteCore() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public void setServer(Networkmanager data_connection) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setClientConnection(Client client) {
@@ -42,7 +42,7 @@ public class RemoteCore extends Core {
 
 	public void addLogic(GameLogic local_logic) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class RemoteCore extends Core {
 
 	@Override
 	public void buildRequest(int id, Type buildType, Vector3i position) {
-		// TODO		
+		this.client.sendMessage(new Packet(Command.BUILD_REQUEST, new Packet.BuildRequest(buildType, position)));
 	}
 
 }
