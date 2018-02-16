@@ -161,61 +161,39 @@ public class Map {
 
 	// returns a list of all possible building sites nearby a building
 	List<Vector3i> get_nearby_building_sites(Vector3i position) {
-		// TODO reimplement
 		List<Vector3i> ret = new ArrayList<Vector3i>();
-		int left_x = position.x % 2 == 0 ? position.x : position.x + 1;
+		int left_x = position.x % 2 == 0 ? position.x : position.x - 1;
 
 		if (position.z == LAYER_NORTH_STMT) {
 			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
 			ret.add(new Vector3i(position.x, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x+1, position.y-1, LAYER_WEST_STREET));
 		} else if (position.z == LAYER_SOUTH_STMT) {
-
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y + 1, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y + 1, LAYER_WEST_STREET));
 		} else if (position.z == LAYER_NORTH_STREET) {
-
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(position.x, position.y, LAYER_WEST_STREET));
+			ret.add(new Vector3i(position.x, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(position.x - 1, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x+1, position.y-1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x, position.y-1, LAYER_SOUTH_STMT));
 		} else if (position.z == LAYER_EAST_STREET) {
-
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(position.x+1, position.y, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_SOUTH_STMT));
+			ret.add(new Vector3i(position.x+1, position.y, LAYER_NORTH_STREET));
 		} else if (position.z == LAYER_WEST_STREET) {
-
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(position.x-1, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x, position.y - 1, LAYER_SOUTH_STMT));
 		}
-
-
-		/*for (Vector3i street : built_streets) {
-			if (position.z == LAYER_NORTH_STMT) {
-				if (position.x == street.x && position.y == street.y
-						&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_EAST_STREET)
-						|| left_x == street.x && position.y - 1 == street.y)
-					ret.add(street);
-			} else if (position.z == LAYER_SOUTH_STMT) {
-				if (Vector3iMath.are_equal(street, new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET))
-						|| position.x == left_x + 1 && position.y + 1 == street.y
-								&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_WEST_STREET))
-					ret.add(street);
-			} else if (position.z == LAYER_NORTH_STREET) {
-				if (position.x == street.x && position.y == street.y
-						&& (street.z == LAYER_EAST_STREET || street.z == LAYER_WEST_STREET
-								|| street.z == LAYER_NORTH_STMT)
-						|| position.x == left_x + 1 && position.y - 1 == street.y && street.z == LAYER_WEST_STREET
-						|| position.x - 1 == street.x && position.y == street.y && street.z == LAYER_EAST_STREET
-						|| position.x == left_x && position.y - 1 == street.y && street.z == LAYER_SOUTH_STMT)
-					ret.add(street);
-			} else if (position.z == LAYER_EAST_STREET) {
-				if (position.x == street.x && position.y == street.y
-						&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_NORTH_STMT)
-						|| position.x == left_x + 1 && position.y - 1 == street.y
-								&& (street.z == LAYER_WEST_STREET || street.z == LAYER_SOUTH_STMT)
-						|| position.x + 1 == street.x && position.y == street.y
-								&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_WEST_STREET))
-					ret.add(street);
-			} else if (position.z == LAYER_WEST_STREET) {
-				if (position.x == street.x && position.y == street.y && street.z == LAYER_NORTH_STREET
-						|| position.x == left_x && position.y + 1 == street.y
-								&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_EAST_STREET
-										|| street.z == LAYER_NORTH_STMT)
-						|| position.x == left_x && position.y - 1 == street.y && street.z == LAYER_SOUTH_STMT
-						|| position.x - 1 == street.x && position.y == street.y && street.z == LAYER_EAST_STREET)
-					ret.add(street);
-			}
-		}*/
 		return ret;
 	}
 

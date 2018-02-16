@@ -146,7 +146,7 @@ public class LocalCore extends Core {
 		//TODO Check if city is too close to other city
 		Player this_player = player.get(id);
 		if (id == current_player
-				&& (initial_round || owns_nearby_buildings(this_player, map.get_nearby_building_sites(position)))) {
+				&& (initial_round || owns_nearby_building(this_player, map.get_nearby_building_sites(position)))) {
 			boolean build_sth = false;
 			java.util.Map<Resource, Integer> resources = this_player.resources;
 			if (buildType == Building.Type.VILLAGE) {
@@ -209,7 +209,7 @@ public class LocalCore extends Core {
 		}
 	}
 
-	private boolean owns_nearby_buildings(Player p, List<Vector3i> buildings) {
+	private boolean owns_nearby_building(Player p, List<Vector3i> buildings) {
 		for (Vector3i b : buildings) {
 			for (Building pb : p.buildings) {
 				if (Vector3iMath.are_equal(pb.get_position(), b))
