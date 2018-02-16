@@ -16,8 +16,6 @@ public abstract class Core {
 
 	public abstract void register_new_user(String name, Color color);
 	
-	public abstract void dice(int id);
-
 	public abstract void buildRequest(int id, Building.Type buildType, Vector3i position);
 
 	public abstract void nextTurn(int id);

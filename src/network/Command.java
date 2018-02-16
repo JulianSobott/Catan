@@ -1,6 +1,5 @@
 package network;
 public enum Command {
-	DICE,
 	DICE_RESULT,
 	TRADE_DEMAND,
 	TRADE_OFFER,
