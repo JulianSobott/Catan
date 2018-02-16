@@ -13,6 +13,7 @@ import data.Field;
 import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
+import math.Vector3iMath;
 import local.TradeDemand;
 import local.TradeOffer;
 import network.RemoteGameLogic;
@@ -87,6 +88,13 @@ public class LocalCore extends Core {
 			player.get(i).add_resource(Resource.WOOD, 1);
 			player.get(i).add_resource(Resource.WOOL, 1);
 
+			// DEBUG
+			player.get(i).add_resource(Resource.CLAY, 10);
+			player.get(i).add_resource(Resource.GRAIN, 10);
+			player.get(i).add_resource(Resource.ORE, 10);
+			player.get(i).add_resource(Resource.WOOD, 10);
+			player.get(i).add_resource(Resource.WOOL, 10);
+
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
@@ -136,7 +144,8 @@ public class LocalCore extends Core {
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
 		//TODO Check if city is too close to other city
 		Player this_player = player.get(id);
-		if (id == current_player) {
+		if (id == current_player
+				&& (initial_round || owns_nearby_buildings(this_player, map.get_nearby_building_sites(position)))) {
 			boolean build_sth = false;
 			java.util.Map<Resource, Integer> resources = this_player.resources;
 			if (buildType == Building.Type.VILLAGE) {
@@ -197,6 +206,16 @@ public class LocalCore extends Core {
 			}
 
 		}
+	}
+
+	private boolean owns_nearby_buildings(Player p, List<Vector3i> buildings) {
+		for (Vector3i b : buildings) {
+			for (Building pb : p.buildings) {
+				if (Vector3iMath.are_equal(pb.get_position(), b))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public void update_scoreboard_data() {
