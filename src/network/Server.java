@@ -82,9 +82,6 @@ public class Server extends Networkmanager {
 
 	public void message_from_client(int id, Packet packet) {
 		switch (packet.getCommand()) {
-		case DICE:
-			core.dice(id);
-			break;
 		case STRING:
 			System.out.println("Server reached Message: " + packet.getDebugString());
 			break;

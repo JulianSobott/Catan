@@ -42,15 +42,10 @@ public class LocalCore extends Core {
 		current_player = 0;
 	}
 
-	public void dice(int id) {
-		int diceResult = -1;
-		if (id == current_player) {
-			diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
-			for (UI ui : uis) {
-				ui.show_dice_result((byte) diceResult);
-			}
-		} else {
-			System.out.println(id + "is not allowed to Dice");
+	public void dice() {
+		int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
+		for (UI ui : uis) {
+			ui.show_dice_result((byte) diceResult);
 		}
 		//distributing resources
 		for (Player p : player) {
@@ -239,13 +234,13 @@ public class LocalCore extends Core {
 			if (current_player == 0 && initial_round) {// initial round has finished
 				initial_round = false;
 
-				for( Player p : player) {
+				for (Player p : player) {
 					create_initial_resources(p);
 				}
 			}
 
 			if (!initial_round)
-				dice(id);
+				dice();
 		}
 
 		// notify others about player change
@@ -260,8 +255,8 @@ public class LocalCore extends Core {
 		for (Player p : player) {
 			if (p.getId() != tradeDemand.get_demander_id()) {
 				boolean showTrade = true;
-				for(Resource r : tradeDemand.getWantedResources().keySet()) {
-					if(p.resources.get(r) < 1) {
+				for (Resource r : tradeDemand.getWantedResources().keySet()) {
+					if (p.resources.get(r) < 1) {
 						showTrade = false;
 					}
 				}
