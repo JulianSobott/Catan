@@ -33,6 +33,7 @@ public class LocalCore extends Core {
 
 	// player data
 	int current_player;
+	boolean initial_round = true;
 	List<Player> player = new ArrayList<Player>();
 
 	public LocalCore() {
@@ -55,7 +56,7 @@ public class LocalCore extends Core {
 		for (Player p : player) {
 			List<Building> villages = p.buildings;
 			for (Building building : villages) {
-				List<Field> surroundingFields = map.get_surrounding_fields_objects(building);
+				List<Field> surroundingFields = map.get_surrounding_field_objects(building);
 				for (Field field : surroundingFields) {
 					if (field.number == (byte) diceResult) {
 						int addCount = building.get_type() == Building.Type.VILLAGE ? 1
@@ -77,10 +78,20 @@ public class LocalCore extends Core {
 		map.calculate_available_places();
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
-			create_initial_resources(player.get(i), map.add_random_cities(seed, 2));
+			for (Vector3i pos : map.add_random_cities(seed, 1)) {
+				player.get(i).buildings.add(new Building(Building.Type.VILLAGE, pos));
+			}
+			player.get(i).update_score();
 			for (int j = 0; j < player.get(i).buildings.size(); j++) {
 				new_buildings.put(i, player.get(i).buildings);
 			}
+
+			// Initial round resources TODO move into database
+			player.get(i).add_resource(Resource.CLAY, 1);
+			player.get(i).add_resource(Resource.GRAIN, 1);
+			player.get(i).add_resource(Resource.WOOD, 1);
+			player.get(i).add_resource(Resource.WOOL, 1);
+
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
@@ -89,16 +100,15 @@ public class LocalCore extends Core {
 		}
 	}
 
-	private void create_initial_resources(Player p, List<Vector2i> cities) {
+	// creates the resources after the initial round
+	private void create_initial_resources(Player p) {
 		List<Vector2i> fields = new ArrayList<Vector2i>();
-		for (Vector2i pos : cities) {
-			p.buildings.add(new Building(Building.Type.VILLAGE, new Vector3i(pos.x, pos.y, 0)));
-			fields.addAll(map.get_surrounding_fields(pos));
+		for (Building building : p.buildings) {
+			fields.addAll(map.get_surrounding_fields(building.get_position()));
 		}
 		for (Vector2i pos : fields) {
 			p.add_resource(map.getFields()[pos.x][pos.y].resource, 1);
 		}
-		p.update_score();
 	}
 
 	public void init_game() {
@@ -110,6 +120,10 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
+<<<<<<< HEAD
+=======
+
+>>>>>>> ded55b9bbb1da408c3a22be3b1f498d3e34558b9
 	}
 
 	@Override
@@ -126,7 +140,7 @@ public class LocalCore extends Core {
 		data_server.set_id_last_joined(id);
 	}
 
-	// USER ACTIONS		
+	// USER ACTIONS
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
 		//TODO Check if city is too close to other city
@@ -134,16 +148,14 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			boolean build_sth = false;
 			java.util.Map<Resource, Integer> resources = this_player.resources;
-			Vector2i pos = new Vector2i(position.x, position.y);
 			if (buildType == Building.Type.VILLAGE) {
-				if (map.is_village_place_available(pos)) {
+				if (map.is_village_place_available(position)) {
 					// TODO extract all building costs into a database to make them configurable
 					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1
 							&& resources.get(Resource.GRAIN) >= 1 && resources.get(Resource.WOOL) >= 1) {
-						map.build_village(pos);
+						map.build_village(position);
 						build_sth = true;
-						this_player.buildings
-								.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
+						this_player.buildings.add(new Building(Building.Type.VILLAGE, position));
 						this_player.take_resource(Resource.WOOD, 1);
 						this_player.take_resource(Resource.CLAY, 1);
 						this_player.take_resource(Resource.GRAIN, 1);
@@ -151,7 +163,7 @@ public class LocalCore extends Core {
 					}
 				}
 			} else if (buildType == Building.Type.CITY) {
-				if (map.is_city_place_available(pos)) {
+				if (map.is_city_place_available(position)) {
 					if (resources.get(Resource.ORE) >= 3 && resources.get(Resource.GRAIN) >= 2) {
 						// find & remove old village
 						int village_index = -1;
@@ -161,14 +173,13 @@ public class LocalCore extends Core {
 								break;
 							}
 						}
-						if( village_index >= 0) {// the selected building is another player's
+						if (village_index >= 0) {// the selected building is another player's
 							this_player.buildings.remove(village_index);
 
-							map.build_city(pos);
+							map.build_city(position);
 							build_sth = true;
 
-							this_player.buildings
-									.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
+							this_player.buildings.add(new Building(Building.Type.CITY, position));
 							this_player.take_resource(Resource.ORE, 3);
 							this_player.take_resource(Resource.GRAIN, 2);
 						}
@@ -179,8 +190,7 @@ public class LocalCore extends Core {
 					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1) {
 						map.build_street(position);
 						build_sth = true;
-						this_player.buildings
-								.add(new Building(Building.Type.STREET, new Vector3i(position.x, position.y, 0)));
+						this_player.buildings.add(new Building(Building.Type.STREET, position));
 						this_player.take_resource(Resource.WOOD, 1);
 						this_player.take_resource(Resource.CLAY, 1);
 					}
@@ -228,8 +238,18 @@ public class LocalCore extends Core {
 	@Override
 	public void nextTurn(int id) {
 		if (id == current_player) {
-			dice(id);
 			current_player = current_player + 1 >= player.size() ? 0 : current_player + 1;
+
+			if (current_player == 0 && initial_round) {// initial round has finished
+				initial_round = false;
+
+				for( Player p : player) {
+					create_initial_resources(p);
+				}
+			}
+
+			if (!initial_round)
+				dice(id);
 		}
 
 		// notify others about player change
@@ -241,18 +261,18 @@ public class LocalCore extends Core {
 
 	@Override
 	public void new_trade_demand(TradeDemand tradeDemand) {
-		for(Player p : player) {
-			if(p.getId() != tradeDemand.get_demander_id()) {
+		for (Player p : player) {
+			if (p.getId() != tradeDemand.get_demander_id()) {
 				boolean showTrade = true;
 				for(Resource r : tradeDemand.getWantedResources().keySet()) {
 					if(p.resources.get(r) < 1) {
 						showTrade = false;
 					}
 				}
-				if(showTrade) {
+				if (showTrade) {
 					uis.get(p.getId()).show_trade_demand(tradeDemand);
 				}
-			}	
+			}
 		}
 	}
 
@@ -263,23 +283,22 @@ public class LocalCore extends Core {
 
 	@Override
 	public void acceptOffer(TradeOffer offer) {
-		for(Resource r : offer.getDemandedResources().keySet()) {
-			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
+		for (Resource r : offer.getDemandedResources().keySet()) {
+			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
 			player.get(offer.getDemanderID()).add_resource(r, 1);
-			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
-			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
+			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 			player.get(offer.getVendor_id()).take_resource(r, 1);
-			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 		}
-		for(Resource r : offer.getOfferedResources().keySet()) {
-			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
+		for (Resource r : offer.getOfferedResources().keySet()) {
+			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
 			player.get(offer.getDemanderID()).take_resource(r, offer.getOfferedResources().get(r));
-			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
-			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
+			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 			player.get(offer.getVendor_id()).add_resource(r, offer.getOfferedResources().get(r));
-			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 		}
-		player.get(1).add_resource(Resource.CLAY, 100);
 		uis.get(offer.getDemanderID()).update_player_data(player.get(offer.getDemanderID()));
 		uis.get(offer.getDemanderID()).closeTradeWindow();
 		uis.get(1).update_player_data(player.get(1));

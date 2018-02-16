@@ -49,7 +49,8 @@ public class LocalGameLogic extends GameLogic {
 	public void setCore(Core core) {
 		this.core = core;
 	}
-	public void setUI( LocalUI ui) {
+
+	public void setUI(LocalUI ui) {
 		this.ui = ui;
 	}
 
@@ -122,9 +123,9 @@ public class LocalGameLogic extends GameLogic {
 		} else if (building.get_type() == Building.Type.CITY) {
 			// remove old village
 			Vector2f building_pos = Map.index_to_building_position(building.get_position());
-			for( int i = 0 ; i < state.villages.get(user).size() ; i++ ){
+			for (int i = 0; i < state.villages.get(user).size(); i++) {
 				Vector2f pos = state.villages.get(user).get(i);
-				if( building_pos.x == pos.x && building_pos.y == pos.y){
+				if (building_pos.x == pos.x && building_pos.y == pos.y) {
 					state.villages.get(user).remove(i);
 					break;
 				}
@@ -206,12 +207,12 @@ public class LocalGameLogic extends GameLogic {
 
 	void mouse_click_input(Vector2f position) {
 		if (state.curr_action == Action.build_village) {
-			Vector2i pos = Map.position_to_settlement_index(position);
-			core.buildRequest(id, Type.VILLAGE, new Vector3i(pos.x, pos.y, 0));
+			Vector3i pos = Map.position_to_settlement_index(position);
+			core.buildRequest(id, Type.VILLAGE, pos);
 			ui.switch_to_idle();
 		} else if (state.curr_action == Action.build_city) {
-			Vector2i pos = Map.position_to_settlement_index(position);
-			core.buildRequest(id, Type.CITY, new Vector3i(pos.x, pos.y, 0));
+			Vector3i pos = Map.position_to_settlement_index(position);
+			core.buildRequest(id, Type.CITY, pos);
 			ui.switch_to_idle();
 		} else if (state.curr_action == Action.build_street) {
 			Vector3i pos = Map.position_to_street_index(position);
