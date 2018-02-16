@@ -12,6 +12,7 @@ import org.jsfml.system.Vector3i;
 import data.Field;
 import data.Resource;
 import math.Vector2fMath;
+import math.Vector3iMath;
 
 public class Map {
 	enum GeneratorType {
@@ -41,6 +42,7 @@ public class Map {
 	private List<Vector3i> available_village_places = new LinkedList<Vector3i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
+	private List<Vector3i> built_streets = new LinkedList<Vector3i>();
 
 	public static void update_constants() {
 		field_offset = field_size * 0.5f;
@@ -158,6 +160,44 @@ public class Map {
 		return surrounding_fields;
 	}
 
+	List<Vector3i> get_nearby_streets(Vector3i position) {
+		List<Vector3i> ret = new ArrayList<Vector3i>();
+		int left_x = position.x % 2 == 0 ? position.x : position.x + 1;
+
+		for (Vector3i street : built_streets) {
+			if (position.z == LAYER_NORTH_STMT) {
+				if (position.x == street.x && position.y == street.y
+						&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_EAST_STREET)
+						|| left_x == street.x && position.y - 1 == street.y)
+					ret.add(street);
+			} else if (position.z == LAYER_SOUTH_STMT) {
+				if (Vector3iMath.are_equal(street, new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET))
+						|| position.x == left_x + 1 && position.y + 1 == street.y
+								&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_WEST_STREET))
+					ret.add(street);
+			} else if (position.z == LAYER_NORTH_STREET) {
+				if (position.x == street.x && position.y == street.y
+						&& (street.z == LAYER_EAST_STREET || street.z == LAYER_WEST_STREET)
+						|| position.x == left_x + 1 && position.y - 1 == street.y && street.z == LAYER_WEST_STREET
+						|| position.x - 1 == street.x && position.y == street.y && street.z == LAYER_EAST_STREET)
+					ret.add(street);
+			} else if (position.z == LAYER_EAST_STREET) {
+				if (position.x == street.x && position.y == street.y && street.z == LAYER_NORTH_STREET
+						|| position.x == left_x + 1 && position.y - 1 == street.y && street.z == LAYER_WEST_STREET
+						|| position.x + 1 == street.x && position.y == street.y
+								&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_WEST_STREET))
+					ret.add(street);
+			} else if (position.z == LAYER_WEST_STREET) {
+				if (position.x == street.x && position.y == street.y && street.z == LAYER_NORTH_STREET
+						|| position.x == left_x && position.y + 1 == street.y
+								&& (street.z == LAYER_NORTH_STREET || street.z == LAYER_EAST_STREET)
+						|| position.x - 1 == street.x && position.y == street.y && street.z == LAYER_EAST_STREET)
+					ret.add(street);
+			}
+		}
+		return ret;
+	}
+
 	// creates internal list of available houses after the map was created
 	void calculate_available_places() {
 		for (int x = 0; x < fields.length; x++) {
@@ -251,6 +291,7 @@ public class Map {
 		for (int i = 0; i < available_street_places.size(); i++) {
 			Vector3i ap = available_street_places.get(i);
 			if (ap.x == pos.x && ap.y == pos.y && ap.z == pos.z) {
+				built_streets.add(pos);
 				available_street_places.remove(i);
 				return;
 			}
@@ -285,7 +326,8 @@ public class Map {
 	}
 
 	public static float layer_to_street_rotation(int layer) {
-		return layer == LAYER_NORTH_STREET ? -30 : layer == LAYER_EAST_STREET ? 30 : layer == LAYER_WEST_STREET ? 90 : 0;
+		return layer == LAYER_NORTH_STREET ? -30
+				: layer == LAYER_EAST_STREET ? 30 : layer == LAYER_WEST_STREET ? 90 : 0;
 	}
 
 	// the z-component contains the layer
