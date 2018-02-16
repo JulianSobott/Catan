@@ -322,7 +322,7 @@ public class LocalUI extends UI {
 	
 	public void build__demander_trade_window() {
 		Label lblWindow = new Label("", new FloatRect(30, 30, window_size.x -60, window_size.y-60));
-		lblWindow.set_fill_color(new Color(50, 50 , 50, 200));
+		lblWindow.set_fill_color(new Color(50, 50 , 50, 190));
 		widgets.add(lblWindow);
 		Button btnClose = new Button("X", new FloatRect(window_size.x - 70, 25, 40, 40));
 		btnClose.set_click_callback(new Runnable() {
@@ -354,8 +354,7 @@ public class LocalUI extends UI {
 		int i = 0;
 		int btnHeight = 50;
 		int btnSpace = 10;
-		Color selectedColor = new Color(200, 200, 255);
-		Color notSelectedColor = new Color(200, 200, 200, 180);
+
 		//All possible wanted resources
 		//TODO Add phrases to Language
 		Label lblWantedResources = new Label("Select Wanted Resopurces", new FloatRect(50, 100, 200, 50));
@@ -365,18 +364,22 @@ public class LocalUI extends UI {
 			if(r != Resource.OCEAN) {
 				Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()), new FloatRect(60, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
 				if(tradeDemand.getWantedResources().containsKey(r)) {
-					btnWantedResource.set_fill_color(selectedColor);
+					btnWantedResource.set_fill_color(r.get_color());
+					btnWantedResource.set_text_color(Color.WHITE);
 				}else {
-					btnWantedResource.set_fill_color(notSelectedColor);
-				}			
+					Color c = r.get_color();
+					btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
+				}		
 				btnWantedResource.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
 						if(tradeDemand.getWantedResources().containsKey(r)) {
-							btnWantedResource.set_fill_color(notSelectedColor);
+							Color c = r.get_color();
+							btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
 							tradeDemand.removeWantedResource(r);
 						}else {
-							btnWantedResource.set_fill_color(selectedColor);
+							btnWantedResource.set_fill_color(r.get_color());
+							btnWantedResource.set_text_color(Color.WHITE);
 							tradeDemand.addWantedResource(r);
 						}
 					}
@@ -391,54 +394,64 @@ public class LocalUI extends UI {
 		lblOfferedResources.set_text_color(Color.WHITE);
 		widgets.add(lblOfferedResources);
 		for(Resource r : Resource.values()) {
-			if(r != Resource.OCEAN) {
+			if(r != Resource.OCEAN && state.my_player_data.get_resources(r) != 0) {
 				String resourceString = (Language.valueOf(r.toString()).toString()) +": " + state.my_player_data.get_resources(r);
-				Button btnWantedResource = new Button(resourceString, new FloatRect(300, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
+				Button btnOfferedResource = new Button(resourceString, new FloatRect(300, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
 				if(tradeDemand.getOfferedResources().containsKey(r)) {
-					btnWantedResource.set_fill_color(selectedColor);
+					btnOfferedResource.set_fill_color(r.get_color());
+					btnOfferedResource.set_text_color(Color.WHITE);
 				}else {
-					btnWantedResource.set_fill_color(notSelectedColor);
+					Color c = r.get_color();
+					btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
 				}			
-				btnWantedResource.set_click_callback(new Runnable() {
+				btnOfferedResource.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
 						if(tradeDemand.getOfferedResources().containsKey(r)) {
-							btnWantedResource.set_fill_color(notSelectedColor);
+							Color c = r.get_color();
+							btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
+							btnOfferedResource.set_text_color(Color.BLACK);
 							tradeDemand.removeOfferedResource(r);
 						}else {
-							btnWantedResource.set_fill_color(selectedColor);
+							btnOfferedResource.set_fill_color(r.get_color());
+							btnOfferedResource.set_text_color(Color.WHITE);
 							tradeDemand.addOfferedResource(r);
 						}
 					}
 				});
-				widgets.add(btnWantedResource);
+				widgets.add(btnOfferedResource);
 				i++;
 			}	
 		}
-		
 		//TODO with accept button (maybe reject)
 		Label lblAllOffers = new Label("All Offers" , new FloatRect(window_size.x/2, 150, 300, 50));
+		lblAllOffers.set_text_color(Color.WHITE);
 		widgets.add(lblAllOffers);
 		//TODO show all offers
 		i = 0;
 		for(TradeOffer offer : allTradeOffer) {
 			System.out.println("Build new trade offer in local UI");
 			//Offer Label
-			Label lblOfferID = new Label("Offer "+ i, new FloatRect(window_size.x/2, 200 + 100*i, 300, 50));
+			Label lblOfferID = new Label("Offer "+ i, new FloatRect(window_size.x/2, 200 + (110+20)*i, 300, 50));
+			lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
 			widgets.add(lblOfferID);
-			Label lblOfferContainer = new Label("", new FloatRect(window_size.x/2, 250 + 100*i, 600, 50));
+			Label lblOfferContainer = new Label("", new FloatRect(window_size.x/2, 200 + (110+20)*i, window_size.x/2 - 30, 110));
 			lblOfferContainer.set_fill_color(new Color(255, 255, 255, 80)); //TODO Maybe change to player color
 			widgets.add(lblOfferContainer);
 			//Demanded resources?? Neccessary??
 			
 			//Offered resources
+			int j = 0;
+			Label lblOfferedResource;
 			for(Resource r : offer.getOfferedResources().keySet()) {
-				Label lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r), new FloatRect(window_size.x/2, 250 + 100*i, 100, 50));
+				lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r), new FloatRect(window_size.x/2+ 150*j, 250 + (110+20)*i, 150, 50));
 				lblOfferedResource.set_fill_color(r.get_color());
+				lblOfferedResource.set_text_size(30);
 				widgets.add(lblOfferedResource);
+				j++;
 			}
 			//Button accept
-			Button btnAccept = new Button("Accept", new FloatRect(window_size.x/2+500, 250 + 100*i, 50, 50));
+			Button btnAccept = new Button("Accept", new FloatRect(window_size.x - 110, 250 + (110+20)*i, 80, 50));
 			btnAccept.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
@@ -451,7 +464,22 @@ public class LocalUI extends UI {
 				}
 			});
 			widgets.add(btnAccept);
-			
+			Button btnReject = new Button("X", new FloatRect(window_size.x - 80, 200 + (110+20)*i, 50, 30));
+			btnReject.set_text_color(Color.RED);
+			btnReject.set_click_callback(new Runnable() {
+				private List<TradeOffer> newAllTradeOffer = new ArrayList<TradeOffer>();
+				@Override
+				public void run() {
+					for(TradeOffer innerOffer : allTradeOffer) {
+						if(innerOffer != offer) {
+							newAllTradeOffer.add(innerOffer);
+						}
+					}
+					allTradeOffer = newAllTradeOffer;
+					rebuild_gui();
+				}
+			});
+			widgets.add(btnReject);
 			i++;
 		}
 		//Button Send demand
@@ -465,10 +493,10 @@ public class LocalUI extends UI {
 		});
 		widgets.add(btnSendDemand);
 	}
-	
+
 	public void build_vendor_trade_window() {
 		Label lblWindow = new Label("", new FloatRect(30, 30, window_size.x -60, window_size.y-60));
-		lblWindow.set_fill_color(new Color(50, 50 , 50, 150));
+		lblWindow.set_fill_color(new Color(50, 50 , 50, 190));
 		widgets.add(lblWindow);
 		Button btnClose = new Button("X", new FloatRect(window_size.x - 70, 25, 40, 40));
 		btnClose.set_click_callback(new Runnable() {
@@ -482,7 +510,7 @@ public class LocalUI extends UI {
 		
 		int i = 0;
 		int btnWidth = 50;
-		int btnResourceWidth = 100;
+		int btnResourceWidth = 120;
 		int lblHeight = 50;
 		int btnSpace = 10;
 		//Show all wanted resources
@@ -552,7 +580,17 @@ public class LocalUI extends UI {
 		}
 		
 		//TODO Send offers
-		
+		//All own Resources
+		i = 0;
+		for(Resource r : Resource.values()) {
+			if(r != Resource.OCEAN) {
+				String str = Language.valueOf(r.toString()).get_text() +": "+ state.my_player_data.get_resources(r);
+				Label lblResource = new Label(str, new FloatRect(40+ i * 130, window_size.y - 110, 110, 70));
+				lblResource.set_fill_color(r.get_color());
+				widgets.add(lblResource);
+				i++;
+			}		
+		}
 		//TODO Maybe show all own offers (if multiple are made)
 		
 		//Button Send offer

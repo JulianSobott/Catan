@@ -120,10 +120,6 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-<<<<<<< HEAD
-=======
-
->>>>>>> ded55b9bbb1da408c3a22be3b1f498d3e34558b9
 	}
 
 	@Override
@@ -278,7 +274,17 @@ public class LocalCore extends Core {
 
 	@Override
 	public void new_trade_offer(TradeOffer tradeOffer) {
-		uis.get(tradeOffer.getDemanderID()).addTradeOffer(tradeOffer);
+		java.util.Map<Resource, Integer> demanderPlayerResources = player.get(tradeOffer.getDemanderID()).resources;
+		java.util.Map<Resource, Integer> offeredResources = tradeOffer.getOfferedResources();
+		boolean sendOffer = true;
+		for(Resource r : offeredResources.keySet()) {
+			if(offeredResources.get(r) > demanderPlayerResources.get(r)) {
+				sendOffer = false;
+			}
+		}
+		if(sendOffer) {
+			uis.get(tradeOffer.getDemanderID()).addTradeOffer(tradeOffer);
+		}
 	}
 
 	@Override

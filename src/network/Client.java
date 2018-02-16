@@ -116,6 +116,7 @@ public class Client extends Networkmanager {
 		try {
 			output.writeObject(p);
 			output.flush();
+			this.output.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

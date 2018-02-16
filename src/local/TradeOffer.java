@@ -22,7 +22,7 @@ public class TradeOffer implements Serializable{
 	
 	public void substractOfferedResource(Resource r) {
 		if(offeredResources.containsKey(r)) {
-			if(offeredResources.get(r) == 0) {
+			if(offeredResources.get(r) <= 1) {
 				offeredResources.remove(r);
 			}else {
 				offeredResources.put(r, offeredResources.get(r) - 1);
