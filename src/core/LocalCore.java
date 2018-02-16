@@ -54,7 +54,7 @@ public class LocalCore extends Core {
 		for (Player p : player) {
 			List<Building> villages = p.buildings;
 			for (Building building : villages) {
-				List<Field> surroundingFields = map.get_surrounding_fields_objects(building);
+				List<Field> surroundingFields = map.get_surrounding_field_objects(building);
 				for (Field field : surroundingFields) {
 					if (field.number == (byte) diceResult) {
 						int addCount = building.get_type() == Building.Type.VILLAGE ? 1
@@ -80,6 +80,12 @@ public class LocalCore extends Core {
 			for (int j = 0; j < player.get(i).buildings.size(); j++) {
 				new_buildings.put(i, player.get(i).buildings);
 			}
+			// DEBUG
+			player.get(i).add_resource(Resource.CLAY, 10);
+			player.get(i).add_resource(Resource.GRAIN, 10);
+			player.get(i).add_resource(Resource.ORE, 10);
+			player.get(i).add_resource(Resource.WOOD, 10);
+			player.get(i).add_resource(Resource.WOOL, 10);
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
@@ -88,10 +94,10 @@ public class LocalCore extends Core {
 		}
 	}
 
-	private void create_initial_resources(Player p, List<Vector2i> cities) {
+	private void create_initial_resources(Player p, List<Vector3i> cities) {
 		List<Vector2i> fields = new ArrayList<Vector2i>();
-		for (Vector2i pos : cities) {
-			p.buildings.add(new Building(Building.Type.VILLAGE, new Vector3i(pos.x, pos.y, 0)));
+		for (Vector3i pos : cities) {
+			p.buildings.add(new Building(Building.Type.VILLAGE, pos));
 			fields.addAll(map.get_surrounding_fields(pos));
 		}
 		for (Vector2i pos : fields) {
@@ -134,16 +140,15 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			boolean build_sth = false;
 			java.util.Map<Resource, Integer> resources = this_player.resources;
-			Vector2i pos = new Vector2i(position.x, position.y);
 			if (buildType == Building.Type.VILLAGE) {
-				if (map.is_village_place_available(pos)) {
+				if (map.is_village_place_available(position)) {
 					// TODO extract all building costs into a database to make them configurable
 					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1
 							&& resources.get(Resource.GRAIN) >= 1 && resources.get(Resource.WOOL) >= 1) {
-						map.build_village(pos);
+						map.build_village(position);
 						build_sth = true;
 						this_player.buildings
-								.add(new Building(Building.Type.VILLAGE, new Vector3i(position.x, position.y, 0)));
+								.add(new Building(Building.Type.VILLAGE, position));
 						this_player.take_resource(Resource.WOOD, 1);
 						this_player.take_resource(Resource.CLAY, 1);
 						this_player.take_resource(Resource.GRAIN, 1);
@@ -151,7 +156,7 @@ public class LocalCore extends Core {
 					}
 				}
 			} else if (buildType == Building.Type.CITY) {
-				if (map.is_city_place_available(pos)) {
+				if (map.is_city_place_available(position)) {
 					if (resources.get(Resource.ORE) >= 3 && resources.get(Resource.GRAIN) >= 2) {
 						// find & remove old village
 						int village_index = -1;
@@ -164,11 +169,11 @@ public class LocalCore extends Core {
 						if( village_index >= 0) {// the selected building is another player's
 							this_player.buildings.remove(village_index);
 
-							map.build_city(pos);
+							map.build_city(position);
 							build_sth = true;
 
 							this_player.buildings
-									.add(new Building(Building.Type.CITY, new Vector3i(position.x, position.y, 0)));
+									.add(new Building(Building.Type.CITY, position));
 							this_player.take_resource(Resource.ORE, 3);
 							this_player.take_resource(Resource.GRAIN, 2);
 						}
@@ -180,7 +185,7 @@ public class LocalCore extends Core {
 						map.build_street(position);
 						build_sth = true;
 						this_player.buildings
-								.add(new Building(Building.Type.STREET, new Vector3i(position.x, position.y, 0)));
+								.add(new Building(Building.Type.STREET, position));
 						this_player.take_resource(Resource.WOOD, 1);
 						this_player.take_resource(Resource.CLAY, 1);
 					}

@@ -18,6 +18,13 @@ public class Map {
 		HEXAGON, CIRCLE,
 	}
 
+	// Settlement & street layer in z-coordinate
+	public final static int LAYER_NORTH_STMT = 0;
+	public final static int LAYER_SOUTH_STMT = 1;
+	public final static int LAYER_NORTH_STREET = 2;
+	public final static int LAYER_EAST_STREET = 3;
+	public final static int LAYER_WEST_STREET = 4;
+
 	public final static float MAGIC_HEX_NUMBER = 0.866f;// height of a isosceles triangle with side length 1
 	public final static int NUMBER_COUNT = 11;
 	public static float border_size = 2.5f;
@@ -31,9 +38,9 @@ public class Map {
 	public static int map_size_y;
 
 	private Field[][] fields;
-	private List<Vector2i> available_village_places = new LinkedList<Vector2i>();
+	private List<Vector3i> available_village_places = new LinkedList<Vector3i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
-	private List<Vector2i> built_villages = new LinkedList<Vector2i>();
+	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
 
 	public static void update_constants() {
 		field_offset = field_size * 0.5f;
@@ -123,25 +130,27 @@ public class Map {
 		return (delta.y <= 0.433f) && (0.433f * delta.x + 0.25f * delta.y <= 0.5f * 0.433f);
 	}
 
-	List<Vector2i> get_surrounding_fields(Vector2i settlement_pos) {
+	List<Vector2i> get_surrounding_fields(Vector3i settlement_pos) {
 		List<Vector2i> ret = new ArrayList<Vector2i>();
 		if (fields[settlement_pos.x][settlement_pos.y].resource != Resource.OCEAN)
 			ret.add(new Vector2i(settlement_pos.x, settlement_pos.y));
-		int upper_left_x = settlement_pos.y % 2 == 0 ? settlement_pos.x - 1 : settlement_pos.x;
-		if (settlement_pos.y > 0 && (settlement_pos.y % 2 != 0 || settlement_pos.x > 0)
-				&& fields[upper_left_x][settlement_pos.y - 1].resource != Resource.OCEAN) {
-			ret.add(new Vector2i(upper_left_x, settlement_pos.y - 1));
-		}
-		if (settlement_pos.y > 0 && (settlement_pos.y % 2 == 0 || settlement_pos.x < map_size_x - 1)
-				&& fields[upper_left_x + 1][settlement_pos.y - 1].resource != Resource.OCEAN) {
-			ret.add(new Vector2i(upper_left_x + 1, settlement_pos.y - 1));
+		if (settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y > 0 : settlement_pos.y < map_size_y - 1) {
+			int left_x = settlement_pos.y % 2 == 0 ? settlement_pos.x - 1 : settlement_pos.x;
+			int left_y = settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y - 1 : settlement_pos.x + 1;
+			if (settlement_pos.y > 0 && (settlement_pos.y % 2 != 0 || settlement_pos.x > 0)
+					&& fields[left_x][left_y].resource != Resource.OCEAN) {
+				ret.add(new Vector2i(left_x, left_y));
+			}
+			if (settlement_pos.y > 0 && (settlement_pos.y % 2 == 0 || settlement_pos.x < map_size_x - 1)
+					&& fields[left_x + 1][left_y].resource != Resource.OCEAN) {
+				ret.add(new Vector2i(left_x + 1, left_y));
+			}
 		}
 		return ret;
 	}
 
-	public List<Field> get_surrounding_fields_objects(Building building) {
-		Vector2i settlement_pos = new Vector2i(building.get_position().x, building.get_position().y);
-		List<Vector2i> field_positions = get_surrounding_fields(settlement_pos);
+	public List<Field> get_surrounding_field_objects(Building building) {
+		List<Vector2i> field_positions = get_surrounding_fields(building.get_position());
 		List<Field> surrounding_fields = new ArrayList<Field>();
 		for (Vector2i f : field_positions) {
 			surrounding_fields.add(fields[f.x][f.y]);
@@ -153,8 +162,13 @@ public class Map {
 	void calculate_available_places() {
 		for (int x = 0; x < fields.length; x++) {
 			for (int y = 0; y < fields[x].length; y++) {
-				if (!get_surrounding_fields(new Vector2i(x, y)).isEmpty()) {
-					available_village_places.add(new Vector2i(x, y));
+				// north
+				if (!get_surrounding_fields(new Vector3i(x, y, 0)).isEmpty()) {
+					available_village_places.add(new Vector3i(x, y, LAYER_NORTH_STMT));
+				}
+				// south
+				if (!get_surrounding_fields(new Vector3i(x, y, 1)).isEmpty()) {
+					available_village_places.add(new Vector3i(x, y, LAYER_SOUTH_STMT));
 				}
 			}
 		}
@@ -164,25 +178,25 @@ public class Map {
 				// north
 				if (fields[x][y].resource != Resource.OCEAN || y > 0 && (y % 2 == 1 || x > 0)
 						&& fields[y % 2 == 0 ? x - 1 : x][y - 1].resource != Resource.OCEAN) {
-					available_street_places.add(new Vector3i(x, y, 1));
+					available_street_places.add(new Vector3i(x, y, LAYER_NORTH_STREET));
 				}
 				// east
 				if (fields[x][y].resource != Resource.OCEAN || y > 0 && (y % 2 == 0 || x < fields.length - 1)
 						&& fields[y % 2 == 1 ? x + 1 : x][y - 1].resource != Resource.OCEAN) {
-					available_street_places.add(new Vector3i(x, y, 2));
+					available_street_places.add(new Vector3i(x, y, LAYER_EAST_STREET));
 				}
 				// west
 				if (fields[x][y].resource != Resource.OCEAN || (x > 0) && fields[x - 1][y].resource != Resource.OCEAN) {
-					available_street_places.add(new Vector3i(x, y, 3));
+					available_street_places.add(new Vector3i(x, y, LAYER_WEST_STREET));
 				}
 			}
 		}
 	}
 
-	List<Vector2i> add_random_cities(int seed, int house_count) {
+	List<Vector3i> add_random_cities(int seed, int house_count) {
 		Random rand = new Random(seed);
 
-		List<Vector2i> new_cities = new ArrayList<Vector2i>();
+		List<Vector3i> new_cities = new ArrayList<Vector3i>();
 		for (int i = 0; i < house_count; i++) {
 			int index = rand.nextInt(available_village_places.size());
 			new_cities.add(available_village_places.get(index));
@@ -192,18 +206,18 @@ public class Map {
 		return new_cities;
 	}
 
-	public boolean is_village_place_available(Vector2i pos) {
-		for (Vector2i ap : available_village_places) {
-			if (ap.x == pos.x && ap.y == pos.y) {
+	public boolean is_village_place_available(Vector3i pos) {
+		for (Vector3i ap : available_village_places) {
+			if (ap.x == pos.x && ap.y == pos.y && ap.z == pos.z) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean is_city_place_available(Vector2i pos) {
-		for (Vector2i ap : built_villages) {
-			if (ap.x == pos.x && ap.y == pos.y) {
+	public boolean is_city_place_available(Vector3i pos) {
+		for (Vector3i ap : built_villages) {
+			if (ap.x == pos.x && ap.y == pos.y && ap.z == pos.z) {
 				return true;
 			}
 		}
@@ -219,8 +233,8 @@ public class Map {
 		return false;
 	}
 
-	public void build_village(Vector2i pos) {
-		for (Vector2i ap : available_village_places) {
+	public void build_village(Vector3i pos) {
+		for (Vector3i ap : available_village_places) {
 			if (ap.x == pos.x && ap.y == pos.y) {
 				available_village_places.remove(ap);
 				built_villages.add(pos);
@@ -228,8 +242,9 @@ public class Map {
 			}
 		}
 	}
-	public void build_city(Vector2i pos) {
-		build_village(pos);
+
+	public void build_city(Vector3i pos) {
+		build_village(pos);// TODO
 	}
 
 	public void build_street(Vector3i pos) {
@@ -248,10 +263,12 @@ public class Map {
 
 	// position <-> building index mapping
 
+	// field index to position
 	public static Vector2f index_to_position(Vector2i index) {
 		return index_to_position(index.x, index.y);
 	}
 
+	// field index to position
 	public static Vector2f index_to_position(float x, float y) {
 		float pos_x = x * (field_size + field_distance) + field_offset
 				+ (y % 2 != 0 ? (field_size + field_distance) / 2.f : 0),
@@ -259,6 +276,7 @@ public class Map {
 		return new Vector2f(pos_x, pos_y);
 	}
 
+	// any position in a field to the fields index
 	public static Vector2i position_to_index(Vector2f position) {
 		int y = Math.round((position.y - field_offset) / (Map.MAGIC_HEX_NUMBER * (field_size + field_distance)));
 		int x = Math.round((position.x - (field_offset + (y % 2 != 0 ? (field_size + field_distance) / 2.f : 0)))
@@ -267,25 +285,27 @@ public class Map {
 	}
 
 	public static float layer_to_street_rotation(int layer) {
-		return layer == 1 ? -30 : layer == 2 ? 30 : layer == 3 ? 90 : 0;
-	}
-
-	public static Vector2f index_to_settlement_position(Vector2i index) {
-		return index_to_building_position(new Vector3i(index.x, index.y, 0));
+		return layer == LAYER_NORTH_STREET ? -30 : layer == LAYER_EAST_STREET ? 30 : layer == LAYER_WEST_STREET ? 90 : 0;
 	}
 
 	// the z-component contains the layer
 	public static Vector2f index_to_building_position(Vector3i index) {
-		if (index.z == 1)
+		if (index.z == LAYER_NORTH_STMT)
+			return Vector2f.add(Map.index_to_position(index.x, index.y), new Vector2f(0, -Map.field_size / 2.f));
+		else if (index.z == LAYER_SOUTH_STMT)
+			return Vector2f.add(Map.index_to_position(index.x, index.y), new Vector2f(0, Map.field_size / 2.f));
+		else if (index.z == LAYER_NORTH_STREET)
 			return Vector2f.add(Map.index_to_position(index.x, index.y),
 					new Vector2f(-diagonal_offset_x, -diagonal_offset_y));
-		else if (index.z == 2)
+		else if (index.z == LAYER_EAST_STREET)
 			return Vector2f.add(Map.index_to_position(index.x, index.y),
 					new Vector2f(diagonal_offset_x, -diagonal_offset_y));
-		else if (index.z == 3)
+		else if (index.z == LAYER_WEST_STREET)
 			return Vector2f.add(Map.index_to_position(index.x, index.y), new Vector2f(-linear_offset_x, 0));
-		else// settlement
-			return Vector2f.add(Map.index_to_position(index.x, index.y), new Vector2f(0, -Map.field_size / 2.f));
+		else {
+			System.err.println("ERROR: undefined building layer '" + index.z + "' in index_to_building_position()");
+			return Map.index_to_position(index.x, index.y);
+		}
 	}
 
 	// the z-component contains the layer
@@ -312,19 +332,37 @@ public class Map {
 		// return the nearest index
 		if (north_length < east_length) {
 			if (north_length < west_length)
-				return new Vector3i(north_index.x, north_index.y, 1);
+				return new Vector3i(north_index.x, north_index.y, LAYER_NORTH_STREET);
 			else
-				return new Vector3i(west_index.x, west_index.y, 3);
+				return new Vector3i(west_index.x, west_index.y, LAYER_WEST_STREET);
 		} else {
 			if (west_length < east_length)
-				return new Vector3i(west_index.x, west_index.y, 3);
+				return new Vector3i(west_index.x, west_index.y, LAYER_WEST_STREET);
 			else
-				return new Vector3i(east_index.x, east_index.y, 2);
+				return new Vector3i(east_index.x, east_index.y, LAYER_EAST_STREET);
 		}
 	}
 
-	public static Vector2i position_to_settlement_index(Vector2f position) {
-		return Map.position_to_index(new Vector2f(position.x, position.y + Map.field_size / 2.f));
+	public static Vector3i position_to_settlement_index(Vector2f position) {
+		// calculate index in all layers
+		Vector2i north_index = position_to_index(new Vector2f(position.x, position.y + Map.field_size / 2.f));
+		Vector2i south_index = position_to_index(new Vector2f(position.x, position.y - Map.field_size / 2.f));
+
+		// calculate normalized position
+		Vector2f north_position = Vector2f.add(Map.index_to_position(north_index),
+				new Vector2f(0, -Map.field_size / 2.f));
+		Vector2f south_position = Vector2f.add(Map.index_to_position(south_index),
+				new Vector2f(0, Map.field_size / 2.f));
+
+		// determine distance from real to normalized position
+		float north_length = Vector2fMath.length(Vector2f.sub(north_position, position));
+		float south_length = Vector2fMath.length(Vector2f.sub(south_position, position));
+
+		// return the nearest index
+		if (north_length < south_length)
+			return new Vector3i(north_index.x, north_index.y, LAYER_NORTH_STMT);
+		else
+			return new Vector3i(south_index.x, south_index.y, LAYER_SOUTH_STMT);
 	}
 
 }
