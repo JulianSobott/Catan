@@ -53,7 +53,6 @@ public class RemoteUI extends UI {
 	@Override
 	public void update_player_data(Player player) {
 		server.message_to_client(id, new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player)));
-		System.out.printf("Packet to %d with num CLAy %d was send", id, player.get_resources(Resource.CLAY));
 	}
 
 	@Override

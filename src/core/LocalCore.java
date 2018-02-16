@@ -14,6 +14,7 @@ import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 import math.Vector3iMath;
+import local.LocalUI;
 import local.TradeDemand;
 import local.TradeOffer;
 import network.RemoteGameLogic;
@@ -288,7 +289,17 @@ public class LocalCore extends Core {
 
 	@Override
 	public void new_trade_offer(TradeOffer tradeOffer) {
-		uis.get(tradeOffer.getDemanderID()).addTradeOffer(tradeOffer);
+		java.util.Map<Resource, Integer> demanderPlayerResources = player.get(tradeOffer.getDemanderID()).resources;
+		java.util.Map<Resource, Integer> offeredResources = tradeOffer.getOfferedResources();
+		boolean sendOffer = true;
+		for(Resource r : offeredResources.keySet()) {
+			if(offeredResources.get(r) > demanderPlayerResources.get(r)) {
+				sendOffer = false;
+			}
+		}
+		if(sendOffer) {
+			uis.get(tradeOffer.getDemanderID()).addTradeOffer(tradeOffer);
+		}
 	}
 
 	@Override
@@ -315,4 +326,14 @@ public class LocalCore extends Core {
 		uis.get(1).closeTradeWindow();
 	}
 
+	@Override
+	public void closeTrade() {
+		for(UI ui : uis) {
+			ui.closeTradeWindow();
+		}
+	}
+	
+	public void showIpAtLobby(String ip) {
+		((LocalUI) this.uis.get(0)).showIpInLobby(ip);
+	}
 }

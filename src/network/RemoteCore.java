@@ -65,4 +65,9 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.ACCEPT_OFFER, new Packet.TradeOffer(offer)));
 	}
 
+	@Override
+	public void closeTrade() {
+		this.client.sendMessage(new Packet(Command.CLOSE_TRADE_WINDOW));
+	}
+
 }
