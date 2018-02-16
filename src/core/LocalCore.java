@@ -120,10 +120,6 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-<<<<<<< HEAD
-=======
-
->>>>>>> ded55b9bbb1da408c3a22be3b1f498d3e34558b9
 	}
 
 	@Override
