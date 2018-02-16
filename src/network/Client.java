@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import data.Resource;
 import local.LocalState.GameMode;
 import local.LocalGameLogic;
 import local.LocalUI;
@@ -72,7 +73,6 @@ public class Client extends Networkmanager {
 			System.out.println("Start game at Client");
 			break;
 		case PLAYER_DATA:
-			System.out.println("Client arrived update Player Data");
 			this.ui.update_player_data(((Packet.PlayerData) packet.data).getPlayer());
 			break;
 		case NEW_MAP:
@@ -102,6 +102,10 @@ public class Client extends Networkmanager {
 			break;
 		case CLOSE_TRADE_WINDOW:
 			ui.closeTradeWindow();
+			break;
+		case SET_ID:
+			ui.setID(((Packet.ID) packet.data).getID());
+			gameLogic.setID(((Packet.ID) packet.data).getID());
 			break;
 		default:
 			System.err.println("Unknown Command reached Client");

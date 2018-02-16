@@ -98,13 +98,16 @@ public class Packet implements Serializable {
 		}
 
 	}
-
-	public static class Trade implements Serializable {
-		//TODO implement parameters
-		public Trade() {
+	
+	public static class ID implements Serializable{
+		private int id;
+		public ID(int id) {
+			this.id = id;
+		}
+		public int getID() {
+			return this.id;
 		}
 	}
-
 	public static class Name implements Serializable {
 		private String name;
 		private Color color;
@@ -144,6 +147,9 @@ public class Packet implements Serializable {
 
 		public Player getPlayer() {
 			return this.player;
+		}
+		public Map<Resource, Integer> getResources() {
+			return this.player.get_all_resources();
 		}
 	}
 
@@ -226,5 +232,8 @@ public class Packet implements Serializable {
 
 	public String getDebugString() {
 		return this.debugString;
+	}
+	public void setString(String str) {
+		this.debugString = str;
 	}
 }

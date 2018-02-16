@@ -26,12 +26,8 @@ public abstract class UI {
 
 	public abstract void build_game_menu();
 	
-	public void setID(int id) {
-		this.id = id;
-	}
-	public int getID() {
-		return this.id;
-	}
+	public abstract void setID(int id);
+	public abstract int getID();
 
 	public abstract void show_trade_demand(TradeDemand tradeDemand);
 

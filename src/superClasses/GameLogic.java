@@ -20,7 +20,5 @@ public abstract class GameLogic {
 
 	public abstract void add_building(int user, Building building);
 
-	public void setID(int id) {
-		this.id = id;
-	}
+	public abstract void setID(int id);
 }

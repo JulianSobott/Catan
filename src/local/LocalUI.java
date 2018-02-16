@@ -313,7 +313,6 @@ public class LocalUI extends UI {
 			@Override
 			public void run() {
 				tradeDemand = new TradeDemand();
-				tradeDemand.set_demander_id(id);
 				mode = GUIMode.TRADE_DEMAND;
 				rebuild_gui();
 			}
@@ -951,5 +950,15 @@ public class LocalUI extends UI {
 	public void closeTradeWindow() {
 		mode = GUIMode.GAME;
 		rebuild_gui();
+	}
+
+	@Override
+	public void setID(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public int getID() {
+		return this.id;
 	}
 }

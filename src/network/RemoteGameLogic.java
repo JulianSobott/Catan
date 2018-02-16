@@ -34,4 +34,10 @@ public class RemoteGameLogic extends GameLogic {
 		server.message_to_client(id, new Packet(Command.NEW_BUILDING, new Packet.NewBuilding(user, building)));
 	}
 
+	@Override
+	public void setID(int id) {
+		this.id = id;
+		server.message_to_client(id, new Packet(Command.SET_ID, new Packet.ID(id)));
+	}
+
 }

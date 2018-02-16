@@ -2,6 +2,8 @@ package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import data.Resource;
+
 public class ClientInputListener extends Thread{
 	
 	private Client client;
@@ -16,12 +18,13 @@ public class ClientInputListener extends Thread{
 	
 	public void run() {
 		while(connectionToServer) {
-			Packet packet;
-			if(input != null) {
+			if(input != null) {		
 				try {
+					Packet packet;
 					packet = (Packet) input.readObject();
 					this.client.message_from_core(packet);
 				}catch(IOException e) {
+					e.printStackTrace();
 					System.err.println("Connection to Server closed (ClientInputListener Line 26)");
 					this.connectionToServer = false;
 				}catch(ClassNotFoundException e) {

@@ -4,6 +4,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import data.Resource;
+
 //TODO Rename Method "message"
 
 public class ClientCommunicator extends Thread{
@@ -52,8 +54,10 @@ public class ClientCommunicator extends Thread{
 	
 	public void message(Packet p) {
 		try {
+			int i = 0;
 			this.output.writeObject(p);
 			this.output.flush();
+			this.output.reset();
 		}catch(IOException e) {
 			System.err.println("Can't send Packet to Client with the Code:" + p.getCommand());
 		}

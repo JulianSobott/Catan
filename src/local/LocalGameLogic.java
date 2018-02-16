@@ -219,4 +219,9 @@ public class LocalGameLogic extends GameLogic {
 			ui.switch_to_idle();
 		}
 	}
+
+	@Override
+	public void setID(int id) {
+		this.id = id;
+	}
 }

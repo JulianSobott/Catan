@@ -110,7 +110,6 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-	
 	}
 
 	@Override
@@ -246,7 +245,7 @@ public class LocalCore extends Core {
 			if(p.getId() != tradeDemand.get_demander_id()) {
 				boolean showTrade = true;
 				for(Resource r : tradeDemand.getWantedResources().keySet()) {
-					if(!p.resources.containsKey(r)) {
+					if(p.resources.get(r) < 1) {
 						showTrade = false;
 					}
 				}
@@ -279,11 +278,12 @@ public class LocalCore extends Core {
 			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
 			player.get(offer.getVendor_id()).add_resource(r, offer.getOfferedResources().get(r));
 			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
-		}	
+		}
+		player.get(1).add_resource(Resource.CLAY, 100);
 		uis.get(offer.getDemanderID()).update_player_data(player.get(offer.getDemanderID()));
 		uis.get(offer.getDemanderID()).closeTradeWindow();
-		uis.get(offer.getVendor_id()).update_player_data(player.get(offer.getVendor_id()));
-		uis.get(offer.getVendor_id()).closeTradeWindow();
+		uis.get(1).update_player_data(player.get(1));
+		uis.get(1).closeTradeWindow();
 	}
 
 }

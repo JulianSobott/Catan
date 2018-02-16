@@ -2,6 +2,8 @@ package network;
 
 import core.Player;
 import data.Language;
+import data.Resource;
+
 import java.util.List;
 
 import local.LocalPlayer;
@@ -14,6 +16,12 @@ public class RemoteUI extends UI {
 
 	public RemoteUI(Server server) {
 		this.server = server;
+	}
+	
+	@Override 
+	public void setID(int id) {
+		this.id = id;
+		server.message_to_client(id, new Packet(Command.SET_ID, new Packet.ID(id)));
 	}
 
 	@Override
@@ -45,6 +53,7 @@ public class RemoteUI extends UI {
 	@Override
 	public void update_player_data(Player player) {
 		server.message_to_client(id, new Packet(Command.PLAYER_DATA, new Packet.PlayerData(player)));
+		System.out.printf("Packet to %d with num CLAy %d was send", id, player.get_resources(Resource.CLAY));
 	}
 
 	@Override
@@ -65,6 +74,11 @@ public class RemoteUI extends UI {
 	@Override
 	public void closeTradeWindow() {
 		server.message_to_client(id, new Packet(Command.CLOSE_TRADE_WINDOW));
+	}
+
+	@Override
+	public int getID() {
+		return this.id;
 	}
 
 }
