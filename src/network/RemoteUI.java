@@ -5,6 +5,7 @@ import data.Language;
 import java.util.List;
 
 import local.LocalPlayer;
+import local.TradeDemand;
 import superClasses.UI;
 
 public class RemoteUI extends UI {
@@ -48,6 +49,11 @@ public class RemoteUI extends UI {
 	@Override
 	public void set_current_player(String player) {
 		server.message_to_client(id, new Packet(Command.SET_CURR_USER, new Packet.SetCurrUser(player)));
+	}
+
+	@Override
+	public void show_trade_demand(int demander_id, TradeDemand tradeDemand) {
+		server.message_to_client(id, new Packet(Command.TRADE_DEMAND, new Packet.TradeDemand(demander_id, tradeDemand)));
 	}
 
 }

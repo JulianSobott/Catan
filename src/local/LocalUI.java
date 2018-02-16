@@ -62,6 +62,14 @@ public class LocalUI extends UI {
 	private Label lblClayCards;
 	private Label lblOreCards;
 	private Label lblInfo;
+	
+	//Trading
+	private TradeDemand tradeDemand;
+	private Button btnWantWool;
+	private Button btnWantWood;
+	private Button btnWantOre;
+	private Button btnWantGrain;
+	private Button btnWantClay;
 
 	private String tf_value_ip = "127.0.0.1";
 	private String tf_value_name = "Julian";
@@ -153,6 +161,7 @@ public class LocalUI extends UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
+				tradeDemand = new TradeDemand();
 				mode = GUIMode.TRADE_DEMAND;
 				rebuild_gui();
 			}
@@ -295,6 +304,7 @@ public class LocalUI extends UI {
 		btnTrade.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
+				tradeDemand = new TradeDemand();
 				mode = GUIMode.TRADE_DEMAND;
 				rebuild_gui();
 			}
@@ -303,11 +313,10 @@ public class LocalUI extends UI {
 	}
 	
 	public void build__demander_trade_window() {
-		
 		Label lblWindow = new Label("", new FloatRect(30, 30, window_size.x -60, window_size.y-60));
 		lblWindow.set_fill_color(new Color(50, 50 , 50, 150));
 		widgets.add(lblWindow);
-		Button btnClose = new Button("X", new FloatRect(window_size.x - 70, 25, 20, 20));
+		Button btnClose = new Button("X", new FloatRect(window_size.x - 70, 25, 40, 40));
 		btnClose.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -315,26 +324,133 @@ public class LocalUI extends UI {
 				rebuild_gui();
 			}
 		});
-		Button btnAskBank = new Button("Bank", new FloatRect(40, 40, 70, 40));
+		widgets.add(btnClose);
+		Button btnAskBank = new Button("Bank", new FloatRect(30, 40, 70, 40));
 		btnAskBank.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+				System.out.println("Bank");
 			}
 		});
 		widgets.add(btnAskBank);
 		Button btnAskPlayer = new Button("Player", new FloatRect(120, 40, 70, 40));
-		btnAskBank.set_click_callback(new Runnable() {
+		btnAskPlayer.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				
+				System.out.println("Player");
 			}
 		});
 		widgets.add(btnAskPlayer);
+		
+		
+		int i = 0;
+		int btnHeight = 50;
+		int btnSpace = 10;
+		Color selectedColor = new Color(200, 200, 255);
+		Color notSelectedColor = new Color(50, 50, 50, 100);
+		//All possible wanted resources
+		//TODO Add phrases to Language
+		Label lblWantedResources = new Label("Select Wanted Resopurces", new FloatRect(50, 100, 200, 50));
+		widgets.add(lblWantedResources);
+		for(Resource r : Resource.values()) {
+			if(r != Resource.OCEAN) {
+				Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()), new FloatRect(60, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
+				if(tradeDemand.getWantedResources().containsKey(r)) {
+					btnWantedResource.set_fill_color(selectedColor);
+				}else {
+					btnWantedResource.set_fill_color(notSelectedColor);
+				}			
+				btnWantedResource.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						if(tradeDemand.getWantedResources().containsKey(r)) {
+							btnWantedResource.set_fill_color(notSelectedColor);
+							tradeDemand.removeWantedResource(r);
+						}else {
+							btnWantedResource.set_fill_color(selectedColor);
+							tradeDemand.addWantedResource(r);
+						}
+					}
+				});
+				widgets.add(btnWantedResource);
+				i++;
+			}	
+		}
+		//All Resources for offer
+		i= 0;
+		Label lblOfferedResources = new Label("Select Resoources That you offer", new FloatRect(370, 100, 300, 50));
+		widgets.add(lblOfferedResources);
+		for(Resource r : Resource.values()) {
+			if(r != Resource.OCEAN) {
+				Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()), new FloatRect(300, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
+				if(tradeDemand.getOfferedResources().containsKey(r)) {
+					btnWantedResource.set_fill_color(selectedColor);
+				}else {
+					btnWantedResource.set_fill_color(notSelectedColor);
+				}			
+				btnWantedResource.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						if(tradeDemand.getOfferedResources().containsKey(r)) {
+							btnWantedResource.set_fill_color(notSelectedColor);
+							tradeDemand.removeOfferedResource(r);
+						}else {
+							btnWantedResource.set_fill_color(selectedColor);
+							tradeDemand.addOfferedResource(r);
+						}
+					}
+				});
+				widgets.add(btnWantedResource);
+				i++;
+			}	
+		}
+		//TODO show all offers
+		//TODO with accept button (maybe reject)
+		
+		
+		//Button Send demand
+		Button btnSendDemand = new Button("Send demand", new FloatRect(window_size.x -100, window_size.y - 100, 200, 70));
+		btnSendDemand.set_fill_color(Color.GREEN);
+		btnSendDemand.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				core.new_trade_demand(id, tradeDemand);
+			}
+		});
+		widgets.add(btnSendDemand);
 	}
 	
 	public void build_vendor_trade_window() {
+		Label lblWindow = new Label("", new FloatRect(30, 30, window_size.x -60, window_size.y-60));
+		lblWindow.set_fill_color(new Color(50, 50 , 50, 150));
+		widgets.add(lblWindow);
+		Button btnClose = new Button("X", new FloatRect(window_size.x - 70, 25, 40, 40));
+		btnClose.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				mode = GUIMode.GAME;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnClose);
+		//TODO Show all wanted resources
 		
+		//TODO Show Resources that are wanted with number
+		
+		//TODO Send offers
+		
+		//TODO Maybe show all own offers (if multiple are made)
+		
+		//Button Send offer
+		Button btnSendOffer = new Button("Send offer", new FloatRect(window_size.x -100, window_size.y - 100, 200, 70));
+		btnSendOffer.set_fill_color(Color.GREEN);
+		btnSendOffer.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				core.new_trade_demand(id, tradeDemand);
+			}
+		});
+		widgets.add(btnSendOffer);
 	}
 
 	public void build_join_menu() {
@@ -597,7 +713,8 @@ public class LocalUI extends UI {
 	// returns true if was on a widget
 	private boolean check_on_click_widgets(Vector2f cursor_position) {
 		boolean found_widget = false;
-		for (Widget widget : widgets) {
+		for(int i = 0; i < widgets.size(); i++) {
+			Widget widget = widgets.get(i);
 			if (widget.contains_cursor(cursor_position)) {
 				found_widget = true;
 				if (activeTF != null) {
@@ -609,7 +726,10 @@ public class LocalUI extends UI {
 					activeTF = (TextField) widget;
 				}
 				widget.do_mouse_click(cursor_position);
-				break;
+				//Neccessary for the trading window
+				if(!(widget instanceof Label)) {
+					break;
+				}
 			}
 		}
 		if (found_widget) {
@@ -692,5 +812,10 @@ public class LocalUI extends UI {
 			lblOreCards.set_text(Language.ORE.get_text() + "\n" + player.get_resources(Resource.ORE));
 		}
 	}
-
+	
+	@Override
+	public void show_trade_demand(int id, TradeDemand tradeDemand) {
+		mode = GUIMode.TRADE_VENDOR;
+		rebuild_gui();
+	}
 }

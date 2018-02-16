@@ -13,6 +13,7 @@ import data.Field;
 import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
+import local.TradeDemand;
 import network.RemoteGameLogic;
 import network.RemoteUI;
 import network.Server;
@@ -108,13 +109,7 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-		
-		// DEBUG
-		player.get(0).add_resource(Resource.CLAY, 10);
-		player.get(0).add_resource(Resource.GRAIN, 10);
-		player.get(0).add_resource(Resource.ORE, 10);
-		player.get(0).add_resource(Resource.WOOD, 10);
-		player.get(0).add_resource(Resource.WOOL, 10);
+	
 	}
 
 	@Override
@@ -241,6 +236,21 @@ public class LocalCore extends Core {
 		String name = player.get(current_player).getName();
 		for (UI ui : uis) {
 			ui.set_current_player(name);
+		}
+	}
+
+	@Override
+	public void new_trade_demand(int id, TradeDemand tradeDemand) {
+		for(Player p : player) {
+			boolean showTrade = true;
+			for(Resource r : tradeDemand.getWantedResources().keySet()) {
+				if(!p.resources.containsKey(r)) {
+					showTrade = false;
+				}
+			}
+			if(showTrade) {
+				uis.get(p.getId()).show_trade_demand(id, tradeDemand);
+			}
 		}
 	}
 

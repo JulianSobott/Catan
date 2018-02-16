@@ -5,6 +5,7 @@ import data.Language;
 import java.util.List;
 
 import local.LocalPlayer;
+import local.TradeDemand;
 
 public abstract class UI {
 	
@@ -30,4 +31,6 @@ public abstract class UI {
 	public int getID() {
 		return this.id;
 	}
+
+	public abstract void show_trade_demand(int id, TradeDemand tradeDemand);
 }

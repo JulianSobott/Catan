@@ -9,6 +9,8 @@ import java.net.UnknownHostException;
 import local.LocalState.GameMode;
 import local.LocalGameLogic;
 import local.LocalUI;
+import network.Packet.TradeDemand;
+import superClasses.UI;
 
 //TODO Error handling when Entered a wrong IP address (reentering)
 public class Client extends Networkmanager {
@@ -90,6 +92,9 @@ public class Client extends Networkmanager {
 			break;
 		case INIT_SCOREBOARD:
 			ui.update_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
+			break;
+		case TRADE_DEMAND:
+			ui.show_trade_demand(((Packet.TradeDemand) packet.data).getDemanderID(), ((Packet.TradeDemand) packet.data).getTradeDemand());
 			break;
 		default:
 			System.err.println("Unknown Command reached Client");

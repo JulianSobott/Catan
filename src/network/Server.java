@@ -100,6 +100,9 @@ public class Server extends Networkmanager {
 		case NEXT_TURN:
 			core.nextTurn(id);
 			break;
+		case TRADE_DEMAND:
+			core.new_trade_demand(id, ((Packet.TradeDemand) packet.data).getTradeDemand());
+			break;
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}

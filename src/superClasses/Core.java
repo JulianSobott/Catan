@@ -4,6 +4,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector3i;
 
 import core.Building;
+import local.TradeDemand;
 
 public abstract class Core {
 	
@@ -19,5 +20,7 @@ public abstract class Core {
 	public abstract void buildRequest(int id, Building.Type buildType, Vector3i position);
 
 	public abstract void nextTurn(int id);
+
+	public abstract void new_trade_demand(int id, TradeDemand tradeDemand);
 	
 }

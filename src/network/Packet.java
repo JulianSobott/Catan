@@ -2,6 +2,7 @@ package network;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +12,29 @@ import org.jsfml.system.Vector3i;
 import core.Building;
 import core.Player;
 import data.Field;
+import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 
 public class Packet implements Serializable {
+
+	public static class TradeDemand implements Serializable {
+		local.TradeDemand tradeDemand = new local.TradeDemand();
+		int demander_id;
+		public TradeDemand(local.TradeDemand tradeDemand) {
+			this.tradeDemand = tradeDemand;
+		}
+		public TradeDemand(int demander_id, local.TradeDemand tradeDemand2) {
+			this.tradeDemand = tradeDemand;
+			this.demander_id = demander_id;
+		}
+		public local.TradeDemand getTradeDemand(){
+			return this.tradeDemand;
+		}
+		public int getDemanderID() {
+			return this.demander_id;
+		}
+	}
 
 	public static class Scoreboard implements Serializable {
 		List<LocalPlayer> player = new ArrayList<LocalPlayer>();

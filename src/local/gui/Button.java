@@ -13,6 +13,7 @@ public class Button extends Widget {
 	private Text text;
 	private Runnable click_event;
 	private boolean enabled = true;
+	private boolean selected = false; //For the trading window
 
 	public Button(String text, FloatRect bounds) {
 		super(bounds);
@@ -70,10 +71,18 @@ public class Button extends Widget {
 	public void set_fill_color(Color color) {
 		shape.setFillColor(color);
 	}
-	
+	public Color getFillColor() {
+		return shape.getFillColor();
+	}
 	public void set_enabled(boolean enabled) {
 		this.enabled = enabled;
 		if(!enabled)
 			shape.setFillColor(new Color(100, 100, 100, 150));
+	}
+	public void set_selected(boolean selected) {
+		this.selected = selected;
+	}
+	public boolean get_selected() {
+		return this.selected;
 	}
 }

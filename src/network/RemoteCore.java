@@ -4,6 +4,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector3i;
 
 import core.Building.Type;
+import local.TradeDemand;
 import superClasses.Core;
 import superClasses.GameLogic;
 import superClasses.UI;
@@ -51,6 +52,11 @@ public class RemoteCore extends Core {
 	@Override
 	public void buildRequest(int id, Type buildType, Vector3i position) {
 		this.client.sendMessage(new Packet(Command.BUILD_REQUEST, new Packet.BuildRequest(buildType, position)));
+	}
+
+	@Override
+	public void new_trade_demand(int id, TradeDemand tradeDemand) {
+		this.client.sendMessage(new Packet(Command.TRADE_DEMAND, new Packet.TradeDemand(tradeDemand)));
 	}
 
 }
