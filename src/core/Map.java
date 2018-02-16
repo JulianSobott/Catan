@@ -136,7 +136,7 @@ public class Map {
 			ret.add(new Vector2i(settlement_pos.x, settlement_pos.y));
 		if (settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y > 0 : settlement_pos.y < map_size_y - 1) {
 			int left_x = settlement_pos.y % 2 == 0 ? settlement_pos.x - 1 : settlement_pos.x;
-			int left_y = settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y - 1 : settlement_pos.x + 1;
+			int left_y = settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y - 1 : settlement_pos.y + 1;
 			if (settlement_pos.y > 0 && (settlement_pos.y % 2 != 0 || settlement_pos.x > 0)
 					&& fields[left_x][left_y].resource != Resource.OCEAN) {
 				ret.add(new Vector2i(left_x, left_y));
