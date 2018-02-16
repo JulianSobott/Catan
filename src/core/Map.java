@@ -31,7 +31,7 @@ public class Map {
 	public static int map_size_y;
 
 	private Field[][] fields;
-	private List<Vector2i> available_city_places = new LinkedList<Vector2i>();
+	private List<Vector2i> available_village_places = new LinkedList<Vector2i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector2i> built_villages = new LinkedList<Vector2i>();
 
@@ -123,25 +123,25 @@ public class Map {
 		return (delta.y <= 0.433f) && (0.433f * delta.x + 0.25f * delta.y <= 0.5f * 0.433f);
 	}
 
-	List<Vector2i> get_surrounding_fields(Vector2i city_pos) {
+	List<Vector2i> get_surrounding_fields(Vector2i settlement_pos) {
 		List<Vector2i> ret = new ArrayList<Vector2i>();
-		if (fields[city_pos.x][city_pos.y].resource != Resource.OCEAN)
-			ret.add(new Vector2i(city_pos.x, city_pos.y));
-		int upper_left_x = city_pos.y % 2 == 0 ? city_pos.x - 1 : city_pos.x;
-		if (city_pos.y > 0 && (city_pos.y % 2 != 0 || city_pos.x > 0)
-				&& fields[upper_left_x][city_pos.y - 1].resource != Resource.OCEAN) {
-			ret.add(new Vector2i(upper_left_x, city_pos.y - 1));
+		if (fields[settlement_pos.x][settlement_pos.y].resource != Resource.OCEAN)
+			ret.add(new Vector2i(settlement_pos.x, settlement_pos.y));
+		int upper_left_x = settlement_pos.y % 2 == 0 ? settlement_pos.x - 1 : settlement_pos.x;
+		if (settlement_pos.y > 0 && (settlement_pos.y % 2 != 0 || settlement_pos.x > 0)
+				&& fields[upper_left_x][settlement_pos.y - 1].resource != Resource.OCEAN) {
+			ret.add(new Vector2i(upper_left_x, settlement_pos.y - 1));
 		}
-		if (city_pos.y > 0 && (city_pos.y % 2 == 0 || city_pos.x < map_size_x - 1)
-				&& fields[upper_left_x + 1][city_pos.y - 1].resource != Resource.OCEAN) {
-			ret.add(new Vector2i(upper_left_x + 1, city_pos.y - 1));
+		if (settlement_pos.y > 0 && (settlement_pos.y % 2 == 0 || settlement_pos.x < map_size_x - 1)
+				&& fields[upper_left_x + 1][settlement_pos.y - 1].resource != Resource.OCEAN) {
+			ret.add(new Vector2i(upper_left_x + 1, settlement_pos.y - 1));
 		}
 		return ret;
 	}
 
 	public List<Field> get_surrounding_fields_objects(Building building) {
-		Vector2i city_pos = new Vector2i(building.get_position().x, building.get_position().y);
-		List<Vector2i> field_positions = get_surrounding_fields(city_pos);
+		Vector2i settlement_pos = new Vector2i(building.get_position().x, building.get_position().y);
+		List<Vector2i> field_positions = get_surrounding_fields(settlement_pos);
 		List<Field> surrounding_fields = new ArrayList<Field>();
 		for (Vector2i f : field_positions) {
 			surrounding_fields.add(fields[f.x][f.y]);
@@ -154,7 +154,7 @@ public class Map {
 		for (int x = 0; x < fields.length; x++) {
 			for (int y = 0; y < fields[x].length; y++) {
 				if (!get_surrounding_fields(new Vector2i(x, y)).isEmpty()) {
-					available_city_places.add(new Vector2i(x, y));
+					available_village_places.add(new Vector2i(x, y));
 				}
 			}
 		}
@@ -184,16 +184,16 @@ public class Map {
 
 		List<Vector2i> new_cities = new ArrayList<Vector2i>();
 		for (int i = 0; i < house_count; i++) {
-			int index = rand.nextInt(available_city_places.size());
-			new_cities.add(available_city_places.get(index));
-			built_villages.add(available_city_places.get(index));
-			available_city_places.remove(index);
+			int index = rand.nextInt(available_village_places.size());
+			new_cities.add(available_village_places.get(index));
+			built_villages.add(available_village_places.get(index));
+			available_village_places.remove(index);
 		}
 		return new_cities;
 	}
 
 	public boolean is_village_place_available(Vector2i pos) {
-		for (Vector2i ap : available_city_places) {
+		for (Vector2i ap : available_village_places) {
 			if (ap.x == pos.x && ap.y == pos.y) {
 				return true;
 			}
@@ -220,9 +220,9 @@ public class Map {
 	}
 
 	public void build_village(Vector2i pos) {
-		for (Vector2i ap : available_city_places) {
+		for (Vector2i ap : available_village_places) {
 			if (ap.x == pos.x && ap.y == pos.y) {
-				available_city_places.remove(ap);
+				available_village_places.remove(ap);
 				built_villages.add(pos);
 				return;
 			}
@@ -270,7 +270,7 @@ public class Map {
 		return layer == 1 ? -30 : layer == 2 ? 30 : layer == 3 ? 90 : 0;
 	}
 
-	public static Vector2f index_to_city_position(Vector2i index) {
+	public static Vector2f index_to_settlement_position(Vector2i index) {
 		return index_to_building_position(new Vector3i(index.x, index.y, 0));
 	}
 
@@ -284,7 +284,7 @@ public class Map {
 					new Vector2f(diagonal_offset_x, -diagonal_offset_y));
 		else if (index.z == 3)
 			return Vector2f.add(Map.index_to_position(index.x, index.y), new Vector2f(-linear_offset_x, 0));
-		else// city/village
+		else// settlement
 			return Vector2f.add(Map.index_to_position(index.x, index.y), new Vector2f(0, -Map.field_size / 2.f));
 	}
 
@@ -323,7 +323,7 @@ public class Map {
 		}
 	}
 
-	public static Vector2i position_to_city_index(Vector2f position) {
+	public static Vector2i position_to_settlement_index(Vector2f position) {
 		return Map.position_to_index(new Vector2f(position.x, position.y + Map.field_size / 2.f));
 	}
 
