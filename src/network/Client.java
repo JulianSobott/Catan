@@ -72,6 +72,7 @@ public class Client extends Networkmanager {
 			System.out.println("Start game at Client");
 			break;
 		case PLAYER_DATA:
+			System.out.println("Client arrived update Player Data");
 			this.ui.update_player_data(((Packet.PlayerData) packet.data).getPlayer());
 			break;
 		case NEW_MAP:
@@ -94,7 +95,13 @@ public class Client extends Networkmanager {
 			ui.update_scoreboard(((Packet.Scoreboard) packet.data).getPlayer());
 			break;
 		case TRADE_DEMAND:
-			ui.show_trade_demand(((Packet.TradeDemand) packet.data).getDemanderID(), ((Packet.TradeDemand) packet.data).getTradeDemand());
+			ui.show_trade_demand(((Packet.TradeDemand) packet.data).getTradeDemand());
+			break;
+		case ADD_TRADE_OFFER:
+			ui.addTradeOffer(((Packet.TradeOffer) packet.data).getTradeOffer());
+			break;
+		case CLOSE_TRADE_WINDOW:
+			ui.closeTradeWindow();
 			break;
 		default:
 			System.err.println("Unknown Command reached Client");

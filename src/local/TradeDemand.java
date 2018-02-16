@@ -10,7 +10,7 @@ public class TradeDemand implements Serializable{
 	
 	Map<Resource, Boolean> wantedResources = new HashMap<Resource, Boolean>();
 	Map<Resource, Boolean> offeredResources = new HashMap<Resource, Boolean>();
-	
+	int demander_id;
 	public TradeDemand() {
 		
 	}
@@ -35,5 +35,11 @@ public class TradeDemand implements Serializable{
 	
 	public Map<Resource, Boolean> getOfferedResources(){
 		return this.offeredResources;
+	}
+	public void set_demander_id(int i) {
+		this.demander_id = i;
+	}
+	public int get_demander_id() {
+		return this.demander_id;
 	}
 }

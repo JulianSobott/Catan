@@ -56,7 +56,9 @@ public class Label extends Widget {
 	public void set_text_size(int character_size) {
 		text.setCharacterSize(character_size);
 	}
-
+	public void set_text_color(Color c) {
+		this.text.setColor(c);
+	}
 	public void set_fill_color(Color color) {
 		shape.setFillColor(color);
 	}

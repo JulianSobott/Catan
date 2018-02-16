@@ -57,7 +57,6 @@ public abstract class Widget {
 	public Vector2f get_size() {
 		return new Vector2f(bounds.width, bounds.height);
 	}
-
 	// abstract methods
 
 	public abstract void render(RenderTarget target);

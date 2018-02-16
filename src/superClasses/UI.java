@@ -6,6 +6,7 @@ import java.util.List;
 
 import local.LocalPlayer;
 import local.TradeDemand;
+import local.TradeOffer;
 
 public abstract class UI {
 	
@@ -32,5 +33,9 @@ public abstract class UI {
 		return this.id;
 	}
 
-	public abstract void show_trade_demand(int id, TradeDemand tradeDemand);
+	public abstract void show_trade_demand(TradeDemand tradeDemand);
+
+	public abstract void addTradeOffer(TradeOffer tradeOffer);
+
+	public abstract void closeTradeWindow();
 }

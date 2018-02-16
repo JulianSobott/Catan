@@ -85,4 +85,8 @@ public class Button extends Widget {
 	public boolean get_selected() {
 		return this.selected;
 	}
+	
+	public void set_text_position(float f1, float f2) {
+		text.setPosition(f1, f2);
+	}
 }

@@ -101,7 +101,13 @@ public class Server extends Networkmanager {
 			core.nextTurn(id);
 			break;
 		case TRADE_DEMAND:
-			core.new_trade_demand(id, ((Packet.TradeDemand) packet.data).getTradeDemand());
+			core.new_trade_demand(((Packet.TradeDemand) packet.data).getTradeDemand());
+			break;
+		case TRADE_OFFER:
+			core.new_trade_offer(((Packet.TradeOffer) packet.data).getTradeOffer());
+			break;
+		case ACCEPT_OFFER:
+			core.acceptOffer(((Packet.TradeOffer) packet.data).getTradeOffer());
 			break;
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());

@@ -18,21 +18,23 @@ import local.LocalState.GameMode;
 
 public class Packet implements Serializable {
 
+	public static class TradeOffer implements Serializable {
+		local.TradeOffer tradeOffer = new local.TradeOffer();
+		public TradeOffer(local.TradeOffer tradeOffer) {
+			this.tradeOffer = tradeOffer;
+		}
+		public local.TradeOffer getTradeOffer(){
+			return this.tradeOffer;
+		}
+	}
+
 	public static class TradeDemand implements Serializable {
 		local.TradeDemand tradeDemand = new local.TradeDemand();
-		int demander_id;
 		public TradeDemand(local.TradeDemand tradeDemand) {
 			this.tradeDemand = tradeDemand;
 		}
-		public TradeDemand(int demander_id, local.TradeDemand tradeDemand2) {
-			this.tradeDemand = tradeDemand;
-			this.demander_id = demander_id;
-		}
 		public local.TradeDemand getTradeDemand(){
 			return this.tradeDemand;
-		}
-		public int getDemanderID() {
-			return this.demander_id;
 		}
 	}
 
