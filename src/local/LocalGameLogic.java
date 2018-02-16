@@ -206,11 +206,11 @@ public class LocalGameLogic extends GameLogic {
 
 	void mouse_click_input(Vector2f position) {
 		if (state.curr_action == Action.build_village) {
-			Vector2i pos = Map.position_to_city_index(position);
+			Vector2i pos = Map.position_to_settlement_index(position);
 			core.buildRequest(id, Type.VILLAGE, new Vector3i(pos.x, pos.y, 0));
 			ui.switch_to_idle();
 		} else if (state.curr_action == Action.build_city) {
-			Vector2i pos = Map.position_to_city_index(position);
+			Vector2i pos = Map.position_to_settlement_index(position);
 			core.buildRequest(id, Type.CITY, new Vector3i(pos.x, pos.y, 0));
 			ui.switch_to_idle();
 		} else if (state.curr_action == Action.build_street) {
