@@ -70,7 +70,8 @@ public class LocalUI extends UI {
 	private TradeDemand tradeDemand;
 	private TradeOffer tradeOffer;
 	private List<TradeOffer> allTradeOffer = new ArrayList<TradeOffer>();
-
+	
+	private String serverIP = "";
 	private String tf_value_ip = "127.0.0.1";
 	private String tf_value_name = "Julian";
 	private String tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
@@ -329,6 +330,7 @@ public class LocalUI extends UI {
 			@Override
 			public void run() {
 				mode = GUIMode.GAME;
+				core.closeTrade();
 				rebuild_gui();
 			}
 		});
@@ -703,7 +705,8 @@ public class LocalUI extends UI {
 	public void build_host_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.HOST_LOBBY;
-
+		Label lblHostIp = new Label(serverIP, new FloatRect(window_size.x/2, 0, 100, 30));
+		widgets.add(lblHostIp);
 		float column0 = 0;
 		float column1 = window_size.x / 2 > 300 ? window_size.x / 2 : 300;
 		float height_anchor = 10;
@@ -987,6 +990,9 @@ public class LocalUI extends UI {
 	@Override
 	public void closeTradeWindow() {
 		mode = GUIMode.GAME;
+		tradeOffer = null;
+		tradeDemand = null;
+		allTradeOffer.clear();
 		rebuild_gui();
 	}
 
@@ -998,5 +1004,9 @@ public class LocalUI extends UI {
 	@Override
 	public int getID() {
 		return this.id;
+	}
+	public void showIpInLobby(String ip) {
+		this.serverIP = ip;
+		rebuild_gui();
 	}
 }

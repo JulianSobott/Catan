@@ -25,5 +25,7 @@ public abstract class Core {
 	public abstract void new_trade_offer(TradeOffer tradeOffer);
 
 	public abstract void acceptOffer(TradeOffer offer);
+
+	public abstract void closeTrade();
 	
 }
