@@ -120,18 +120,27 @@ public class LocalCore extends Core {
 
 	@Override
 	public void register_new_user(String name, Color color) {
+		String playername = checkName(name);
 		int id = player.size();
-		player.add(new Player(name, id, color));
+		player.add(new Player(playername, id, color));
 		UI ui = new RemoteUI(data_server);
 		ui.setID(id);
 		uis.add(ui);
 		GameLogic logic = new RemoteGameLogic(data_server);
 		logic.setID(id);
 		logics.add(logic);
-		uis.get(0).show_guest_at_lobby(name);
+		uis.get(0).show_guest_at_lobby(playername);
 		data_server.set_id_last_joined(id);
 	}
-
+	public String checkName(String name) {
+		String newName = name;
+		for(Player p : player) {
+			if(p.getName().equals(name)) {
+				newName = checkName(name+ (int)(Math.random()*100));
+			}
+		}
+		return newName;
+	}
 	// USER ACTIONS
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
@@ -223,7 +232,8 @@ public class LocalCore extends Core {
 	}
 
 	public void changePlayerProps(int id, String newName, Color color) {
-		player.get(id).setName(newName);
+		String newerName = checkName(newName);
+		player.get(id).setName(newerName);
 		player.get(id).setColor(color);
 	}
 
