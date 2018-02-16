@@ -71,6 +71,15 @@ public class TextField extends Widget {
 			}
 			return true;
 		}
+		else if (key == Keyboard.Key.DELETE) {
+			String str = text.getString();
+			if (!str.isEmpty()) {
+				text.setString("");
+				if (input_event != null)
+					input_event.run();
+			}
+			return true;
+		}
 		return false;
 	}
 
