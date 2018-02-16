@@ -5,6 +5,7 @@ import org.jsfml.system.Vector3i;
 
 import core.Building.Type;
 import local.TradeDemand;
+import local.TradeOffer;
 import superClasses.Core;
 import superClasses.GameLogic;
 import superClasses.UI;
@@ -55,8 +56,18 @@ public class RemoteCore extends Core {
 	}
 
 	@Override
-	public void new_trade_demand(int id, TradeDemand tradeDemand) {
+	public void new_trade_demand(TradeDemand tradeDemand) {
 		this.client.sendMessage(new Packet(Command.TRADE_DEMAND, new Packet.TradeDemand(tradeDemand)));
+	}
+
+	@Override
+	public void new_trade_offer(TradeOffer tradeOffer) {
+		this.client.sendMessage(new Packet(Command.TRADE_OFFER, new Packet.TradeOffer(tradeOffer)));
+	}
+
+	@Override
+	public void acceptOffer(TradeOffer offer) {
+		this.client.sendMessage(new Packet(Command.ACCEPT_OFFER, new Packet.TradeOffer(offer)));
 	}
 
 }

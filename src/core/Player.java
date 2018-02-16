@@ -58,7 +58,9 @@ public class Player implements Serializable {
 	public int get_resources(Resource r) {
 		return resources.get(r);
 	}
-
+	public Map<Resource, Integer> get_all_resources(){
+		return this.resources;
+	}
 	public void add_resource(Resource r, int count) {
 		resources.put(r, resources.get(r) + count);
 	}

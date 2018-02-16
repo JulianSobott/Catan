@@ -6,6 +6,7 @@ import java.util.List;
 
 import local.LocalPlayer;
 import local.TradeDemand;
+import local.TradeOffer;
 import superClasses.UI;
 
 public class RemoteUI extends UI {
@@ -52,8 +53,18 @@ public class RemoteUI extends UI {
 	}
 
 	@Override
-	public void show_trade_demand(int demander_id, TradeDemand tradeDemand) {
-		server.message_to_client(id, new Packet(Command.TRADE_DEMAND, new Packet.TradeDemand(demander_id, tradeDemand)));
+	public void show_trade_demand(TradeDemand tradeDemand) {
+		server.message_to_client(id, new Packet(Command.TRADE_DEMAND, new Packet.TradeDemand(tradeDemand)));
+	}
+
+	@Override
+	public void addTradeOffer(TradeOffer tradeOffer) {
+		server.message_to_client(id, new Packet(Command.ADD_TRADE_OFFER, new Packet.TradeOffer(tradeOffer)));
+	}
+
+	@Override
+	public void closeTradeWindow() {
+		server.message_to_client(id, new Packet(Command.CLOSE_TRADE_WINDOW));
 	}
 
 }

@@ -5,6 +5,7 @@ import org.jsfml.system.Vector3i;
 
 import core.Building;
 import local.TradeDemand;
+import local.TradeOffer;
 
 public abstract class Core {
 	
@@ -21,6 +22,10 @@ public abstract class Core {
 
 	public abstract void nextTurn(int id);
 
-	public abstract void new_trade_demand(int id, TradeDemand tradeDemand);
+	public abstract void new_trade_demand(TradeDemand tradeDemand);
+
+	public abstract void new_trade_offer(TradeOffer tradeOffer);
+
+	public abstract void acceptOffer(TradeOffer offer);
 	
 }

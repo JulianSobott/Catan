@@ -14,6 +14,7 @@ import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 import local.TradeDemand;
+import local.TradeOffer;
 import network.RemoteGameLogic;
 import network.RemoteUI;
 import network.Server;
@@ -245,18 +246,49 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void new_trade_demand(int id, TradeDemand tradeDemand) {
+	public void new_trade_demand(TradeDemand tradeDemand) {
 		for(Player p : player) {
-			boolean showTrade = true;
-			for(Resource r : tradeDemand.getWantedResources().keySet()) {
-				if(!p.resources.containsKey(r)) {
-					showTrade = false;
+			if(p.getId() != tradeDemand.get_demander_id()) {
+				boolean showTrade = true;
+				for(Resource r : tradeDemand.getWantedResources().keySet()) {
+					if(!p.resources.containsKey(r)) {
+						showTrade = false;
+					}
 				}
-			}
-			if(showTrade) {
-				uis.get(p.getId()).show_trade_demand(id, tradeDemand);
-			}
+				if(showTrade) {
+					uis.get(p.getId()).show_trade_demand(tradeDemand);
+				}
+			}	
 		}
+	}
+
+	@Override
+	public void new_trade_offer(TradeOffer tradeOffer) {
+		uis.get(tradeOffer.getDemanderID()).addTradeOffer(tradeOffer);
+	}
+
+	@Override
+	public void acceptOffer(TradeOffer offer) {
+		for(Resource r : offer.getDemandedResources().keySet()) {
+			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
+			player.get(offer.getDemanderID()).add_resource(r, 1);
+			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
+			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+			player.get(offer.getVendor_id()).take_resource(r, 1);
+			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+		}
+		for(Resource r : offer.getOfferedResources().keySet()) {
+			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
+			player.get(offer.getDemanderID()).take_resource(r, offer.getOfferedResources().get(r));
+			System.out.println("Demander" + r.toString()+ ": "+ player.get(offer.getDemanderID()).get_resources(r));
+			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+			player.get(offer.getVendor_id()).add_resource(r, offer.getOfferedResources().get(r));
+			System.out.println("vendor" + r.toString()+ ": "+ player.get(offer.getVendor_id()).get_resources(r));
+		}	
+		uis.get(offer.getDemanderID()).update_player_data(player.get(offer.getDemanderID()));
+		uis.get(offer.getDemanderID()).closeTradeWindow();
+		uis.get(offer.getVendor_id()).update_player_data(player.get(offer.getVendor_id()));
+		uis.get(offer.getVendor_id()).closeTradeWindow();
 	}
 
 }
