@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.jsfml.graphics.Color;
 
 import core.LocalCore;
+import core.LocalFilehandler;
 
 public class Server extends Networkmanager {
 
@@ -28,7 +29,6 @@ public class Server extends Networkmanager {
 	private LocalCore core;
 
 	public Server(LocalCore core) {
-
 		this.core = core;
 		//Getting the local IP Adress
 		DatagramSocket ds;

@@ -40,7 +40,10 @@ public class LocalCore extends Core {
 	boolean initial_round = true;
 	List<Player> player = new ArrayList<Player>();
 
+	//Filehandler
+	private LocalFilehandler fileHandler;
 	public LocalCore() {
+		fileHandler = new LocalFilehandler();
 		Player hostPlayer = new Player("Host", 0, Color.BLACK);
 		player.add(hostPlayer);
 		current_player = 0;
@@ -131,6 +134,7 @@ public class LocalCore extends Core {
 		player.get(0).add_resource(Resource.GRAIN, 40);
 		player.get(0).add_resource(Resource.WOOD, 40);
 		uis.get(0).update_player_data(player.get(0));
+		saveGame();
 //		buildRequest(0, Type.VILLAGE, new Vector3i(0,0,1));
 	}
 
@@ -368,5 +372,14 @@ public class LocalCore extends Core {
 
 	public void showIpAtLobby(String ip) {
 		((LocalUI) this.uis.get(0)).showIpInLobby(ip);
+	}
+	
+	public void saveGame() {
+		fileHandler.saveGame(map.getFields(), player);
+	}
+	public void loadGame() {
+		fileHandler.loadGame();
+		Field[][] fields = fileHandler.getFields();
+		List<Player> player = fileHandler.getPlayer();
 	}
 }
