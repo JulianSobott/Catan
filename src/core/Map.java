@@ -12,6 +12,7 @@ import org.jsfml.system.Vector3i;
 import data.Field;
 import data.Resource;
 import math.Vector2fMath;
+import math.Vector3iMath;
 
 public class Map {
 	enum GeneratorType {
@@ -158,6 +159,44 @@ public class Map {
 		return surrounding_fields;
 	}
 
+	// returns a list of all possible building sites nearby a building
+	List<Vector3i> get_nearby_building_sites(Vector3i position) {
+		List<Vector3i> ret = new ArrayList<Vector3i>();
+		int left_x = position.x % 2 == 0 ? position.x : position.x - 1;
+
+		if (position.z == LAYER_NORTH_STMT) {
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(position.x, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x+1, position.y-1, LAYER_WEST_STREET));
+		} else if (position.z == LAYER_SOUTH_STMT) {
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y + 1, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y + 1, LAYER_WEST_STREET));
+		} else if (position.z == LAYER_NORTH_STREET) {
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(position.x, position.y, LAYER_WEST_STREET));
+			ret.add(new Vector3i(position.x, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(position.x - 1, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x+1, position.y-1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x, position.y-1, LAYER_SOUTH_STMT));
+		} else if (position.z == LAYER_EAST_STREET) {
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(position.x+1, position.y, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_SOUTH_STMT));
+			ret.add(new Vector3i(position.x+1, position.y, LAYER_NORTH_STREET));
+		} else if (position.z == LAYER_WEST_STREET) {
+			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(position.x-1, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(left_x, position.y - 1, LAYER_SOUTH_STMT));
+		}
+		return ret;
+	}
+
 	// creates internal list of available houses after the map was created
 	void calculate_available_places() {
 		for (int x = 0; x < fields.length; x++) {
@@ -286,7 +325,8 @@ public class Map {
 	}
 
 	public static float layer_to_street_rotation(int layer) {
-		return layer == LAYER_NORTH_STREET ? -30 : layer == LAYER_EAST_STREET ? 30 : layer == LAYER_WEST_STREET ? 90 : 0;
+		return layer == LAYER_NORTH_STREET ? -30
+				: layer == LAYER_EAST_STREET ? 30 : layer == LAYER_WEST_STREET ? 90 : 0;
 	}
 
 	// the z-component contains the layer
