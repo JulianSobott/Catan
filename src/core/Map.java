@@ -205,7 +205,8 @@ public class Map {
 		}
 		return new_cities;
 	}
-
+	
+	
 	public boolean is_village_place_available(Vector3i pos) {
 		for (Vector3i ap : available_village_places) {
 			if (ap.x == pos.x && ap.y == pos.y && ap.z == pos.z) {

@@ -8,11 +8,13 @@ import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
 
+import core.Building.Type;
 import core.Map.GeneratorType;
 import data.Field;
 import data.Resource;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
+import local.TradeDemand.Vendor;
 import local.LocalUI;
 import local.TradeDemand;
 import local.TradeOffer;
@@ -116,6 +118,12 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
+		player.get(0).add_resource(Resource.CLAY, 40);
+		player.get(0).add_resource(Resource.ORE, 40);
+		player.get(0).add_resource(Resource.GRAIN, 40);
+		player.get(0).add_resource(Resource.WOOD, 40);
+		uis.get(0).update_player_data(player.get(0));
+//		buildRequest(0, Type.VILLAGE, new Vector3i(0,0,1));
 	}
 
 	@Override
@@ -263,19 +271,42 @@ public class LocalCore extends Core {
 
 	@Override
 	public void new_trade_demand(TradeDemand tradeDemand) {
-		for (Player p : player) {
-			if (p.getId() != tradeDemand.get_demander_id()) {
-				boolean showTrade = true;
-				for (Resource r : tradeDemand.getWantedResources().keySet()) {
-					if (p.resources.get(r) < 1) {
-						showTrade = false;
-					}
-				}
-				if (showTrade) {
-					uis.get(p.getId()).show_trade_demand(tradeDemand);
+		if(tradeDemand.getVendor() == Vendor.BANK) {
+			int neededResources = 0;
+			int availableResources = 0;
+			for(Resource r : tradeDemand.getOfferedResources().keySet()) {
+				if(player.get(tradeDemand.get_demander_id()).get_resources(r) >= 4) {
+					availableResources += player.get(tradeDemand.get_demander_id()).get_resources(r);
 				}
 			}
-		}
+			for(Resource r : tradeDemand.getWantedResources().keySet()) {
+				neededResources += 4;
+			}
+			if(neededResources <= availableResources) {
+				for (Resource r : tradeDemand.getWantedResources().keySet()) {
+					player.get(tradeDemand.get_demander_id()).add_resource(r, 1);
+				}
+				for (Resource r : tradeDemand.getOfferedResources().keySet()) {
+					player.get(tradeDemand.get_demander_id()).take_resource(r, 4);
+				}
+				uis.get(tradeDemand.get_demander_id()).update_player_data(player.get(tradeDemand.get_demander_id()));
+				uis.get(tradeDemand.get_demander_id()).closeTradeWindow();
+			}
+		}else if(tradeDemand.getVendor() == Vendor.PLAYER) {
+			for (Player p : player) {
+				if (p.getId() != tradeDemand.get_demander_id()) {
+					boolean showTrade = true;
+					for (Resource r : tradeDemand.getWantedResources().keySet()) {
+						if (p.resources.get(r) < 1) {
+							showTrade = false;
+						}
+					}
+					if (showTrade) {
+						uis.get(p.getId()).show_trade_demand(tradeDemand);
+					}
+				}
+			}
+		}	
 	}
 
 	@Override
@@ -296,20 +327,12 @@ public class LocalCore extends Core {
 	@Override
 	public void acceptOffer(TradeOffer offer) {
 		for (Resource r : offer.getDemandedResources().keySet()) {
-			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
 			player.get(offer.getDemanderID()).add_resource(r, 1);
-			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
-			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 			player.get(offer.getVendor_id()).take_resource(r, 1);
-			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 		}
 		for (Resource r : offer.getOfferedResources().keySet()) {
-			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
 			player.get(offer.getDemanderID()).take_resource(r, offer.getOfferedResources().get(r));
-			System.out.println("Demander" + r.toString() + ": " + player.get(offer.getDemanderID()).get_resources(r));
-			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 			player.get(offer.getVendor_id()).add_resource(r, offer.getOfferedResources().get(r));
-			System.out.println("vendor" + r.toString() + ": " + player.get(offer.getVendor_id()).get_resources(r));
 		}
 		uis.get(offer.getDemanderID()).update_player_data(player.get(offer.getDemanderID()));
 		uis.get(offer.getDemanderID()).closeTradeWindow();

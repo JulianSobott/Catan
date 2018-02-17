@@ -7,6 +7,13 @@ import java.util.Map;
 import data.Resource;
 
 public class TradeDemand implements Serializable{
+	public enum Vendor{
+		PLAYER,
+		BANK,
+		HARBOUR,
+		COMPUTER;
+	}
+	private Vendor vendor;
 	
 	Map<Resource, Boolean> wantedResources = new HashMap<Resource, Boolean>();
 	Map<Resource, Boolean> offeredResources = new HashMap<Resource, Boolean>();
@@ -41,5 +48,12 @@ public class TradeDemand implements Serializable{
 	}
 	public int get_demander_id() {
 		return this.demander_id;
+	}
+	
+	public Vendor getVendor() {
+		return vendor;
+	}
+	public void setVendor(Vendor vendor) {
+		this.vendor = vendor;
 	}
 }

@@ -20,6 +20,7 @@ import core.Player;
 import data.Language;
 import data.Resource;
 import local.LocalState.GameMode;
+import local.TradeDemand.Vendor;
 import local.gui.Button;
 import local.gui.ColorPicker;
 import local.gui.Label;
@@ -162,20 +163,10 @@ public class LocalUI extends UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				tradeDemand = new TradeDemand();
-				tradeDemand.addWantedResource(Resource.WOOD);
-				tradeDemand.addWantedResource(Resource.WOOL);
-				tradeDemand.addOfferedResource(Resource.CLAY);
-				Player p  = new Player("h", 1, Color.RED);
-				p.add_resource(Resource.WOOD, 10);
-				p.add_resource(Resource.WOOL, 10);
-				state.my_player_data = p;
-				show_trade_demand(tradeDemand);
-				mode = GUIMode.TRADE_VENDOR;
-				rebuild_gui();
+			
 			}
 		});
-		//btn.set_enabled(false); //TODO remove when implemented
+		btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
 
 		btn = new Button(Language.OPTIONS.get_text(), new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -335,165 +326,193 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(btnClose);
-		Button btnAskBank = new Button("Bank", new FloatRect(30, 40, 70, 40));
-		btnAskBank.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("Bank");
+		if(tradeDemand.getVendor() == null) {
+			Button btnAskBank = new Button("Bank", new FloatRect(200, window_size.y/4, 200, 100));
+			btnAskBank.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					tradeDemand.setVendor(Vendor.BANK);
+					rebuild_gui();
+				}
+			});
+			Map<Resource, Integer> playerResources = state.my_player_data.get_all_resources();
+			boolean enabled = false;
+			for(Resource r: playerResources.keySet()) {
+				if(playerResources.get(r) >= 4) {
+					enabled = true;
+					break;
+				}else {
+					enabled = false;
+				}
 			}
-		});
-		widgets.add(btnAskBank);
-		Button btnAskPlayer = new Button("Player", new FloatRect(120, 40, 70, 40));
-		btnAskPlayer.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("Player");
-			}
-		});
-		widgets.add(btnAskPlayer);
-		
-		
+			btnAskBank.set_enabled(enabled);
+			widgets.add(btnAskBank);
+			Button btnAskPlayer = new Button("Player", new FloatRect(500, window_size.y/4, 200, 100));
+			btnAskPlayer.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					tradeDemand.setVendor(Vendor.PLAYER);
+					rebuild_gui();
+				}
+			});
+			widgets.add(btnAskPlayer);
+		}
 		int i = 0;
 		int btnHeight = 50;
 		int btnSpace = 10;
 
-		//All possible wanted resources
+		//All wanted resources
 		//TODO Add phrases to Language
-		Label lblWantedResources = new Label("Select Wanted Resopurces", new FloatRect(50, 100, 200, 50));
-		lblWantedResources.set_text_color(Color.WHITE);
-		widgets.add(lblWantedResources);
-		for(Resource r : Resource.values()) {
-			if(r != Resource.OCEAN) {
-				Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()), new FloatRect(60, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
-				if(tradeDemand.getWantedResources().containsKey(r)) {
-					btnWantedResource.set_fill_color(r.get_color());
-					btnWantedResource.set_text_color(Color.WHITE);
-				}else {
-					Color c = r.get_color();
-					btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
-				}		
-				btnWantedResource.set_click_callback(new Runnable() {
+		if(tradeDemand.getVendor() != null) {
+			Label lblWantedResources = new Label("Select Wanted Resopurces", new FloatRect(50, 100, 200, 50));
+			lblWantedResources.set_text_color(Color.WHITE);
+			widgets.add(lblWantedResources);
+			for(Resource r : Resource.values()) {
+				if(r != Resource.OCEAN) {
+					Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()), new FloatRect(60, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
+					if(tradeDemand.getWantedResources().containsKey(r)) {
+						btnWantedResource.set_fill_color(r.get_color());
+						btnWantedResource.set_text_color(Color.WHITE);
+						btnWantedResource.set_outline_color(Color.GREEN);
+					}else {
+						Color c = r.get_color();
+						btnWantedResource.set_text_color(Color.BLACK);
+						btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
+						btnWantedResource.set_outline_color(new Color(0,0,0,0));
+					}		
+					btnWantedResource.set_click_callback(new Runnable() {
+						@Override
+						public void run() {
+							if(tradeDemand.getWantedResources().containsKey(r)) {
+								Color c = r.get_color();
+								btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
+								btnWantedResource.set_text_color(Color.BLACK);
+								btnWantedResource.set_outline_color(new Color(0,0,0,0));
+								tradeDemand.removeWantedResource(r);
+							}else {
+								btnWantedResource.set_fill_color(r.get_color());
+								btnWantedResource.set_text_color(Color.WHITE);
+								btnWantedResource.set_outline_color(Color.GREEN);
+								tradeDemand.addWantedResource(r);
+							}
+						}
+					});
+					widgets.add(btnWantedResource);
+					i++;
+				}	
+			}
+			//All Resources for offer
+			i= 0;
+			Label lblOfferedResources = new Label("Select Resources That you offer", new FloatRect(370, 100, 300, 50));
+			lblOfferedResources.set_text_color(Color.WHITE);
+			widgets.add(lblOfferedResources);
+			for(Resource r : Resource.values()) {
+				
+				if(r != Resource.OCEAN && state.my_player_data.get_resources(r) > 1 && tradeDemand.getVendor() == Vendor.PLAYER ||
+						state.my_player_data.get_resources(r) >= 4 && tradeDemand.getVendor() == Vendor.BANK) {
+					String resourceString = (Language.valueOf(r.toString()).toString()) +": " + state.my_player_data.get_resources(r);
+					Button btnOfferedResource = new Button(resourceString, new FloatRect(300, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
+					if(tradeDemand.getOfferedResources().containsKey(r)) {
+						btnOfferedResource.set_fill_color(r.get_color());
+						btnOfferedResource.set_text_color(Color.WHITE);
+						btnOfferedResource.set_outline_color(Color.RED);
+					}else {
+						Color c = r.get_color();
+						btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
+						btnOfferedResource.set_outline_color(new Color(0,0,0,0));
+					}			
+					btnOfferedResource.set_click_callback(new Runnable() {
+						@Override
+						public void run() {
+							if(tradeDemand.getOfferedResources().containsKey(r)) {
+								Color c = r.get_color();
+								btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
+								btnOfferedResource.set_text_color(Color.BLACK);
+								btnOfferedResource.set_outline_color(new Color(0,0,0,0));
+								tradeDemand.removeOfferedResource(r);
+							}else {
+								btnOfferedResource.set_fill_color(r.get_color());
+								btnOfferedResource.set_text_color(Color.WHITE);
+								btnOfferedResource.set_outline_color(Color.RED);
+								tradeDemand.addOfferedResource(r);
+							}
+						}
+					});
+					widgets.add(btnOfferedResource);
+					i++;
+				}	
+			}
+			//TODO with accept button (maybe reject)
+			Label lblAllOffers = new Label("All Offers" , new FloatRect(window_size.x/2, 150, 300, 50));
+			lblAllOffers.set_text_color(Color.WHITE);
+			widgets.add(lblAllOffers);
+			//TODO show all offers
+			i = 0;
+			for(TradeOffer offer : allTradeOffer) {
+				System.out.println("Build new trade offer in local UI");
+				//Offer Label
+				Label lblOfferID = new Label("Offer "+ i, new FloatRect(window_size.x/2, 200 + (110+20)*i, 300, 50));
+				lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
+				widgets.add(lblOfferID);
+				Label lblOfferContainer = new Label("", new FloatRect(window_size.x/2, 200 + (110+20)*i, window_size.x/2 - 30, 110));
+				lblOfferContainer.set_fill_color(new Color(255, 255, 255, 80)); //TODO Maybe change to player color
+				widgets.add(lblOfferContainer);
+				//Demanded resources?? Neccessary??
+				
+				//Offered resources
+				int j = 0;
+				Label lblOfferedResource;
+				for(Resource r : offer.getOfferedResources().keySet()) {
+					lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r), new FloatRect(window_size.x/2+ 150*j, 250 + (110+20)*i, 150, 50));
+					lblOfferedResource.set_fill_color(r.get_color());
+					lblOfferedResource.set_text_size(30);
+					widgets.add(lblOfferedResource);
+					j++;
+				}
+				//Button accept
+				Button btnAccept = new Button("Accept", new FloatRect(window_size.x - 110, 250 + (110+20)*i, 80, 50));
+				btnAccept.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
-						if(tradeDemand.getWantedResources().containsKey(r)) {
-							Color c = r.get_color();
-							btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
-							tradeDemand.removeWantedResource(r);
-						}else {
-							btnWantedResource.set_fill_color(r.get_color());
-							btnWantedResource.set_text_color(Color.WHITE);
-							tradeDemand.addWantedResource(r);
+						java.util.Map<Resource, Integer> demandedResources= new HashMap<Resource, Integer>();
+						for(Resource r : tradeDemand.getWantedResources().keySet()) {
+							demandedResources.put(r, 1);
 						}
+						offer.setDemandedResources(demandedResources);
+						core.acceptOffer(offer);
 					}
 				});
-				widgets.add(btnWantedResource);
-				i++;
-			}	
-		}
-		//All Resources for offer
-		i= 0;
-		Label lblOfferedResources = new Label("Select Resources That you offer", new FloatRect(370, 100, 300, 50));
-		lblOfferedResources.set_text_color(Color.WHITE);
-		widgets.add(lblOfferedResources);
-		for(Resource r : Resource.values()) {
-			if(r != Resource.OCEAN && state.my_player_data.get_resources(r) != 0) {
-				String resourceString = (Language.valueOf(r.toString()).toString()) +": " + state.my_player_data.get_resources(r);
-				Button btnOfferedResource = new Button(resourceString, new FloatRect(300, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
-				if(tradeDemand.getOfferedResources().containsKey(r)) {
-					btnOfferedResource.set_fill_color(r.get_color());
-					btnOfferedResource.set_text_color(Color.WHITE);
-				}else {
-					Color c = r.get_color();
-					btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
-				}			
-				btnOfferedResource.set_click_callback(new Runnable() {
+				widgets.add(btnAccept);
+				Button btnReject = new Button("X", new FloatRect(window_size.x - 80, 200 + (110+20)*i, 50, 30));
+				btnReject.set_text_color(Color.RED);
+				btnReject.set_click_callback(new Runnable() {
+					private List<TradeOffer> newAllTradeOffer = new ArrayList<TradeOffer>();
 					@Override
 					public void run() {
-						if(tradeDemand.getOfferedResources().containsKey(r)) {
-							Color c = r.get_color();
-							btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 100));
-							btnOfferedResource.set_text_color(Color.BLACK);
-							tradeDemand.removeOfferedResource(r);
-						}else {
-							btnOfferedResource.set_fill_color(r.get_color());
-							btnOfferedResource.set_text_color(Color.WHITE);
-							tradeDemand.addOfferedResource(r);
+						for(TradeOffer innerOffer : allTradeOffer) {
+							if(innerOffer != offer) {
+								newAllTradeOffer.add(innerOffer);
+							}
 						}
+						allTradeOffer = newAllTradeOffer;
+						rebuild_gui();
 					}
 				});
-				widgets.add(btnOfferedResource);
+				widgets.add(btnReject);
 				i++;
-			}	
-		}
-		//TODO with accept button (maybe reject)
-		Label lblAllOffers = new Label("All Offers" , new FloatRect(window_size.x/2, 150, 300, 50));
-		lblAllOffers.set_text_color(Color.WHITE);
-		widgets.add(lblAllOffers);
-		//TODO show all offers
-		i = 0;
-		for(TradeOffer offer : allTradeOffer) {
-			System.out.println("Build new trade offer in local UI");
-			//Offer Label
-			Label lblOfferID = new Label("Offer "+ i, new FloatRect(window_size.x/2, 200 + (110+20)*i, 300, 50));
-			lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
-			widgets.add(lblOfferID);
-			Label lblOfferContainer = new Label("", new FloatRect(window_size.x/2, 200 + (110+20)*i, window_size.x/2 - 30, 110));
-			lblOfferContainer.set_fill_color(new Color(255, 255, 255, 80)); //TODO Maybe change to player color
-			widgets.add(lblOfferContainer);
-			//Demanded resources?? Neccessary??
-			
-			//Offered resources
-			int j = 0;
-			Label lblOfferedResource;
-			for(Resource r : offer.getOfferedResources().keySet()) {
-				lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r), new FloatRect(window_size.x/2+ 150*j, 250 + (110+20)*i, 150, 50));
-				lblOfferedResource.set_fill_color(r.get_color());
-				lblOfferedResource.set_text_size(30);
-				widgets.add(lblOfferedResource);
-				j++;
 			}
-			//Button accept
-			Button btnAccept = new Button("Accept", new FloatRect(window_size.x - 110, 250 + (110+20)*i, 80, 50));
-			btnAccept.set_click_callback(new Runnable() {
+			//Button Send demand
+			Button btnSendDemand = new Button("Send demand", new FloatRect(window_size.x -300, window_size.y - 100, 200, 70));
+			btnSendDemand.set_fill_color(Color.GREEN);
+			btnSendDemand.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					java.util.Map<Resource, Integer> demandedResources= new HashMap<Resource, Integer>();
-					for(Resource r : tradeDemand.getWantedResources().keySet()) {
-						demandedResources.put(r, 1);
-					}
-					offer.setDemandedResources(demandedResources);
-					core.acceptOffer(offer);
+					core.new_trade_demand(tradeDemand);
 				}
 			});
-			widgets.add(btnAccept);
-			Button btnReject = new Button("X", new FloatRect(window_size.x - 80, 200 + (110+20)*i, 50, 30));
-			btnReject.set_text_color(Color.RED);
-			btnReject.set_click_callback(new Runnable() {
-				private List<TradeOffer> newAllTradeOffer = new ArrayList<TradeOffer>();
-				@Override
-				public void run() {
-					for(TradeOffer innerOffer : allTradeOffer) {
-						if(innerOffer != offer) {
-							newAllTradeOffer.add(innerOffer);
-						}
-					}
-					allTradeOffer = newAllTradeOffer;
-					rebuild_gui();
-				}
-			});
-			widgets.add(btnReject);
-			i++;
+			widgets.add(btnSendDemand);
 		}
-		//Button Send demand
-		Button btnSendDemand = new Button("Send demand", new FloatRect(window_size.x -300, window_size.y - 100, 200, 70));
-		btnSendDemand.set_fill_color(Color.GREEN);
-		btnSendDemand.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				core.new_trade_demand(tradeDemand);
-			}
-		});
-		widgets.add(btnSendDemand);
+		
 	}
 
 	public void build_vendor_trade_window() {

@@ -89,4 +89,9 @@ public class Button extends Widget {
 	public void set_text_position(float f1, float f2) {
 		text.setPosition(f1, f2);
 	}
+	
+	public void set_outline_color(Color c) {
+		this.shape.setOutlineThickness(2);
+		this.shape.setOutlineColor(c);
+	}
 }
