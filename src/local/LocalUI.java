@@ -87,7 +87,7 @@ public class LocalUI extends UI {
 	private String lbl_value_dice = "0";
 	private String tf_game_name = "";
 	private float color_pkr_hue = (float) Math.random();
-	private Color hostPlayerColor = null;
+	private Color hostPlayerColor = Color.RED;
 
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
