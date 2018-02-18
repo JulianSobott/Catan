@@ -56,6 +56,7 @@ public class LocalUI extends UI {
 	private TextField activeTF;
 
 	// lobby
+	private SavedGame savedGame = null;
 	private List<String> guests = new ArrayList<String>();
 
 	//widgets Just widgets which may be changed
@@ -86,6 +87,7 @@ public class LocalUI extends UI {
 	private String lbl_value_dice = "0";
 	private String tf_game_name = "";
 	private float color_pkr_hue = (float) Math.random();
+	private Color hostPlayerColor = null;
 
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
@@ -784,93 +786,102 @@ public class LocalUI extends UI {
 		float textfield_height = 50;
 		float row_count = 0;
 
-		Label lbl;
-		//Row0 ==> Settings
-		lbl = new Label(Language.SETTINGS.get_text() + ": ", new FloatRect(column0,
-				height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
-		widgets.add(lbl);
-		row_count++;
-		lbl = new Label(Language.MAP_SIZE.get_text() + ": ", new FloatRect(column0,
-				height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
-		widgets.add(lbl);
-		lbl = new Label(Language.SEED.get_text() + ": ", new FloatRect(column0,
-				height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
-		widgets.add(lbl);
-		lbl = new Label(Language.YOUR_NAME.get_text() + ": ", new FloatRect(column0,
-				height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
-		widgets.add(lbl);
-		lbl = new Label(Language.YOUR_COLOR.get_text() + ": ", new FloatRect(column0,
-				height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
-		widgets.add(lbl);
-
-		row_count = 2;
-		TextField tfMapSize = new TextField(new FloatRect(column0 + 200,
-				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
-		tfMapSize.set_text_color(new Color(20, 20, 20));
-		tfMapSize.set_text(tf_value_size);
-		tfMapSize.set_input_callback(new Runnable() {
-			TextField textField = tfMapSize;
-
-			@Override
-			public void run() {
-				tf_value_size = textField.get_text();
-			}
-		});
-		widgets.add(tfMapSize);
-
-		TextField tfSeed = new TextField(new FloatRect(column0 + 200,
-				height_anchor + (textfield_height + 10) * row_count, textfield_width, textfield_height));
-		tfSeed.set_text_color(new Color(20, 20, 20));
-		tfSeed.set_text(tf_value_seed);
-		tfSeed.set_input_callback(new Runnable() {
-			TextField textField = tfSeed;
-
-			@Override
-			public void run() {
-				tf_value_seed = textField.get_text();
-			}
-		});
-		widgets.add(tfSeed);
-		Button btnRandom = new Button(Language.RANDOM.get_text(), new FloatRect(column0 + 205 + textfield_width,
-				height_anchor + (textfield_height + 10) * row_count++, 100, textfield_height));
-		btnRandom.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				tf_value_seed = "" + (int)(Math.random() * Integer.MAX_VALUE);
-				tfSeed.set_text(tf_value_seed);
-			}
-		});
-		widgets.add(btnRandom);
-
-		TextField tfName = new TextField(new FloatRect(column0 + 200,
-				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
-		tfName.set_text_color(new Color(20, 20, 20));
-		tfName.set_text(tf_value_name);
-		tfName.set_input_callback(new Runnable() {
-			TextField textField = tfName;
-
-			@Override
-			public void run() {
-				tf_value_name = textField.get_text();
-			}
-		});
-		widgets.add(tfName);
-
-		ColorPicker colorPicker = new ColorPicker(new FloatRect(column0 + 200,
-				height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
-		colorPicker.set_color(color_pkr_hue, 1.f, 0.8f);
-		colorPicker.set_select_callback(new Runnable() {
-			ColorPicker cp = colorPicker;
-
-			@Override
-			public void run() {
-				color_pkr_hue = cp.get_hue();
-			}
-		});
-		widgets.add(colorPicker);
-
+		if(savedGame != null) {
+			Label lblGameName = new Label(Language.SETTINGS.get_text() + savedGame.getName(), new FloatRect(10, 10, 200, 50));
+			lblGameName.set_text_color(Color.GREEN);
+			widgets.add(lblGameName);
+		}else {
+			Label lbl = new Label(Language.SETTINGS.get_text() + ": ", new FloatRect(10,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+		}
+		if(savedGame == null) {
+			Label lbl;
+			//Row0 ==> Settings
+			
+			row_count++;
+			lbl = new Label(Language.MAP_SIZE.get_text() + ": ", new FloatRect(column0,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+			lbl = new Label(Language.SEED.get_text() + ": ", new FloatRect(column0,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+			lbl = new Label(Language.YOUR_NAME.get_text() + ": ", new FloatRect(column0,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+			lbl = new Label(Language.YOUR_COLOR.get_text() + ": ", new FloatRect(column0,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+	
+			row_count = 2;
+			TextField tfMapSize = new TextField(new FloatRect(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+			tfMapSize.set_text_color(new Color(20, 20, 20));
+			tfMapSize.set_text(tf_value_size);
+			tfMapSize.set_input_callback(new Runnable() {
+				TextField textField = tfMapSize;
+	
+				@Override
+				public void run() {
+					tf_value_size = textField.get_text();
+				}
+			});
+			widgets.add(tfMapSize);
+	
+			TextField tfSeed = new TextField(new FloatRect(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count, textfield_width, textfield_height));
+			tfSeed.set_text_color(new Color(20, 20, 20));
+			tfSeed.set_text(tf_value_seed);
+			tfSeed.set_input_callback(new Runnable() {
+				TextField textField = tfSeed;
+	
+				@Override
+				public void run() {
+					tf_value_seed = textField.get_text();
+				}
+			});
+			widgets.add(tfSeed);
+			Button btnRandom = new Button(Language.RANDOM.get_text(), new FloatRect(column0 + 205 + textfield_width,
+					height_anchor + (textfield_height + 10) * row_count++, 100, textfield_height));
+			btnRandom.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					tf_value_seed = "" + (int)(Math.random() * Integer.MAX_VALUE);
+					tfSeed.set_text(tf_value_seed);
+				}
+			});
+			widgets.add(btnRandom);
+	
+			TextField tfName = new TextField(new FloatRect(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+			tfName.set_text_color(new Color(20, 20, 20));
+			tfName.set_text(tf_value_name);
+			tfName.set_input_callback(new Runnable() {
+				TextField textField = tfName;
+	
+				@Override
+				public void run() {
+					tf_value_name = textField.get_text();
+				}
+			});
+			widgets.add(tfName);
+	
+			ColorPicker  colorPicker = new ColorPicker(new FloatRect(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+			colorPicker.set_color(color_pkr_hue, 1.f, 0.8f);
+			colorPicker.set_select_callback(new Runnable() {
+				ColorPicker cp = colorPicker;
+	
+				@Override
+				public void run() {
+					color_pkr_hue = cp.get_hue();
+					hostPlayerColor = cp.get_color();
+				}
+			});
+			widgets.add(colorPicker);
+		}	
 		//Row1 ==> members
-		lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(column1, 10, 100, 100));
+		Label lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(column1, 10, 100, 100));
 		widgets.add(lbl);
 
 		for (int i = 0; i < guests.size(); i++) {
@@ -882,20 +893,30 @@ public class LocalUI extends UI {
 
 		Button btnStart = new Button(Language.START.get_text(),
 				new FloatRect(view.getSize().x - 300, view.getSize().y - 200, 200, 100));
-		btnStart.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
-				int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
-						: ((int) Math.random() * 100) + 1;
-				String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
-				Color user_color = colorPicker.get_color();
+		if(savedGame == null) {
+			btnStart.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
+					int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
+							: ((int) Math.random() * 100) + 1;
+					String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
+					Color user_color = hostPlayerColor;
 
-				((LocalCore) core).changePlayerProps(0, user_name, user_color);
-				((LocalCore) core).create_new_map(map_size, seed);
-				((LocalCore) core).init_game();
-			}
-		});
+					((LocalCore) core).changePlayerProps(0, user_name, user_color);
+					((LocalCore) core).create_new_map(map_size, seed);
+					((LocalCore) core).init_game();
+				}
+			});
+		}else {
+			btnStart.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					((LocalCore) core).loadGame(savedGame);
+				}
+			});
+		}
+		
 		widgets.add(btnStart);
 	}
 	
@@ -969,13 +990,15 @@ public class LocalUI extends UI {
 		LocalFilehandler fileHandler = new LocalFilehandler();
 		List<SavedGame> allGames = fileHandler.getAllGames();
 		int i = 0;
-		for(SavedGame game : allGames) {
-			System.out.println(game.getName());
-			Button btnGame = new Button(game.getName(), new FloatRect(window_size.x/2-150, 200+80*i, 400, 60));
+		for(SavedGame tempGame : allGames) {
+			Button btnGame = new Button(tempGame.getName(), new FloatRect(window_size.x/2-150, 200+80*i, 400, 60));
 			btnGame.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					((LocalCore)core).loadGame(game);
+					mode = GUIMode.HOST_LOBBY;
+					savedGame = tempGame;
+					rebuild_gui();
+					//((LocalCore)core).loadGame(game);
 				}
 			});
 			widgets.add(btnGame);
