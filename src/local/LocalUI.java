@@ -878,8 +878,9 @@ public class LocalUI extends UI {
 					hostPlayerColor = cp.get_color();
 				}
 			});
+			hostPlayerColor = colorPicker.get_color();
 			widgets.add(colorPicker);
-		}	
+		}
 		//Row1 ==> members
 		Label lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(column1, 10, 100, 100));
 		widgets.add(lbl);

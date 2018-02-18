@@ -99,11 +99,11 @@ public class LocalCore extends Core {
 			player.get(i).add_resource(Resource.WOOL, 1);
 
 			// DEBUG
-			player.get(i).add_resource(Resource.CLAY, 50);
+			/*player.get(i).add_resource(Resource.CLAY, 50);
 			player.get(i).add_resource(Resource.GRAIN, 50);
 			player.get(i).add_resource(Resource.ORE, 50);
 			player.get(i).add_resource(Resource.WOOD, 50);
-			player.get(i).add_resource(Resource.WOOL, 50);
+			player.get(i).add_resource(Resource.WOOL, 50);*/
 
 			uis.get(i).update_player_data(player.get(i));
 		}
