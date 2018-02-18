@@ -35,7 +35,8 @@ public enum Language {
 	GRAIN("Grain", "Getreide"),
 	CLAY("Clay", "Ton"),
 	ORE("Ore", "Erz"), 
-	TRADE("Trade", "Handeln");
+	TRADE("Trade", "Handeln"), 
+	SAVE("Save game", "Spiel speichern");
 
 
 	

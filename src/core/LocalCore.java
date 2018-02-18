@@ -1,6 +1,8 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import core.Building.Type;
 import core.Map.GeneratorType;
 import data.Field;
 import data.Resource;
+import data.SavedGame;
 import local.LocalPlayer;
 import local.LocalState.GameMode;
 import local.TradeDemand.Vendor;
@@ -134,7 +137,6 @@ public class LocalCore extends Core {
 		player.get(0).add_resource(Resource.GRAIN, 40);
 		player.get(0).add_resource(Resource.WOOD, 40);
 		uis.get(0).update_player_data(player.get(0));
-		saveGame();
 //		buildRequest(0, Type.VILLAGE, new Vector3i(0,0,1));
 	}
 
@@ -374,12 +376,36 @@ public class LocalCore extends Core {
 		((LocalUI) this.uis.get(0)).showIpInLobby(ip);
 	}
 	
-	public void saveGame() {
-		fileHandler.saveGame(map.getFields(), player);
+	public void saveGame(String game_name) {
+		Date date = new Date();
+		Calendar c = Calendar.getInstance();
+		SavedGame game = new SavedGame(map.getFields(), player, date);
+		if(game_name.isEmpty()) {
+			game_name = "QuickSave_"+c.get(c.YEAR)+"_"+c.get(c.MONTH)+1+"_"+c.get(c.DAY_OF_MONTH)+"_"+c.get(c.HOUR_OF_DAY) ;
+		}
+		game.setName(game_name);
+		fileHandler.saveGame(game);
 	}
-	public void loadGame() {
-		fileHandler.loadGame();
-		Field[][] fields = fileHandler.getFields();
-		List<Player> player = fileHandler.getPlayer();
+	
+	public void loadGame(SavedGame game) {
+		player = game.getPlayer();
+		map.set_fields(game.getFields());
+		update_scoreboard_data();
+		for (UI ui : uis) {
+			ui.build_game_menu();
+			ui.set_current_player(player.get(current_player).getName());
+			ui.update_player_data(player.get(ui.getID()));
+		}
+		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
+		for(Player p : player) {
+			for (int j = 0; j < p.buildings.size(); j++) {
+				new_buildings.put(p.getId(), p.buildings);
+			}
+		}
+		for (GameLogic logic : logics) {
+			logic.set_mode(GameMode.game);
+			logic.update_new_map(map.getFields());
+			logic.update_buildings(new_buildings);
+		}
 	}
 }

@@ -16,9 +16,11 @@ import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import core.LocalCore;
+import core.LocalFilehandler;
 import core.Player;
 import data.Language;
 import data.Resource;
+import data.SavedGame;
 import local.LocalState.GameMode;
 import local.TradeDemand.Vendor;
 import local.gui.Button;
@@ -31,9 +33,12 @@ import superClasses.UI;
 
 public class LocalUI extends UI {
 	enum GUIMode {
-		LOBBY, JOIN, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR;
 	}
-
+	enum MenuMode{
+		MENU, SAVE, LOAD, OPTIONS;
+	}
+	private MenuMode menuMode; 
 	private GUIMode mode;
 
 	private Core core;
@@ -79,6 +84,7 @@ public class LocalUI extends UI {
 	private String tf_value_size = "5";
 	private String lbl_value_info = "";
 	private String lbl_value_dice = "0";
+	private String tf_game_name = "";
 	private float color_pkr_hue = (float) Math.random();
 
 	LocalUI(LocalGameLogic logic, Framework framework) {
@@ -126,6 +132,10 @@ public class LocalUI extends UI {
 			build__demander_trade_window();
 		} else if(mode == GUIMode.TRADE_VENDOR) {
 			build_vendor_trade_window();
+		}else if(mode == GUIMode.LOAD) {
+			build_load_window();
+		}else if(mode == GUIMode.MENU) {
+			build_menu();
 		}
 	}
 
@@ -163,10 +173,11 @@ public class LocalUI extends UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-			
+				framework.init_host_game();
+				build_load_window();
 			}
 		});
-		btn.set_enabled(false); //TODO remove when implemented
+		//btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
 
 		btn = new Button(Language.OPTIONS.get_text(), new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -310,6 +321,19 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(btnTrade);
+		//Save Button
+		Button btnMenu = new Button("...", new FloatRect(window_size.x/2-25, 10, 80, 40));
+		btnMenu.set_text_size(100);
+		btnMenu.set_text_position(window_size.x/2-10, -60);
+		btnMenu.set_fill_color(new Color(250,250,250,40));
+		btnMenu.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				mode = GUIMode.MENU;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnMenu);
 	}
 	
 	public void build__demander_trade_window() {
@@ -847,7 +871,87 @@ public class LocalUI extends UI {
 		});
 		widgets.add(btnStart);
 	}
+	
+	public void build_menu() {
+		Label lblWindow = new Label("", new FloatRect(30, 30, window_size.x -60, window_size.y-60));
+		lblWindow.set_fill_color(new Color(50, 50 , 50, 190));
+		widgets.add(lblWindow);
+		Button btnClose = new Button("X", new FloatRect(window_size.x - 70, 25, 40, 40));
+		btnClose.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				mode = GUIMode.GAME;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnClose);
 
+		if(menuMode == null || menuMode == MenuMode.MENU) {
+			Button btnSave = new Button(Language.SAVE.get_text(), new FloatRect(window_size.x/2 - 150, 200, 300, 50));
+			btnSave.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					menuMode = MenuMode.SAVE;
+					rebuild_gui();
+				}
+			});
+			widgets.add(btnSave);
+		}else if(menuMode == MenuMode.SAVE) {
+			LocalFilehandler fileHandler = new LocalFilehandler();	
+			TextField tfGameName = new TextField(new FloatRect(window_size.x - 800, window_size.y - 100, 300, 40));
+			tfGameName.set_text(tf_game_name);
+			tfGameName.set_input_callback(new Runnable() {
+				@Override
+				public void run() {
+					tf_game_name = tfGameName.get_text();					
+				}
+			});
+			widgets.add(tfGameName);
+			Button btnSaveGame = new Button(Language.SAVE.get_text(), new FloatRect(window_size.x - 400, window_size.y - 100, 150, 40));
+			btnSaveGame.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("Button Savw");
+					((LocalCore)core).saveGame(tf_game_name);
+				}
+			});
+			widgets.add(btnSaveGame);
+			
+			List<SavedGame> allGames = fileHandler.getAllGames();
+			int i = 0;
+			for(SavedGame game : allGames) {
+				Button btnGame = new Button(game.getName(), new FloatRect(window_size.x/2-500, 100+80*i, 500, 60));
+				btnGame.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						tfGameName.set_text(game.getName());
+					}
+				});
+				widgets.add(btnGame);
+				i++;
+			}
+		}
+	}
+	
+	public void build_load_window() {
+		destroy_widgets();
+		mode = GUIMode.LOAD;
+		LocalFilehandler fileHandler = new LocalFilehandler();
+		List<SavedGame> allGames = fileHandler.getAllGames();
+		int i = 0;
+		for(SavedGame game : allGames) {
+			System.out.println(game.getName());
+			Button btnGame = new Button(game.getName(), new FloatRect(window_size.x/2-150, 200+80*i, 400, 60));
+			btnGame.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					((LocalCore)core).loadGame(game);
+				}
+			});
+			widgets.add(btnGame);
+			i++;
+		}
+	}
 	// returns true if event was handled
 	boolean handle_event(Event evt) {
 		if (evt.type == Event.Type.MOUSE_BUTTON_PRESSED) {

@@ -406,4 +406,8 @@ public class Map {
 			return new Vector3i(south_index.x, south_index.y, LAYER_SOUTH_STMT);
 	}
 
+	public void set_fields(Field[][] fields) {
+		this.fields = fields;
+	}
+
 }
