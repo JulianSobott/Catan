@@ -91,7 +91,7 @@ public class Map {
 		}
 
 		Vector2f island_center = Map.index_to_position(new Vector2i(map_size_x / 2, map_size_y / 2));
-
+		
 		this.fields = new Field[map_size_x][map_size_y];
 		for (int x = 0; x < map_size_x; x++) {
 			for (int y = 0; y < map_size_y; y++) {
@@ -404,6 +404,10 @@ public class Map {
 			return new Vector3i(north_index.x, north_index.y, LAYER_NORTH_STMT);
 		else
 			return new Vector3i(south_index.x, south_index.y, LAYER_SOUTH_STMT);
+	}
+
+	public void set_fields(Field[][] fields) {
+		this.fields = fields;
 	}
 
 }
