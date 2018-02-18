@@ -45,6 +45,7 @@ public class LocalCore extends Core {
 
 	//Filehandler
 	private LocalFilehandler fileHandler;
+
 	public LocalCore() {
 		fileHandler = new LocalFilehandler();
 		Player hostPlayer = new Player("Host", 0, Color.BLACK);
@@ -133,7 +134,7 @@ public class LocalCore extends Core {
 			logic.set_mode(GameMode.game);
 		}
 		uis.get(0).update_player_data(player.get(0));
-//		buildRequest(0, Type.VILLAGE, new Vector3i(0,0,1));
+		//		buildRequest(0, Type.VILLAGE, new Vector3i(0,0,1));
 	}
 
 	@Override
@@ -150,22 +151,24 @@ public class LocalCore extends Core {
 		uis.get(0).show_guest_at_lobby(playername);
 		data_server.set_id_last_joined(id);
 	}
+
 	public String checkName(String name) {
 		String newName = name;
-		for(Player p : player) {
-			if(p.getName().equals(name)) {
-				newName = checkName(name+ (int)(Math.random()*100));
+		for (Player p : player) {
+			if (p.getName().equals(name)) {
+				newName = checkName(name + (int) (Math.random() * 100));
 			}
 		}
 		return newName;
 	}
+
 	// USER ACTIONS
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
 		//TODO Check if city is too close to other city
 		Player this_player = player.get(id);
-		if (id == current_player
-				&& (initial_round || owns_nearby_building(this_player, map.get_nearby_building_sites(position)))) {
+		if (id == current_player && (initial_round || owns_nearby_building(this_player,
+				map.get_nearby_building_sites(position), buildType == Building.Type.VILLAGE))) {
 			boolean build_sth = false;
 			java.util.Map<Resource, Integer> resources = this_player.resources;
 			if (buildType == Building.Type.VILLAGE) {
@@ -228,14 +231,26 @@ public class LocalCore extends Core {
 		}
 	}
 
-	private boolean owns_nearby_building(Player p, List<Vector3i> buildings) {
+	private boolean owns_nearby_building(Player p, List<Vector3i> buildings, boolean but_not_a_settlement) {
+		boolean found_building = false;
 		for (Vector3i b : buildings) {
 			for (Building pb : p.buildings) {
-				if (Vector3iMath.are_equal(pb.get_position(), b))
-					return true;
+				if (Vector3iMath.are_equal(pb.get_position(), b)) {
+					if (but_not_a_settlement && (b.z == Map.LAYER_NORTH_STMT || b.z == Map.LAYER_SOUTH_STMT))
+						return false;// found a nearby settlement
+					else {
+						if (but_not_a_settlement)
+							found_building = true;
+						else
+							return true;
+					}
+				}
 			}
 		}
-		return false;
+		if (found_building)
+			return true;
+		else
+			return false;
 	}
 
 	public void update_scoreboard_data() {
@@ -292,18 +307,18 @@ public class LocalCore extends Core {
 
 	@Override
 	public void new_trade_demand(TradeDemand tradeDemand) {
-		if(tradeDemand.getVendor() == Vendor.BANK) {
+		if (tradeDemand.getVendor() == Vendor.BANK) {
 			int neededResources = 0;
 			int availableResources = 0;
-			for(Resource r : tradeDemand.getOfferedResources().keySet()) {
-				if(player.get(tradeDemand.get_demander_id()).get_resources(r) >= 4) {
+			for (Resource r : tradeDemand.getOfferedResources().keySet()) {
+				if (player.get(tradeDemand.get_demander_id()).get_resources(r) >= 4) {
 					availableResources += player.get(tradeDemand.get_demander_id()).get_resources(r);
 				}
 			}
-			for(Resource r : tradeDemand.getWantedResources().keySet()) {
+			for (Resource r : tradeDemand.getWantedResources().keySet()) {
 				neededResources += 4;
 			}
-			if(neededResources <= availableResources) {
+			if (neededResources <= availableResources) {
 				for (Resource r : tradeDemand.getWantedResources().keySet()) {
 					player.get(tradeDemand.get_demander_id()).add_resource(r, 1);
 				}
@@ -313,7 +328,7 @@ public class LocalCore extends Core {
 				uis.get(tradeDemand.get_demander_id()).update_player_data(player.get(tradeDemand.get_demander_id()));
 				uis.get(tradeDemand.get_demander_id()).closeTradeWindow();
 			}
-		}else if(tradeDemand.getVendor() == Vendor.PLAYER) {
+		} else if (tradeDemand.getVendor() == Vendor.PLAYER) {
 			for (Player p : player) {
 				if (p.getId() != tradeDemand.get_demander_id()) {
 					boolean showTrade = true;
@@ -335,12 +350,12 @@ public class LocalCore extends Core {
 		java.util.Map<Resource, Integer> demanderPlayerResources = player.get(tradeOffer.getDemanderID()).resources;
 		java.util.Map<Resource, Integer> offeredResources = tradeOffer.getOfferedResources();
 		boolean sendOffer = true;
-		for(Resource r : offeredResources.keySet()) {
-			if(offeredResources.get(r) > demanderPlayerResources.get(r)) {
+		for (Resource r : offeredResources.keySet()) {
+			if (offeredResources.get(r) > demanderPlayerResources.get(r)) {
 				sendOffer = false;
 			}
 		}
-		if(sendOffer) {
+		if (sendOffer) {
 			uis.get(tradeOffer.getDemanderID()).addTradeOffer(tradeOffer);
 		}
 	}
@@ -363,7 +378,7 @@ public class LocalCore extends Core {
 
 	@Override
 	public void closeTrade() {
-		for(UI ui : uis) {
+		for (UI ui : uis) {
 			ui.closeTradeWindow();
 		}
 	}
@@ -371,18 +386,19 @@ public class LocalCore extends Core {
 	public void showIpAtLobby(String ip) {
 		((LocalUI) this.uis.get(0)).showIpInLobby(ip);
 	}
-	
+
 	public void saveGame(String game_name) {
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
 		SavedGame game = new SavedGame(map.getFields(), player, date);
-		if(game_name.isEmpty()) {
-			game_name = "QuickSave_"+c.get(c.YEAR)+"_"+c.get(c.MONTH)+1+"_"+c.get(c.DAY_OF_MONTH)+"_"+c.get(c.HOUR_OF_DAY) ;
+		if (game_name.isEmpty()) {
+			game_name = "QuickSave_" + c.get(c.YEAR) + "_" + c.get(c.MONTH) + 1 + "_" + c.get(c.DAY_OF_MONTH) + "_"
+					+ c.get(c.HOUR_OF_DAY);
 		}
 		game.setName(game_name);
 		fileHandler.saveGame(game);
 	}
-	
+
 	public void loadGame(SavedGame game) {
 		player = game.getPlayer();
 		map.set_fields(game.getFields());
@@ -393,7 +409,7 @@ public class LocalCore extends Core {
 			ui.update_player_data(player.get(ui.getID()));
 		}
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
-		for(Player p : player) {
+		for (Player p : player) {
 			for (int j = 0; j < p.buildings.size(); j++) {
 				new_buildings.put(p.getId(), p.buildings);
 			}

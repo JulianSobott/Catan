@@ -91,7 +91,7 @@ public class Map {
 		}
 
 		Vector2f island_center = Map.index_to_position(new Vector2i(map_size_x / 2, map_size_y / 2));
-		
+
 		this.fields = new Field[map_size_x][map_size_y];
 		for (int x = 0; x < map_size_x; x++) {
 			for (int y = 0; y < map_size_y; y++) {
@@ -167,31 +167,37 @@ public class Map {
 		if (position.z == LAYER_NORTH_STMT) {
 			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
 			ret.add(new Vector3i(position.x, position.y, LAYER_EAST_STREET));
-			ret.add(new Vector3i(left_x+1, position.y-1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x, position.y - 1, LAYER_SOUTH_STMT));
+			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_SOUTH_STMT));
+			ret.add(new Vector3i(position.x, position.y - 2, LAYER_SOUTH_STMT));
 		} else if (position.z == LAYER_SOUTH_STMT) {
 			ret.add(new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET));
 			ret.add(new Vector3i(left_x + 1, position.y + 1, LAYER_NORTH_STREET));
 			ret.add(new Vector3i(left_x + 1, position.y + 1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x, position.y + 1, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(left_x + 1, position.y + 1, LAYER_NORTH_STMT));
+			ret.add(new Vector3i(position.x, position.y + 2, LAYER_NORTH_STMT));
 		} else if (position.z == LAYER_NORTH_STREET) {
 			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STMT));
 			ret.add(new Vector3i(position.x, position.y, LAYER_WEST_STREET));
 			ret.add(new Vector3i(position.x, position.y, LAYER_EAST_STREET));
 			ret.add(new Vector3i(position.x - 1, position.y, LAYER_EAST_STREET));
-			ret.add(new Vector3i(left_x+1, position.y-1, LAYER_WEST_STREET));
-			ret.add(new Vector3i(left_x, position.y-1, LAYER_SOUTH_STMT));
+			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_WEST_STREET));
+			ret.add(new Vector3i(left_x, position.y - 1, LAYER_SOUTH_STMT));
 		} else if (position.z == LAYER_EAST_STREET) {
 			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STMT));
 			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
-			ret.add(new Vector3i(position.x+1, position.y, LAYER_WEST_STREET));
+			ret.add(new Vector3i(position.x + 1, position.y, LAYER_WEST_STREET));
 			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_WEST_STREET));
 			ret.add(new Vector3i(left_x + 1, position.y - 1, LAYER_SOUTH_STMT));
-			ret.add(new Vector3i(position.x+1, position.y, LAYER_NORTH_STREET));
+			ret.add(new Vector3i(position.x + 1, position.y, LAYER_NORTH_STREET));
 		} else if (position.z == LAYER_WEST_STREET) {
 			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
 			ret.add(new Vector3i(left_x, position.y + 1, LAYER_EAST_STREET));
 			ret.add(new Vector3i(left_x, position.y + 1, LAYER_NORTH_STREET));
 			ret.add(new Vector3i(left_x, position.y + 1, LAYER_NORTH_STMT));
-			ret.add(new Vector3i(position.x-1, position.y, LAYER_EAST_STREET));
+			ret.add(new Vector3i(position.x - 1, position.y, LAYER_EAST_STREET));
 			ret.add(new Vector3i(left_x, position.y - 1, LAYER_SOUTH_STMT));
 		}
 		return ret;
@@ -244,8 +250,7 @@ public class Map {
 		}
 		return new_cities;
 	}
-	
-	
+
 	public boolean is_village_place_available(Vector3i pos) {
 		for (Vector3i ap : available_village_places) {
 			if (ap.x == pos.x && ap.y == pos.y && ap.z == pos.z) {
