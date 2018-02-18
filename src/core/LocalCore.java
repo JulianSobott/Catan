@@ -92,11 +92,11 @@ public class LocalCore extends Core {
 			player.get(i).add_resource(Resource.WOOL, 1);
 
 			// DEBUG
-			player.get(i).add_resource(Resource.CLAY, 10);
-			player.get(i).add_resource(Resource.GRAIN, 10);
-			player.get(i).add_resource(Resource.ORE, 10);
-			player.get(i).add_resource(Resource.WOOD, 10);
-			player.get(i).add_resource(Resource.WOOL, 10);
+			player.get(i).add_resource(Resource.CLAY, 50);
+			player.get(i).add_resource(Resource.GRAIN, 50);
+			player.get(i).add_resource(Resource.ORE, 50);
+			player.get(i).add_resource(Resource.WOOD, 50);
+			player.get(i).add_resource(Resource.WOOL, 50);
 
 			uis.get(i).update_player_data(player.get(i));
 		}
@@ -126,10 +126,6 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-		player.get(0).add_resource(Resource.CLAY, 40);
-		player.get(0).add_resource(Resource.ORE, 40);
-		player.get(0).add_resource(Resource.GRAIN, 40);
-		player.get(0).add_resource(Resource.WOOD, 40);
 		uis.get(0).update_player_data(player.get(0));
 //		buildRequest(0, Type.VILLAGE, new Vector3i(0,0,1));
 	}
