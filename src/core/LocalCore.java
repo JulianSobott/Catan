@@ -34,7 +34,9 @@ public class LocalCore extends Core {
 	List<GameLogic> logics = new ArrayList<GameLogic>();
 	// data server
 	Server data_server;
-
+	
+	private boolean loadedGame = false;
+	private SavedGame savedGame;
 	// map
 	Map map = new Map();
 
@@ -139,17 +141,28 @@ public class LocalCore extends Core {
 
 	@Override
 	public void register_new_user(String name, Color color) {
-		String playername = checkName(name);
-		int id = player.size();
-		player.add(new Player(playername, id, color));
-		UI ui = new RemoteUI(data_server);
-		ui.setID(id);
-		uis.add(ui);
-		GameLogic logic = new RemoteGameLogic(data_server);
-		logic.setID(id);
-		logics.add(logic);
-		uis.get(0).show_guest_at_lobby(playername);
-		data_server.set_id_last_joined(id);
+		boolean correctName = false;
+		if(loadedGame) {
+			
+			for(Player p : savedGame.getPlayer()) {
+				if(p.getName() == name) {
+					correctName = true;
+				}
+			}
+		}
+		if(!loadedGame || correctName) {
+			String playername = checkName(name);
+			int id = player.size();
+			player.add(new Player(playername, id, color));
+			UI ui = new RemoteUI(data_server);
+			ui.setID(id);
+			uis.add(ui);
+			GameLogic logic = new RemoteGameLogic(data_server);
+			logic.setID(id);
+			logics.add(logic);
+			uis.get(0).show_guest_at_lobby(playername);
+			data_server.set_id_last_joined(id);
+		}	
 	}
 
 	public String checkName(String name) {
@@ -400,7 +413,15 @@ public class LocalCore extends Core {
 	}
 
 	public void loadGame(SavedGame game) {
-		player = game.getPlayer();
+		List<Player> newPlayerdata = new ArrayList<Player>();
+		for(Player p : player) {
+			for(Player loadedP : game.getPlayer()) {
+				if(p.getName() == loadedP.getName()) {
+					newPlayerdata.add(loadedP);
+				}
+			}
+		}
+		player = newPlayerdata;
 		map.set_fields(game.getFields());
 		update_scoreboard_data();
 		for (UI ui : uis) {
@@ -425,7 +446,9 @@ public class LocalCore extends Core {
 		int id = 0;
 		for(Player p : player) {
 			if(p.getName() == name) {
-				id = p.getId();
+				break;
+			}else {
+				id++;
 			}
 		}
 		for(UI ui : uis) {
@@ -437,5 +460,20 @@ public class LocalCore extends Core {
 		uis.remove(id);
 		logics.remove(id);
 		data_server.remove_client(id);
+	}
+	
+	public void setLoadedGame(boolean b) {
+		this.loadedGame = b;
+	}
+	public boolean getLoadedGame() {
+		return this.loadedGame;
+	}
+
+	public SavedGame getSavedGame() {
+		return savedGame;
+	}
+
+	public void setSavedGame(SavedGame savedGame) {
+		this.savedGame = savedGame;
 	}
 }

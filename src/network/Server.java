@@ -137,6 +137,11 @@ public class Server extends Networkmanager {
 				idx++;
 			}
 		}
-		this.clients.remove(idx);
+		if(idx < clients.size())
+			this.clients.remove(idx);
+		else {
+			System.out.println("Cant Remove Client: " + idx);
+			core.register_new_user("Deleted User", Color.BLACK);
+		}
 	}
 }
