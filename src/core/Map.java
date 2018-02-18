@@ -162,7 +162,7 @@ public class Map {
 	// returns a list of all possible building sites nearby a building
 	List<Vector3i> get_nearby_building_sites(Vector3i position) {
 		List<Vector3i> ret = new ArrayList<Vector3i>();
-		int left_x = position.x % 2 == 0 ? position.x : position.x - 1;
+		int left_x = position.y % 2 == 0 ? position.x - 1 : position.x;
 
 		if (position.z == LAYER_NORTH_STMT) {
 			ret.add(new Vector3i(position.x, position.y, LAYER_NORTH_STREET));
