@@ -152,7 +152,6 @@ public class LocalUI extends UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("Start new game");
 				framework.init_host_game();
 				build_host_lobby_window();
 			}
@@ -163,7 +162,6 @@ public class LocalUI extends UI {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("Join Game");
 				build_join_menu();
 			}
 		});
@@ -177,7 +175,7 @@ public class LocalUI extends UI {
 				build_load_window();
 			}
 		});
-		//btn.set_enabled(false); //TODO remove when implemented
+		
 		widgets.add(btn);
 
 		btn = new Button(Language.OPTIONS.get_text(), new FloatRect(0, 0, mm_button_width, mm_button_height));
@@ -467,14 +465,13 @@ public class LocalUI extends UI {
 					i++;
 				}	
 			}
-			//TODO with accept button (maybe reject)
+			
 			Label lblAllOffers = new Label("All Offers" , new FloatRect(window_size.x/2, 150, 300, 50));
 			lblAllOffers.set_text_color(Color.WHITE);
 			widgets.add(lblAllOffers);
-			//TODO show all offers
+			//show all offers
 			i = 0;
 			for(TradeOffer offer : allTradeOffer) {
-				System.out.println("Build new trade offer in local UI");
 				//Offer Label
 				Label lblOfferID = new Label("Offer "+ i, new FloatRect(window_size.x/2, 200 + (110+20)*i, 300, 50));
 				lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
@@ -560,7 +557,7 @@ public class LocalUI extends UI {
 		int lblHeight = 50;
 		int btnSpace = 10;
 		//Show all wanted resources
-		//TODO Show all wanted resources
+		//Show all wanted resources
 		Label lblAllWantedResources = new Label("Player want these resources: ", new FloatRect(30, 40, 200, 50));
 		lblAllWantedResources.set_text_color(Color.WHITE);
 		widgets.add(lblAllWantedResources);
@@ -582,7 +579,7 @@ public class LocalUI extends UI {
 			i++;
 		}
 		
-		//TODO Show Resources that are offered by myself with number
+		//Show Resources that are offered by myself with number
 		
 		//show all possible trading resources
 		Label lblWantedResourcesFromDemander = new Label("I want from "+state.player_data.get(tradeDemand.get_demander_id()).getName(), new FloatRect(50, 200, 300, 50));
@@ -625,7 +622,7 @@ public class LocalUI extends UI {
 			}	
 		}
 		
-		//TODO Send offers
+		//Send offers
 		//All own Resources
 		i = 0;
 		for(Resource r : Resource.values()) {
@@ -638,14 +635,43 @@ public class LocalUI extends UI {
 			}		
 		}
 		//TODO Maybe show all own offers (if multiple are made)
-		
+		Label lblAllOffers = new Label("All own offers" , new FloatRect(window_size.x/2, 150, 300, 50));
+		lblAllOffers.set_text_color(Color.WHITE);
+		widgets.add(lblAllOffers);
+		i = 0;
+		for(TradeOffer offer : allTradeOffer) {
+			//Offer Label
+			Label lblOfferID = new Label("Offer "+ i, new FloatRect(window_size.x/2, 200 + (110+20)*i, 300, 50));
+			lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
+			widgets.add(lblOfferID);
+			Label lblOfferContainer = new Label("", new FloatRect(window_size.x/2, 200 + (110+20)*i, window_size.x/2 - 30, 110));
+			lblOfferContainer.set_fill_color(new Color(255, 255, 255, 80)); //TODO Maybe change to player color
+			widgets.add(lblOfferContainer);
+			
+			//Offered resources
+			int j = 0;
+			Label lblOfferedResource;
+			for(Resource r : offer.getOfferedResources().keySet()) {
+				lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r), new FloatRect(window_size.x/2+ 150*j, 250 + (110+20)*i, 150, 50));
+				lblOfferedResource.set_fill_color(r.get_color());
+				lblOfferedResource.set_text_size(30);
+				widgets.add(lblOfferedResource);
+				j++;
+			}
+			i++;
+		}
 		//Button Send offer
 		Button btnSendOffer = new Button("Send offer", new FloatRect(window_size.x -300, window_size.y - 110, 200, 70));
 		btnSendOffer.set_fill_color(Color.GREEN);
 		btnSendOffer.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
+				allTradeOffer.add(tradeOffer);
 				core.new_trade_offer(tradeOffer);
+				tradeOffer = new TradeOffer();
+				tradeOffer.setVendor_id(id);
+				tradeOffer.setDemanderID(tradeDemand.get_demander_id());		
+				rebuild_gui();
 			}
 		});
 		widgets.add(btnSendOffer);
@@ -888,15 +914,18 @@ public class LocalUI extends UI {
 		widgets.add(btnClose);
 
 		if(menuMode == null || menuMode == MenuMode.MENU) {
-			Button btnSave = new Button(Language.SAVE.get_text(), new FloatRect(window_size.x/2 - 150, 200, 300, 50));
-			btnSave.set_click_callback(new Runnable() {
-				@Override
-				public void run() {
-					menuMode = MenuMode.SAVE;
-					rebuild_gui();
-				}
-			});
-			widgets.add(btnSave);
+			System.out.println(core.getClass().getName());
+			if(core.getClass().getName() == "core.LocalCore") {
+				Button btnSave = new Button(Language.SAVE.get_text(), new FloatRect(window_size.x/2 - 150, 200, 300, 50));
+				btnSave.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						menuMode = MenuMode.SAVE;
+						rebuild_gui();
+					}
+				});
+				widgets.add(btnSave);
+			}		
 		}else if(menuMode == MenuMode.SAVE) {
 			LocalFilehandler fileHandler = new LocalFilehandler();	
 			TextField tfGameName = new TextField(new FloatRect(window_size.x - 800, window_size.y - 100, 300, 40));
