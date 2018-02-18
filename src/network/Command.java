@@ -22,6 +22,7 @@ public enum Command {
 	INIT_SCOREBOARD, 
 	SET_CURR_USER,
 	SET_MODE, 
-	SET_ID;
+	SET_ID, 
+	SHOW_KICKED;
 	
 }

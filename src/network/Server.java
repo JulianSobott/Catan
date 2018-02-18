@@ -127,5 +127,16 @@ public class Server extends Networkmanager {
 	public void set_id_last_joined(int id) {
 		this.clients.get(clients.size() - 1).setID(id);
 	}
-
+	
+	public void remove_client(int id) {
+		int idx = 0;
+		for(ClientCommunicator c : clients) {
+			if(c.getID() == id) {
+				break;
+			}else {
+				idx++;
+			}
+		}
+		this.clients.remove(idx);
+	}
 }

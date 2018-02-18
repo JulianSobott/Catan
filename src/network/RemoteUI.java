@@ -80,4 +80,9 @@ public class RemoteUI extends UI {
 		return this.id;
 	}
 
+	@Override
+	public void show_kicked() {
+		server.message_to_client(id, new Packet(Command.SHOW_KICKED));
+	}
+
 }

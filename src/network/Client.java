@@ -107,6 +107,9 @@ public class Client extends Networkmanager {
 			ui.setID(((Packet.ID) packet.data).getID());
 			gameLogic.setID(((Packet.ID) packet.data).getID());
 			break;
+		case SHOW_KICKED:
+			ui.show_kicked();
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}

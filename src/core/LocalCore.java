@@ -420,4 +420,22 @@ public class LocalCore extends Core {
 			logic.update_buildings(new_buildings);
 		}
 	}
+
+	public void kickPlayer(String name) {
+		int id = 0;
+		for(Player p : player) {
+			if(p.getName() == name) {
+				id = p.getId();
+			}
+		}
+		for(UI ui : uis) {
+			if(ui.getID() == id) {
+				ui.show_kicked();
+			}
+		}
+		player.remove(id);
+		uis.remove(id);
+		logics.remove(id);
+		data_server.remove_client(id);
+	}
 }
