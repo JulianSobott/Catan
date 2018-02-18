@@ -316,6 +316,7 @@ public class LocalUI extends UI {
 			@Override
 			public void run() {
 				tradeDemand = new TradeDemand();
+				tradeDemand.set_demander_id(id);
 				mode = GUIMode.TRADE_DEMAND;
 				rebuild_gui();
 			}
