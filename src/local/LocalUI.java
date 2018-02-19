@@ -58,6 +58,7 @@ public class LocalUI extends UI {
 	// lobby
 	private SavedGame savedGame = null;
 	private List<String> guests = new ArrayList<String>();
+	private int idxPlayer = 0;
 
 	//widgets Just widgets which may be changed
 	private Button btnFinishedMove;
@@ -790,6 +791,7 @@ public class LocalUI extends UI {
 			Label lblGameName = new Label(Language.SETTINGS.get_text() + savedGame.getName(), new FloatRect(10, 10, 200, 50));
 			lblGameName.set_text_color(Color.GREEN);
 			widgets.add(lblGameName);
+			
 		}else {
 			Label lbl = new Label(Language.SETTINGS.get_text() + ": ", new FloatRect(10,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
@@ -885,12 +887,78 @@ public class LocalUI extends UI {
 		Label lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(column1, 10, 100, 100));
 		widgets.add(lbl);
 
-		for (int i = 0; i < guests.size(); i++) {
-			lbl = new Label(guests.get(i),
-					new FloatRect(view.getSize().x / 2 > 200 ? view.getSize().x / 2 : 200, 200 + 110 * i, 400, 100));
-			lbl.set_fill_color(new Color(100, 100, 100, 90));
-			widgets.add(lbl);
+		if(savedGame != null) {
+			int i = 0;
+			for(Player p : savedGame.getPlayer()) {
+				if(i == 0) {
+					Label lblHost = new Label(p.getName(), new FloatRect(window_size.x /2 - 500, 200, 400, 100));
+					lblHost.set_fill_color(p.getColor());
+					widgets.add(lblHost);
+				}else {
+					idxPlayer = i-1;
+					Label lblPlayer = new Label(p.getName(), new FloatRect(window_size.x /2, 200 + 110 *i, 400, 100));
+					Color color = new Color(100, 100, 100, 100);
+					for(String guestName : guests) {
+						if(guestName == p.getName()) {
+							color = p.getColor();
+						}
+					}
+					lblPlayer.set_fill_color(color);
+					widgets.add(lblPlayer);
+					i++;
+				}	
+				
+			}
+			for(String guest: guests) {
+				boolean show = true;
+				for(Player p : savedGame.getPlayer()) {
+					if(guest == p.getName()) {
+						show = false;
+					}
+				}
+				if(show) {
+					idxPlayer = i;
+					lbl = new Label(guest,
+							new FloatRect(view.getSize().x / 2 > 200 ? view.getSize().x / 2 : 200, 200 + 110 * i, 400, 100));
+					lbl.set_fill_color(new Color(250, 100, 100, 200));
+					widgets.add(lbl);
+					Button btnKickPlayer = new Button("Kick", new FloatRect(window_size.x/2 + 300, 200 + 110 * i, 100, 100));
+					btnKickPlayer.set_text_color(Color.RED);
+					btnKickPlayer.set_click_callback(new Runnable() {
+						@Override
+						public void run() {
+							((LocalCore)core).kickPlayer(guest);
+							guests.remove(guest);
+							rebuild_gui();
+						}
+					});
+					widgets.add(btnKickPlayer);
+					widgets.add(btnKickPlayer);
+					i++;
+				}
+				
+			}	
+		}else {
+			for (int i = 0; i < guests.size(); i++) {
+				idxPlayer = i;
+				lbl = new Label(guests.get(i),
+						new FloatRect(view.getSize().x / 2 > 200 ? view.getSize().x / 2 : 200, 200 + 110 * i, 400, 100));
+				lbl.set_fill_color(new Color(100, 100, 100, 90));
+				widgets.add(lbl);
+				Button btnKickPlayer = new Button("Kick", new FloatRect(window_size.x/2 + 300, 200 + 110 * i, 100, 100));
+				btnKickPlayer.set_text_color(Color.RED);
+				btnKickPlayer.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						((LocalCore)core).kickPlayer(guests.get(idxPlayer));
+						guests.remove(idxPlayer);
+						rebuild_gui();
+					}
+				});
+				widgets.add(btnKickPlayer);
+			}
 		}
+		
 
 		Button btnStart = new Button(Language.START.get_text(),
 				new FloatRect(view.getSize().x - 300, view.getSize().y - 200, 200, 100));
@@ -913,7 +981,9 @@ public class LocalUI extends UI {
 			btnStart.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					((LocalCore) core).loadGame(savedGame);
+					if(guests.size()+1 == savedGame.getPlayer().size()) {
+						((LocalCore) core).loadGame(savedGame);
+					}			
 				}
 			});
 		}
@@ -1182,8 +1252,15 @@ public class LocalUI extends UI {
 	public int getID() {
 		return this.id;
 	}
+	@Override 
+	public void show_kicked() {
+		mode = GUIMode.LOBBY;
+		rebuild_gui();
+	}
+	
 	public void showIpInLobby(String ip) {
 		this.serverIP = ip;
 		rebuild_gui();
 	}
+	
 }

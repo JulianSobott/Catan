@@ -34,4 +34,6 @@ public abstract class UI {
 	public abstract void addTradeOffer(TradeOffer tradeOffer);
 
 	public abstract void closeTradeWindow();
+
+	public abstract void show_kicked();
 }

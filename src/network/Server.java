@@ -127,5 +127,21 @@ public class Server extends Networkmanager {
 	public void set_id_last_joined(int id) {
 		this.clients.get(clients.size() - 1).setID(id);
 	}
-
+	
+	public void remove_client(int id) {
+		int idx = 0;
+		for(ClientCommunicator c : clients) {
+			if(c.getID() == id) {
+				break;
+			}else {
+				idx++;
+			}
+		}
+		if(idx < clients.size())
+			this.clients.remove(idx);
+		else {
+			System.out.println("Cant Remove Client: " + idx);
+			core.register_new_user("Deleted User", Color.BLACK);
+		}
+	}
 }
