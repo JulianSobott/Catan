@@ -11,6 +11,7 @@ public enum Command {
 	NEXT_TURN,
 	SHOW_ACTUAL_PLAYER,
 	STRING,
+	BUY_DEVELOPMENT_CARD,
 	//Pre Game Stuff
 	PLAYER_DATA,
 	NEW_MAP,

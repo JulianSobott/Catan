@@ -1,6 +1,7 @@
 package core;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import org.jsfml.graphics.Color;
 
+import data.DevelopmentCard;
 import data.Resource;
 
 public class Player implements Serializable {
@@ -17,6 +19,7 @@ public class Player implements Serializable {
 	private Color color;
 	Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	List<Building> buildings = new LinkedList<Building>();
+	List<DevelopmentCard> developmentCards = new ArrayList<DevelopmentCard>();
 
 	public Player(String name, int id, Color color) {
 		this.name = name;
@@ -80,5 +83,13 @@ public class Player implements Serializable {
 				score += 2;
 			}
 		}
+	}
+
+	public void addDevelopmentCard(DevelopmentCard card) {
+		this.developmentCards.add(card);
+	}
+	
+	public List<DevelopmentCard> getDevelopmentCards(){
+		return this.developmentCards;
 	}
 }

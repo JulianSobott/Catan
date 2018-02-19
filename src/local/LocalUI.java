@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
@@ -19,6 +20,7 @@ import org.jsfml.window.event.Event;
 import core.LocalCore;
 import core.LocalFilehandler;
 import core.Player;
+import data.DevelopmentCard;
 import data.Language;
 import data.Resource;
 import data.SavedGame;
@@ -55,6 +57,7 @@ public class LocalUI extends UI {
 	// gui data
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
 	private TextField activeTF;
+	private boolean showDevelopmentCards = false;
 
 	// lobby
 	private SavedGame savedGame = null;
@@ -67,6 +70,7 @@ public class LocalUI extends UI {
 	private Button btnBuildVillage;
 	private Button btnBuildCity;
 	private Button btnBuildStreet;
+	private Button btnBuyDevelopmentCard;
 	private Label lblDiceResult;
 	private Label lblWoodCards;
 	private Label lblWoolCards;
@@ -229,9 +233,9 @@ public class LocalUI extends UI {
 		//player resources
 		int pos_count = 1;
 		float cards_width = 100;
-		float orientation_anchor = (window_size.x / 5) * 3;
+		float orientation_anchor = (window_size.x / 2) -200;
 		Widget.set_default_outline_color(Color.WHITE);
-		Iterator it = state.my_player_data.get_all_resources().entrySet().iterator();
+		Iterator<Entry<Resource, Integer>> it = state.my_player_data.get_all_resources().entrySet().iterator();
 		int i = 0;
 		while(it.hasNext()) {
 			java.util.Map.Entry<Resource, Integer> pair = (java.util.Map.Entry<Resource, Integer>)it.next();
@@ -243,34 +247,37 @@ public class LocalUI extends UI {
 			widgets.add(lblResource);
 			i++;
 		}
-		/*lblClayCards = new Label(Language.CLAY.get_text() + "\n" + state.my_player_data.get_resources(Resource.CLAY),
-				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
-						80));
-		lblClayCards.set_fill_color(Resource.CLAY.get_color());
-		widgets.add(lblClayCards);
-		lblGrainCards = new Label(Language.GRAIN.get_text() + "\n" + state.my_player_data.get_resources(Resource.GRAIN),
-				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
-						80));
-		lblGrainCards.set_fill_color(Resource.GRAIN.get_color());
-		widgets.add(lblGrainCards);
-		lblOreCards = new Label(Language.ORE.get_text() + "\n" + state.my_player_data.get_resources(Resource.ORE),
-				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
-						80));
-		lblOreCards.set_fill_color(Resource.ORE.get_color());
-		widgets.add(lblOreCards);
-		lblWoodCards = new Label(Language.WOOD.get_text() + "\n" + state.my_player_data.get_resources(Resource.WOOD),
-				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
-						80));
-		lblWoodCards.set_fill_color(Resource.WOOD.get_color());
-		widgets.add(lblWoodCards);
-		lblWoolCards = new Label(Language.WOOL.get_text() + "\n" + state.my_player_data.get_resources(Resource.WOOL),
-				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
-						80));
-		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
-		widgets.add(lblWoolCards);
-		*/
 		Widget.set_default_outline_color(Color.TRANSPARENT);
-
+		
+		//player Development Cards
+		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(), new FloatRect(5, 100, 200, 50));
+		btnShowDevelopmentCards.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				if(showDevelopmentCards)
+					showDevelopmentCards = false;
+				else
+					showDevelopmentCards = true;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnShowDevelopmentCards);
+		if(showDevelopmentCards) {
+			i = 0;
+			for(DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
+				Button btnCard = new Button(card.getType().toString(), new FloatRect(205, 100 + 110*i, 400, 100));
+				btnCard.set_fill_color(card.getColor());
+				btnCard.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						card.playCard();	
+					}
+				});
+				widgets.add(btnCard);
+				i++;
+			}
+		}
+		
 		// finished move button
 		btnFinishedMove = new Button(Language.FINISHED_MOVE.get_text(),
 				new FloatRect(window_size.x - 155, window_size.y - 130, 150, 70));
@@ -286,7 +293,7 @@ public class LocalUI extends UI {
 		pos_count = 0;
 		float buttons_width = 110;
 		btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new FloatRect(
-				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
+				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y -80, buttons_width, 70));
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -315,7 +322,16 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(btnBuildStreet);
-
+		
+		btnBuyDevelopmentCard = new Button(Language.DEVELOPMENT_CARD.get_text(), new FloatRect(
+				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width+ 30, 70));
+		btnBuyDevelopmentCard.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				core.buyDevelopmentCard(id);	
+			}
+		});
+		widgets.add(btnBuyDevelopmentCard);
 		//dice result
 		lblDiceResult = new Label(lbl_value_dice, new FloatRect(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(170, 170, 170));
@@ -338,7 +354,7 @@ public class LocalUI extends UI {
 			}
 		});
 		widgets.add(btnTrade);
-		//Save Button
+		//Menu Button
 		Button btnMenu = new Button("...", new FloatRect(window_size.x/2-25, 10, 80, 40));
 		btnMenu.set_text_size(100);
 		btnMenu.set_text_position(window_size.x/2-10, -60);
@@ -450,7 +466,7 @@ public class LocalUI extends UI {
 			for(Resource r : Resource.values()) {
 				
 				if(r != Resource.OCEAN && state.my_player_data.get_resources(r) > 1 && tradeDemand.getVendor() == Vendor.PLAYER ||
-						state.my_player_data.get_resources(r) >= 4 && tradeDemand.getVendor() == Vendor.BANK) {
+						r != Resource.OCEAN && state.my_player_data.get_resources(r) >= 4 && tradeDemand.getVendor() == Vendor.BANK) {
 					String resourceString = (Language.valueOf(r.toString()).toString()) +": " + state.my_player_data.get_resources(r);
 					Button btnOfferedResource = new Button(resourceString, new FloatRect(300, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
 					if(tradeDemand.getOfferedResources().containsKey(r)) {
@@ -1203,6 +1219,7 @@ public class LocalUI extends UI {
 			btnBuildStreet.set_enabled(false);
 			btnBuildVillage.set_enabled(false);
 			btnTrade.set_enabled(false);
+			btnBuyDevelopmentCard.set_enabled(false);
 		}
 	}
 

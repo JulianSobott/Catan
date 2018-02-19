@@ -36,7 +36,8 @@ public enum Language {
 	CLAY("Clay", "Ton"),
 	ORE("Ore", "Erz"), 
 	TRADE("Trade", "Handeln"), 
-	SAVE("Save game", "Spiel speichern");
+	SAVE("Save game", "Spiel speichern"), 
+	DEVELOPMENT_CARD("Development\n card", "Entwicklungskarte kaufen");
 
 
 	

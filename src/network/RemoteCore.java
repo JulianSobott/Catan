@@ -70,4 +70,9 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.CLOSE_TRADE_WINDOW));
 	}
 
+	@Override
+	public void buyDevelopmentCard(int id) {
+		this.client.sendMessage(new Packet(Command.BUY_DEVELOPMENT_CARD));
+	}
+
 }

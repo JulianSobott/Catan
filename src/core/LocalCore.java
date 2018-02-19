@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
@@ -12,6 +13,7 @@ import org.jsfml.system.Vector3i;
 
 import core.Building.Type;
 import core.Map.GeneratorType;
+import data.DevelopmentCard;
 import data.Field;
 import data.Resource;
 import data.SavedGame;
@@ -501,6 +503,15 @@ public class LocalCore extends Core {
 			logic.update_new_map(map.getFields());
 			logic.update_buildings(new_buildings);
 		}
+	}
+
+	@Override
+	public void buyDevelopmentCard(int id) {
+		//TODO VAlidate if user is allowed and have enough resources
+		DevelopmentCard card = DevelopmentCard.getRandomCard();
+		System.out.println(card.getType());
+		player.get(id).addDevelopmentCard(card);
+		uis.get(id).update_player_data(player.get(id));
 	}
 
 	

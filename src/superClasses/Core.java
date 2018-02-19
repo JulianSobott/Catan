@@ -27,5 +27,6 @@ public abstract class Core {
 	public abstract void acceptOffer(TradeOffer offer);
 
 	public abstract void closeTrade();
-	
+
+	public abstract void buyDevelopmentCard(int id);
 }

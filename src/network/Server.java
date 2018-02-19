@@ -110,6 +110,9 @@ public class Server extends Networkmanager {
 		case CLOSE_TRADE_WINDOW:
 			core.closeTrade();
 			break;
+		case BUY_DEVELOPMENT_CARD:
+			core.buyDevelopmentCard(id);
+			break;
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}
