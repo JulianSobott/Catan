@@ -23,6 +23,7 @@ public class ClientInputListener extends Thread{
 					Packet packet;
 					packet = (Packet) input.readObject();
 					this.client.message_from_core(packet);
+					input.reset();
 				}catch(IOException e) {
 					e.printStackTrace();
 					System.err.println("Connection to Server closed (ClientInputListener Line 26)");

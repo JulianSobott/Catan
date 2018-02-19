@@ -58,6 +58,7 @@ public class LocalUI extends UI {
 	// lobby
 	private SavedGame savedGame = null;
 	private List<String> guests = new ArrayList<String>();
+	private List<Player> allPossiblePlayer = new ArrayList<Player>();
 	private int idxPlayer = 0;
 
 	//widgets Just widgets which may be changed
@@ -770,9 +771,33 @@ public class LocalUI extends UI {
 	public void build_guest_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.GUEST_LOBBY;
-
-		Label lbl = new Label("Successfully joined Lobby", new FloatRect(0, 0, 100, 100));
-		widgets.add(lbl);
+		if(allPossiblePlayer.size() > 0) {
+			int i = 0;
+			for(Player p : allPossiblePlayer) {
+				Button btnPName = new Button(p.getName(), new FloatRect(window_size.x/2-100, 50 + 70*i, 200, 60));
+				btnPName.set_fill_color(p.getColor());
+				btnPName.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+							core.register_new_user(p.getName(), p.getColor());
+					}
+				});
+				widgets.add(btnPName);
+				i++;
+			}
+		}else {
+			Label lbl = new Label("Successfully joined Lobby with: ", new FloatRect(0, 0, 100, 100));
+			widgets.add(lbl);
+			int i = 0;
+			for(String guestName : guests) {
+				Label lblPlayer = new Label(guestName, new FloatRect(window_size.x /2, 200 + 110 *i, 400, 100));
+				Color color = new Color(100, 100, 100, 100);
+				lblPlayer.set_fill_color(color);
+				widgets.add(lblPlayer);
+				i++;
+			}
+			
+		}
 	}
 
 	public void build_host_lobby_window() {
@@ -982,7 +1007,7 @@ public class LocalUI extends UI {
 				@Override
 				public void run() {
 					if(guests.size()+1 == savedGame.getPlayer().size()) {
-						((LocalCore) core).loadGame(savedGame);
+						((LocalCore) core).startLoadedGame();
 					}			
 				}
 			});
@@ -1069,7 +1094,7 @@ public class LocalUI extends UI {
 					mode = GUIMode.HOST_LOBBY;
 					savedGame = tempGame;
 					rebuild_gui();
-					//((LocalCore)core).loadGame(game);
+					((LocalCore)core).loadGame(savedGame);
 				}
 			});
 			widgets.add(btnGame);
@@ -1260,6 +1285,13 @@ public class LocalUI extends UI {
 	
 	public void showIpInLobby(String ip) {
 		this.serverIP = ip;
+		rebuild_gui();
+	}
+	@Override
+	public void showAllPossibleNames(List<Player> player) {
+		for(Player p : player) {
+			allPossiblePlayer.add(p);	
+		}
 		rebuild_gui();
 	}
 	

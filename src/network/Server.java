@@ -89,7 +89,7 @@ public class Server extends Networkmanager {
 		case NAME:
 			String name = ((Packet.Name) packet.data).getName();
 			Color color = ((Packet.Name) packet.data).getColor();
-			core.register_new_user(name, color);
+			core.register_new_user(name, color, id);
 			break;
 		case BUILD_REQUEST:
 			core.buildRequest(id, ((Packet.BuildRequest) packet.data).getBuildingType(),

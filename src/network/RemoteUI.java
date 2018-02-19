@@ -6,6 +6,8 @@ import data.Resource;
 
 import java.util.List;
 
+import org.jsfml.graphics.Color;
+
 import local.LocalPlayer;
 import local.TradeDemand;
 import local.TradeOffer;
@@ -42,7 +44,7 @@ public class RemoteUI extends UI {
 
 	@Override
 	public void show_guest_at_lobby(String name) {
-		// TODO really needed for remote?
+		server.message_to_client(id, new Packet(Command.SHOW_NEW_MEMBER, new Packet.Name(name, Color.RED)));
 	}
 
 	@Override
@@ -83,6 +85,10 @@ public class RemoteUI extends UI {
 	@Override
 	public void show_kicked() {
 		server.message_to_client(id, new Packet(Command.SHOW_KICKED));
+	}
+	@Override
+	public void showAllPossibleNames(List<Player> player) {
+		server.message_to_client(id, new Packet(Command.SHOW_ALL_POSSIBLE_NAMES, new Packet.PlayerList(player)));
 	}
 
 }

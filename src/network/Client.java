@@ -110,6 +110,12 @@ public class Client extends Networkmanager {
 		case SHOW_KICKED:
 			ui.show_kicked();
 			break;
+		case SHOW_ALL_POSSIBLE_NAMES:
+			ui.showAllPossibleNames(((Packet.PlayerList)packet.data).getPlayer());	
+			break;
+		case SHOW_NEW_MEMBER:
+			ui.show_guest_at_lobby(((Packet.Name)packet.data).getName());
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}

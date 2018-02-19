@@ -18,6 +18,16 @@ import local.LocalState.GameMode;
 
 public class Packet implements Serializable {
 
+	public static  class PlayerList implements Serializable {
+		private List<Player> player;
+		public PlayerList(List<Player> player) {
+			this.player = player;
+		}
+		public List<Player> getPlayer(){
+			return this.player;
+		}
+	}
+
 	public static class TradeOffer implements Serializable {
 		local.TradeOffer tradeOffer = new local.TradeOffer();
 		public TradeOffer(local.TradeOffer tradeOffer) {

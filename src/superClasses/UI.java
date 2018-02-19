@@ -36,4 +36,5 @@ public abstract class UI {
 	public abstract void closeTradeWindow();
 
 	public abstract void show_kicked();
+	public abstract void showAllPossibleNames(List<Player> player);
 }

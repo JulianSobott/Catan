@@ -12,15 +12,17 @@ public class SavedGame implements Serializable{
 	private Field[][] fields = null;
 	private Date date;
 	private String name;
+	private int current_player;
 	
 	public SavedGame() {
 		
 	}
 
-	public SavedGame(Field[][] fields, List<Player> player, Date date) {
+	public SavedGame(Field[][] fields, List<Player> player, Date date, int current_player) {
 		this.fields = fields;
 		this.player = player;
 		this.date = date;
+		this.current_player = current_player;
 	}
 
 	public List<Player> getPlayer() {
@@ -55,5 +57,8 @@ public class SavedGame implements Serializable{
 		this.name = name;
 	}
 	
+	public int getCurrentPlayer() {
+		return this.current_player;
+	}
 	
 }

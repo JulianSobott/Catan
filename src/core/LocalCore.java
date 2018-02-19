@@ -35,9 +35,8 @@ public class LocalCore extends Core {
 	// data server
 	Server data_server;
 
-	private boolean loadedGame = false;
-	private SavedGame savedGame;
-	// map
+	private SavedGame savedGame = null;
+	
 	Map map = new Map();
 
 	// player data
@@ -141,16 +140,34 @@ public class LocalCore extends Core {
 
 	@Override
 	public void register_new_user(String name, Color color) {
+		String playername = checkName(name);
+		int id = player.size();
+		player.add(new Player(playername, id, color));
+		UI ui = new RemoteUI(data_server);
+		ui.setID(id);
+		uis.add(ui);
+		GameLogic logic = new RemoteGameLogic(data_server);
+		logic.setID(id);
+		logics.add(logic);
+		uis.get(0).show_guest_at_lobby(playername);
+		data_server.set_id_last_joined(id);
+	}
+	public void register_new_user(String name, Color color, int communicatorID) {
 		boolean correctName = false;
-		if (loadedGame) {
-
+		if (savedGame != null) {
 			for (Player p : savedGame.getPlayer()) {
-				if (p.getName() == name) {
+				if (p.getName().equals(name)) {
 					correctName = true;
+					System.out.println("Correct Name");
 				}
 			}
+			if(!correctName) {
+				UI ui = new RemoteUI(data_server);
+				ui.setID(communicatorID);
+				((RemoteUI)ui).showAllPossibleNames(savedGame.getPlayer());
+			}
 		}
-		if (!loadedGame || correctName) {
+		if (savedGame == null || correctName) {
 			String playername = checkName(name);
 			int id = player.size();
 			player.add(new Player(playername, id, color));
@@ -160,11 +177,12 @@ public class LocalCore extends Core {
 			GameLogic logic = new RemoteGameLogic(data_server);
 			logic.setID(id);
 			logics.add(logic);
-			uis.get(0).show_guest_at_lobby(playername);
+			for(UI tempUI : uis) {
+				tempUI.show_guest_at_lobby(name);
+			}
 			data_server.set_id_last_joined(id);
 		}
 	}
-
 	public String checkName(String name) {
 		String newName = name;
 		for (Player p : player) {
@@ -407,7 +425,7 @@ public class LocalCore extends Core {
 	public void saveGame(String game_name) {
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
-		SavedGame game = new SavedGame(map.getFields(), player, date);
+		SavedGame game = new SavedGame(map.getFields(), player, date, current_player);
 		if (game_name.isEmpty()) {
 			game_name = "QuickSave_" + c.get(c.YEAR) + "_" + c.get(c.MONTH) + 1 + "_" + c.get(c.DAY_OF_MONTH) + "_"
 					+ c.get(c.HOUR_OF_DAY);
@@ -417,33 +435,7 @@ public class LocalCore extends Core {
 	}
 
 	public void loadGame(SavedGame game) {
-		List<Player> newPlayerdata = new ArrayList<Player>();
-		for (Player p : player) {
-			for (Player loadedP : game.getPlayer()) {
-				if (p.getName() == loadedP.getName()) {
-					newPlayerdata.add(loadedP);
-				}
-			}
-		}
-		player = newPlayerdata;
-		map.set_fields(game.getFields());
-		update_scoreboard_data();
-		for (UI ui : uis) {
-			ui.build_game_menu();
-			ui.set_current_player(player.get(current_player).getName());
-			ui.update_player_data(player.get(ui.getID()));
-		}
-		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
-		for (Player p : player) {
-			for (int j = 0; j < p.buildings.size(); j++) {
-				new_buildings.put(p.getId(), p.buildings);
-			}
-		}
-		for (GameLogic logic : logics) {
-			logic.set_mode(GameMode.game);
-			logic.update_new_map(map.getFields());
-			logic.update_buildings(new_buildings);
-		}
+		savedGame = game;
 	}
 
 	public void kickPlayer(String name) {
@@ -466,12 +458,9 @@ public class LocalCore extends Core {
 		data_server.remove_client(id);
 	}
 
-	public void setLoadedGame(boolean b) {
-		this.loadedGame = b;
-	}
 
 	public boolean getLoadedGame() {
-		return this.loadedGame;
+		return savedGame != null;
 	}
 
 	public SavedGame getSavedGame() {
@@ -481,4 +470,38 @@ public class LocalCore extends Core {
 	public void setSavedGame(SavedGame savedGame) {
 		this.savedGame = savedGame;
 	}
+
+	public void startLoadedGame() {
+		List<Player> newPlayerdata = new ArrayList<Player>();
+		for (Player p : player) {
+			for (Player loadedP : savedGame.getPlayer()) {
+				if (p.getName() == loadedP.getName()) {
+					newPlayerdata.add(loadedP);
+				}
+			}
+		}
+		current_player = savedGame.getCurrentPlayer();
+		newPlayerdata.add(savedGame.getPlayer().get(0)); //Always add Host
+		player = newPlayerdata;
+		map.set_fields(savedGame.getFields());
+		update_scoreboard_data();
+		for (UI ui : uis) {
+			ui.build_game_menu();
+			ui.set_current_player(player.get(current_player).getName());
+			ui.update_player_data(player.get(ui.getID()));
+		}
+		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
+		for (Player p : player) {
+			for (int j = 0; j < p.buildings.size(); j++) {
+				new_buildings.put(p.getId(), p.buildings);
+			}
+		}
+		for (GameLogic logic : logics) {
+			logic.set_mode(GameMode.game);
+			logic.update_new_map(map.getFields());
+			logic.update_buildings(new_buildings);
+		}
+	}
+
+	
 }
