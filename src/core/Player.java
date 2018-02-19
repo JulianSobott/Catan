@@ -23,7 +23,9 @@ public class Player implements Serializable {
 		this.color = color;
 		this.id = id;
 		for (Resource r : Resource.values()) {
-			resources.put(r, 0);
+			if(r != Resource.OCEAN){
+				resources.put(r, 0);
+			}		
 		}
 	}
 

@@ -2,6 +2,7 @@ package local;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -230,7 +231,19 @@ public class LocalUI extends UI {
 		float cards_width = 100;
 		float orientation_anchor = (window_size.x / 5) * 3;
 		Widget.set_default_outline_color(Color.WHITE);
-		lblClayCards = new Label(Language.CLAY.get_text() + "\n" + state.my_player_data.get_resources(Resource.CLAY),
+		Iterator it = state.my_player_data.get_all_resources().entrySet().iterator();
+		int i = 0;
+		while(it.hasNext()) {
+			java.util.Map.Entry<Resource, Integer> pair = (java.util.Map.Entry<Resource, Integer>)it.next();
+			Resource r = pair.getKey();
+			int num = pair.getValue();
+			Label lblResource = new Label(Language.valueOf(r.name()).get_text() + ":\n"+ num, 
+					new FloatRect(5 , 200 + 100*i, cards_width, 80));
+			lblResource.set_fill_color(r.get_color());
+			widgets.add(lblResource);
+			i++;
+		}
+		/*lblClayCards = new Label(Language.CLAY.get_text() + "\n" + state.my_player_data.get_resources(Resource.CLAY),
 				new FloatRect(orientation_anchor - (cards_width + 10) * pos_count++, window_size.y - 85, cards_width,
 						80));
 		lblClayCards.set_fill_color(Resource.CLAY.get_color());
@@ -255,6 +268,7 @@ public class LocalUI extends UI {
 						80));
 		lblWoolCards.set_fill_color(Resource.WOOL.get_color());
 		widgets.add(lblWoolCards);
+		*/
 		Widget.set_default_outline_color(Color.TRANSPARENT);
 
 		// finished move button
