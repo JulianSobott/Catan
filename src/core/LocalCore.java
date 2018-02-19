@@ -34,7 +34,7 @@ public class LocalCore extends Core {
 	List<GameLogic> logics = new ArrayList<GameLogic>();
 	// data server
 	Server data_server;
-	
+
 	private boolean loadedGame = false;
 	private SavedGame savedGame;
 	// map
@@ -142,15 +142,15 @@ public class LocalCore extends Core {
 	@Override
 	public void register_new_user(String name, Color color) {
 		boolean correctName = false;
-		if(loadedGame) {
-			
-			for(Player p : savedGame.getPlayer()) {
-				if(p.getName() == name) {
+		if (loadedGame) {
+
+			for (Player p : savedGame.getPlayer()) {
+				if (p.getName() == name) {
 					correctName = true;
 				}
 			}
 		}
-		if(!loadedGame || correctName) {
+		if (!loadedGame || correctName) {
 			String playername = checkName(name);
 			int id = player.size();
 			player.add(new Player(playername, id, color));
@@ -162,7 +162,7 @@ public class LocalCore extends Core {
 			logics.add(logic);
 			uis.get(0).show_guest_at_lobby(playername);
 			data_server.set_id_last_joined(id);
-		}	
+		}
 	}
 
 	public String checkName(String name) {
@@ -178,24 +178,26 @@ public class LocalCore extends Core {
 	// USER ACTIONS
 	@Override
 	public void buildRequest(int id, Building.Type buildType, Vector3i position) {
-		//TODO Check if city is too close to other city
 		Player this_player = player.get(id);
-		if (id == current_player && (initial_round || owns_nearby_building(this_player,
-				map.get_nearby_building_sites(position), buildType == Building.Type.VILLAGE))) {
+		if (id == current_player) {
 			boolean build_sth = false;
 			java.util.Map<Resource, Integer> resources = this_player.resources;
 			if (buildType == Building.Type.VILLAGE) {
 				if (map.is_village_place_available(position)) {
-					// TODO extract all building costs into a database to make them configurable
-					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1
-							&& resources.get(Resource.GRAIN) >= 1 && resources.get(Resource.WOOL) >= 1) {
-						map.build_village(position);
-						build_sth = true;
-						this_player.buildings.add(new Building(Building.Type.VILLAGE, position));
-						this_player.take_resource(Resource.WOOD, 1);
-						this_player.take_resource(Resource.CLAY, 1);
-						this_player.take_resource(Resource.GRAIN, 1);
-						this_player.take_resource(Resource.WOOL, 1);
+					List<Vector3i> nearbyBuildingSites = map.get_nearby_building_sites(position);
+					if (( initial_round ||owns_nearby_building(this_player, nearbyBuildingSites))
+							&& no_nearby_settlement(nearbyBuildingSites)) {
+						// TODO extract all building costs into a database to make them configurable
+						if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1
+								&& resources.get(Resource.GRAIN) >= 1 && resources.get(Resource.WOOL) >= 1) {
+							map.build_village(position);
+							build_sth = true;
+							this_player.buildings.add(new Building(Building.Type.VILLAGE, position));
+							this_player.take_resource(Resource.WOOD, 1);
+							this_player.take_resource(Resource.CLAY, 1);
+							this_player.take_resource(Resource.GRAIN, 1);
+							this_player.take_resource(Resource.WOOL, 1);
+						}
 					}
 				}
 			} else if (buildType == Building.Type.CITY) {
@@ -222,7 +224,7 @@ public class LocalCore extends Core {
 					}
 				}
 			} else if (buildType == Building.Type.STREET) {
-				if (map.is_street_place_available(position)) {
+				if (map.is_street_place_available(position) && owns_nearby_building(this_player, map.get_nearby_building_sites(position))) {
 					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1) {
 						map.build_street(position);
 						build_sth = true;
@@ -244,26 +246,28 @@ public class LocalCore extends Core {
 		}
 	}
 
-	private boolean owns_nearby_building(Player p, List<Vector3i> buildings, boolean but_not_a_settlement) {
-		boolean found_building = false;
+	private boolean owns_nearby_building(Player p, List<Vector3i> buildings) {
 		for (Vector3i b : buildings) {
 			for (Building pb : p.buildings) {
 				if (Vector3iMath.are_equal(pb.get_position(), b)) {
-					if (but_not_a_settlement && (b.z == Map.LAYER_NORTH_STMT || b.z == Map.LAYER_SOUTH_STMT))
-						return false;// found a nearby settlement
-					else {
-						if (but_not_a_settlement)
-							found_building = true;
-						else
-							return true;
-					}
+					return true;
 				}
 			}
 		}
-		if (found_building)
-			return true;
-		else
-			return false;
+		return false;
+	}
+
+	private boolean no_nearby_settlement(List<Vector3i> buildings) {
+		for (Vector3i b : buildings) {
+			for (Player p : player) {
+				for (Building pb : p.buildings) {
+					if ((b.z == Map.LAYER_NORTH_STMT || b.z == Map.LAYER_SOUTH_STMT)
+							&& Vector3iMath.are_equal(pb.get_position(), b))
+						return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public void update_scoreboard_data() {
@@ -414,9 +418,9 @@ public class LocalCore extends Core {
 
 	public void loadGame(SavedGame game) {
 		List<Player> newPlayerdata = new ArrayList<Player>();
-		for(Player p : player) {
-			for(Player loadedP : game.getPlayer()) {
-				if(p.getName() == loadedP.getName()) {
+		for (Player p : player) {
+			for (Player loadedP : game.getPlayer()) {
+				if (p.getName() == loadedP.getName()) {
 					newPlayerdata.add(loadedP);
 				}
 			}
@@ -444,15 +448,15 @@ public class LocalCore extends Core {
 
 	public void kickPlayer(String name) {
 		int id = 0;
-		for(Player p : player) {
-			if(p.getName() == name) {
+		for (Player p : player) {
+			if (p.getName() == name) {
 				break;
-			}else {
+			} else {
 				id++;
 			}
 		}
-		for(UI ui : uis) {
-			if(ui.getID() == id) {
+		for (UI ui : uis) {
+			if (ui.getID() == id) {
 				ui.show_kicked();
 			}
 		}
@@ -461,10 +465,11 @@ public class LocalCore extends Core {
 		logics.remove(id);
 		data_server.remove_client(id);
 	}
-	
+
 	public void setLoadedGame(boolean b) {
 		this.loadedGame = b;
 	}
+
 	public boolean getLoadedGame() {
 		return this.loadedGame;
 	}
