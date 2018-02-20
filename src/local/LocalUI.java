@@ -265,12 +265,12 @@ public class LocalUI extends UI {
 		if(showDevelopmentCards) {
 			i = 0;
 			for(DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
-				Button btnCard = new Button(card.getType().toString(), new FloatRect(205, 100 + 110*i, 400, 100));
-				btnCard.set_fill_color(card.getColor());
+				Button btnCard = new Button(card.toString(), new FloatRect(205, 100 + 110*i, 400, 100));
+				btnCard.set_fill_color(new Color(50, 77, 172, 230));
 				btnCard.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
-						card.playCard();	
+						core.playCard(id, card);	
 					}
 				});
 				widgets.add(btnCard);

@@ -4,6 +4,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector3i;
 
 import core.Building;
+import data.DevelopmentCard;
 import local.TradeDemand;
 import local.TradeOffer;
 
@@ -29,4 +30,6 @@ public abstract class Core {
 	public abstract void closeTrade();
 
 	public abstract void buyDevelopmentCard(int id);
+
+	public abstract void playCard(int id, DevelopmentCard card);
 }

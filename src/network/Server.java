@@ -113,6 +113,9 @@ public class Server extends Networkmanager {
 		case BUY_DEVELOPMENT_CARD:
 			core.buyDevelopmentCard(id);
 			break;
+		case PLAY_DEVELOPMENTCARD:
+			core.playCard(id, ((Packet.Developmentcard) packet.data).getCard());
+			break;
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}

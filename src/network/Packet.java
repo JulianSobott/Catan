@@ -11,6 +11,7 @@ import org.jsfml.system.Vector3i;
 
 import core.Building;
 import core.Player;
+import data.DevelopmentCard;
 import data.Field;
 import data.Resource;
 import local.LocalPlayer;
@@ -216,7 +217,16 @@ public class Packet implements Serializable {
 			return this.mode;
 		}
 	}
-
+	
+	public static class Developmentcard implements Serializable{
+		private DevelopmentCard card;
+		public Developmentcard(DevelopmentCard card) {
+			this.card = card;
+		}
+		public DevelopmentCard getCard() {
+			return this.card;
+		}
+	}
 	private Command cmd;
 	Serializable data;
 

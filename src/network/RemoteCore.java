@@ -4,6 +4,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector3i;
 
 import core.Building.Type;
+import data.DevelopmentCard;
 import local.TradeDemand;
 import local.TradeOffer;
 import superClasses.Core;
@@ -73,6 +74,11 @@ public class RemoteCore extends Core {
 	@Override
 	public void buyDevelopmentCard(int id) {
 		this.client.sendMessage(new Packet(Command.BUY_DEVELOPMENT_CARD));
+	}
+
+	@Override
+	public void playCard(int id, DevelopmentCard card) {
+		this.client.sendMessage(new Packet(Command.PLAY_DEVELOPMENTCARD, new Packet.Developmentcard(card)));
 	}
 
 }

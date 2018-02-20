@@ -508,11 +508,45 @@ public class LocalCore extends Core {
 	@Override
 	public void buyDevelopmentCard(int id) {
 		//TODO VAlidate if user is allowed and have enough resources
-		DevelopmentCard card = DevelopmentCard.getRandomCard();
-		System.out.println(card.getType());
-		player.get(id).addDevelopmentCard(card);
-		uis.get(id).update_player_data(player.get(id));
+		if(id == current_player) {
+			if(player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1 && player.get(id).get_resources(Resource.WOOL) >= 1) {
+				Random rand = new Random();
+				DevelopmentCard card = DevelopmentCard.values()[rand.nextInt(DevelopmentCard.values().length-1)];
+				player.get(id).addDevelopmentCard(card);
+				
+				player.get(id).take_resource(Resource.GRAIN, 1);
+				player.get(id).take_resource(Resource.ORE, 1);
+				player.get(id).take_resource(Resource.WOOL, 1);
+				uis.get(id).update_player_data(player.get(id));	
+			}
+		}	
 	}
 
+	@Override
+	public void playCard(int id, DevelopmentCard card) {
+		if(id == current_player) {
+			switch(card) {
+			case FREE_RESOURCES:
+				
+				break;
+			case KNIGHT:
+				
+				break;
+			case MONOPOL:
+				
+				break;
+			case FREE_STREETS:
+				
+				break;
+			case POINT:
+				
+				break;
+			default:
+				System.err.println("Unknown Card reached core:" + card);
+			}
+		}
+	}
+	
+	
 	
 }
