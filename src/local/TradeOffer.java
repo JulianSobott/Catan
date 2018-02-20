@@ -30,6 +30,25 @@ public class TradeOffer implements Serializable{
 		}
 	}
 	
+	
+	public void substractWantedResource(Resource r) {
+		if(demandedResources.containsKey(r)) {
+			if(demandedResources.get(r) <= 1) {
+				demandedResources.remove(r);
+			}else {
+				demandedResources.put(r, offeredResources.get(r) - 1);
+			}
+		}
+	}
+	
+	public void addWantedResource(Resource r) {
+		if(demandedResources.containsKey(r)) {
+			demandedResources.put(r, demandedResources.get(r) + 1);
+		}else {
+			demandedResources.put(r, 1);
+		}
+	}
+
 	public Map<Resource, Integer> getOfferedResources(){
 		return this.offeredResources;
 	}
@@ -53,5 +72,6 @@ public class TradeOffer implements Serializable{
 	public void setVendor_id(int vendor_id) {
 		this.vendor_id = vendor_id;
 	}
-	
+
+
 }

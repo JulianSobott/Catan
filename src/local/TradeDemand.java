@@ -15,32 +15,42 @@ public class TradeDemand implements Serializable{
 	}
 	private Vendor vendor;
 	
-	Map<Resource, Boolean> wantedResources = new HashMap<Resource, Boolean>();
-	Map<Resource, Boolean> offeredResources = new HashMap<Resource, Boolean>();
+	Map<Resource, Integer> wantedResources = new HashMap<Resource, Integer>();
+	Map<Resource, Integer> offeredResources = new HashMap<Resource, Integer>();
 	int demander_id;
 	public TradeDemand() {
 		
 	}
 	public void addWantedResource(Resource r) {
-		wantedResources.put(r, true);
+		if(wantedResources.containsKey(r)) {
+			wantedResources.put(r, wantedResources.get(r) + 1);
+		}else {
+			wantedResources.put(r, 1);
+		}
 	}
 	
 	public void removeWantedResource(Resource r) {
-		wantedResources.remove(r);
+		if(wantedResources.containsKey(r)) {
+			if(wantedResources.get(r) <= 1) {
+				wantedResources.remove(r);
+			}else {
+				wantedResources.put(r, wantedResources.get(r) - 1);
+			}
+		}
 	}
 	
-	public Map<Resource, Boolean> getWantedResources(){
+	public Map<Resource, Integer> getWantedResources(){
 		return this.wantedResources;
 	}
 	public void addOfferedResource(Resource r) {
-		offeredResources.put(r, true);
+		offeredResources.put(r, 1);
 	}
 	
 	public void removeOfferedResource(Resource r) {
 		offeredResources.remove(r);
 	}
 	
-	public Map<Resource, Boolean> getOfferedResources(){
+	public Map<Resource, Integer> getOfferedResources(){
 		return this.offeredResources;
 	}
 	public void set_demander_id(int i) {

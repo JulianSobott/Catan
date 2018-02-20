@@ -66,4 +66,9 @@ public class Label extends Widget {
 	public void set_visible(boolean visible) {
 		this.visible = visible;
 	}
+
+	public void setOutlineColor(Color color) {
+		shape.setOutlineColor(color);
+		shape.setOutlineThickness(3);
+	}
 }
