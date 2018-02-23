@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jsfml.graphics.Color;
@@ -13,12 +12,14 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 import core.LocalCore;
 import core.LocalFilehandler;
+import core.Map;
 import core.Player;
 import data.DevelopmentCard;
 import data.Language;
@@ -404,7 +405,7 @@ public class LocalUI extends UI {
 					rebuild_gui();
 				}
 			});
-			Map<Resource, Integer> playerResources = state.my_player_data.get_all_resources();
+			java.util.Map<Resource, Integer> playerResources = state.my_player_data.get_all_resources();
 			boolean enabled = false;
 			for (Resource r : playerResources.keySet()) {
 				if (playerResources.get(r) >= 4) {
@@ -972,9 +973,7 @@ public class LocalUI extends UI {
 			Label lbl = new Label(Language.SETTINGS.get_text() + ": ", new FloatRect(10,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
-		}
-		if (savedGame == null) {
-			Label lbl;
+
 			//Row0 ==> Settings
 
 			row_count++;
@@ -1152,6 +1151,10 @@ public class LocalUI extends UI {
 					((LocalCore) core).changePlayerProps(0, user_name, user_color);
 					((LocalCore) core).create_new_map(map_size, seed);
 					((LocalCore) core).init_game();
+
+					framework.game_view.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
+					framework.update_view();
+
 				}
 			});
 		} else {
