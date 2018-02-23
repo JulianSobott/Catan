@@ -1,12 +1,13 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
+import java.util.TreeMap;
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3i;
@@ -38,7 +39,7 @@ public class LocalCore extends Core {
 	Server data_server;
 
 	private SavedGame savedGame = null;
-	
+
 	Map map = new Map();
 
 	// player data
@@ -54,6 +55,22 @@ public class LocalCore extends Core {
 		Player hostPlayer = new Player("Host", 0, Color.BLACK);
 		player.add(hostPlayer);
 		current_player = 0;
+
+		// create initial resource database
+		TreeMap<Resource, Integer> neededResources = new TreeMap<Resource, Integer>();
+		neededResources.put(Resource.WOOD, 1);
+		neededResources.put(Resource.CLAY, 1);
+		Building.Type.STREET.setNeededResources(neededResources);
+		neededResources = new TreeMap<Resource, Integer>();
+		neededResources.put(Resource.WOOD, 1);
+		neededResources.put(Resource.WOOL, 1);
+		neededResources.put(Resource.GRAIN, 1);
+		neededResources.put(Resource.CLAY, 1);
+		Building.Type.VILLAGE.setNeededResources(neededResources);
+		neededResources = new TreeMap<Resource, Integer>();
+		neededResources.put(Resource.GRAIN, 2);
+		neededResources.put(Resource.ORE, 3);
+		Building.Type.CITY.setNeededResources(neededResources);
 	}
 
 	public void dice() {
@@ -95,11 +112,9 @@ public class LocalCore extends Core {
 				new_buildings.put(i, player.get(i).buildings);
 			}
 
-			// Initial round resources TODO move into database
-			player.get(i).add_resource(Resource.CLAY, 1);
-			player.get(i).add_resource(Resource.GRAIN, 1);
-			player.get(i).add_resource(Resource.WOOD, 1);
-			player.get(i).add_resource(Resource.WOOL, 1);
+			// Initial round resources
+			for (java.util.Map.Entry<Resource, Integer> nr : Building.Type.VILLAGE.getNeededResources().entrySet())
+				player.get(i).add_resource(nr.getKey(), nr.getValue());
 
 			// DEBUG
 			/*player.get(i).add_resource(Resource.CLAY, 50);
@@ -154,6 +169,7 @@ public class LocalCore extends Core {
 		uis.get(0).show_guest_at_lobby(playername);
 		data_server.set_id_last_joined(id);
 	}
+
 	public void register_new_user(String name, Color color, int communicatorID) {
 		boolean correctName = false;
 		if (savedGame != null) {
@@ -163,10 +179,10 @@ public class LocalCore extends Core {
 					System.out.println("Correct Name");
 				}
 			}
-			if(!correctName) {
+			if (!correctName) {
 				UI ui = new RemoteUI(data_server);
 				ui.setID(communicatorID);
-				((RemoteUI)ui).showAllPossibleNames(savedGame.getPlayer());
+				((RemoteUI) ui).showAllPossibleNames(savedGame.getPlayer());
 			}
 		}
 		if (savedGame == null || correctName) {
@@ -179,12 +195,13 @@ public class LocalCore extends Core {
 			GameLogic logic = new RemoteGameLogic(data_server);
 			logic.setID(id);
 			logics.add(logic);
-			for(UI tempUI : uis) {
+			for (UI tempUI : uis) {
 				tempUI.show_guest_at_lobby(name);
 			}
 			data_server.set_id_last_joined(id);
 		}
 	}
+
 	public String checkName(String name) {
 		String newName = name;
 		for (Player p : player) {
@@ -202,27 +219,25 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			boolean build_sth = false;
 			java.util.Map<Resource, Integer> resources = this_player.resources;
-			if (buildType == Building.Type.VILLAGE) {
-				if (map.is_village_place_available(position)) {
-					List<Vector3i> nearbyBuildingSites = map.get_nearby_building_sites(position);
-					if (( initial_round ||owns_nearby_building(this_player, nearbyBuildingSites))
-							&& no_nearby_settlement(nearbyBuildingSites)) {
-						// TODO extract all building costs into a database to make them configurable
-						if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1
-								&& resources.get(Resource.GRAIN) >= 1 && resources.get(Resource.WOOL) >= 1) {
+
+			boolean enoughResources = true;
+			for (java.util.Map.Entry<Resource, Integer> nr : buildType.getNeededResources().entrySet())
+				if (resources.get(nr.getKey()) < nr.getValue())
+					enoughResources = false;
+			if (enoughResources) {
+
+				if (buildType == Building.Type.VILLAGE) {
+					if (map.is_village_place_available(position)) {
+						List<Vector3i> nearbyBuildingSites = map.get_nearby_building_sites(position);
+						if ((initial_round || owns_nearby_building(this_player, nearbyBuildingSites))
+								&& no_nearby_settlement(nearbyBuildingSites)) {
 							map.build_village(position);
 							build_sth = true;
 							this_player.buildings.add(new Building(Building.Type.VILLAGE, position));
-							this_player.take_resource(Resource.WOOD, 1);
-							this_player.take_resource(Resource.CLAY, 1);
-							this_player.take_resource(Resource.GRAIN, 1);
-							this_player.take_resource(Resource.WOOL, 1);
 						}
 					}
-				}
-			} else if (buildType == Building.Type.CITY) {
-				if (map.is_city_place_available(position)) {
-					if (resources.get(Resource.ORE) >= 3 && resources.get(Resource.GRAIN) >= 2) {
+				} else if (buildType == Building.Type.CITY) {
+					if (map.is_city_place_available(position)) {
 						// find & remove old village
 						int village_index = -1;
 						for (int i = 0; i < this_player.buildings.size(); i++) {
@@ -238,23 +253,21 @@ public class LocalCore extends Core {
 							build_sth = true;
 
 							this_player.buildings.add(new Building(Building.Type.CITY, position));
-							this_player.take_resource(Resource.ORE, 3);
-							this_player.take_resource(Resource.GRAIN, 2);
 						}
 					}
-				}
-			} else if (buildType == Building.Type.STREET) {
-				if (map.is_street_place_available(position) && owns_nearby_building(this_player, map.get_nearby_building_sites(position))) {
-					if (resources.get(Resource.WOOD) >= 1 && resources.get(Resource.CLAY) >= 1) {
+				} else if (buildType == Building.Type.STREET) {
+					if (map.is_street_place_available(position)
+							&& owns_nearby_building(this_player, map.get_nearby_building_sites(position))) {
 						map.build_street(position);
 						build_sth = true;
 						this_player.buildings.add(new Building(Building.Type.STREET, position));
-						this_player.take_resource(Resource.WOOD, 1);
-						this_player.take_resource(Resource.CLAY, 1);
 					}
 				}
 			}
 			if (build_sth) {
+				for (java.util.Map.Entry<Resource, Integer> nr : buildType.getNeededResources().entrySet())
+					this_player.take_resource(nr.getKey(), nr.getValue());
+
 				for (GameLogic logic : logics) {
 					logic.add_building(id, new Building(buildType, position));
 				}
@@ -460,7 +473,6 @@ public class LocalCore extends Core {
 		data_server.remove_client(id);
 	}
 
-
 	public boolean getLoadedGame() {
 		return savedGame != null;
 	}
@@ -508,45 +520,44 @@ public class LocalCore extends Core {
 	@Override
 	public void buyDevelopmentCard(int id) {
 		//TODO VAlidate if user is allowed and have enough resources
-		if(id == current_player) {
-			if(player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1 && player.get(id).get_resources(Resource.WOOL) >= 1) {
+		if (id == current_player) {
+			if (player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1
+					&& player.get(id).get_resources(Resource.WOOL) >= 1) {
 				Random rand = new Random();
-				DevelopmentCard card = DevelopmentCard.values()[rand.nextInt(DevelopmentCard.values().length-1)];
+				DevelopmentCard card = DevelopmentCard.values()[rand.nextInt(DevelopmentCard.values().length - 1)];
 				player.get(id).addDevelopmentCard(card);
-				
+
 				player.get(id).take_resource(Resource.GRAIN, 1);
 				player.get(id).take_resource(Resource.ORE, 1);
 				player.get(id).take_resource(Resource.WOOL, 1);
-				uis.get(id).update_player_data(player.get(id));	
+				uis.get(id).update_player_data(player.get(id));
 			}
-		}	
+		}
 	}
 
 	@Override
 	public void playCard(int id, DevelopmentCard card) {
-		if(id == current_player) {
-			switch(card) {
+		if (id == current_player) {
+			switch (card) {
 			case FREE_RESOURCES:
-				
+
 				break;
 			case KNIGHT:
-				
+
 				break;
 			case MONOPOL:
-				
+
 				break;
 			case FREE_STREETS:
-				
+
 				break;
 			case POINT:
-				
+
 				break;
 			default:
 				System.err.println("Unknown Card reached core:" + card);
 			}
 		}
 	}
-	
-	
-	
+
 }

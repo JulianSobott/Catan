@@ -1,12 +1,25 @@
 package core;
 
+import data.Resource;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import org.jsfml.system.Vector3i;
 
 public class Building implements Serializable {
 	public enum Type {
-		STREET, VILLAGE, CITY,
+		STREET, VILLAGE, CITY;
+
+		// \p neededResources: order has to be equivalent to the definition order in Resources.java
+		void setNeededResources(Map<Resource, Integer> neededResources) {
+			this.neededResources = neededResources;
+		}
+		
+		Map<Resource, Integer> getNeededResources() {
+			return neededResources;
+		}
+		Map<Resource, Integer> neededResources;
 	};
 
 	private Type type;
