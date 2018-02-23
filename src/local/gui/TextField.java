@@ -70,8 +70,7 @@ public class TextField extends Widget {
 					input_event.run();
 			}
 			return true;
-		}
-		else if (key == Keyboard.Key.DELETE) {
+		} else if (key == Keyboard.Key.DELETE) {
 			String str = text.getString();
 			if (!str.isEmpty()) {
 				text.setString("");

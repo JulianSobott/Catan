@@ -10,24 +10,24 @@ public enum Language {
 	EXIT("Exit game", "Spiel beenden"),
 	//Create game window 
 	START("Start game", "Spiel starten"),
-	RANDOM("Random", "Zufällig"),
+	RANDOM("Random", "Zuf\u00E4llig"),
 	//Join game window
 	JOIN("Join game", "Spiel beitreten"),
 	//Lobby Window
-	SETTINGS("Settings for the Game: ", "Einstellungen für das Spiel"),
+	SETTINGS("Settings for the Game: ", "Einstellungen f\u00FCr das Spiel"),
 	MEMBERS("Members", "Mitspieler"), 
-	MAP_SIZE("Map size", "Karten Größe"), 
+	MAP_SIZE("Map size", "Karten Gr\u00F6\u00DFe"), 
 	SEED("Seed", "Seed"),
 	YOUR_NAME("Your name", "Dein Name"), 
 	YOUR_COLOR("Your color", "Deine Farbe"),
 	//In game
-	DICE("Dice", "Würfeln"),
+	DICE("Dice", "W\u00FCrfeln"),
 	BUILD_VILLAGE("Village", "Siedlung"),
 	BUILD_CITY("City", "Stadt"),
-	BUILD_STREET("Street", "Straße"),
+	BUILD_STREET("Street", "Stra\u00DFe"),
 	DO_MOVE("Make your move", "Mache deinen Zug"),
 	OTHERS_MOVE("It's {}s move", "{} ist am Zug"),
-	SELECT_BUILD_PLACE("Select a building site", "Wähle den Bauplatz aus"),
+	SELECT_BUILD_PLACE("Select a building site", "W\u00E4hle den Bauplatz aus"),
 	FINISHED_MOVE("Finish move", "Zug beenden"),
 	OF("of", "von"),
 	WOOD("Wood", "Holz"),
@@ -51,7 +51,7 @@ public enum Language {
 		english, german,
 	}
 
-	static private Type curr_language = Type.english;
+	static private Type curr_language = Type.german;
 
 	Language(String english, String german) {
 		this.english = english;

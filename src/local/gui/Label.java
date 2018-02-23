@@ -72,4 +72,12 @@ public class Label extends Widget {
 		shape.setOutlineColor(color);
 		shape.setOutlineThickness(3);
 	}
+
+	// adjusts width automatically based on text size
+	public void adjustWidth(float padding) {
+		update_bounds(
+				new FloatRect(bounds.left, bounds.top, text.getGlobalBounds().width + padding * 2, bounds.height));
+		shape.setSize(new Vector2f(bounds.width, shape.getSize().y));
+		this.text.setPosition(bounds.left, bounds.top + bounds.height * 0.5f);
+	}
 }
