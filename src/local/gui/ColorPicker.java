@@ -102,6 +102,7 @@ public class ColorPicker extends Widget {
 
 	// setter
 
+	@Override
 	public void set_position(Vector2f pos) {
 		update_bounds(new FloatRect(pos.x, pos.y, bounds.width, bounds.height));
 		shape.setPosition(pos);

@@ -43,6 +43,7 @@ public class Label extends Widget {
 	public void do_mouse_click(Vector2f pos) {
 	}
 
+	@Override
 	public void set_position(Vector2f pos) {
 		update_bounds(new FloatRect(pos.x, pos.y, bounds.width, bounds.height));
 		shape.setPosition(pos);

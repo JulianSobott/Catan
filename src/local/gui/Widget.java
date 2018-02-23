@@ -44,10 +44,13 @@ public abstract class Widget {
 	public static void set_default_outline_highlight_color(Color color) {
 		default_outline_highlight_color = color;
 	}
-	
+
 	public static void set_default_fill_color(Color color) {
 		default_fill_color = color;
 	}
+
+	public abstract void set_position(Vector2f pos);
+
 	// getter
 
 	public Vector2f get_position() {

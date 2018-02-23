@@ -109,6 +109,7 @@ public class TextField extends Widget {
 			shape.setOutlineColor(color);
 	}
 
+	@Override
 	public void set_position(Vector2f pos) {
 		update_bounds(new FloatRect(pos.x, pos.y, bounds.width, bounds.height));
 		shape.setPosition(pos);

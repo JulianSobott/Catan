@@ -91,7 +91,7 @@ public class LocalUI extends UI {
 	
 	private String serverIP = "";
 	private String tf_value_ip = "127.0.0.1";
-	private String tf_value_name = "Julian";
+	private String tf_value_name = "Anonymous";
 	private String tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
 	private String tf_value_size = "5";
 	private String lbl_value_info = "";
@@ -783,6 +783,7 @@ public class LocalUI extends UI {
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
 
+
 		TextField tfIp = new TextField(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text_size(30);
 		tfIp.set_text(tf_value_ip);
@@ -809,26 +810,25 @@ public class LocalUI extends UI {
 		});
 		widgets.add(tfName);
 
-		for (int i = 0; i < widgets.size(); i++) {
-			TextField temp_tf = (TextField) widgets.get(i);
-			temp_tf.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f + 200,
-					(window_size.y - (mm_tf_height + mm_tf_spacing) * widgets.size()) * 0.5f
-							+ (mm_tf_height + mm_tf_spacing) * i));
-		}
+		ColorPicker colorPicker = new ColorPicker(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
+		colorPicker.set_color(color_pkr_hue, 1.f, 0.8f);
+		colorPicker.set_select_callback(new Runnable() {
+			ColorPicker cp = colorPicker;
 
-		Label lbl = new Label("Enter IP: ", new FloatRect(0, 0, mm_tf_width, mm_tf_height));
-		lbl.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f,
-				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 0));
-		widgets.add(lbl);
-		lbl = new Label("Enter Name: ", new FloatRect(0, 0, mm_tf_width, mm_tf_height));
-		lbl.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f,
-				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 1));
-		widgets.add(lbl);
+			@Override
+			public void run() {
+				color_pkr_hue = cp.get_hue();
+				hostPlayerColor = cp.get_color();
+			}
+		});
+		hostPlayerColor = colorPicker.get_color();
+		widgets.add(colorPicker);
 
-		Label lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(),
+		Label lblConnecting;
+		lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(),
 				new FloatRect(window_size.x / 2, window_size.y - 200, 100, 50));
 		lblConnecting.set_visible(false);
-		widgets.add(lblConnecting);
+
 		Button btn = new Button(Language.JOIN.get_text(), new FloatRect(0, 0, mm_tf_width, mm_tf_height));
 		btn.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f + 200,
 				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 2));
@@ -860,6 +860,19 @@ public class LocalUI extends UI {
 
 		});
 		widgets.add(btn);
+
+		for (int i = 0; i < widgets.size(); i++) {
+			Widget temp_tf = widgets.get(i);
+			temp_tf.set_position(new Vector2f((window_size.x - mm_tf_width) * 0.5f + 200,
+					(window_size.y - (mm_tf_height + mm_tf_spacing) * widgets.size()) * 0.5f
+							+ (mm_tf_height + mm_tf_spacing) * i));
+		}
+
+		Label lbl = new Label("Enter IP: ", new FloatRect((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, mm_tf_width, mm_tf_height));
+		widgets.add(lbl);
+		lbl = new Label("Enter Name: ", new FloatRect((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y, mm_tf_width, mm_tf_height));
+		widgets.add(lbl);
+		widgets.add(lblConnecting);
 	}
 
 	public void build_guest_lobby_window() {
@@ -1152,7 +1165,7 @@ public class LocalUI extends UI {
 			btnSaveGame.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					System.out.println("Button Savw");
+					System.out.println("Button Save");
 					((LocalCore)core).saveGame(tf_game_name);
 				}
 			});
