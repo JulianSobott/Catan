@@ -254,7 +254,7 @@ public class LocalUI extends UI {
 		Widget.set_default_outline_color(Color.TRANSPARENT);
 		
 		//player Development Cards
-		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(), new FloatRect(5, 100, 200, 50));
+		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(), new FloatRect(5, 100, 220, 50));
 		btnShowDevelopmentCards.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -269,7 +269,7 @@ public class LocalUI extends UI {
 		if(showDevelopmentCards) {
 			i = 0;
 			for(DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
-				Button btnCard = new Button(card.toString(), new FloatRect(205, 100 + 110*i, 400, 100));
+				Button btnCard = new Button(card.toString(), new FloatRect(205, 100 + 75*i, 300, 70));
 				btnCard.set_fill_color(new Color(50, 77, 172, 230));
 				btnCard.set_click_callback(new Runnable() {
 					@Override
@@ -284,7 +284,7 @@ public class LocalUI extends UI {
 		
 		// finished move button
 		btnFinishedMove = new Button(Language.FINISHED_MOVE.get_text(),
-				new FloatRect(window_size.x - 155, window_size.y - 130, 150, 70));
+				new FloatRect(window_size.x - 155, window_size.y - 155, 150, 70));
 		btnFinishedMove.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -328,7 +328,7 @@ public class LocalUI extends UI {
 		widgets.add(btnBuildStreet);
 		
 		btnBuyDevelopmentCard = new Button(Language.DEVELOPMENT_CARD.get_text(), new FloatRect(
-				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width+ 30, 70));
+				orientation_anchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width+ 100, 70));
 		btnBuyDevelopmentCard.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
