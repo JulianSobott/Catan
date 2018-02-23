@@ -21,6 +21,7 @@ import core.LocalCore;
 import core.LocalFilehandler;
 import core.Map;
 import core.Player;
+import core.Map.GeneratorType;
 import data.DevelopmentCard;
 import data.Language;
 import data.Resource;
@@ -28,6 +29,7 @@ import data.SavedGame;
 import local.LocalState.GameMode;
 import local.TradeDemand.Vendor;
 import local.gui.Button;
+import local.gui.Checkbox;
 import local.gui.ColorPicker;
 import local.gui.Label;
 import local.gui.TextField;
@@ -98,6 +100,9 @@ public class LocalUI extends UI {
 	private String tf_value_name = "Anonymous";
 	private String tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
 	private String tf_value_size = "5";
+	private String tf_value_random_houses = "1";
+	private String tf_value_resource_houses = "1";
+	private boolean cb_value_is_circle = false;
 	private String lbl_value_info = "";
 	private String lbl_value_dice = "0";
 	private String tf_game_name = "";
@@ -989,6 +994,15 @@ public class LocalUI extends UI {
 			lbl = new Label(Language.YOUR_COLOR.get_text() + ": ", new FloatRect(column0,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
+			lbl = new Label(Language.RANDOM_HOUSES.get_text() + ": ", new FloatRect(column0,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+			lbl = new Label(Language.RESOURCE_HOUSES.get_text() + ": ", new FloatRect(column0,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+			lbl = new Label(Language.IS_CIRCLE.get_text(), new FloatRect(column0 + 180 + textfield_height + 5,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
 
 			row_count = 2;
 			TextField tfMapSize = new TextField(new FloatRect(column0 + 200,
@@ -1057,6 +1071,48 @@ public class LocalUI extends UI {
 			});
 			hostPlayerColor = colorPicker.get_color();
 			widgets.add(colorPicker);
+
+			TextField tfRandomHouses = new TextField(new FloatRect(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+			tfRandomHouses.set_text_color(new Color(20, 20, 20));
+			tfRandomHouses.set_text(tf_value_random_houses);
+			tfRandomHouses.set_input_callback(new Runnable() {
+				TextField textField = tfRandomHouses;
+
+				@Override
+				public void run() {
+					tf_value_random_houses = textField.get_text();
+				}
+			});
+			widgets.add(tfRandomHouses);
+
+			TextField tfResourceHouses = new TextField(new FloatRect(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+			tfResourceHouses.set_text_color(new Color(20, 20, 20));
+			tfResourceHouses.set_text(tf_value_resource_houses);
+			tfResourceHouses.set_input_callback(new Runnable() {
+				TextField textField = tfResourceHouses;
+
+				@Override
+				public void run() {
+					tf_value_resource_houses = textField.get_text();
+				}
+			});
+			widgets.add(tfResourceHouses);
+
+			Checkbox cbCircleMap = new Checkbox(
+					new FloatRect(column0 + 200, height_anchor + (textfield_height + 10) * row_count++ + textfield_height * .15f,
+							textfield_height * .7f, textfield_height * .7f));
+			cbCircleMap.setSelected(cb_value_is_circle);
+			cbCircleMap.set_click_callback(new Runnable() {
+				Checkbox cb = cbCircleMap;
+
+				@Override
+				public void run() {
+					cb_value_is_circle = cb.isSelected();
+				}
+			});
+			widgets.add(cbCircleMap);
 		}
 		//Row1 ==> members
 		Label lbl = new Label(Language.MEMBERS.get_text(), new FloatRect(column1, 10, 100, 100));
@@ -1142,17 +1198,20 @@ public class LocalUI extends UI {
 			btnStart.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					int map_size = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
+					int islandSize = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
 					int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 							: ((int) Math.random() * 100) + 1;
 					String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
 					Color user_color = hostPlayerColor;
 
 					((LocalCore) core).changePlayerProps(0, user_name, user_color);
-					((LocalCore) core).create_new_map(map_size, seed);
+					((LocalCore) core).create_new_map(islandSize, seed,
+							new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f }, cb_value_is_circle ? GeneratorType.CIRCLE : GeneratorType.HEXAGON, // something
+							Integer.parseInt(tf_value_random_houses), Integer.parseInt(tf_value_resource_houses));
 					((LocalCore) core).init_game();
 
-					framework.game_view.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
+					framework.game_view
+							.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
 					framework.update_view();
 
 				}

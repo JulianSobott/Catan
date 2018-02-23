@@ -20,6 +20,9 @@ public enum Language {
 	SEED("Seed", "Seed"),
 	YOUR_NAME("Your name", "Dein Name"), 
 	YOUR_COLOR("Your color", "Deine Farbe"),
+	RANDOM_HOUSES("Random houses", "Zuf\u00E4llige h\u00E4user"), 
+	RESOURCE_HOUSES("Resource houses", "Resourcenh\u00E4user"),
+	IS_CIRCLE("Circle map", "Kreiskarte"),
 	//In game
 	DICE("Dice", "W\u00FCrfeln"),
 	BUILD_VILLAGE("Village", "Siedlung"),

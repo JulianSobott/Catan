@@ -7,13 +7,15 @@ import core.Building;
 import data.DevelopmentCard;
 import local.TradeDemand;
 import local.TradeOffer;
+import core.Map.GeneratorType;
 
 public abstract class Core {
 	
 	public Core() {
 	}
 	
-	public abstract void create_new_map(int map_size, int seed);
+	public abstract void create_new_map(int islandSize, int seed, float[] resourceRatio, GeneratorType generatorType,
+			int randomStartBuildings, int startResources);
 
 	public abstract void register_new_user(String name, Color color);
 	

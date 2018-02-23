@@ -15,7 +15,7 @@ import math.Vector2fMath;
 import math.Vector3iMath;
 
 public class Map {
-	enum GeneratorType {
+	public enum GeneratorType {
 		HEXAGON, CIRCLE,
 	}
 

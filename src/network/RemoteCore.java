@@ -10,6 +10,7 @@ import local.TradeOffer;
 import superClasses.Core;
 import superClasses.GameLogic;
 import superClasses.UI;
+import core.Map.GeneratorType;
 
 public class RemoteCore extends Core {
 	Client client;
@@ -22,7 +23,8 @@ public class RemoteCore extends Core {
 	}
 
 	@Override
-	public void create_new_map(int map_size, int seed) {
+	public void create_new_map(int islandSize, int seed, float[] resourceRatio, GeneratorType generatorType,
+			int randomStartBuildings, int startResources) {
 		//this.client.sendMessage(new Packet(Command.NEW_MAP, new Packet.CreateNewMap(map_size, seed)));
 		// TODO only enable this call if core runs on a external server and you are authorized
 	}

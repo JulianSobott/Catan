@@ -73,7 +73,7 @@ public class LocalCore extends Core {
 		Building.Type.CITY.setNeededResources(neededResources);
 	}
 
-	public void dice() {
+	void dice() {
 		int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
 		for (UI ui : uis) {
 			ui.show_dice_result((byte) diceResult);
@@ -98,13 +98,14 @@ public class LocalCore extends Core {
 		}
 	}
 
-	public void create_new_map(int map_size, int seed) {
-		map.create_map(map_size + 2, seed, map_size, new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
-				GeneratorType.HEXAGON);
+	// \p startResources are the initial resources measured by the count of villages
+	public void create_new_map(int islandSize, int seed, float[] resourceRatio, GeneratorType generatorType,
+			int randomStartBuildings, int startResources) {
+		map.create_map(islandSize + 2, seed, islandSize, resourceRatio, generatorType);
 		map.calculate_available_places();
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
-			for (Vector3i pos : map.add_random_cities(seed, 1)) {
+			for (Vector3i pos : map.add_random_cities(seed, randomStartBuildings)) {
 				player.get(i).buildings.add(new Building(Building.Type.VILLAGE, pos));
 			}
 			player.get(i).update_score();
@@ -114,7 +115,7 @@ public class LocalCore extends Core {
 
 			// Initial round resources
 			for (java.util.Map.Entry<Resource, Integer> nr : Building.Type.VILLAGE.getNeededResources().entrySet())
-				player.get(i).add_resource(nr.getKey(), nr.getValue());
+				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
 			/*player.get(i).add_resource(Resource.CLAY, 50);
