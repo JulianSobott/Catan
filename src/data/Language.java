@@ -40,7 +40,7 @@ public enum Language {
 	ORE("Ore", "Erz"), 
 	TRADE("Trade", "Handeln"), 
 	SAVE("Save game", "Spiel speichern"), 
-	DEVELOPMENT_CARD("Development card", "Entwicklungskarte kaufen");
+	DEVELOPMENT_CARD("Development card", "Entwicklungskarte");
 
 
 	

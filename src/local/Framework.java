@@ -70,7 +70,6 @@ public class Framework {
 		window.create(new VideoMode(1200, 800), "Catan", RenderWindow.DEFAULT, new ContextSettings(8));
 		game_view = (View) window.getDefaultView();
 		gui_view = new View(game_view.getCenter(), game_view.getSize());
-		game_view.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));
 		update_view();
 
 		gameLogic.init(std_font);
