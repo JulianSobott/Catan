@@ -922,11 +922,22 @@ public class LocalUI extends UI {
 				mm_tf_width, mm_tf_height));
 		widgets.add(lbl);
 		widgets.add(lblConnecting);
+
+		Button btnBack = new Button(Language.BACK.get_text(), new FloatRect(20, window_size.y - 70, 100, 50));
+		btnBack.adjustWidth(5);
+		btnBack.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				build_lobby();
+			}
+		});
+		widgets.add(btnBack);
 	}
 
 	public void build_guest_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.GUEST_LOBBY;
+
 		if (allPossiblePlayer.size() > 0) {
 			int i = 0;
 			for (Player p : allPossiblePlayer) {
@@ -1100,9 +1111,9 @@ public class LocalUI extends UI {
 			});
 			widgets.add(tfResourceHouses);
 
-			Checkbox cbCircleMap = new Checkbox(
-					new FloatRect(column0 + 200, height_anchor + (textfield_height + 10) * row_count++ + textfield_height * .15f,
-							textfield_height * .7f, textfield_height * .7f));
+			Checkbox cbCircleMap = new Checkbox(new FloatRect(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++ + textfield_height * .15f,
+					textfield_height * .7f, textfield_height * .7f));
 			cbCircleMap.setSelected(cb_value_is_circle);
 			cbCircleMap.set_click_callback(new Runnable() {
 				Checkbox cb = cbCircleMap;
@@ -1206,7 +1217,8 @@ public class LocalUI extends UI {
 
 					((LocalCore) core).changePlayerProps(0, user_name, user_color);
 					((LocalCore) core).create_new_map(islandSize, seed,
-							new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f }, cb_value_is_circle ? GeneratorType.CIRCLE : GeneratorType.HEXAGON, // something
+							new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
+							cb_value_is_circle ? GeneratorType.CIRCLE : GeneratorType.HEXAGON, // something
 							Integer.parseInt(tf_value_random_houses), Integer.parseInt(tf_value_resource_houses));
 					((LocalCore) core).init_game();
 
@@ -1228,6 +1240,16 @@ public class LocalUI extends UI {
 		}
 
 		widgets.add(btnStart);
+
+		Button btnBack = new Button(Language.BACK.get_text(), new FloatRect(20, window_size.y - 70, 100, 50));
+		btnBack.adjustWidth(5);
+		btnBack.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				build_lobby();
+			}
+		});
+		widgets.add(btnBack);
 	}
 
 	public void build_menu() {

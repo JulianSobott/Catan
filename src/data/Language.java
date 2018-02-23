@@ -8,6 +8,7 @@ public enum Language {
 	LOAD_GAME("Load game", "Spiel laden"),
 	OPTIONS("Options", "Einstellungen"),
 	EXIT("Exit game", "Spiel beenden"),
+	BACK("Back", "Zur\u00FCck"),
 	//Create game window 
 	START("Start game", "Spiel starten"),
 	RANDOM("Random", "Zuf\u00E4llig"),
