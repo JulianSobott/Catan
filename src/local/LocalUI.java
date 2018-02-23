@@ -811,7 +811,7 @@ public class LocalUI extends UI {
 		widgets.add(tfName);
 
 		ColorPicker colorPicker = new ColorPicker(new FloatRect(0, 0, mm_tf_width, mm_tf_height));
-		colorPicker.set_color(color_pkr_hue, 1.f, 0.8f);
+		colorPicker.set_color(color_pkr_hue, 1.f, 0.9f);
 		colorPicker.set_select_callback(new Runnable() {
 			ColorPicker cp = colorPicker;
 
@@ -1002,7 +1002,7 @@ public class LocalUI extends UI {
 	
 			ColorPicker  colorPicker = new ColorPicker(new FloatRect(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
-			colorPicker.set_color(color_pkr_hue, 1.f, 0.8f);
+			colorPicker.set_color(color_pkr_hue, 1.f, 0.9f);
 			colorPicker.set_select_callback(new Runnable() {
 				ColorPicker cp = colorPicker;
 	
