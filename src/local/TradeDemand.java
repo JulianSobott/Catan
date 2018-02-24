@@ -29,13 +29,18 @@ public class TradeDemand implements Serializable{
 		}
 	}
 	
-	public void removeWantedResource(Resource r) {
+	public void substractWantedResource(Resource r) {
 		if(wantedResources.containsKey(r)) {
 			if(wantedResources.get(r) <= 1) {
 				wantedResources.remove(r);
 			}else {
 				wantedResources.put(r, wantedResources.get(r) - 1);
 			}
+		}
+	}
+	public void removeWantedResource(Resource r) {
+		if(wantedResources.containsKey(r)) {
+			wantedResources.remove(r);
 		}
 	}
 	

@@ -414,17 +414,17 @@ public class LocalCore extends Core {
 	@Override
 	public void acceptOffer(TradeOffer offer) {
 		for (Resource r : offer.getDemandedResources().keySet()) {
-			player.get(offer.getDemanderID()).add_resource(r, 1);
-			player.get(offer.getVendor_id()).take_resource(r, 1);
+			player.get(offer.getDemanderID()).add_resource(r, offer.getDemandedResources().get(r));
+			player.get(offer.getVendor_id()).take_resource(r, offer.getDemandedResources().get(r));
 		}
 		for (Resource r : offer.getOfferedResources().keySet()) {
 			player.get(offer.getDemanderID()).take_resource(r, offer.getOfferedResources().get(r));
 			player.get(offer.getVendor_id()).add_resource(r, offer.getOfferedResources().get(r));
 		}
-		uis.get(offer.getDemanderID()).update_player_data(player.get(offer.getDemanderID()));
-		uis.get(offer.getDemanderID()).closeTradeWindow();
-		uis.get(1).update_player_data(player.get(1));
-		uis.get(1).closeTradeWindow();
+		for(UI ui : uis) {
+			ui.update_player_data(player.get(ui.getID()));
+			ui.closeTradeWindow();
+		}
 	}
 
 	@Override
