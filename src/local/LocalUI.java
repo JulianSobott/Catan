@@ -779,7 +779,7 @@ public class LocalUI extends UI {
 				widgets.add(lblNumresources);
 				Button btnPlus = new Button("+", new FloatRect(start + btnSpace * 3 + lblWidth + btnWidths * 2,
 						290 + (lblHeight + btnSpace) * i, btnWidths, 30));
-				btnPlus.set_text_position(start + btnSpace * 3 + lblWidth + btnWidths * 2,
+				btnPlus.set_text_position(start + btnSpace * 3 + lblWidth + btnWidths * 2.5f,
 						295 + (lblHeight + btnSpace) * i);
 				btnPlus.set_click_callback(new Runnable() {
 					@Override
@@ -853,6 +853,7 @@ public class LocalUI extends UI {
 				new FloatRect(window_size.x - 300, window_size.y - 110, 200, 70));
 		btnSendOffer.set_fill_color(Color.GREEN);
 		btnSendOffer.set_click_callback(new Runnable() {
+			TradeDemand t = tradeDemand;
 			@Override
 			public void run() {
 				allTradeOffer.add(tradeOffer);
@@ -860,6 +861,7 @@ public class LocalUI extends UI {
 				tradeOffer = new TradeOffer();
 				tradeOffer.setVendor_id(id);
 				tradeOffer.setDemanderID(tradeDemand.get_demander_id());
+				tradeOffer.setDemandedResources(t.getWantedResources());
 				rebuild_gui();
 			}
 		});
@@ -1538,6 +1540,7 @@ public class LocalUI extends UI {
 		tradeOffer = new TradeOffer();
 		tradeOffer.setVendor_id(this.id);
 		tradeOffer.setDemanderID(tradeDemand.get_demander_id());
+		tradeOffer.setDemandedResources(tradeDemand.getWantedResources());
 		this.tradeDemand = tradeDemand;
 		mode = GUIMode.TRADE_VENDOR;
 		rebuild_gui();
@@ -1555,8 +1558,9 @@ public class LocalUI extends UI {
 		tradeOffer = null;
 		tradeDemand = null;
 		allTradeOffer.clear();
+		
 		switch_to_idle();
-		//rebuild_gui();
+		rebuild_gui();
 	}
 
 	@Override
