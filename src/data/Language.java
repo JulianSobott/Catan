@@ -41,7 +41,9 @@ public enum Language {
 	ORE("Ore", "Erz"), 
 	TRADE("Trade", "Handeln"), 
 	SAVE("Save game", "Spiel speichern"), 
-	DEVELOPMENT_CARD("Development card", "Entwicklungskarte");
+	DEVELOPMENT_CARD("Development card", "Entwicklungskarte"), 
+	//After Game
+	WINNER("{} won this game", "{} hat gewonnen");
 
 
 	

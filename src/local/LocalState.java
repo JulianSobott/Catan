@@ -14,7 +14,7 @@ import data.Resource;
 public class LocalState {
 	// runtime information
 	public enum GameMode {
-		main_menu, game,
+		main_menu, game, end_screen;
 
 	}
 

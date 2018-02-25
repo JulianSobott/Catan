@@ -27,6 +27,8 @@ public enum Command {
 	SET_ID, 
 	SHOW_KICKED, 
 	SHOW_ALL_POSSIBLE_NAMES, 
-	SHOW_NEW_MEMBER;
+	SHOW_NEW_MEMBER, 
+	//After Game
+	END_SCREEN;
 	
 }
