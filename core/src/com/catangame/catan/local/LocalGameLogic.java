@@ -58,9 +58,9 @@ public class LocalGameLogic extends GameLogic {
 
 	void init(BitmapFont std_font) {
 		this.std_font = std_font;
-		village_txtr = new Texture(Gdx.files.internal("assets/res/village.png"));
-		city_txtr = new Texture(Gdx.files.internal("assets/res/city.png"));
-		street_txtr = new Texture(Gdx.files.internal("assets/res/street.png"));
+		village_txtr = new Texture(Gdx.files.local("assets/res/village.png"));
+		city_txtr = new Texture(Gdx.files.local("assets/res/city.png"));
+		street_txtr = new Texture(Gdx.files.local("assets/res/street.png"));
 	}
 
 	@Override

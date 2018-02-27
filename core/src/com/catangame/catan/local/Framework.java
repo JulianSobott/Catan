@@ -18,6 +18,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -34,6 +36,11 @@ import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
 
 public class Framework extends ApplicationAdapter {
+	public enum DeviceMode {
+		DESKTOP,
+		MOBILE
+	}
+	DeviceMode deviceMode;
 
 	// view & camera
 	private Vector2 windowSize = new Vector2();
@@ -65,8 +72,9 @@ public class Framework extends ApplicationAdapter {
 	// server
 	Core core;
 
-	public Framework(Vector2 windowSize){
+	public Framework(Vector2 windowSize, DeviceMode deviceMode){
 		this.windowSize = windowSize;
+		this.deviceMode = deviceMode;
 	}
 
 	@Override
@@ -104,7 +112,7 @@ public class Framework extends ApplicationAdapter {
 
 			@Override
 			public boolean touchDragged(int screenX, int screenY, int pointer) {
-				if (mouse_was_moved) {
+				if (mouse_was_moved || deviceMode == deviceMode.MOBILE) {
 					float x = (float) screenX, y = (float) screenY;
 					camera.translate((mouse_start.x - x) * zoom_level, (mouse_start.y - y) * zoom_level);
 					mouse_start = new Vector2(x, y);
@@ -153,6 +161,53 @@ public class Framework extends ApplicationAdapter {
 				return false;
 			}
 		});
+		multiplexer.addProcessor(new GestureDetector(new GestureDetector.GestureListener(){
+		
+			@Override
+			public boolean zoom(float initialDistance, float distance) {
+				return false;
+			}
+		
+			@Override
+			public boolean touchDown(float x, float y, int pointer, int button) {
+				return false;
+			}
+		
+			@Override
+			public boolean tap(float x, float y, int count, int button) {
+				return false;
+			}
+		
+			@Override
+			public void pinchStop() {
+				
+			}
+		
+			@Override
+			public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+				return false;
+			}
+		
+			@Override
+			public boolean panStop(float x, float y, int pointer, int button) {
+				return false;
+			}
+		
+			@Override
+			public boolean pan(float x, float y, float deltaX, float deltaY) {
+				return false;
+			}
+		
+			@Override
+			public boolean longPress(float x, float y) {
+				return false;
+			}
+		
+			@Override
+			public boolean fling(float velocityX, float velocityY, int button) {
+				return false;
+			}
+		}));
 		Gdx.input.setInputProcessor(multiplexer);
 
 		gameLogic.init(std_font);
