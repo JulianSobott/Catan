@@ -73,5 +73,4 @@ public class TradeOffer implements Serializable{
 		this.vendor_id = vendor_id;
 	}
 
-
 }
