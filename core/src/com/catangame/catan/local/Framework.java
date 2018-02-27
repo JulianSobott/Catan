@@ -33,12 +33,12 @@ import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
 
-public class Catan extends ApplicationAdapter {
+public class Framework extends ApplicationAdapter {
 
 	// view & camera
 	private Vector2 windowSize = new Vector2();
-	private OrthographicCamera camera;
-	private OrthographicCamera guiCamera;
+	OrthographicCamera camera;
+	OrthographicCamera guiCamera;
 	float zoom_level = 0.5f;
 	float mouse_value = 3.f;
 	Vector2 mouse_start;
@@ -65,12 +65,14 @@ public class Catan extends ApplicationAdapter {
 	// server
 	Core core;
 
-	public Catan(Vector2 windowSize){
+	public Framework(Vector2 windowSize){
 		this.windowSize = windowSize;
 	}
 
 	@Override
 	public void create() {
+		Map.update_constants();
+
 		// camera
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true, windowSize.x, windowSize.y);
@@ -165,7 +167,7 @@ public class Catan extends ApplicationAdapter {
 
 		// actual rendering
 		Gdx.gl.glClearColor(0.04f, 0.57f, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
 		
 		sr.setProjectionMatrix(camera.combined);
 		sb.setProjectionMatrix(camera.combined);
@@ -197,23 +199,13 @@ public class Catan extends ApplicationAdapter {
 		update_view();
 	}
 
-	void update_view() {// TODO l3
-		/*camera.zoom = MathUtils.clamp(camera.zoom, 0.1f, 100 / camera.viewportWidth);
-		
-		float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
-		float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
-		
-		camera.position.x = MathUtils.clamp(camera.position.x, effectiveViewportWidth / 2f,
-				100 - effectiveViewportWidth / 2f);
-		camera.position.y = MathUtils.clamp(camera.position.y, effectiveViewportHeight / 2f,
-				100 - effectiveViewportHeight / 2f);*/
-
-		/*camera.position.x = Math.max(0.f,
+	void update_view() {
+		camera.position.x = Math.max(0.f,
 				Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, camera.position.x));
 		camera.position.y = Math.max(0.f, Math
-				.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER, camera.position.y));// constraint*/
+				.min((Map.field_size + Map.field_distance) * Map.map_size_y * Map.MAGIC_HEX_NUMBER, camera.position.y));// constraint
 		zoom_level = Math.max(0.2f, Math.min(Map.map_size_x * 0.15f, zoom_level));// constraint
-		camera.viewportWidth = windowSize.x * zoom_level;
+		camera.viewportWidth = windowSize.x * zoom_level;// TODO should this be done so?
 		camera.viewportHeight = windowSize.y * zoom_level;
 		guiCamera.translate(-(guiCamera.viewportWidth - windowSize.x) * 0.5f,
 				-(guiCamera.viewportHeight - windowSize.y) * 0.5f);
@@ -228,7 +220,7 @@ public class Catan extends ApplicationAdapter {
 	Vector2 reverse_transform_position(int x, int y, OrthographicCamera view) {
 		Vector3 vec3 = view.unproject(new Vector3(x, y, 0));
 		return new Vector2(vec3.x, vec3.y);
-		/*return new Vector2(
+		/*return new Vector2(// TODO del
 				(float) x / (float) window.getSize().x * view.getSize().x + view.getCenter().x - view.getSize().x / 2,
 				(float) y / (float) window.getSize().y * view.getSize().y + view.getCenter().y - view.getSize().y / 2);*/
 	}

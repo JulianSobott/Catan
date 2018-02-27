@@ -134,10 +134,7 @@ public class TextField extends Widget {
 
 		textPosition = new Vector2(bounds.x+5, bounds.y + (bounds.height - font.getLineHeight()) * 0.5f);
 	}
-
-	public void set_text_size(int character_size) {// TODO l3
-	}
-
+	
 	public void set_input_callback(Runnable input_event) {
 		this.input_event = input_event;
 	}

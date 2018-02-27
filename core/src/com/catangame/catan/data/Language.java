@@ -25,6 +25,7 @@ public enum Language {
 	RESOURCE_HOUSES("Resource houses", "Resourcenh\u00E4user"),
 	IS_CIRCLE("Circle map", "Kreiskarte"),
 	//In game
+	MENU("MENU", "MEN\u00DC"), 
 	DICE("Dice", "W\u00FCrfeln"),
 	BUILD_VILLAGE("Village", "Siedlung"),
 	BUILD_CITY("City", "Stadt"),

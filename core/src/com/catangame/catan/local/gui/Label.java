@@ -71,15 +71,17 @@ public class Label extends Widget {
 		update_bounds(new Rectangle(pos.x, pos.y, bounds.width, bounds.height));
 
 		GlyphLayout layout = new GlyphLayout(font, text);
-		textPosition = new Vector2(bounds.x, bounds.y + (bounds.height - layout.height) * 0.5f);
+		textPosition = new Vector2(bounds.x + 5, bounds.y + (bounds.height - layout.height) * 0.5f);
+	}
+
+	public void set_font(BitmapFont bitmapFont) {
+		font = bitmapFont;
 	}
 
 	public void set_text(String text) {
 		this.text = text;
 	}
 
-	public void set_text_size(int character_size) {//TODO l3
-	}
 	public void set_text_color(Color c) {
 		textColor = c;
 	}
@@ -96,10 +98,9 @@ public class Label extends Widget {
 	}
 
 	// adjusts width automatically based on text size
-	public void adjustWidth(float padding) {//TODO l3
-		/*update_bounds(
-				new Rectangle(bounds.left, bounds.top, text.getGlobalBounds().width + padding * 2, bounds.height));
-		shape.setSize(new Vector2(bounds.width, shape.getSize().y));
-		this.text.setPosition(bounds.left, bounds.top + bounds.height * 0.5f);*/
+	public void adjustWidth(float padding) {
+		GlyphLayout layout = new GlyphLayout(font, text);
+		update_bounds(new Rectangle(bounds.x, bounds.y, layout.width + padding * 2, bounds.height));
+		set_position(new Vector2(bounds.x, bounds.y));
 	}
 }

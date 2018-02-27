@@ -19,7 +19,7 @@ public class NewClientListener extends Thread{
 	}
 	
 	public void run() {
-		while(listenForNewClients && !this.server.isClosed()) {
+		while(listenForNewClients && this.server != null && !this.server.isClosed()) {
 			try {
 				client = this.server.accept();
 			}catch(IOException e) {

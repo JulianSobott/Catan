@@ -315,7 +315,7 @@ public class Map {
 	}
 
 	// field index to position
-	public static Vector2 index_to_position(float x, float y) {
+	public static Vector2 index_to_position(float x, float y) {//TODO check
 		float pos_x = x * (field_size + field_distance) + field_offset
 				+ (y % 2 != 0 ? (field_size + field_distance) / 2.f : 0),
 				pos_y = y * (field_size + field_distance) * Map.MAGIC_HEX_NUMBER + field_offset;

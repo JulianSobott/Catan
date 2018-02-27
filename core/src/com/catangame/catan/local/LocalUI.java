@@ -38,6 +38,7 @@ import com.catangame.catan.local.gui.TextField;
 import com.catangame.catan.local.gui.Widget;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.UI;
+import com.catangame.catan.utils.FontMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
@@ -59,7 +60,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private Core core;
 	// local state
 	private LocalState state;
-	private Catan framework;
+	private Framework framework;
 	private Vector2 window_size;
 	private OrthographicCamera camera;
 
@@ -111,7 +112,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private float color_pkr_hue = (float) Math.random();
 	private Color hostPlayerColor = Color.RED;
 
-	LocalUI(LocalGameLogic logic, Catan framework) {
+	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
 		this.framework = framework;
 
@@ -366,8 +367,8 @@ public class LocalUI extends UI implements InputProcessor {
 
 		//Trade Button
 		btnTrade = new Button(Language.TRADE.get_text(), new Rectangle(100, 10, 70, 40));
+		btnTrade.set_font(FontMgr.getFont(25));
 		btnTrade.adjustWidth(5);
-		btnTrade.set_text_size(25);
 		btnTrade.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -379,9 +380,7 @@ public class LocalUI extends UI implements InputProcessor {
 		});
 		widgets.add(btnTrade);
 		//Menu Button
-		Button btnMenu = new Button("...", new Rectangle(window_size.x / 2 - 25, 10, 80, 40));
-		btnMenu.set_text_size(100);
-		//btnMenu.set_text_position(window_size.x / 2 - 10, -60);//TODO l3
+		Button btnMenu = new Button(Language.MENU.get_text(), new Rectangle(window_size.x / 2 - 50, 10, 100, 40));
 		btnMenu.set_fill_color(new Color(0.98f, 0.98f, 0.98f, 0.16f));
 		btnMenu.set_click_callback(new Runnable() {
 			@Override
@@ -491,8 +490,9 @@ public class LocalUI extends UI implements InputProcessor {
 
 					Button btnMinus = new Button("-", new Rectangle(start1 + btnSpace + lblWidth1,
 							190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-					btnMinus.set_text_position(start1 + btnSpace + lblWidth1 + btnWidth1 / 2,
-							190 + (lblHeight + btnSpace) * i);
+					/*btnMinus.set_text_position(start1 + btnSpace + lblWidth1 + btnWidth1 / 2,
+							190 + (lblHeight + btnSpace) * i);*/// TODO del
+					//btnMinus.adjustWidth(2);
 					btnMinus.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
@@ -511,8 +511,9 @@ public class LocalUI extends UI implements InputProcessor {
 					widgets.add(lblNumresources);
 					Button btnPlus = new Button("+", new Rectangle(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2,
 							190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-					btnPlus.set_text_position(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2.5f,
-							195 + (lblHeight + btnSpace) * i);
+					/*btnPlus.set_text_position(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2.5f,
+							195 + (lblHeight + btnSpace) * i);*/// TODO del
+					//btnPlus.adjustWidth(2);
 					btnPlus.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
@@ -595,7 +596,7 @@ public class LocalUI extends UI implements InputProcessor {
 					lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r),
 							new Rectangle(window_size.x / 2 + 150 * j, 250 + (110 + 20) * i, 150, 50));
 					lblOfferedResource.set_fill_color(r.get_color());
-					lblOfferedResource.set_text_size(30);
+					lblOfferedResource.set_font(FontMgr.getFont(23));
 					widgets.add(lblOfferedResource);
 					j++;
 				}
@@ -711,8 +712,9 @@ public class LocalUI extends UI implements InputProcessor {
 				widgets.add(lblResource);
 				Button btnMinus = new Button("-",
 						new Rectangle(start1 + btnSpace + lblWidth1, 290 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-				btnMinus.set_text_position(start1 + btnSpace + lblWidth1 + btnWidth1 / 2,
-						290 + (lblHeight + btnSpace) * i);
+				/*btnMinus.set_text_position(start1 + btnSpace + lblWidth1 + btnWidth1 / 2,
+						290 + (lblHeight + btnSpace) * i);*/// TODO del
+				//btnMinus.adjustWidth(2);
 				btnMinus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
@@ -731,8 +733,9 @@ public class LocalUI extends UI implements InputProcessor {
 				widgets.add(lblNumresources);
 				Button btnPlus = new Button("+", new Rectangle(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2,
 						290 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-				btnPlus.set_text_position(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2.5f,
-						295 + (lblHeight + btnSpace) * i);
+				/*btnPlus.set_text_position(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2.5f,
+						295 + (lblHeight + btnSpace) * i);*/ // TODO del
+				//btnPlus.adjustWidth(2);
 				btnPlus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
@@ -764,8 +767,9 @@ public class LocalUI extends UI implements InputProcessor {
 				widgets.add(lblResource);
 				Button btnMinus = new Button("-",
 						new Rectangle(start + btnSpace + lblWidth, 290 + (lblHeight + btnSpace) * i, btnWidths, 30));
-				btnMinus.set_text_position(start + btnSpace + lblWidth + btnWidths / 2,
-						290 + (lblHeight + btnSpace) * i);
+				/*btnMinus.set_text_position(start + btnSpace + lblWidth + btnWidths / 2,
+						290 + (lblHeight + btnSpace) * i);*/ // TODO del
+				//btnMinus.adjustWidth(2);
 				btnMinus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
@@ -784,8 +788,9 @@ public class LocalUI extends UI implements InputProcessor {
 				widgets.add(lblNumresources);
 				Button btnPlus = new Button("+", new Rectangle(start + btnSpace * 3 + lblWidth + btnWidths * 2,
 						290 + (lblHeight + btnSpace) * i, btnWidths, 30));
-				btnPlus.set_text_position(start + btnSpace * 3 + lblWidth + btnWidths * 2.5f,
-						295 + (lblHeight + btnSpace) * i);
+				/*btnPlus.set_text_position(start + btnSpace * 3 + lblWidth + btnWidths * 2.5f,
+						295 + (lblHeight + btnSpace) * i);*/ // TODO del
+				//btnPlus.adjustWidth(2);
 				btnPlus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
@@ -819,7 +824,7 @@ public class LocalUI extends UI implements InputProcessor {
 			//Offer Label
 			Label lblOfferID = new Label("Offer " + i, new Rectangle(window_size.x / 2, 200 + (150) * i, 300, 50));
 			lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
-			lblOfferID.set_text_size(23);
+			lblOfferID.set_font(FontMgr.getFont(23));
 			widgets.add(lblOfferID);
 			Label lblOfferContainer = new Label("",
 					new Rectangle(window_size.x / 2, 200 + (150 + 3) * i, window_size.x / 2 - 30, 150));
@@ -834,7 +839,7 @@ public class LocalUI extends UI implements InputProcessor {
 				lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r),
 						new Rectangle(window_size.x / 2 + 120 * j, 250 + (150) * i, 120, 50));
 				lblOfferedResource.set_fill_color(r.get_color());
-				lblOfferedResource.set_text_size(23);
+				lblOfferedResource.set_font(FontMgr.getFont(23));
 				lblOfferedResource.set_text_color(Color.RED);
 				widgets.add(lblOfferedResource);
 				j++;
@@ -846,7 +851,7 @@ public class LocalUI extends UI implements InputProcessor {
 				lblWantedResource = new Label(r.toString() + ": " + offer.getDemandedResources().get(r),
 						new Rectangle(window_size.x / 2 + 120 * j, 300 + (150) * i, 120, 50));
 				lblWantedResource.set_fill_color(r.get_color());
-				lblWantedResource.set_text_size(23);
+				lblWantedResource.set_font(FontMgr.getFont(23));
 				lblWantedResource.set_text_color(Color.GREEN);
 				widgets.add(lblWantedResource);
 				j++;
@@ -883,7 +888,6 @@ public class LocalUI extends UI implements InputProcessor {
 		float mm_tf_spacing = 20;
 
 		TextField tfIp = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
-		tfIp.set_text_size(30);
 		tfIp.set_text(tf_value_ip);
 		tfIp.set_input_callback(new Runnable() {
 			TextField textField = tfIp;
@@ -896,7 +900,6 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(tfIp);
 
 		TextField tfName = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
-		tfName.set_text_size(30);
 		tfName.set_text(tf_value_name);
 		tfName.set_input_callback(new Runnable() {
 			TextField textField = tfName;
@@ -1273,9 +1276,9 @@ public class LocalUI extends UI implements InputProcessor {
 							Integer.parseInt(tf_value_random_houses), Integer.parseInt(tf_value_resource_houses));
 					((LocalCore) core).init_game();
 
-					//TODO l3
-					/*framework.game_view
-							.setCenter(Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2)));*/
+					Vector2 newCameraPos = Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2));
+					framework.camera.position.x = newCameraPos.x;
+					framework.camera.position.y = newCameraPos.y;
 					framework.update_view();
 
 				}
