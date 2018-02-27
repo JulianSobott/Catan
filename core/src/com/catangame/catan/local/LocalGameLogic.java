@@ -136,6 +136,14 @@ public class LocalGameLogic extends GameLogic {
 	void render_map(ShapeRenderer sr, SpriteBatch sb) {
 		if (state.mode == GameMode.game) {
 			// render fields
+			sr.begin(ShapeType.Filled);
+			sr.setColor(new Color(0.6f, 0.6f, 0.6f, 1.f));
+			sr.rect((Map.field_size + Map.border_size) / 2.f,
+					0.26795f * Map.field_size * Map.MAGIC_HEX_NUMBER + Map.border_size,
+					Map.field_size * (Map.map_size_y - 2.21f) - Map.border_size,
+					Map.field_size * ((float) Map.map_size_y - 1.2f) * Map.MAGIC_HEX_NUMBER);
+			sr.end();
+
 			for (java.util.Map.Entry<Resource, List<Vector2>> resource : state.field_resources.entrySet()) {
 				for (Vector2 pos : resource.getValue()) {
 					sr.begin(ShapeType.Filled);
@@ -189,10 +197,10 @@ public class LocalGameLogic extends GameLogic {
 							street_Sprite.getWidth() * 0.5f * 0.08f, street_Sprite.getHeight() * 0.5f * 0.08f,
 							street_Sprite.getWidth(), street_Sprite.getHeight(), 0.08f, 0.08f, street.rotation);
 					sr.begin(ShapeType.Line);
-					sr.rect(street.position.x, street.position.y,
-							street_Sprite.getWidth() * 0.5f * 0.08f, street_Sprite.getHeight() * 0.5f * 0.08f,
-							street_Sprite.getWidth(), street_Sprite.getHeight(), 0.08f, 0.08f, street.rotation,
-							Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE);
+					sr.rect(street.position.x, street.position.y, street_Sprite.getWidth() * 0.5f * 0.08f,
+							street_Sprite.getHeight() * 0.5f * 0.08f, street_Sprite.getWidth(),
+							street_Sprite.getHeight(), 0.08f, 0.08f, street.rotation, Color.WHITE, Color.WHITE,
+							Color.WHITE, Color.WHITE);
 					sr.end();
 				}
 			}
