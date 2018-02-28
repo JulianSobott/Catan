@@ -170,7 +170,6 @@ public class Framework extends ApplicationAdapter {
 					camera.translate(-deltaX * camera.zoom, -deltaY * camera.zoom);
 					mouse_start = new Vector2(x, y);
 					update_view(false);
-					System.out.println("PAN!!!!!!!!!!!!");
 					return true;
 				}
 			}));
