@@ -47,6 +47,7 @@ public class Framework extends ApplicationAdapter {
 	private Vector2 windowSize = new Vector2();
 	OrthographicCamera camera;
 	OrthographicCamera guiCamera;
+	float lastZoom;
 	float mouse_value = 3.f;
 	Vector2 mouse_start;
 	ArrayList<Vector2> mouse_moved;
@@ -85,6 +86,7 @@ public class Framework extends ApplicationAdapter {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true, windowSize.x, windowSize.y);
 		camera.zoom = 0.5f;
+		lastZoom = camera.zoom;
 		guiCamera = new OrthographicCamera();
 		guiCamera.setToOrtho(true, windowSize.x, windowSize.y);
 		update_view();
@@ -113,7 +115,7 @@ public class Framework extends ApplicationAdapter {
 
 			@Override
 			public boolean touchDragged(int screenX, int screenY, int pointer) {
-				if (mouse_was_moved || deviceMode == deviceMode.MOBILE) {
+				if (mouse_was_moved) {
 					float x = (float) screenX, y = (float) screenY;
 					camera.translate((mouse_start.x - x) * camera.zoom, (mouse_start.y - y) * camera.zoom);
 					mouse_start = new Vector2(x, y);
@@ -166,7 +168,9 @@ public class Framework extends ApplicationAdapter {
 
 			@Override
 			public boolean zoom(float initialDistance, float distance) {
-				return false;
+				camera.zoom = lastZoom * initialDistance / distance;
+				update_view();
+				return true;
 			}
 
 			@Override
@@ -191,11 +195,15 @@ public class Framework extends ApplicationAdapter {
 
 			@Override
 			public boolean panStop(float x, float y, int pointer, int button) {
+				lastZoom = camera.zoom;
 				return false;
 			}
 
 			@Override
 			public boolean pan(float x, float y, float deltaX, float deltaY) {
+				camera.translate(-deltaX * camera.zoom, -deltaY * camera.zoom);
+				mouse_start = new Vector2(x, y);
+				update_view();
 				return false;
 			}
 
