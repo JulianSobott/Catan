@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
@@ -89,7 +90,7 @@ public class Framework extends ApplicationAdapter {
 		lastZoom = camera.zoom;
 		guiCamera = new OrthographicCamera();
 		guiCamera.setToOrtho(true, windowSize.x, windowSize.y);
-		update_view();
+		update_view(true);
 
 		// BitmapFont
 		FontMgr.init();
@@ -102,121 +103,77 @@ public class Framework extends ApplicationAdapter {
 		// event handling
 		InputMultiplexer multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(ui);
-		multiplexer.addProcessor(new InputProcessor() {
+		if (deviceMode == DeviceMode.DESKTOP)
+			multiplexer.addProcessor(new InputAdapter() {
 
-			@Override
-			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-				if (button == Input.Buttons.RIGHT) {
-					// disable screen moving
-					mouse_was_moved = false;
+				@Override
+				public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+					if (button == Input.Buttons.RIGHT) {
+						// disable screen moving
+						mouse_was_moved = false;
+						return true;
+					} else
+						return false;
 				}
-				return false;
-			}
 
-			@Override
-			public boolean touchDragged(int screenX, int screenY, int pointer) {
-				if (mouse_was_moved) {
-					float x = (float) screenX, y = (float) screenY;
-					camera.translate((mouse_start.x - x) * camera.zoom, (mouse_start.y - y) * camera.zoom);
-					mouse_start = new Vector2(x, y);
-					update_view();
+				@Override
+				public boolean touchDragged(int screenX, int screenY, int pointer) {
+					if (mouse_was_moved) {
+						float x = (float) screenX, y = (float) screenY;
+						camera.translate((mouse_start.x - x) * camera.zoom, (mouse_start.y - y) * camera.zoom);
+						mouse_start = new Vector2(x, y);
+						update_view(false);
+						return true;
+					} else
+						return false;
+				}
+
+				@Override
+				public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+					if (button == Input.Buttons.LEFT) {
+						gameLogic.mouse_click_input(reverse_transform_position(screenX, screenY, camera));
+						return true;
+					} else if (button == Input.Buttons.RIGHT) {
+						// reset mouse position
+						mouse_start = new Vector2((float) screenX, (float) screenY);
+						mouse_was_moved = true;
+						return true;
+					} else
+						return false;
+				}
+
+				@Override
+				public boolean scrolled(int amount) {
+					camera.zoom *= Math.pow(0.9f, (float) -amount);
+					update_view(false);
 					return true;
-				} else
-					return false;
-			}
-
-			@Override
-			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				if (button == Input.Buttons.LEFT) {
-					gameLogic.mouse_click_input(reverse_transform_position(screenX, screenY, camera));
-				} else if (button == Input.Buttons.RIGHT) {
-					// reset mouse position
-					mouse_start = new Vector2((float) screenX, (float) screenY);
-					mouse_was_moved = true;
 				}
-				return false;
-			}
+			});
+		else if (deviceMode == DeviceMode.MOBILE)
+			multiplexer.addProcessor(new GestureDetector(new GestureDetector.GestureAdapter() {
 
-			@Override
-			public boolean scrolled(int amount) {
-				camera.zoom *= Math.pow(0.9f, (float) -amount);
-				update_view();
-				return true;
-			}
+				@Override
+				public boolean zoom(float initialDistance, float distance) {
+					camera.zoom = lastZoom * initialDistance / distance;
+					update_view(false);
+					return true;
+				}
 
-			@Override
-			public boolean mouseMoved(int screenX, int screenY) {
-				return false;
-			}
+				@Override
+				public boolean panStop(float x, float y, int pointer, int button) {
+					lastZoom = camera.zoom;
+					return true;
+				}
 
-			@Override
-			public boolean keyUp(int keycode) {
-				return false;
-			}
-
-			@Override
-			public boolean keyTyped(char character) {
-				return false;
-			}
-
-			@Override
-			public boolean keyDown(int keycode) {
-				return false;
-			}
-		});
-		multiplexer.addProcessor(new GestureDetector(new GestureDetector.GestureListener() {
-
-			@Override
-			public boolean zoom(float initialDistance, float distance) {
-				camera.zoom = lastZoom * initialDistance / distance;
-				update_view();
-				return true;
-			}
-
-			@Override
-			public boolean touchDown(float x, float y, int pointer, int button) {
-				return false;
-			}
-
-			@Override
-			public boolean tap(float x, float y, int count, int button) {
-				return false;
-			}
-
-			@Override
-			public void pinchStop() {
-
-			}
-
-			@Override
-			public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-				return false;
-			}
-
-			@Override
-			public boolean panStop(float x, float y, int pointer, int button) {
-				lastZoom = camera.zoom;
-				return false;
-			}
-
-			@Override
-			public boolean pan(float x, float y, float deltaX, float deltaY) {
-				camera.translate(-deltaX * camera.zoom, -deltaY * camera.zoom);
-				mouse_start = new Vector2(x, y);
-				update_view();
-				return false;
-			}
-
-			@Override
-			public boolean longPress(float x, float y) {
-				return false;
-			}
-
-			@Override
-			public boolean fling(float velocityX, float velocityY, int button) {
-				return false;
-			}
-		}));
+				@Override
+				public boolean pan(float x, float y, float deltaX, float deltaY) {
+					camera.translate(-deltaX * camera.zoom, -deltaY * camera.zoom);
+					mouse_start = new Vector2(x, y);
+					update_view(false);
+					System.out.println("PAN!!!!!!!!!!!!");
+					return true;
+				}
+			}));
 		Gdx.input.setInputProcessor(multiplexer);
 
 		gameLogic.init();
@@ -261,10 +218,10 @@ public class Framework extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		windowSize.x = width;
 		windowSize.y = height;
-		update_view();
+		update_view(true);
 	}
 
-	void update_view() {
+	void update_view(boolean updateWindowSize) {
 		camera.position.x = Math.max(0.f,
 				Math.min((Map.field_size + Map.field_distance) * Map.map_size_x, camera.position.x));
 		camera.position.y = Math.max(0.f, Math
@@ -279,7 +236,8 @@ public class Framework extends ApplicationAdapter {
 
 		camera.update();
 		guiCamera.update();
-		ui.update_window_size(new Vector2(windowSize.x, windowSize.y), guiCamera);
+		if (updateWindowSize)
+			ui.update_window_size(new Vector2(windowSize.x, windowSize.y), guiCamera);
 	}
 
 	Vector2 reverse_transform_position(int x, int y, OrthographicCamera view) {

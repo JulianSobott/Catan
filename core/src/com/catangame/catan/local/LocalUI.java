@@ -1281,7 +1281,7 @@ public class LocalUI extends UI implements InputProcessor {
 					Vector2 newCameraPos = Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2));
 					framework.camera.position.x = newCameraPos.x;
 					framework.camera.position.y = newCameraPos.y;
-					framework.update_view();
+					framework.update_view(false);
 
 				}
 			});

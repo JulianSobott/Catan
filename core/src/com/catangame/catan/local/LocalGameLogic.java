@@ -171,7 +171,8 @@ public class LocalGameLogic extends GameLogic {
 			}
 			// render field numbers
 			for (java.util.Map.Entry<Byte, List<Vector2>> number : state.field_numbers.entrySet()) {
-				std_font.getData().setScale((1.5f - (float)Math.abs(number.getKey() - (Map.NUMBER_COUNT + 4) / 2)*0.17f )*fontScale);
+				std_font.getData().setScale(
+						(1.5f - (float) Math.abs(number.getKey() - (Map.NUMBER_COUNT + 4) / 2) * 0.17f) * fontScale);
 				GlyphLayout layout = new GlyphLayout(std_font, "" + number.getKey());
 
 				for (Vector2 pos : number.getValue()) {
@@ -195,15 +196,11 @@ public class LocalGameLogic extends GameLogic {
 			for (java.util.Map.Entry<Integer, List<AbstractStreet>> ub : state.streets.entrySet()) {
 				sb.setColor(state.player_data.get(ub.getKey()).getColor());
 				for (AbstractStreet street : ub.getValue()) {
-					sb.draw(street_Sprite, street.position.x- street_Sprite.getWidth() * 0.5f * 0.08f, street.position.y- street_Sprite.getHeight() * 0.5f * 0.08f,
+					sb.draw(street_Sprite, street.position.x - street_Sprite.getWidth() * 0.5f * 0.08f,
+							street.position.y - street_Sprite.getHeight() * 0.5f * 0.08f,
 							street_Sprite.getWidth() * 0.5f * 0.08f, street_Sprite.getHeight() * 0.5f * 0.08f,
-							street_Sprite.getWidth()*0.08f, street_Sprite.getHeight()*0.08f, 1.f, 1.f, street.rotation);
-					/*sr.begin(ShapeType.Line);
-					sr.rect(street.position.x, street.position.y, street_Sprite.getWidth() * 0.5f * 0.08f,
-							street_Sprite.getHeight() * 0.5f * 0.08f, street_Sprite.getWidth(),
-							street_Sprite.getHeight(), 0.08f, 0.08f, street.rotation, Color.WHITE, Color.WHITE,
-							Color.WHITE, Color.WHITE);
-					sr.end();*/
+							street_Sprite.getWidth() * 0.08f, street_Sprite.getHeight() * 0.08f, 1.f, 1.f,
+							street.rotation);
 				}
 			}
 			for (java.util.Map.Entry<Integer, List<Vector2>> ub : state.villages.entrySet()) {
