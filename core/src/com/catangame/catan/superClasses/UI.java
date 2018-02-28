@@ -37,4 +37,5 @@ public abstract class UI {
 
 	public abstract void show_kicked();
 	public abstract void showAllPossibleNames(List<Player> player);
+	public abstract void showEndScreen(int winnerID, List<Player> player);
 }

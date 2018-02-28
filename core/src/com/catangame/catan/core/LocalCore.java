@@ -46,6 +46,9 @@ public class LocalCore extends Core {
 	boolean initial_round = true;
 	List<Player> player = new ArrayList<Player>();
 
+	//TODO add field at lobby to change this
+	int winningScore = 3; //Default Score to win a game
+
 	//Filehandler
 	private LocalFilehandler fileHandler;
 
@@ -334,24 +337,31 @@ public class LocalCore extends Core {
 	@Override
 	public void nextTurn(int id) {
 		if (id == current_player) {
-			current_player = current_player + 1 >= player.size() ? 0 : current_player + 1;
-
-			if (current_player == 0 && initial_round) {// initial round has finished
-				initial_round = false;
-
-				for (Player p : player) {
-					create_initial_resources(p);
+			//Checks if player won
+			if (player.get(id).getScore() >= winningScore) {
+				for (UI ui : uis) {
+					ui.showEndScreen(id, player);
 				}
+			} else {
+				current_player = current_player + 1 >= player.size() ? 0 : current_player + 1;
+
+				if (current_player == 0 && initial_round) {// initial round has finished
+					initial_round = false;
+
+					for (Player p : player) {
+						create_initial_resources(p);
+					}
+				}
+
+				if (!initial_round)
+					dice();
 			}
 
-			if (!initial_round)
-				dice();
-		}
-
-		// notify others about player change
-		String name = player.get(current_player).getName();
-		for (UI ui : uis) {
-			ui.set_current_player(name);
+			// notify others about player change
+			String name = player.get(current_player).getName();
+			for (UI ui : uis) {
+				ui.set_current_player(name);
+			}
 		}
 	}
 
@@ -420,7 +430,7 @@ public class LocalCore extends Core {
 			player.get(offer.getDemanderID()).take_resource(r, offer.getOfferedResources().get(r));
 			player.get(offer.getVendor_id()).add_resource(r, offer.getOfferedResources().get(r));
 		}
-		for(UI ui : uis) {
+		for (UI ui : uis) {
 			ui.update_player_data(player.get(ui.getID()));
 			ui.closeTradeWindow();
 		}

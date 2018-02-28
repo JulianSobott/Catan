@@ -42,7 +42,7 @@ import com.catangame.catan.utils.FontMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
-		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, END_SCREEN;
 	}
 
 	//TODO Either implement this modes or delete this enum!!
@@ -112,6 +112,9 @@ public class LocalUI extends UI implements InputProcessor {
 	private float color_pkr_hue = (float) Math.random();
 	private Color hostPlayerColor = Color.RED;
 
+	//End Screen 
+	private List<Player> player;
+
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
 		this.framework = framework;
@@ -164,6 +167,8 @@ public class LocalUI extends UI implements InputProcessor {
 			build_load_window();
 		} else if (mode == GUIMode.MENU) {
 			build_menu();
+		} else if (mode == GUIMode.END_SCREEN) {
+			buildEndScreen();
 		}
 	}
 
@@ -1399,6 +1404,38 @@ public class LocalUI extends UI implements InputProcessor {
 		}
 	}
 
+	public void buildEndScreen() {
+		destroy_widgets();
+		int winnerID = 0; //TODO get winner ID from Core??
+		for (Player p : this.player) {
+			if (p.getScore() > this.player.get(winnerID).getScore()) {
+				winnerID = p.getId();
+			}
+		}
+
+		Label lblWinner = new Label(Language.WINNER.get_text(this.player.get(winnerID).getName()),
+				new Rectangle(window_size.x / 2 - 100, 200, 200, 50));
+		widgets.add(lblWinner);
+		//Score board
+		for (int i = 0; i < player.size(); i++) {
+			Label lblPlayerScore = new Label(this.player.get(i).getName() + ": " + this.player.get(i).getScore(),
+					new Rectangle(window_size.x / 2 - 100, 270 + 50 * i, 200, 50));
+			lblPlayerScore.set_fill_color(player.get(i).getColor());
+			widgets.add(lblPlayerScore);
+		}
+		//Button to Lobby
+		Button btnLobby = new Button("Lobby", new Rectangle(window_size.x / 2 - 100, window_size.y - 100, 200, 50));
+		btnLobby.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				state.mode = GameMode.main_menu;
+				build_lobby();
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnLobby);
+	}
+
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (button == Input.Buttons.LEFT) { // reset mouse position
@@ -1632,4 +1669,13 @@ public class LocalUI extends UI implements InputProcessor {
 		}
 		rebuild_gui();
 	}
+
+	@Override
+	public void showEndScreen(int winnerID, List<Player> player) {
+		this.player = player;
+		state.mode = GameMode.end_screen;
+		mode = GUIMode.END_SCREEN;
+		rebuild_gui();
+	}
+
 }

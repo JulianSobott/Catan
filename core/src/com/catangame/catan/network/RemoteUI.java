@@ -91,4 +91,9 @@ public class RemoteUI extends UI {
 		server.message_to_client(id, new Packet(Command.SHOW_ALL_POSSIBLE_NAMES, new Packet.PlayerList(player)));
 	}
 
+	@Override
+	public void showEndScreen(int winnerID, List<Player> player) {
+		server.message_to_client(id, new Packet(Command.END_SCREEN, new Packet.PlayerList(player)));
+	}
+
 }

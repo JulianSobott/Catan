@@ -116,6 +116,9 @@ public class Client extends Networkmanager {
 		case SHOW_NEW_MEMBER:
 			ui.show_guest_at_lobby(((Packet.Name)packet.data).getName());
 			break;
+		case END_SCREEN:
+			ui.showEndScreen(0, ((Packet.PlayerList) packet.data).getPlayer()); //TODO get Winner ID from Core or remove
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}
