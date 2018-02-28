@@ -9,6 +9,10 @@ public class Time {
         this.milliseconds = milliseconds;
     }
 
+    public long asMilliseconds() {
+        return milliseconds;
+    }
+
     public float asSeconds() {
         return (float) milliseconds / 1000.f;
     }
