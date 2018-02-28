@@ -338,7 +338,7 @@ public class Map {
 	// the z-component contains the layer
 	public static Vector2 index_to_building_position(Vector3i index) {
 		if (index.z == LAYER_NORTH_STMT)
-			return Map.index_to_position(index.x, index.y).add(new Vector2(0, -Map.field_size / 2.f));
+			return Map.index_to_position(index.x, index.y).add(new Vector2(0, -Map.field_size / 2.f-5.f));
 		else if (index.z == LAYER_SOUTH_STMT)
 			return Map.index_to_position(index.x, index.y).add( new Vector2(0, Map.field_size / 2.f));
 		else if (index.z == LAYER_NORTH_STREET)

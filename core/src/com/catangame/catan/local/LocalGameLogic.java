@@ -8,7 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -29,6 +31,8 @@ import com.catangame.catan.local.LocalState.Action;
 import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
+import com.catangame.catan.utils.Clock;
+import com.catangame.catan.utils.FontMgr;
 
 public class LocalGameLogic extends GameLogic {
 	// state, ui & connection
@@ -38,11 +42,15 @@ public class LocalGameLogic extends GameLogic {
 
 	// fonts
 	BitmapFont std_font;
+	float fontScale = 0.25f;
 
 	// textures
 	Texture village_txtr;
 	Texture city_txtr;
 	Texture street_txtr;
+
+	//DEBUG
+	Clock timer = new Clock();
 
 	public LocalGameLogic() {
 		state = new LocalState();
@@ -56,11 +64,15 @@ public class LocalGameLogic extends GameLogic {
 		this.ui = ui;
 	}
 
-	void init(BitmapFont std_font) {
-		this.std_font = std_font;
-		village_txtr = new Texture(Gdx.files.local("assets/res/village.png"));
-		city_txtr = new Texture(Gdx.files.local("assets/res/city.png"));
-		street_txtr = new Texture(Gdx.files.local("assets/res/street.png"));
+	void init() {
+		std_font = FontMgr.getFont(120);
+		std_font.getData().setScale(fontScale);
+		village_txtr = new Texture(Gdx.files.local("assets/res/village.png"), true);
+		village_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
+		city_txtr = new Texture(Gdx.files.local("assets/res/city.png"), true);
+		city_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
+		street_txtr = new Texture(Gdx.files.local("assets/res/street.png"), true);
+		street_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 	}
 
 	@Override
@@ -136,37 +148,30 @@ public class LocalGameLogic extends GameLogic {
 	void render_map(ShapeRenderer sr, SpriteBatch sb) {
 		if (state.mode == GameMode.game) {
 			// render fields
-			sr.begin(ShapeType.Filled);
-			sr.setColor(new Color(0.6f, 0.6f, 0.6f, 1.f));
-			sr.rect((Map.field_size + Map.border_size) / 2.f,
-					0.26795f * Map.field_size * Map.MAGIC_HEX_NUMBER + Map.border_size,
-					Map.field_size * (Map.map_size_y - 2.21f) - Map.border_size,
-					Map.field_size * ((float) Map.map_size_y - 1.2f) * Map.MAGIC_HEX_NUMBER);
-			sr.end();
-
 			for (java.util.Map.Entry<Resource, List<Vector2>> resource : state.field_resources.entrySet()) {
 				for (Vector2 pos : resource.getValue()) {
+					if (resource.getKey() != Resource.OCEAN) {
+						sr.begin(ShapeType.Filled);
+						sr.setColor(new Color(0.6f, 0.6f, 0.6f, 1.f));
+						sr.ellipse(pos.x - Map.field_size / 2 - Map.border_size,
+								pos.y - Map.field_size / 2 - Map.border_size, Map.field_size + Map.border_size * 2,
+								Map.field_size + Map.border_size * 2, 30, 6);
+						sr.end();
+					}
+
 					sr.begin(ShapeType.Filled);
+					Gdx.gl.glEnable(GL20.GL_BLEND);
+					Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 					sr.setColor(resource.getKey().get_color());
 					sr.ellipse(pos.x - Map.field_size / 2, pos.y - Map.field_size / 2, Map.field_size, Map.field_size,
 							30, 6);
 					sr.end();
-
-					/*sr.begin(ShapeType.Line);
-					sr.setColor(new Color(0.6f, 0.6f, 0.6f, 1.f));
-					Gdx.gl.glLineWidth(Map.border_size*5);// TODO apply zoom level
-					sr.ellipse(pos.x - Map.field_size / 2, pos.y - Map.field_size / 2, Map.field_size,
-							Map.field_size, 30, 6);
-					sr.end();*/
+					Gdx.gl.glDisable(GL20.GL_BLEND);
 				}
 			}
 			// render field numbers
 			for (java.util.Map.Entry<Byte, List<Vector2>> number : state.field_numbers.entrySet()) {
-				/*Text text = new Text("" + number.getKey(), std_font);
-				text.setCharacterSize((40 - Math.abs(number.getKey() - (Map.NUMBER_COUNT + 4) / 2) * 4) * 4);
-				text.setOrigin(text.getGlobalBounds().width * 0.5f, text.getGlobalBounds().height * 0.5f);
-				text.setScale(0.25f, 0.25f);*/
-
+				std_font.getData().setScale((1.5f - (float)Math.abs(number.getKey() - (Map.NUMBER_COUNT + 4) / 2)*0.17f )*fontScale);
 				GlyphLayout layout = new GlyphLayout(std_font, "" + number.getKey());
 
 				for (Vector2 pos : number.getValue()) {
@@ -176,6 +181,7 @@ public class LocalGameLogic extends GameLogic {
 					sb.end();
 				}
 			}
+			std_font.getData().setScale(fontScale);// reset
 
 			// render buildings
 			Sprite village_sprite = new Sprite(village_txtr);
@@ -184,24 +190,20 @@ public class LocalGameLogic extends GameLogic {
 			city_Sprite.flip(false, true);
 			Sprite street_Sprite = new Sprite(street_txtr);
 			street_Sprite.flip(false, true);
-			/*Sprite village_sprite = new Sprite(village_txtr);
-			village_sprite.flip(false, true);
-			village_sprite.setScale(0.1f, 0.1f);
-			village_sprite.*/
 
 			sb.begin();
 			for (java.util.Map.Entry<Integer, List<AbstractStreet>> ub : state.streets.entrySet()) {
 				sb.setColor(state.player_data.get(ub.getKey()).getColor());
 				for (AbstractStreet street : ub.getValue()) {
-					sb.draw(street_Sprite, street.position.x, street.position.y,
+					sb.draw(street_Sprite, street.position.x- street_Sprite.getWidth() * 0.5f * 0.08f, street.position.y- street_Sprite.getHeight() * 0.5f * 0.08f,
 							street_Sprite.getWidth() * 0.5f * 0.08f, street_Sprite.getHeight() * 0.5f * 0.08f,
-							street_Sprite.getWidth(), street_Sprite.getHeight(), 0.08f, 0.08f, street.rotation);
-					sr.begin(ShapeType.Line);
+							street_Sprite.getWidth()*0.08f, street_Sprite.getHeight()*0.08f, 1.f, 1.f, street.rotation);
+					/*sr.begin(ShapeType.Line);
 					sr.rect(street.position.x, street.position.y, street_Sprite.getWidth() * 0.5f * 0.08f,
 							street_Sprite.getHeight() * 0.5f * 0.08f, street_Sprite.getWidth(),
 							street_Sprite.getHeight(), 0.08f, 0.08f, street.rotation, Color.WHITE, Color.WHITE,
 							Color.WHITE, Color.WHITE);
-					sr.end();
+					sr.end();*/
 				}
 			}
 			for (java.util.Map.Entry<Integer, List<Vector2>> ub : state.villages.entrySet()) {

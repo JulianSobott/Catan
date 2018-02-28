@@ -93,8 +93,9 @@ public class Label extends Widget {
 		this.visible = visible;
 	}
 
-	public void setOutlineColor(Color color) {
+	public void set_outline(Color color, float thickness) {
 		outlineColor = color;
+		outlineThickness = thickness;
 	}
 
 	// adjusts width automatically based on text size

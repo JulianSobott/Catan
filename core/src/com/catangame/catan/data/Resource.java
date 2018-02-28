@@ -2,7 +2,7 @@ package com.catangame.catan.data;
 import com.badlogic.gdx.graphics.Color;
 
 public enum Resource {
-	OCEAN(new Color(0, 0, 1, 0.2f)),// not a resource but is needed for the map
+	OCEAN(new Color(0, 0, 1, 0.4f)),// not a resource but is needed for the map
 	WOOD(new Color(0.47f, 0.39f, 0, 1)),
 	WOOL(new Color(0.2f, 0.63f, 0.2f, 1)),
 	GRAIN(new Color(0.86f, 0.71f, 0, 1)),

@@ -263,6 +263,7 @@ public class LocalUI extends UI implements InputProcessor {
 			Label lblResource = new Label(Language.valueOf(r.name()).get_text() + ":\n" + num,
 					new Rectangle(5, 200 + 100 * i, cards_width, 80));
 			lblResource.set_fill_color(r.get_color());
+			lblResource.set_outline(Color.BLACK, 2);
 			widgets.add(lblResource);
 			i++;
 		}
@@ -359,6 +360,7 @@ public class LocalUI extends UI implements InputProcessor {
 		//dice result
 		lblDiceResult = new Label(lbl_value_dice, new Rectangle(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(0.67f, 0.67f, 0.67f, 1.f));
+		lblDiceResult.set_outline(Color.BLACK, 2);
 		widgets.add(lblDiceResult);
 
 		// info label
@@ -829,7 +831,7 @@ public class LocalUI extends UI implements InputProcessor {
 			Label lblOfferContainer = new Label("",
 					new Rectangle(window_size.x / 2, 200 + (150 + 3) * i, window_size.x / 2 - 30, 150));
 			lblOfferContainer.set_fill_color(new Color(1.f, 1.f, 1.f, 0.3f)); //TODO Maybe change to player color
-			lblOfferContainer.setOutlineColor(Color.BLACK);
+			lblOfferContainer.set_outline(Color.BLACK, 2);
 			widgets.add(lblOfferContainer);
 
 			//Offered resources

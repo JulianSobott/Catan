@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -52,6 +53,9 @@ public class FontMgr {
             FreeTypeFontParameter parameter = new FreeTypeFontParameter();
             parameter.size = size;
             parameter.flip = true;
+            parameter.genMipMaps = true;
+            parameter.magFilter = TextureFilter.Linear;
+            parameter.minFilter = TextureFilter.MipMapLinearLinear;
             fontMap.put(spec, fontGenerator.get(type).generateFont(parameter));
         }
         return fontMap.get(spec);

@@ -1,5 +1,6 @@
 package com.catangame.catan.local.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,6 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 public class ColorPicker extends Widget {
 	private Color selectColor;
 	private Color color;// selected color
+	private Color outlineColor;
+	private float outlineThickness = 2;
 	private Runnable select_event;
 	private float hue = (float) Math.random();
 	private float saturation = 1.f;
@@ -20,6 +23,7 @@ public class ColorPicker extends Widget {
 		super(bounds);
 
 		selectColor = default_checkbox_color;
+		outlineColor = default_outline_color;
 
 		update_color();
 	}
@@ -30,6 +34,14 @@ public class ColorPicker extends Widget {
 		sr.setColor(color);
 		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 		sr.end();
+		
+		if (outlineThickness > 0) {
+			sr.begin(ShapeType.Line);
+			sr.setColor(outlineColor);
+			Gdx.gl.glLineWidth(outlineThickness);
+			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+			sr.end();
+		}
 
 		sr.begin(ShapeType.Filled);
 		sr.setColor(selectColor);
@@ -117,6 +129,11 @@ public class ColorPicker extends Widget {
 		this.saturation = saturation;
 		this.value = value;
 		update_color();
+	}
+
+	public void set_outline(Color color, float thickness) {
+		outlineColor = color;
+		outlineThickness = thickness;
 	}
 
 	public void set_enabled(boolean enabled) {

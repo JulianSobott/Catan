@@ -72,7 +72,7 @@ public class TextField extends Widget {
 	}
 
 	public void text_input(char character) {
-		if (character != 0 && character != '\n' && character != '\r' && character != '\b' && character != '\t') {
+		if (character != 0 && character != 0x7F && character != '\n' && character != '\r' && character != '\b' && character != '\t') {
 			text += character;
 			if (input_event != null)
 				input_event.run();
@@ -88,7 +88,7 @@ public class TextField extends Widget {
 					input_event.run();
 			}
 			return true;
-		} else if (key == Keys.DEL) {
+		} else if (key == Keys.FORWARD_DEL) {
 			if (!text.isEmpty()) {
 				text = "";
 				if (input_event != null)
