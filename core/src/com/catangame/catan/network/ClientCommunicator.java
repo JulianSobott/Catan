@@ -41,7 +41,13 @@ public class ClientCommunicator extends Thread{
 			Packet packet;
 			try {
 				packet = (Packet) input.readObject();
-				localDataServer.message_from_client(id, packet);
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						localDataServer.message_from_client(id, packet);
+					}
+				});
+				
 			}catch(IOException e) {
 				System.err.println("End of File Exception at ClientCommunicator => stopped running");
 				this.running = false;
