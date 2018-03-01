@@ -148,28 +148,34 @@ public class LocalUI extends UI implements InputProcessor {
 
 	// this method is called when the window gets resized
 	public void rebuild_gui() {
-		destroy_widgets();
-		if (mode == GUIMode.LOBBY) {
-			build_lobby();
-		} else if (mode == GUIMode.JOIN) {
-			build_join_menu();
-		} else if (mode == GUIMode.GUEST_LOBBY) {
-			build_guest_lobby_window();
-		} else if (mode == GUIMode.HOST_LOBBY) {
-			build_host_lobby_window();
-		} else if (mode == GUIMode.GAME) {
-			build_game_menu();
-		} else if (mode == GUIMode.TRADE_DEMAND) {
-			build__demander_trade_window();
-		} else if (mode == GUIMode.TRADE_VENDOR) {
-			build_vendor_trade_window();
-		} else if (mode == GUIMode.LOAD) {
-			build_load_window();
-		} else if (mode == GUIMode.MENU) {
-			build_menu();
-		} else if (mode == GUIMode.END_SCREEN) {
-			buildEndScreen();
-		}
+		Gdx.app.postRunnable(new Runnable() {
+			@Override
+			public void run() {
+				destroy_widgets();
+				if (mode == GUIMode.LOBBY) {
+					build_lobby();
+				} else if (mode == GUIMode.JOIN) {
+					build_join_menu();
+				} else if (mode == GUIMode.GUEST_LOBBY) {
+					build_guest_lobby_window();
+				} else if (mode == GUIMode.HOST_LOBBY) {
+					build_host_lobby_window();
+				} else if (mode == GUIMode.GAME) {
+					build_game_menu();
+				} else if (mode == GUIMode.TRADE_DEMAND) {
+					build__demander_trade_window();
+				} else if (mode == GUIMode.TRADE_VENDOR) {
+					build_vendor_trade_window();
+				} else if (mode == GUIMode.LOAD) {
+					build_load_window();
+				} else if (mode == GUIMode.MENU) {
+					build_menu();
+				} else if (mode == GUIMode.END_SCREEN) {
+					buildEndScreen();
+				}	
+			}
+		});
+		
 	}
 
 	public void build_lobby() {

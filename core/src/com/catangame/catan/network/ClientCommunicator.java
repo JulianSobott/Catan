@@ -4,6 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import com.badlogic.gdx.Gdx;
 import com.catangame.catan.data.Resource;
 
 //TODO Rename Method "message"
@@ -40,7 +41,7 @@ public class ClientCommunicator extends Thread{
 			Packet packet;
 			try {
 				packet = (Packet) input.readObject();
-				this.localDataServer.message_from_client(this.id, packet);
+				localDataServer.message_from_client(id, packet);
 			}catch(IOException e) {
 				System.err.println("End of File Exception at ClientCommunicator => stopped running");
 				this.running = false;

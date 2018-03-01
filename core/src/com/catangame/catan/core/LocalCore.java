@@ -95,7 +95,7 @@ public class LocalCore extends Core {
 			}
 
 		}
-		for (UI ui : uis) {
+		for (UI ui : uis) {	
 			ui.update_player_data(player.get(ui.getID()));
 		}
 	}

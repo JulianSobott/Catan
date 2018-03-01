@@ -2,6 +2,7 @@ package com.catangame.catan.network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.badlogic.gdx.Gdx;
 import com.catangame.catan.data.Resource;
 
 public class ClientInputListener extends Thread{
@@ -22,7 +23,12 @@ public class ClientInputListener extends Thread{
 				try {
 					Packet packet;
 					packet = (Packet) input.readObject();
-					this.client.message_from_core(packet);
+					Gdx.app.postRunnable(new Runnable() {
+						@Override
+						public void run() {
+							client.message_from_core(packet);	
+						}
+					});				
 				}catch(IOException e) {
 					e.printStackTrace();
 					System.err.println("Connection to Server closed (ClientInputListener Line 26)");
