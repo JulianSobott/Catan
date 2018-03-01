@@ -13,7 +13,7 @@ public class DesktopLauncher {
 		config.height = 800;
 		config.addIcon("assets/res/icon.png", FileType.Internal);
 		config.samples = 8;
-		config.initialBackgroundColor = Framework.clearColor;
+		config.initialBackgroundColor = Framework.clearColor.gdx();
 		new LwjglApplication(new Framework(new Vector2(config.width, config.height), Framework.DeviceMode.DESKTOP), config);
 	}
 }

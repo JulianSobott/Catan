@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import com.catangame.catan.core.Player;

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.math.Vector3i;
 

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -152,7 +152,7 @@ public class LocalGameLogic extends GameLogic {
 				for (Vector2 pos : resource.getValue()) {
 					if (resource.getKey() != Resource.OCEAN) {
 						sr.begin(ShapeType.Filled);
-						sr.setColor(new Color(0.6f, 0.6f, 0.6f, 1.f));
+						sr.setColor(new Color(0.6f, 0.6f, 0.6f, 1.f).gdx());
 						sr.ellipse(pos.x - Map.field_size / 2 - Map.border_size,
 								pos.y - Map.field_size / 2 - Map.border_size, Map.field_size + Map.border_size * 2,
 								Map.field_size + Map.border_size * 2, 30, 6);
@@ -162,7 +162,7 @@ public class LocalGameLogic extends GameLogic {
 					sr.begin(ShapeType.Filled);
 					Gdx.gl.glEnable(GL20.GL_BLEND);
 					Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-					sr.setColor(resource.getKey().get_color());
+					sr.setColor(resource.getKey().get_color().gdx());
 					sr.ellipse(pos.x - Map.field_size / 2, pos.y - Map.field_size / 2, Map.field_size, Map.field_size,
 							30, 6);
 					sr.end();
@@ -177,7 +177,7 @@ public class LocalGameLogic extends GameLogic {
 
 				for (Vector2 pos : number.getValue()) {
 					sb.begin();
-					sb.setColor(Color.WHITE);
+					sb.setColor(Color.WHITE.gdx());
 					std_font.draw(sb, "" + number.getKey(), pos.x - layout.width / 2, pos.y - layout.height / 2);
 					sb.end();
 				}
@@ -194,7 +194,7 @@ public class LocalGameLogic extends GameLogic {
 
 			sb.begin();
 			for (java.util.Map.Entry<Integer, List<AbstractStreet>> ub : state.streets.entrySet()) {
-				sb.setColor(state.player_data.get(ub.getKey()).getColor());
+				sb.setColor(state.player_data.get(ub.getKey()).getColor().gdx());
 				for (AbstractStreet street : ub.getValue()) {
 					sb.draw(street_Sprite, street.position.x - street_Sprite.getWidth() * 0.5f * 0.08f,
 							street.position.y - street_Sprite.getHeight() * 0.5f * 0.08f,

@@ -1,6 +1,6 @@
 package com.catangame.catan.local.gui;
 
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -25,13 +25,13 @@ public class Checkbox extends Widget {
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		sr.begin(ShapeType.Filled);
-		sr.setColor(backColor);
+		sr.setColor(backColor.gdx());
 		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 		sr.end();
 
 		if (selected) {
 			sr.begin(ShapeType.Filled);
-			sr.setColor(innerColor);
+			sr.setColor(innerColor.gdx());
 			sr.rect(inner.x, inner.y, inner.width, inner.height);
 			sr.end();
 		}

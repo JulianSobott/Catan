@@ -1,5 +1,5 @@
 package com.catangame.catan.data;
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 
 public enum Resource {
 	OCEAN(new Color(0, 0, 1, 0.4f)),// not a resource but is needed for the map

@@ -1,7 +1,7 @@
 package com.catangame.catan.local.gui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -31,20 +31,20 @@ public class ColorPicker extends Widget {
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		sr.begin(ShapeType.Filled);
-		sr.setColor(color);
+		sr.setColor(color.gdx());
 		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 		sr.end();
 		
 		if (outlineThickness > 0) {
 			sr.begin(ShapeType.Line);
-			sr.setColor(outlineColor);
+			sr.setColor(outlineColor.gdx());
 			Gdx.gl.glLineWidth(outlineThickness);
 			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 			sr.end();
 		}
 
 		sr.begin(ShapeType.Filled);
-		sr.setColor(selectColor);
+		sr.setColor(selectColor.gdx());
 		sr.circle(bounds.x+hue*bounds.width, bounds.y+bounds.height*0.5f, bounds.height*0.3f, 4);
 		sr.end();
 	}

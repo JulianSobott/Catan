@@ -2,7 +2,7 @@ package com.catangame.catan.local.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -41,21 +41,21 @@ public class TextField extends Widget {
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		sr.begin(ShapeType.Filled);
-		sr.setColor(backColor);
+		sr.setColor(backColor.gdx());
 		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 		sr.end();
 
 		sr.begin(ShapeType.Line);
 		if (is_active)
-			sr.setColor(outlineColor);
+			sr.setColor(outlineColor.gdx());
 		else
-			sr.setColor(disabledOutlineColor);
+			sr.setColor(disabledOutlineColor.gdx());
 		Gdx.gl.glLineWidth(outlineThickness);
 		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 		sr.end();
 
 		sb.begin();
-		font.setColor(textColor);
+		font.setColor(textColor.gdx());
 		font.draw(sb, text, textPosition.x, textPosition.y);
 		sb.end();
 	}

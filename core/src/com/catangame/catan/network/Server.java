@@ -9,7 +9,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;

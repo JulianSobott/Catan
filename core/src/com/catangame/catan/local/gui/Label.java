@@ -1,7 +1,7 @@
 package com.catangame.catan.local.gui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -42,21 +42,21 @@ public class Label extends Widget {
 			sr.begin(ShapeType.Filled);
 			Gdx.gl.glEnable(GL20.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-			sr.setColor(backColor);
+			sr.setColor(backColor.gdx());
 			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 			sr.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
 
 			if (outlineThickness > 0) {
 				sr.begin(ShapeType.Line);
-				sr.setColor(outlineColor);
+				sr.setColor(outlineColor.gdx());
 				Gdx.gl.glLineWidth(outlineThickness);
 				sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 				sr.end();
 			}
 
 			sb.begin();
-			font.setColor(textColor);
+			font.setColor(textColor.gdx());
 			font.draw(sb, text, textPosition.x, textPosition.y);
 			sb.end();
 		}

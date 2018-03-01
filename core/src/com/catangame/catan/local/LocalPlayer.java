@@ -1,6 +1,6 @@
 package com.catangame.catan.local;
 
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import java.io.Serializable;
 
 // This class should be used in "local" environment instead of core.Player

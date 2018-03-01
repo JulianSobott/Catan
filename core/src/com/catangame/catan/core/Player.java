@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 
 import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Resource;

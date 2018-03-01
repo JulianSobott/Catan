@@ -6,7 +6,7 @@ import com.catangame.catan.data.Resource;
 
 import java.util.List;
 
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 
 import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.TradeDemand;

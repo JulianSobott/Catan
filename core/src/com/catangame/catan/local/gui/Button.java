@@ -2,7 +2,7 @@ package com.catangame.catan.local.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -40,22 +40,22 @@ public class Button extends Widget {
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		sr.begin(ShapeType.Filled);
 		if (enabled)
-			sr.setColor(backColor);
+			sr.setColor(backColor.gdx());
 		else
-			sr.setColor(disabledBackColor);
+			sr.setColor(disabledBackColor.gdx());
 		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 		sr.end();
 
 		if (outlineThickness > 0) {
 			sr.begin(ShapeType.Line);
-			sr.setColor(outlineColor);
+			sr.setColor(outlineColor.gdx());
 			Gdx.gl.glLineWidth(outlineThickness);
 			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 			sr.end();
 		}
 
 		sb.begin();
-		font.setColor(textColor);
+		font.setColor(textColor.gdx());
 		font.draw(sb, text, textPosition.x, textPosition.y);
 		sb.end();
 	}

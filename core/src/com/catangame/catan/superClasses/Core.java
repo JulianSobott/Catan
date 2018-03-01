@@ -1,6 +1,6 @@
 package com.catangame.catan.superClasses;
 
-import com.badlogic.gdx.graphics.Color;
+import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
 
 import com.catangame.catan.core.Building;
