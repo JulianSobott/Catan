@@ -1,6 +1,8 @@
 package com.catangame.catan.math;
 
-public class Vector3i {
+import java.io.Serializable;
+
+public class Vector3i implements Serializable{
 	final public int x, y, z;
 
 	public Vector3i(int x, int y, int z) {

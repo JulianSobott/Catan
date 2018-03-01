@@ -3,7 +3,7 @@
     package="com.catangame.catan" >
 
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="25" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
