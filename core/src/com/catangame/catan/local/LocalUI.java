@@ -291,7 +291,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnShowDevelopmentCards);
 		if (showDevelopmentCards) {
 			i = 0;
-			for (DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
+			for (final DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
 				Button btnCard = new Button(card.toString(), new Rectangle(205, 100 + 75 * i, 300, 70));
 				btnCard.set_fill_color(new Color(0.2f, 0.3f, 0.67f, 0.9f));
 				btnCard.set_click_callback(new Runnable() {
@@ -460,10 +460,10 @@ public class LocalUI extends UI implements InputProcessor {
 			float lblWidth1 = containerWidth1 / 3;
 			float btnWidth1 = containerWidth1 / 6 - 5;
 			float lblHeight = 50;
-			for (Resource r : Resource.values()) {
+			for (final Resource r : Resource.values()) {
 				if (r != Resource.OCEAN) {
 
-					Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()),
+					final Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()),
 							new Rectangle(start1, 170 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
 					if (tradeDemand.getWantedResources().containsKey(r)) {
 						btnWantedResource.set_fill_color(r.get_color());
@@ -538,7 +538,7 @@ public class LocalUI extends UI implements InputProcessor {
 			Label lblOfferedResources = new Label("Select Resources That you offer", new Rectangle(370, 100, 300, 50));
 			lblOfferedResources.set_text_color(Color.WHITE);
 			widgets.add(lblOfferedResources);
-			for (Resource r : Resource.values()) {
+			for (final Resource r : Resource.values()) {
 
 				if (r != Resource.OCEAN && state.my_player_data.get_resources(r) >= 1
 						&& tradeDemand.getVendor() == Vendor.PLAYER
@@ -546,7 +546,7 @@ public class LocalUI extends UI implements InputProcessor {
 								&& tradeDemand.getVendor() == Vendor.BANK) {
 					String resourceString = (Language.valueOf(r.toString()).toString()) + ": "
 							+ state.my_player_data.get_resources(r);
-					Button btnOfferedResource = new Button(resourceString,
+					final Button btnOfferedResource = new Button(resourceString,
 							new Rectangle(start2, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
 					if (tradeDemand.getOfferedResources().containsKey(r)) {
 						btnOfferedResource.set_fill_color(r.get_color());
@@ -584,7 +584,7 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(lblAllOffers);
 			//show all offers
 			i = 0;
-			for (TradeOffer offer : allTradeOffer) {
+			for (final TradeOffer offer : allTradeOffer) {
 				//Offer Label
 				Label lblOfferID = new Label("Offer " + i,
 						new Rectangle(window_size.x / 2, 200 + (110 + 20) * i, 300, 50));
@@ -711,7 +711,7 @@ public class LocalUI extends UI implements InputProcessor {
 		lblWantedResourcesFromDemander.set_text_color(Color.WHITE);
 		widgets.add(lblWantedResourcesFromDemander);
 		i = 0;
-		for (Resource r : Resource.values()) {
+		for (final Resource r : Resource.values()) {
 			if (tradeDemand.offeredResources.containsKey(r)) {
 				Label lblResource = new Label(r.toString(),
 						new Rectangle(start1, 270 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
@@ -766,7 +766,7 @@ public class LocalUI extends UI implements InputProcessor {
 		lblOfferedResourcesFromMe.set_text_color(Color.WHITE);
 		widgets.add(lblOfferedResourcesFromMe);
 		i = 0;
-		for (Resource r : Resource.values()) {
+		for (final Resource r : Resource.values()) {
 			if (tradeDemand.wantedResources.containsKey(r)) {
 				Label lblResource = new Label(r.toString(),
 						new Rectangle(start, 270 + (lblHeight + btnSpace) * i, lblWidth, lblHeight));
@@ -894,7 +894,7 @@ public class LocalUI extends UI implements InputProcessor {
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
 
-		TextField tfIp = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
+		final TextField tfIp = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text(tf_value_ip);
 		tfIp.set_input_callback(new Runnable() {
 			TextField textField = tfIp;
@@ -906,7 +906,7 @@ public class LocalUI extends UI implements InputProcessor {
 		});
 		widgets.add(tfIp);
 
-		TextField tfName = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
+		final TextField tfName = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		tfName.set_text(tf_value_name);
 		tfName.set_input_callback(new Runnable() {
 			TextField textField = tfName;
@@ -918,7 +918,7 @@ public class LocalUI extends UI implements InputProcessor {
 		});
 		widgets.add(tfName);
 
-		ColorPicker colorPicker = new ColorPicker(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
+		final ColorPicker colorPicker = new ColorPicker(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		colorPicker.set_color(color_pkr_hue, 1.f, 0.9f);
 		colorPicker.set_select_callback(new Runnable() {
 			ColorPicker cp = colorPicker;
@@ -932,7 +932,7 @@ public class LocalUI extends UI implements InputProcessor {
 		hostPlayerColor = colorPicker.get_color();
 		widgets.add(colorPicker);
 
-		Label lblConnecting;
+		final Label lblConnecting;
 		lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(),
 				new Rectangle(window_size.x / 2, window_size.y - 200, 100, 50));
 		lblConnecting.set_visible(false);
@@ -1001,7 +1001,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 		if (allPossiblePlayer.size() > 0) {
 			int i = 0;
-			for (Player p : allPossiblePlayer) {
+			for (final Player p : allPossiblePlayer) {
 				Button btnPName = new Button(p.getName(), new Rectangle(window_size.x / 2 - 100, 50 + 70 * i, 200, 60));
 				btnPName.set_fill_color(p.getColor());
 				btnPName.set_click_callback(new Runnable() {
@@ -1077,7 +1077,7 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(lbl);
 
 			row_count = 2;
-			TextField tfMapSize = new TextField(new Rectangle(column0 + 200,
+			final TextField tfMapSize = new TextField(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
 			tfMapSize.set_text_color(new Color(0.08f, 0.08f, 0.08f, 1.f));
 			tfMapSize.set_text(tf_value_size);
@@ -1091,7 +1091,7 @@ public class LocalUI extends UI implements InputProcessor {
 			});
 			widgets.add(tfMapSize);
 
-			TextField tfSeed = new TextField(new Rectangle(column0 + 200,
+			final TextField tfSeed = new TextField(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count, textfield_width, textfield_height));
 			tfSeed.set_text_color(new Color(0.08f, 0.08f, 0.08f, 1.f));
 			tfSeed.set_text(tf_value_seed);
@@ -1115,7 +1115,7 @@ public class LocalUI extends UI implements InputProcessor {
 			});
 			widgets.add(btnRandom);
 
-			TextField tfName = new TextField(new Rectangle(column0 + 200,
+			final TextField tfName = new TextField(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
 			tfName.set_text_color(new Color(0.08f, 0.08f, 0.08f, 1.f));
 			tfName.set_text(tf_value_name);
@@ -1129,7 +1129,7 @@ public class LocalUI extends UI implements InputProcessor {
 			});
 			widgets.add(tfName);
 
-			ColorPicker colorPicker = new ColorPicker(new Rectangle(column0 + 200,
+			final ColorPicker colorPicker = new ColorPicker(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
 			colorPicker.set_color(color_pkr_hue, 1.f, 0.9f);
 			colorPicker.set_select_callback(new Runnable() {
@@ -1144,7 +1144,7 @@ public class LocalUI extends UI implements InputProcessor {
 			hostPlayerColor = colorPicker.get_color();
 			widgets.add(colorPicker);
 
-			TextField tfRandomHouses = new TextField(new Rectangle(column0 + 200,
+			final TextField tfRandomHouses = new TextField(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
 			tfRandomHouses.set_text_color(new Color(0.08f, 0.08f, 0.08f, 1.f));
 			tfRandomHouses.set_text(tf_value_random_houses);
@@ -1158,7 +1158,7 @@ public class LocalUI extends UI implements InputProcessor {
 			});
 			widgets.add(tfRandomHouses);
 
-			TextField tfResourceHouses = new TextField(new Rectangle(column0 + 200,
+			final TextField tfResourceHouses = new TextField(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
 			tfResourceHouses.set_text_color(new Color(0.08f, 0.08f, 0.08f, 1.f));
 			tfResourceHouses.set_text(tf_value_resource_houses);
@@ -1172,7 +1172,7 @@ public class LocalUI extends UI implements InputProcessor {
 			});
 			widgets.add(tfResourceHouses);
 
-			Checkbox cbCircleMap = new Checkbox(new Rectangle(column0 + 200,
+			final Checkbox cbCircleMap = new Checkbox(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++ + textfield_height * .15f,
 					textfield_height * .7f, textfield_height * .7f));
 			cbCircleMap.setSelected(cb_value_is_circle);
@@ -1212,7 +1212,7 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 
 			}
-			for (String guest : guests) {
+			for (final String guest : guests) {
 				boolean show = true;
 				for (Player p : savedGame.getPlayer()) {
 					if (guest == p.getName()) {
@@ -1344,7 +1344,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		} else if (menuMode == MenuMode.SAVE) {
 			LocalFilehandler fileHandler = new LocalFilehandler();
-			TextField tfGameName = new TextField(new Rectangle(window_size.x - 800, window_size.y - 100, 300, 40));
+			final TextField tfGameName = new TextField(new Rectangle(window_size.x - 800, window_size.y - 100, 300, 40));
 			tfGameName.set_text(tf_game_name);
 			tfGameName.set_input_callback(new Runnable() {
 				@Override
@@ -1366,7 +1366,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 			List<SavedGame> allGames = fileHandler.getAllGames();
 			int i = 0;
-			for (SavedGame game : allGames) {
+			for (final SavedGame game : allGames) {
 				Button btnGame = new Button(game.getName(),
 						new Rectangle(window_size.x / 2 - 500, 100 + 80 * i, 500, 60));
 				btnGame.set_click_callback(new Runnable() {
@@ -1387,7 +1387,7 @@ public class LocalUI extends UI implements InputProcessor {
 		LocalFilehandler fileHandler = new LocalFilehandler();
 		List<SavedGame> allGames = fileHandler.getAllGames();
 		int i = 0;
-		for (SavedGame tempGame : allGames) {
+		for (final SavedGame tempGame : allGames) {
 			Button btnGame = new Button(tempGame.getName(),
 					new Rectangle(window_size.x / 2 - 150, 200 + 80 * i, 400, 60));
 			btnGame.set_click_callback(new Runnable() {
