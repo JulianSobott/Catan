@@ -279,6 +279,7 @@ public class LocalUI extends UI implements InputProcessor {
 		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(),
 				new Rectangle(5, 100, 220, 50));
 		btnShowDevelopmentCards.adjustWidth(5);
+		btnShowDevelopmentCards.set_enabled(state.isCurrentPlayer);
 		btnShowDevelopmentCards.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -311,6 +312,7 @@ public class LocalUI extends UI implements InputProcessor {
 		btnFinishedMove = new Button(Language.FINISHED_MOVE.get_text(),
 				new Rectangle(window_size.x - 155, window_size.y - 155, 150, 70));
 		btnFinishedMove.adjustWidth(5);
+		btnFinishedMove.set_enabled(state.isCurrentPlayer);
 		btnFinishedMove.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -324,6 +326,7 @@ public class LocalUI extends UI implements InputProcessor {
 		float buttons_width = 110;
 		btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
+		btnBuildVillage.set_enabled(state.isCurrentPlayer);
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
 			public void run() {		
@@ -343,6 +346,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnBuildVillage);
 		btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
+		btnBuildCity.set_enabled(state.isCurrentPlayer);
 		btnBuildCity.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -362,6 +366,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnBuildCity);
 		btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
+		btnBuildStreet.set_enabled(state.isCurrentPlayer);
 		btnBuildStreet.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -383,6 +388,7 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuyDevelopmentCard = new Button(Language.DEVELOPMENT_CARD.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width + 100, 70));
 		btnBuyDevelopmentCard.adjustWidth(5);
+		btnBuyDevelopmentCard.set_enabled(state.isCurrentPlayer);
 		btnBuyDevelopmentCard.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -404,6 +410,7 @@ public class LocalUI extends UI implements InputProcessor {
 		btnTrade = new Button(Language.TRADE.get_text(), new Rectangle(100, 10, 70, 40));
 		btnTrade.set_font(FontMgr.getFont(25));
 		btnTrade.adjustWidth(5);
+		btnTrade.set_enabled(state.isCurrentPlayer);
 		btnTrade.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -1577,16 +1584,13 @@ public class LocalUI extends UI implements InputProcessor {
 	public void switch_to_idle() {
 		state.curr_action = LocalState.Action.idle;
 		if (state.curr_player.equals(state.my_player_data.getName())) {
+			state.isCurrentPlayer = true;
 			show_informative_hint(Language.DO_MOVE, "");
 			rebuild_gui();
 		} else {
 			show_informative_hint(Language.OTHERS_MOVE, state.curr_player);
-			btnFinishedMove.set_enabled(false);
-			btnBuildCity.set_enabled(false);
-			btnBuildStreet.set_enabled(false);
-			btnBuildVillage.set_enabled(false);
-			btnTrade.set_enabled(false);
-			btnBuyDevelopmentCard.set_enabled(false);
+			state.isCurrentPlayer = false;
+			rebuild_gui();
 		}
 	}
 

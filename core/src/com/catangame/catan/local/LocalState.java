@@ -31,6 +31,7 @@ public class LocalState {
 	List<LocalPlayer> player_data = new ArrayList<LocalPlayer>();
 	Player my_player_data = new Player("Anonymous", 0, Color.BLUE);
 	String curr_player;
+	boolean isCurrentPlayer = true; 
 
 	Map<Resource, List<Vector2>> field_resources = new HashMap<Resource, List<Vector2>>();// maps resource fields to their positions on the board
 	Map<Byte, List<Vector2>> field_numbers = new HashMap<Byte, List<Vector2>>();// maps field numbers to their positions on the board
