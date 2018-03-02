@@ -1393,7 +1393,7 @@ public class LocalUI extends UI implements InputProcessor {
 			});
 			widgets.add(btnLobby);
 		} else if (menuMode == MenuMode.SAVE) {
-			LocalFilehandler fileHandler = new LocalFilehandler();
+			final LocalFilehandler fileHandler = new LocalFilehandler();
 			final TextField tfGameName = new TextField(new Rectangle(window_size.x - 800, window_size.y - 100, 300, 40));
 			tfGameName.set_text(tf_game_name);
 			tfGameName.set_input_callback(new Runnable() {
