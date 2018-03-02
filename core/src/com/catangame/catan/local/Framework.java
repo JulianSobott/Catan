@@ -42,6 +42,7 @@ public class Framework extends ApplicationAdapter {
 	}
 
 	DeviceMode deviceMode;
+	public static boolean usingGdx = true;// wether libgdx or sfml rendering backend is used
 	public static Color clearColor = new Color(0.04f, 0.57f, 1, 1);
 
 	// view & camera
@@ -77,11 +78,16 @@ public class Framework extends ApplicationAdapter {
 	public Framework(Vector2 windowSize, DeviceMode deviceMode) {
 		this.windowSize = windowSize;
 		this.deviceMode = deviceMode;
+
 	}
 
 	@Override
 	public void create() {
 		Map.update_constants();
+
+		if( Gdx.graphics.getGLVersion().getMajorVersion()<2) {
+			usingGdx = false;
+		}
 
 		// camera
 		camera = new OrthographicCamera();

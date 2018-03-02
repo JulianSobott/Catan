@@ -140,4 +140,5 @@ idea {
     }
 }
 dependencies {
+    compile files('../core/deps/sfml/jsfml.jar')
 }
