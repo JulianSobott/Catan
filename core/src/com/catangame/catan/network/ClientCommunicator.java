@@ -38,7 +38,7 @@ public class ClientCommunicator extends Thread{
 		
 		//Listen for Input from Client
 		while(this.running && output != null && input != null) {
-			Packet packet;
+			final Packet packet;
 			try {
 				packet = (Packet) input.readObject();
 				Gdx.app.postRunnable(new Runnable() {

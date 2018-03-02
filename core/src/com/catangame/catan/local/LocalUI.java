@@ -326,9 +326,18 @@ public class LocalUI extends UI implements InputProcessor {
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
-			public void run() {
-				state.curr_action = LocalState.Action.build_village;
-				show_informative_hint(Language.SELECT_BUILD_PLACE, "");
+			public void run() {		
+				if(state.curr_action != LocalState.Action.build_village) {
+					state.curr_action = LocalState.Action.build_village;
+					show_informative_hint(Language.SELECT_BUILD_PLACE, "");
+					btnBuildVillage.set_fill_color(state.my_player_data.getColor());
+					btnBuildStreet.set_fill_color(Widget.getDefaultFillColor());
+					btnBuildCity.set_fill_color(Widget.getDefaultFillColor());
+				}else {
+					show_informative_hint(Language.DO_MOVE, "");
+					state.curr_action = null;
+					btnBuildVillage.set_fill_color(Widget.getDefaultFillColor());
+				}
 			}
 		});
 		widgets.add(btnBuildVillage);
@@ -337,8 +346,17 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildCity.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				state.curr_action = LocalState.Action.build_city;
-				show_informative_hint(Language.SELECT_BUILD_PLACE, "");
+				if(state.curr_action != LocalState.Action.build_city) {
+					state.curr_action = LocalState.Action.build_city;
+					show_informative_hint(Language.SELECT_BUILD_PLACE, "");
+					btnBuildCity.set_fill_color(state.my_player_data.getColor());
+					btnBuildStreet.set_fill_color(Widget.getDefaultFillColor());
+					btnBuildVillage.set_fill_color(Widget.getDefaultFillColor());
+				}else {
+					show_informative_hint(Language.DO_MOVE, "");
+					state.curr_action = null;
+					btnBuildCity.set_fill_color(Widget.getDefaultFillColor());
+				}		
 			}
 		});
 		widgets.add(btnBuildCity);
@@ -347,8 +365,17 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildStreet.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				state.curr_action = LocalState.Action.build_street;
-				show_informative_hint(Language.SELECT_BUILD_PLACE, "");
+				if(state.curr_action != LocalState.Action.build_street) {
+					state.curr_action = LocalState.Action.build_street;
+					show_informative_hint(Language.SELECT_BUILD_PLACE, "");
+					btnBuildStreet.set_fill_color(state.my_player_data.getColor());
+					btnBuildVillage.set_fill_color(Widget.getDefaultFillColor());
+					btnBuildCity.set_fill_color(Widget.getDefaultFillColor());
+				}else {
+					show_informative_hint(Language.DO_MOVE, "");
+					state.curr_action = null;
+					btnBuildStreet.set_fill_color(Widget.getDefaultFillColor());
+				}	
 			}
 		});
 		widgets.add(btnBuildStreet);

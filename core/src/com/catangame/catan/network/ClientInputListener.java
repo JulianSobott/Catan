@@ -21,7 +21,7 @@ public class ClientInputListener extends Thread{
 		while(connectionToServer) {
 			if(input != null) {		
 				try {
-					Packet packet;
+					final Packet packet;
 					packet = (Packet) input.readObject();
 					Gdx.app.postRunnable(new Runnable() {
 						@Override

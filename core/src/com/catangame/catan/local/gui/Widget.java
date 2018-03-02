@@ -77,6 +77,13 @@ public abstract class Widget {
 	public Vector2 get_size() {
 		return new Vector2(bounds.width, bounds.height);
 	}
+	public static Color getDefaultFillColor() {
+		return default_back_color;
+	}
+	public static Color getDefaultOutlineColor() {
+		return default_outline_color;
+	}
+
 	// abstract methods
 
 	public abstract void render(ShapeRenderer sr, SpriteBatch sb);
