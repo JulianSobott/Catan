@@ -257,7 +257,7 @@ public class Framework extends ApplicationAdapter {
 	}
 
 	// creates a new game with this machine as client
-	public boolean init_guest_game(String ip, String name) {
+	public boolean init_guest_game(String ip, String name, Color color) {
 		String serverIp = ip;
 		try {
 			data_connection = new Client(ui, gameLogic, serverIp);
@@ -270,10 +270,7 @@ public class Framework extends ApplicationAdapter {
 		((RemoteCore) core).setClientConnection((Client) data_connection);
 		gameLogic.setCore(core);
 		gameLogic.setUI(ui);
-
-		Color user_color = new Color(((float) Math.random() * 170.f + 50) / 255.f,
-				((float) Math.random() * 170.f + 50.f) / 255.f, ((float) Math.random() * 170.f + 50.f / 255.f), 1.f); // TODO implement color picker
-		core.register_new_user(name, user_color);
+		core.register_new_user(name, color);
 
 		return true;
 	}

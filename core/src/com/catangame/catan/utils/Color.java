@@ -34,6 +34,7 @@ public class Color implements Serializable {
         return new org.jsfml.graphics.Color((int)(r * 255.f), (int)(g * 255.f), (int)(b * 255.f), (int)(a * 255.f));
     }
 
+    public static final Color TRANSPARENT = new Color(0.f, 0.f, 0.f, 0.f);
     public static final Color BLACK = new Color(0.f, 0.f, 0.f, 1.f);
     public static final Color WHITE = new Color(1.f, 1.f, 1.f, 1.f);
     public static final Color BLUE = new Color(0.f, 0.f, 1.f, 1.f);

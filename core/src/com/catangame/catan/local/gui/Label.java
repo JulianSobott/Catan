@@ -29,8 +29,8 @@ public class Label extends Widget {
 		super(bounds);
 		
 		this.text = text;
-		backColor = new Color(0);
-		outlineColor = new Color(0);
+		backColor = Color.TRANSPARENT;
+		outlineColor = Color.TRANSPARENT;
 		textColor = default_text_color;
 		font = default_font;
 		set_position(new Vector2(bounds.x, bounds.y));

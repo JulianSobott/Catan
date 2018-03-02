@@ -204,6 +204,7 @@ public class LocalGameLogic extends GameLogic {
 				}
 			}
 			for (java.util.Map.Entry<Integer, List<Vector2>> ub : state.villages.entrySet()) {
+				sb.setColor(state.player_data.get(ub.getKey()).getColor().gdx());
 				for (Vector2 pos : ub.getValue()) {
 					sb.draw(village_sprite, pos.x - village_sprite.getWidth() * 0.05f,
 							pos.y - village_sprite.getHeight() * 0.06f, village_sprite.getWidth() * 0.1f,
@@ -211,6 +212,7 @@ public class LocalGameLogic extends GameLogic {
 				}
 			}
 			for (java.util.Map.Entry<Integer, List<Vector2>> ub : state.cities.entrySet()) {
+				sb.setColor(state.player_data.get(ub.getKey()).getColor().gdx());
 				for (Vector2 pos : ub.getValue()) {
 					sb.draw(city_Sprite, pos.x - city_Sprite.getWidth() * 0.05f,
 							pos.y - city_Sprite.getHeight() * 0.05f, city_Sprite.getWidth() * 0.1f,

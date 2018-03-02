@@ -138,7 +138,6 @@ public class ColorPicker extends Widget {
 
 	public void set_enabled(boolean enabled) {
 		this.enabled = enabled;
-		this.color = new Color(100, 100, 100, 150);
 	}
 
 	public float get_hue() {

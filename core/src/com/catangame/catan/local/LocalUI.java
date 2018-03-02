@@ -110,7 +110,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private String lbl_value_dice = "0";
 	private String tf_game_name = "";
 	private float color_pkr_hue = (float) Math.random();
-	private Color hostPlayerColor = Color.RED;
+	private Color playerColor = Color.RED;
 	
 	//Menu
 	List<SavedGame> allGames = null;
@@ -131,7 +131,7 @@ public class LocalUI extends UI implements InputProcessor {
 		Widget.set_default_font(std_font);
 		Widget.set_default_back_color(Color.WHITE);
 		Widget.set_default_text_color(new Color(0.08f, 0.2f, 0.2f, 1.f));
-		Widget.set_default_outline_color(new Color(0));
+		Widget.set_default_outline_color(Color.TRANSPARENT);
 		Widget.set_default_outline_highlight_color(new Color(0.8f, 0.55f, 0.8f, 1.f));
 		Widget.set_default_disabled_outline_color(Color.BLACK);
 		Widget.set_default_disabled_background_color(new Color(0.4f, 0.4f, 0.4f, 1.f));
@@ -275,7 +275,7 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(lblResource);
 			i++;
 		}
-		Widget.set_default_outline_color(new Color(0));
+		Widget.set_default_outline_color(Color.TRANSPARENT);
 
 		//player Development Cards
 		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(),
@@ -510,7 +510,7 @@ public class LocalUI extends UI implements InputProcessor {
 						Color c = r.get_color();
 						btnWantedResource.set_text_color(Color.BLACK);
 						btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 0.4f));
-						btnWantedResource.set_outline(new Color(0, 0, 0, 0), 2);
+						btnWantedResource.set_outline(Color.TRANSPARENT, 2);
 					}
 					btnWantedResource.set_click_callback(new Runnable() {
 						@Override
@@ -519,7 +519,7 @@ public class LocalUI extends UI implements InputProcessor {
 								Color c = r.get_color();
 								btnWantedResource.set_fill_color(new Color(c.r, c.g, c.b, 0.4f));
 								btnWantedResource.set_text_color(Color.BLACK);
-								btnWantedResource.set_outline(new Color(0, 0, 0, 0), 2);
+								btnWantedResource.set_outline(Color.TRANSPARENT, 2);
 								tradeDemand.removeWantedResource(r);
 							} else {
 								btnWantedResource.set_fill_color(r.get_color());
@@ -592,7 +592,7 @@ public class LocalUI extends UI implements InputProcessor {
 					} else {
 						Color c = r.get_color();
 						btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 0.39f));
-						btnOfferedResource.set_outline(new Color(0, 0, 0, 0), 2);
+						btnOfferedResource.set_outline(Color.TRANSPARENT, 2);
 					}
 					btnOfferedResource.set_click_callback(new Runnable() {
 						@Override
@@ -601,7 +601,7 @@ public class LocalUI extends UI implements InputProcessor {
 								Color c = r.get_color();
 								btnOfferedResource.set_fill_color(new Color(c.r, c.g, c.b, 0.39f));
 								btnOfferedResource.set_text_color(Color.BLACK);
-								btnOfferedResource.set_outline(new Color(0, 0, 0, 0), 2);
+								btnOfferedResource.set_outline(Color.TRANSPARENT, 2);
 								tradeDemand.removeOfferedResource(r);
 							} else {
 								btnOfferedResource.set_fill_color(r.get_color());
@@ -963,10 +963,10 @@ public class LocalUI extends UI implements InputProcessor {
 			@Override
 			public void run() {
 				color_pkr_hue = cp.get_hue();
-				hostPlayerColor = cp.get_color();
+				playerColor = cp.get_color();
 			}
 		});
-		hostPlayerColor = colorPicker.get_color();
+		playerColor = colorPicker.get_color();
 		widgets.add(colorPicker);
 
 		final Label lblConnecting;
@@ -986,7 +986,7 @@ public class LocalUI extends UI implements InputProcessor {
 					//Entered wrong Ip or server is not online
 					new Thread(new Runnable() {
 						public void run() {
-							if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim())) {
+							if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
 								System.out.println("Not accepted");
 								tfIp.set_outline(Color.RED, 2);
 								lblConnecting.set_text("Entered wrong IP or the server is not online");
@@ -1175,10 +1175,10 @@ public class LocalUI extends UI implements InputProcessor {
 				@Override
 				public void run() {
 					color_pkr_hue = cp.get_hue();
-					hostPlayerColor = cp.get_color();
+					playerColor = cp.get_color();
 				}
 			});
-			hostPlayerColor = colorPicker.get_color();
+			playerColor = colorPicker.get_color();
 			widgets.add(colorPicker);
 
 			final TextField tfRandomHouses = new TextField(new Rectangle(column0 + 200,
@@ -1311,9 +1311,8 @@ public class LocalUI extends UI implements InputProcessor {
 					int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
 							: ((int) Math.random() * 100) + 1;
 					String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
-					Color user_color = hostPlayerColor;
 
-					((LocalCore) core).changePlayerProps(0, user_name, user_color);
+					((LocalCore) core).changePlayerProps(0, user_name, playerColor);
 					((LocalCore) core).create_new_map(islandSize, seed,
 							new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
 							cb_value_is_circle ? GeneratorType.CIRCLE : GeneratorType.HEXAGON, // something
