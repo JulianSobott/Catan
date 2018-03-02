@@ -111,7 +111,9 @@ public class LocalUI extends UI implements InputProcessor {
 	private String tf_game_name = "";
 	private float color_pkr_hue = (float) Math.random();
 	private Color hostPlayerColor = Color.RED;
-
+	
+	//Menu
+	List<SavedGame> allGames = null;
 	//End Screen 
 	private List<Player> player;
 
@@ -1365,7 +1367,8 @@ public class LocalUI extends UI implements InputProcessor {
 
 		if (menuMode == null || menuMode == MenuMode.MENU) {
 			System.out.println(core.getClass().getName());
-			if (core.getClass().getName() == "core.LocalCore") {
+			System.out.println(core.getClass());
+			if (core.getClass().getName() == "com.catangame.catan.core.LocalCore") {
 				Button btnSave = new Button(Language.SAVE.get_text(),
 						new Rectangle(window_size.x / 2 - 150, 200, 300, 50));
 				btnSave.set_click_callback(new Runnable() {
@@ -1377,6 +1380,18 @@ public class LocalUI extends UI implements InputProcessor {
 				});
 				widgets.add(btnSave);
 			}
+			
+			Button btnLobby = new Button(Language.EXIT.get_text(), new Rectangle(window_size.x / 2 - 150, 260, 300, 50));
+			btnLobby.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					mode = GUIMode.LOBBY;
+					state.mode = GameMode.main_menu;
+					framework.reset_game();
+					rebuild_gui();
+				}
+			});
+			widgets.add(btnLobby);
 		} else if (menuMode == MenuMode.SAVE) {
 			LocalFilehandler fileHandler = new LocalFilehandler();
 			final TextField tfGameName = new TextField(new Rectangle(window_size.x - 800, window_size.y - 100, 300, 40));
@@ -1390,29 +1405,41 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(tfGameName);
 			Button btnSaveGame = new Button(Language.SAVE.get_text(),
 					new Rectangle(window_size.x - 400, window_size.y - 100, 150, 40));
+			btnSaveGame.adjustWidth(5);
 			btnSaveGame.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					System.out.println("Button Save");
+					show_informative_hint(Language.SAVED_GAME, "");
 					((LocalCore) core).saveGame(tf_game_name);
+					mode = GUIMode.GAME;
+					menuMode = MenuMode.MENU;
+					rebuild_gui();
 				}
 			});
 			widgets.add(btnSaveGame);
-
-			List<SavedGame> allGames = fileHandler.getAllGames();
-			int i = 0;
-			for (final SavedGame game : allGames) {
-				Button btnGame = new Button(game.getName(),
-						new Rectangle(window_size.x / 2 - 500, 100 + 80 * i, 500, 60));
-				btnGame.set_click_callback(new Runnable() {
-					@Override
-					public void run() {
-						tfGameName.set_text(game.getName());
+			
+			
+			Gdx.app.postRunnable(new Runnable() {
+				@Override
+				public void run() {
+					allGames = fileHandler.getAllGames();	
+					int i = 0;
+					for (final SavedGame game : allGames) {
+						Button btnGame = new Button(game.getName(),
+								new Rectangle(window_size.x / 2 - 500, 100 + 80 * i, 500, 60));
+						btnGame.set_click_callback(new Runnable() {
+							@Override
+							public void run() {
+								tfGameName.set_text(game.getName());
+							}
+						});
+						widgets.add(btnGame);
+						i++;
 					}
-				});
-				widgets.add(btnGame);
-				i++;
-			}
+				}
+			});
+			
+			
 		}
 	}
 

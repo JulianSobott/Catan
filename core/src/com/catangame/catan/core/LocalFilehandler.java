@@ -33,13 +33,14 @@ public class LocalFilehandler {
 	
 	public List<SavedGame> getAllGames() {
 		List<SavedGame> allSavedGames = new ArrayList<SavedGame>();
-		folder = new File(Paths.get("").toAbsolutePath().toString()+ "/saves");
+		System.out.println(new File(Paths.get("").toAbsolutePath().toString()).getParent());
+		folder = new File(new File(Paths.get("").toAbsolutePath().toString()).getParent() + "/saves");
 		for(final File file : folder.listFiles()) {
-			if(!file.isDirectory()) {
-				SavedGame savedGame = loadGame(file);
-				allSavedGames.add(savedGame);
-				if(file.getName().lastIndexOf('.') > 1 && file.getName().substring(file.getName().lastIndexOf('.')) == "cat") {
-					
+			if(!file.isDirectory()) {	
+				System.out.println(file.getName().substring(file.getName().lastIndexOf('.')));
+				if(file.getName().lastIndexOf('.') > 1 && file.getName().substring(file.getName().lastIndexOf('.')).equals(".catan")) {
+					SavedGame savedGame = loadGame(file);
+					allSavedGames.add(savedGame);
 				}		
 			}
 		}
@@ -48,7 +49,7 @@ public class LocalFilehandler {
 	
 	public void saveGame(SavedGame game) {
 		try {
-			outputStream = new FileOutputStream("saves/"+game.getName()+".catan");
+			outputStream = new FileOutputStream(new File(Paths.get("").toAbsolutePath().toString()).getParent() + "/saves/"+game.getName()+".catan");
 			output = new ObjectOutputStream(outputStream);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();

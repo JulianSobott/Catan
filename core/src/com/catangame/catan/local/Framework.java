@@ -277,4 +277,9 @@ public class Framework extends ApplicationAdapter {
 
 		return true;
 	}
+	
+	public void reset_game() {
+		data_connection.closeAllResources();
+		data_connection = null;
+	}
 }

@@ -43,6 +43,7 @@ public enum Language {
 	TRADE("Trade", "Handeln"), 
 	SAVE("Save game", "Spiel speichern"), 
 	DEVELOPMENT_CARD("Development card", "Entwicklungskarte"),
+	SAVED_GAME("Successfully saved game", "Erfolgreich Spiel gespeichert"),
 	//After Game
 	WINNER("{} won this game", "{} hat gewonnen");
 
