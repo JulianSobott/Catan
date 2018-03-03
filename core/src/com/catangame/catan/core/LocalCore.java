@@ -550,19 +550,19 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			switch (card) {
 			case FREE_RESOURCES:
-
+				uis.get(id).showDevelopmentCardWindow(card);
 				break;
 			case KNIGHT:
-
+				uis.get(id).showDevelopmentCardWindow(card);
 				break;
 			case MONOPOL:
-
+				uis.get(id).showDevelopmentCardWindow(card);
 				break;
 			case FREE_STREETS:
-
+				uis.get(id).showDevelopmentCardWindow(card);
 				break;
 			case POINT:
-
+				uis.get(id).showDevelopmentCardWindow(card);
 				break;
 			default:
 				System.err.println("Unknown Card reached core:" + card);

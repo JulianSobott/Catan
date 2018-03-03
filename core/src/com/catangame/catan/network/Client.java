@@ -119,6 +119,9 @@ public class Client extends Networkmanager {
 		case END_SCREEN:
 			ui.showEndScreen(0, ((Packet.PlayerList) packet.data).getPlayer()); //TODO get Winner ID from Core or remove
 			break;
+		case SHOW_DEVELOPMENTCARD_WINDOW:
+			ui.showDevelopmentCardWindow(((Packet.Developmentcard) packet.data).getCard());
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}

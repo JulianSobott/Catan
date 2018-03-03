@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.jsfml.graphics.FloatRect;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -42,12 +44,12 @@ import com.catangame.catan.utils.FontMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
-		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, END_SCREEN;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN;
 	}
 
 	//TODO Either implement this modes or delete this enum!!
 	enum WindowMode {
-		TRADE_VENDOR, TRADE_DEMANDER, SHOW_DEV_CARDS;
+		TRADE_VENDOR, TRADE_DEMANDER, SHOW_DEV_CARDS, DEV_SHOW_FREE_RESOURCES;
 	}
 
 	enum MenuMode {
@@ -112,6 +114,8 @@ public class LocalUI extends UI implements InputProcessor {
 	private float color_pkr_hue = (float) Math.random();
 	private Color playerColor = Color.RED;
 	
+	//Developmentcards
+	private DevelopmentCard currentCard;
 	//Menu
 	List<SavedGame> allGames = null;
 	//End Screen 
@@ -165,7 +169,9 @@ public class LocalUI extends UI implements InputProcessor {
 			build__demander_trade_window();
 		} else if (mode == GUIMode.TRADE_VENDOR) {
 			build_vendor_trade_window();
-		} else if (mode == GUIMode.LOAD) {
+		}else if(mode == GUIMode.DEV_CARD) {
+			buildDevCardWindow();
+		}else if (mode == GUIMode.LOAD) {
 			build_load_window();
 		} else if (mode == GUIMode.MENU) {
 			build_menu();
@@ -302,6 +308,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 					@Override
 					public void run() {
+						showDevelopmentCards = false;
 						core.playCard(id, card);
 					}
 				});
@@ -437,19 +444,7 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	public void build__demander_trade_window() {
-		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
-		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
-		widgets.add(lblWindow);
-		Button btnClose = new Button("X", new Rectangle(window_size.x - 70, 25, 40, 40));
-		btnClose.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				mode = GUIMode.GAME;
-				core.closeTrade();
-				rebuild_gui();
-			}
-		});
-		widgets.add(btnClose);
+		buildIngameWindow();
 		if (tradeDemand.getVendor() == null) {
 			Button btnAskBank = new Button("Bank", new Rectangle(200, window_size.y / 4, 200, 100));
 			btnAskBank.set_click_callback(new Runnable() {
@@ -694,18 +689,7 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	public void build_vendor_trade_window() {
-		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
-		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
-		widgets.add(lblWindow);
-		Button btnClose = new Button("X", new Rectangle(window_size.x - 70, 25, 40, 40));
-		btnClose.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				mode = GUIMode.GAME;
-				rebuild_gui();
-			}
-		});
-		widgets.add(btnClose);
+		buildIngameWindow();
 
 		int i = 0;
 		int btnWidth = 50;
@@ -921,6 +905,47 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnSendOffer);
+	}
+	
+	public void buildDevCardWindow() {
+		buildIngameWindow();
+		switch(this.currentCard) {
+		case FREE_RESOURCES:
+			int i = 0;
+			for(Resource r : Resource.values()) {
+				if(r != Resource.OCEAN) {
+					Button btnResource = new Button(Language.valueOf(r.name()).get_text(), new Rectangle(100, 100 + i*100, 100, 100));
+					btnResource.set_fill_color(r.get_color());
+					btnResource.set_click_callback(new Runnable() {
+						@Override
+						public void run() {
+							btnResource.set_outline(Color.GREEN, 3.f);
+						}
+					});
+					widgets.add(btnResource);
+					i++;
+				}
+			}
+			break;
+		default:
+			System.err.println("Unkown Card played");
+			break;
+		}
+	}
+
+	private void buildIngameWindow() {
+		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
+		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
+		widgets.add(lblWindow);
+		Button btnClose = new Button("X", new Rectangle(window_size.x - 70, 25, 40, 40));
+		btnClose.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				mode = GUIMode.GAME;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnClose);
 	}
 
 	public void build_join_menu() {
@@ -1734,6 +1759,12 @@ public class LocalUI extends UI implements InputProcessor {
 		state.mode = GameMode.end_screen;
 		mode = GUIMode.END_SCREEN;
 		rebuild_gui();
+	}
+
+	@Override
+	public void showDevelopmentCardWindow(DevelopmentCard card) {
+		this.currentCard = card;
+		buildDevCardWindow();
 	}
 
 }
