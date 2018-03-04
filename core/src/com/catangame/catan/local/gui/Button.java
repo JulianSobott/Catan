@@ -2,9 +2,12 @@ package com.catangame.catan.local.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -23,10 +26,12 @@ public class Button extends Widget {
 	private Runnable click_event;
 	private boolean enabled = true;
 	private boolean selected = false; //For the trading window
+	
+	private Texture texture = null;
 
 	public Button(String text, Rectangle bounds) {
 		super(bounds);
-
+		
 		this.text = text;
 		backColor = default_back_color;
 		disabledBackColor = default_disabled_background_color;
@@ -35,16 +40,37 @@ public class Button extends Widget {
 		font = default_font;
 		set_position(new Vector2(bounds.x, bounds.y));
 	}
+	public Button(String text, Rectangle bounds, Texture texture) {
+		super(bounds);
+		
+		this.text = text;
+		backColor = default_back_color;
+		disabledBackColor = default_disabled_background_color;
+		outlineColor = default_outline_color;
+		textColor = default_text_color;
+		font = default_font;
+		set_position(new Vector2(bounds.x, bounds.y));
+		this.texture = texture;
+	}
 
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
-		sr.begin(ShapeType.Filled);
-		if (enabled)
-			sr.setColor(backColor.gdx());
-		else
-			sr.setColor(disabledBackColor.gdx());
-		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-		sr.end();
+		if(texture == null) {
+			sr.begin(ShapeType.Filled);
+			if (enabled)
+				sr.setColor(backColor.gdx());
+			else
+				sr.setColor(disabledBackColor.gdx());
+			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+			sr.end();
+		}else {
+			Sprite sprite = new Sprite(texture);
+			sb.begin();
+			sb.draw(sprite, bounds.x, bounds.y, bounds.width, bounds.height);
+			sb.end();
+		}
+		
+		
 
 		if (outlineThickness > 0) {
 			sr.begin(ShapeType.Line);
