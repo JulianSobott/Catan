@@ -961,31 +961,21 @@ public class LocalUI extends UI implements InputProcessor {
 			
 			break;
 		case MONOPOL:
+			state.devCard = new DevCard(DevCard.Type.MONOPOL, new DevCard.Monopol());
 			i = 0;
 			for(Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
 					String str = Language.valueOf(r.name()).get_text() + ": ";
-					Label btnResource = new Label(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
+					Button btnResource = new Button(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
 					btnResource.set_fill_color(r.get_color());
-					widgets.add(btnResource);
-					Button btnAddresource = new Button("+", new Rectangle(320, 100 + i*100, 100, 90));
-					btnAddresource.set_click_callback(new Runnable() {
+					btnResource.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
-							
-							state.my_player_data.add_resource(r, 1);
-							Gdx.app.postRunnable(new Runnable() {
-								@Override
-								public void run() {
-									btnResource.set_text(str + state.my_player_data.get_resources(r));	
-								}
-							});
-							mode = GUIMode.GAME;
-							state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
-							rebuild_gui();
+							((DevCard.Monopol)state.devCard.data).resource = r;
+							core.playCard(id, state.devCard);							
 						}
 					});
-					widgets.add(btnAddresource);
+					widgets.add(btnResource);
 					i++;
 				}
 			}

@@ -53,7 +53,7 @@ public class DevCard implements Serializable{
 	}
 	
 	public static class Monopol implements Serializable{
-		
+		public Resource resource;
 	}
 	
 }

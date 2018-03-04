@@ -561,7 +561,15 @@ public class LocalCore extends Core {
 				
 				break;
 			case MONOPOL:
-				
+				int addedResources = 0;
+				for(Player p : player) {
+					addedResources += p.get_resources(((DevCard.Monopol)card.data).resource);
+					p.take_resource(((DevCard.Monopol)card.data).resource, p.get_resources(((DevCard.Monopol)card.data).resource)); //Take all
+				}
+				player.get(id).add_resource(((DevCard.Monopol)card.data).resource, addedResources);
+				for(UI ui : uis) {
+					ui.update_player_data(player.get(ui.getID()));
+				}
 				break;
 			case FREE_STREETS:
 			
