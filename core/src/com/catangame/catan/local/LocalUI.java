@@ -13,6 +13,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
+import com.catangame.catan.utils.BoxShadow;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -210,6 +211,7 @@ public class LocalUI extends UI implements InputProcessor {
 				build_join_menu();
 			}
 		});
+		btn.addBoxShadow(new BoxShadow(new Color(126, 71, 20, 90), 0, 2, 2 , new BoxShadow(new Color(0, 0, 20, 90), 2, 0, 0 )));
 		widgets.add(btn);
 
 		btn = new Button(Language.LOAD_GAME.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
