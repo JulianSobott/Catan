@@ -1,6 +1,7 @@
 package com.catangame.catan.superClasses;
 
 import com.catangame.catan.core.Player;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Language;
 import java.util.List;
@@ -40,5 +41,5 @@ public abstract class UI {
 	public abstract void showAllPossibleNames(List<Player> player);
 	public abstract void showEndScreen(int winnerID, List<Player> player);
 
-	public abstract void showDevelopmentCardWindow(DevelopmentCard card);
+	public abstract void showDevelopmentCardWindow(DevCard card);
 }

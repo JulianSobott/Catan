@@ -4,6 +4,7 @@ import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
 
 import com.catangame.catan.core.Building.Type;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
@@ -11,6 +12,7 @@ import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
 import com.catangame.catan.superClasses.UI;
 import com.catangame.catan.core.Map.GeneratorType;
+import com.catangame.catan.core.Player;
 
 public class RemoteCore extends Core {
 	Client client;
@@ -79,7 +81,7 @@ public class RemoteCore extends Core {
 	}
 
 	@Override
-	public void playCard(int id, DevelopmentCard card) {
+	public void playCard(int id, DevCard card) {
 		this.client.sendMessage(new Packet(Command.PLAY_DEVELOPMENTCARD, new Packet.Developmentcard(card)));
 	}
 

@@ -14,6 +14,7 @@ import com.catangame.catan.math.Vector3i;
 
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.core.Map.GeneratorType;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Field;
 import com.catangame.catan.data.Resource;
@@ -534,7 +535,7 @@ public class LocalCore extends Core {
 			if (player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1
 					&& player.get(id).get_resources(Resource.WOOL) >= 1) {
 				Random rand = new Random();
-				DevelopmentCard card = DevelopmentCard.values()[rand.nextInt(DevelopmentCard.values().length - 1)];
+				DevCard card = new DevCard(DevCard.Type.values()[rand.nextInt(DevelopmentCard.values().length )]);
 				player.get(id).addDevelopmentCard(card);
 
 				player.get(id).take_resource(Resource.GRAIN, 1);
@@ -546,20 +547,24 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void playCard(int id, DevelopmentCard card) {
+	public void playCard(int id, DevCard card) {
 		if (id == current_player) {
-			switch (card) {
+			player.get(id).developmentCards.remove(card.type);
+			switch (card.type) {
 			case FREE_RESOURCES:
-				uis.get(id).showDevelopmentCardWindow(card);
+				for(java.util.Map.Entry<Resource, Integer> entry : ((DevCard.FreeResources) card.data).newResources.entrySet()) {
+					player.get(id).add_resource(entry.getKey(), entry.getValue());
+				}
+				uis.get(id).update_player_data(player.get(id));
 				break;
 			case KNIGHT:
-				uis.get(id).showDevelopmentCardWindow(card);
+				
 				break;
 			case MONOPOL:
-				uis.get(id).showDevelopmentCardWindow(card);
+				
 				break;
 			case FREE_STREETS:
-				uis.get(id).showDevelopmentCardWindow(card);
+			
 				break;
 			case POINT:
 				player.get(id).setScore(player.get(id).getScore() + 1);
@@ -570,12 +575,6 @@ public class LocalCore extends Core {
 				System.err.println("Unknown Card reached core:" + card);
 			}
 		}
-	}
-
-	@Override
-	public void updatePlayerData(int id, Player my_player_data) {
-		player.get(id).developmentCards = my_player_data.getDevelopmentCards();
-		player.get(id).resources = my_player_data.get_all_resources();
 	}
 
 }

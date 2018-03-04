@@ -26,6 +26,7 @@ import com.catangame.catan.core.LocalFilehandler;
 import com.catangame.catan.core.Map;
 import com.catangame.catan.core.Player;
 import com.catangame.catan.core.Map.GeneratorType;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
@@ -303,15 +304,15 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnShowDevelopmentCards);
 		if (showDevelopmentCards) {
 			i = 0;
-			for (final DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
-				Button btnCard = new Button(Language.valueOf(card.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
+			for (final DevCard card : state.my_player_data.getDevelopmentCards()) {
+				Button btnCard = new Button(Language.valueOf(card.type.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
 				btnCard.set_fill_color(new Color(0.2f, 0.3f, 0.67f, 0.9f));
 				btnCard.set_click_callback(new Runnable() {
 					
 					@Override
 					public void run() {
 						showDevelopmentCards = false;
-						core.playCard(id, card);
+						showDevelopmentCardWindow(card);
 					}
 				});
 				widgets.add(btnCard);
@@ -911,32 +912,39 @@ public class LocalUI extends UI implements InputProcessor {
 	
 	public void buildDevCardWindow() {
 		buildIngameWindow();
-		switch(this.currentCard) {
+		
+		switch(state.devCard.type) {
 		case FREE_RESOURCES:
-			int i = 0;
-			state.remainingFreeResources = 2;
+			state.devCard = new DevCard(DevCard.Type.FREE_RESOURCES, new DevCard.FreeResources());
+			int i = 0;		
 			for(Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
 					String str = Language.valueOf(r.name()).get_text() + ": ";
-					Label lblResource = new Label(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
+					int valResource;
+					if(((DevCard.FreeResources) state.devCard.data).newResources.containsKey(r))
+						valResource = ((DevCard.FreeResources) state.devCard.data).newResources.get(r) + state.my_player_data.get_resources(r);
+					else
+						valResource = state.my_player_data.get_resources(r);
+					Label lblResource = new Label(str + valResource, new Rectangle(100, 100 + i*100, 200, 90));
 					lblResource.set_fill_color(r.get_color());
 					widgets.add(lblResource);
 					Button btnAddresource = new Button("+", new Rectangle(320, 100 + i*100, 100, 90));
 					btnAddresource.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
-							
-							state.my_player_data.add_resource(r, 1);
+							((DevCard.FreeResources)state.devCard.data).addResource(r);
 							Gdx.app.postRunnable(new Runnable() {
 								@Override
 								public void run() {
-									lblResource.set_text(str + state.my_player_data.get_resources(r));	
+									int valResource = ((DevCard.FreeResources) state.devCard.data).newResources.get(r) + state.my_player_data.get_resources(r);
+									lblResource.set_text(str + valResource);	
 								}
 							});
-							state.remainingFreeResources--;
-							if(state.remainingFreeResources <= 0) {
+							((DevCard.FreeResources)state.devCard.data).remainedFreeresources--;
+							if(((DevCard.FreeResources)state.devCard.data).remainedFreeresources <= 0) {
 								mode = GUIMode.GAME;
-								state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
+								state.my_player_data.getDevelopmentCards().remove(DevCard.Type.FREE_RESOURCES);
+								core.playCard(id, state.devCard);
 								rebuild_gui();
 							}
 						}
@@ -972,12 +980,9 @@ public class LocalUI extends UI implements InputProcessor {
 									btnResource.set_text(str + state.my_player_data.get_resources(r));	
 								}
 							});
-							state.remainingFreeResources--;
-							if(state.remainingFreeResources <= 0) {
-								mode = GUIMode.GAME;
-								state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
-								rebuild_gui();
-							}
+							mode = GUIMode.GAME;
+							state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
+							rebuild_gui();
 						}
 					});
 					widgets.add(btnAddresource);
@@ -1823,8 +1828,8 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	@Override
-	public void showDevelopmentCardWindow(DevelopmentCard card) {
-		this.currentCard = card;
+	public void showDevelopmentCardWindow(DevCard card) {
+		state.devCard = card;
 		showDevelopmentCards = false;
 		mode = GUIMode.DEV_CARD;
 		rebuild_gui();

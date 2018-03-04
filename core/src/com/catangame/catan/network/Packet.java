@@ -11,6 +11,7 @@ import com.catangame.catan.math.Vector3i;
 
 import com.catangame.catan.core.Building;
 import com.catangame.catan.core.Player;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Field;
 import com.catangame.catan.data.Resource;
@@ -219,11 +220,11 @@ public class Packet implements Serializable {
 	}
 	
 	public static class Developmentcard implements Serializable{
-		private DevelopmentCard card;
-		public Developmentcard(DevelopmentCard card) {
-			this.card = card;
+		private DevCard card;
+		public Developmentcard(DevCard card2) {
+			this.card = card2;
 		}
-		public DevelopmentCard getCard() {
+		public DevCard getCard() {
 			return this.card;
 		}
 	}

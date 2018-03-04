@@ -1,6 +1,7 @@
 package com.catangame.catan.network;
 
 import com.catangame.catan.core.Player;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
@@ -98,7 +99,7 @@ public class RemoteUI extends UI {
 	}
 
 	@Override
-	public void showDevelopmentCardWindow(DevelopmentCard card) {
+	public void showDevelopmentCardWindow(DevCard card) {
 		server.message_to_client(id, new Packet(Command.SHOW_DEVELOPMENTCARD_WINDOW, new Packet.Developmentcard(card)));
 	}
 
