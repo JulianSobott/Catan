@@ -100,6 +100,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private TradeOffer tradeOffer;
 	private List<TradeOffer> allTradeOffer = new ArrayList<TradeOffer>();
 
+	//Lobby
 	private String serverIP = "";
 	private String tf_value_ip = "127.0.0.1";
 	private String tf_value_name = "Anonymous";
@@ -288,6 +289,7 @@ public class LocalUI extends UI implements InputProcessor {
 				new Rectangle(5, 100, 220, 50));
 		btnShowDevelopmentCards.adjustWidth(5);
 		btnShowDevelopmentCards.set_enabled(state.isCurrentPlayer);
+		btnShowDevelopmentCards.adjustWidth(3f);
 		btnShowDevelopmentCards.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -302,10 +304,10 @@ public class LocalUI extends UI implements InputProcessor {
 		if (showDevelopmentCards) {
 			i = 0;
 			for (final DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
-				Button btnCard = new Button(card.toString(), new Rectangle(205, 100 + 75 * i, 300, 70));
+				Button btnCard = new Button(Language.valueOf(card.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
 				btnCard.set_fill_color(new Color(0.2f, 0.3f, 0.67f, 0.9f));
 				btnCard.set_click_callback(new Runnable() {
-
+					
 					@Override
 					public void run() {
 						showDevelopmentCards = false;
@@ -912,20 +914,79 @@ public class LocalUI extends UI implements InputProcessor {
 		switch(this.currentCard) {
 		case FREE_RESOURCES:
 			int i = 0;
+			state.remainingFreeResources = 2;
 			for(Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
-					Button btnResource = new Button(Language.valueOf(r.name()).get_text(), new Rectangle(100, 100 + i*100, 100, 100));
-					btnResource.set_fill_color(r.get_color());
-					btnResource.set_click_callback(new Runnable() {
+					String str = Language.valueOf(r.name()).get_text() + ": ";
+					Label lblResource = new Label(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
+					lblResource.set_fill_color(r.get_color());
+					widgets.add(lblResource);
+					Button btnAddresource = new Button("+", new Rectangle(320, 100 + i*100, 100, 90));
+					btnAddresource.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
-							btnResource.set_outline(Color.GREEN, 3.f);
+							
+							state.my_player_data.add_resource(r, 1);
+							Gdx.app.postRunnable(new Runnable() {
+								@Override
+								public void run() {
+									lblResource.set_text(str + state.my_player_data.get_resources(r));	
+								}
+							});
+							state.remainingFreeResources--;
+							if(state.remainingFreeResources <= 0) {
+								mode = GUIMode.GAME;
+								state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
+								rebuild_gui();
+							}
 						}
 					});
-					widgets.add(btnResource);
+					widgets.add(btnAddresource);
 					i++;
 				}
 			}
+			break;
+		case FREE_STREETS:
+			
+			break;
+		case KNIGHT:
+			
+			break;
+		case MONOPOL:
+			i = 0;
+			for(Resource r : Resource.values()) {
+				if(r != Resource.OCEAN) {
+					String str = Language.valueOf(r.name()).get_text() + ": ";
+					Label btnResource = new Label(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
+					btnResource.set_fill_color(r.get_color());
+					widgets.add(btnResource);
+					Button btnAddresource = new Button("+", new Rectangle(320, 100 + i*100, 100, 90));
+					btnAddresource.set_click_callback(new Runnable() {
+						@Override
+						public void run() {
+							
+							state.my_player_data.add_resource(r, 1);
+							Gdx.app.postRunnable(new Runnable() {
+								@Override
+								public void run() {
+									btnResource.set_text(str + state.my_player_data.get_resources(r));	
+								}
+							});
+							state.remainingFreeResources--;
+							if(state.remainingFreeResources <= 0) {
+								mode = GUIMode.GAME;
+								state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
+								rebuild_gui();
+							}
+						}
+					});
+					widgets.add(btnAddresource);
+					i++;
+				}
+			}
+			break;
+		case POINT:
+			
 			break;
 		default:
 			System.err.println("Unkown Card played");
@@ -1764,7 +1825,9 @@ public class LocalUI extends UI implements InputProcessor {
 	@Override
 	public void showDevelopmentCardWindow(DevelopmentCard card) {
 		this.currentCard = card;
-		buildDevCardWindow();
+		showDevelopmentCards = false;
+		mode = GUIMode.DEV_CARD;
+		rebuild_gui();
 	}
 
 }

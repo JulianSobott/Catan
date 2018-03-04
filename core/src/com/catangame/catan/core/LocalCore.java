@@ -150,11 +150,12 @@ public class LocalCore extends Core {
 		for (UI ui : uis) {
 			ui.build_game_menu();
 			ui.set_current_player(player.get(current_player).getName());
+			ui.update_player_data(player.get(ui.getID()));
 		}
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
 		}
-		uis.get(0).update_player_data(player.get(0));
+		//uis.get(0).update_player_data(player.get(0));
 		//		buildRequest(0, Type.VILLAGE, new Vector3i(0,0,1));
 	}
 
@@ -529,7 +530,6 @@ public class LocalCore extends Core {
 
 	@Override
 	public void buyDevelopmentCard(int id) {
-		//TODO VAlidate if user is allowed and have enough resources
 		if (id == current_player) {
 			if (player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1
 					&& player.get(id).get_resources(Resource.WOOL) >= 1) {

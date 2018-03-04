@@ -44,6 +44,11 @@ public enum Language {
 	SAVE("Save game", "Spiel speichern"), 
 	DEVELOPMENT_CARD("Development card", "Entwicklungskarte"),
 	SAVED_GAME("Successfully saved game", "Erfolgreich Spiel gespeichert"),
+	KNIGHT("Knight", "Ritter"), 
+	POINT("Point", "Punkt"),
+	FREE_RESOURCES("2 free Resources", "2 kostenlose Resourcen"),
+	FREE_STREETS("2 free streets","2 kostenlose Straﬂen"), 
+	MONOPOL("Monopol", "Monopol"),
 	//After Game
 	WINNER("{} won this game", "{} hat gewonnen");
 
