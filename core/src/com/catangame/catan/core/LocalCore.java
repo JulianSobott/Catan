@@ -562,12 +562,20 @@ public class LocalCore extends Core {
 				uis.get(id).showDevelopmentCardWindow(card);
 				break;
 			case POINT:
-				uis.get(id).showDevelopmentCardWindow(card);
+				player.get(id).setScore(player.get(id).getScore() + 1);
+				player.get(id).developmentCards.remove(DevelopmentCard.POINT);
+				update_scoreboard_data();
 				break;
 			default:
 				System.err.println("Unknown Card reached core:" + card);
 			}
 		}
+	}
+
+	@Override
+	public void updatePlayerData(int id, Player my_player_data) {
+		player.get(id).developmentCards = my_player_data.getDevelopmentCards();
+		player.get(id).resources = my_player_data.get_all_resources();
 	}
 
 }
