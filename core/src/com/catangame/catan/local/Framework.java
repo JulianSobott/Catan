@@ -44,6 +44,7 @@ public class Framework extends ApplicationAdapter {
 	DeviceMode deviceMode;
 	public static boolean usingGdx = true;// wether libgdx or sfml rendering backend is used
 	public static Color clearColor = new Color(0.04f, 0.57f, 1, 1);
+	public static Vector2 initialScreenSize = new Vector2(1200, 800);
 
 	// view & camera
 	private Vector2 windowSize = new Vector2();

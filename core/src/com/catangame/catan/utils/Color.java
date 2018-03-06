@@ -30,6 +30,10 @@ public class Color implements Serializable {
         return new com.badlogic.gdx.graphics.Color(r, g, b, a);
     }
 
+    public java.awt.Color awt() {
+        return new java.awt.Color(r, g, b, a);
+    }
+
     public org.jsfml.graphics.Color sfml() {
         return new org.jsfml.graphics.Color((int)(r * 255.f), (int)(g * 255.f), (int)(b * 255.f), (int)(a * 255.f));
     }
