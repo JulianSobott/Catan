@@ -18,6 +18,7 @@ import com.catangame.catan.core.Map.GeneratorType;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
+import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.data.SavedGame;
 import com.catangame.catan.local.LocalPlayer;
@@ -614,7 +615,25 @@ public class LocalCore extends Core {
 				}
 				break;
 			case FREE_STREETS:
-			
+				Vector3i position = ((DevCard.FreeStreets) card.data).places.get(((DevCard.FreeStreets) card.data).places.size()-1);
+				if (map.is_street_place_available(position)	&& owns_nearby_building(player.get(id), map.get_nearby_building_sites(position))) {
+					map.build_street(position);
+					player.get(id).buildings.add(new Building(Building.Type.STREET, position));
+					for (GameLogic logic : logics) {
+						logic.add_building(id, new Building(Building.Type.STREET, position));
+					}
+				}else {
+					((DevCard.FreeStreets) card.data).remainedFreeStreets++;
+				}
+				player.get(id).update_score();
+				update_scoreboard_data();
+				uis.get(id).update_player_data(player.get(id));
+				if(((DevCard.FreeStreets) card.data).remainedFreeStreets != 0) {
+					uis.get(id).showDevelopmentCardWindow(card);
+				}else {
+					uis.get(id).show_informative_hint(Language.DO_MOVE, "");
+				}
+					
 				break;
 			case POINT:
 				player.get(id).setScore(player.get(id).getScore() + 1);

@@ -418,34 +418,4 @@ public class Map {
 		this.fields = fields;
 	}
 
-	public LinkedList<DevCard> createDevCardsStack(int seed) {
-		Random rand = new Random(seed);
-		List<DevCard> sortedDevCardStack = new ArrayList<DevCard>();
-		LinkedList<DevCard> devCardStack = new LinkedList<DevCard>();
-		int numCards = 50;
-		DevCard card;
-		double ratioSum = 0;
-		for(DevCardType type : DevCardType.values()) {
-			ratioSum += type.getRatio();
-		}
-		for(DevCardType type : DevCardType.values()) {
-			int num = (int) (numCards * type.getRatio() / ratioSum);
-			for(int i = 0; i < num; i++) {
-				card = new DevCard(type);
-				sortedDevCardStack.add(card);
-			}
-		}
-		//Shuffle Stack
-		for(int i = 0; i < numCards; i++) {
-			int idx = rand.nextInt(sortedDevCardStack.size());
-			devCardStack.add(sortedDevCardStack.get(idx));
-			sortedDevCardStack.remove(idx);
-		}
-		//TODO make unlimited Cards!?
-		for(int i = 0; i < 100; i++) {
-			card = new DevCard(DevCardType.KNIGHT);
-			sortedDevCardStack.add(card);
-		}
-		return devCardStack;
-	}
 }

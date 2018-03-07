@@ -30,6 +30,7 @@ public enum Language {
 	BUILD_VILLAGE("Village", "Siedlung"),
 	BUILD_CITY("City", "Stadt"),
 	BUILD_STREET("Street", "Stra\u00DFe"),
+	BUILD_FREE_STREETS("Build {} free Streets", "Baue {} kostenlose Straﬂen"),
 	DO_MOVE("Make your move", "Mache deinen Zug"),
 	OTHERS_MOVE("It's {}s move", "{} ist am Zug"),
 	SELECT_BUILD_PLACE("Select a building site", "W\u00E4hle den Bauplatz aus"),
@@ -50,7 +51,7 @@ public enum Language {
 	FREE_STREETS("2 free streets","2 kostenlose Straﬂen"), 
 	MONOPOL("Monopol", "Monopol"),
 	//After Game
-	WINNER("{} won this game", "{} hat gewonnen");
+	WINNER("{} won this game", "{} hat gewonnen"), ;
 
 
 	

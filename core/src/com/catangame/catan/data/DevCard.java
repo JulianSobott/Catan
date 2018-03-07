@@ -1,8 +1,12 @@
 package com.catangame.catan.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.catangame.catan.math.Vector3i;
 
 public class DevCard implements Serializable{
 	public enum Type{
@@ -52,7 +56,11 @@ public class DevCard implements Serializable{
 	}
 	
 	public static class FreeStreets implements Serializable{
-		
+		public int remainedFreeStreets = 2;
+		public List<Vector3i> places = new ArrayList<Vector3i>();
+		public void addPosition(Vector3i pos) {
+			places.add(pos);
+		}
 	}
 	
 	public static class Monopol implements Serializable{

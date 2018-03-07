@@ -911,11 +911,10 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnSendOffer);
 	}
 	
-	public void buildDevCardWindow() {
-		buildIngameWindow();
-		
+	public void buildDevCardWindow() {		
 		switch(state.devCard.type) {
 		case FREE_RESOURCES:
+			buildIngameWindow();
 			state.devCard = new DevCard(DevCardType.FREE_RESOURCES, new DevCard.FreeResources());
 			int i = 0;		
 			for(Resource r : Resource.values()) {
@@ -956,12 +955,20 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 			break;
 		case FREE_STREETS:
+			if(state.devCard.data == null) {
+				state.devCard = new DevCard(DevCardType.FREE_STREETS, new DevCard.FreeStreets());
+			}	
+			mode = GUIMode.GAME;
+			show_informative_hint(Language.BUILD_FREE_STREETS, Integer.toString(((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets));
+			rebuild_gui();
 			
+			//state.devCard ;
 			break;
 		case KNIGHT:
 			
 			break;
 		case MONOPOL:
+			buildIngameWindow();
 			state.devCard = new DevCard(DevCardType.MONOPOL, new DevCard.Monopol());
 			i = 0;
 			for(Resource r : Resource.values()) {
@@ -982,12 +989,14 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 			break;
 		case POINT:
-			
+			mode = GUIMode.GAME;
+			core.playCard(id, state.devCard);	
 			break;
 		default:
 			System.err.println("Unkown Card played");
 			break;
 		}
+		
 	}
 
 	private void buildIngameWindow() {
