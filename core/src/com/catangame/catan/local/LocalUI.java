@@ -39,6 +39,7 @@ import com.catangame.catan.local.gui.Button;
 import com.catangame.catan.local.gui.Checkbox;
 import com.catangame.catan.local.gui.ColorPicker;
 import com.catangame.catan.local.gui.Label;
+import com.catangame.catan.local.gui.ScrollContainer;
 import com.catangame.catan.local.gui.TextField;
 import com.catangame.catan.local.gui.Widget;
 import com.catangame.catan.superClasses.Core;
@@ -97,6 +98,8 @@ public class LocalUI extends UI implements InputProcessor {
 	private Label lblOreCards;
 	private Label lblInfo;
 	private Button btnTrade;
+	
+	public ScrollContainer sc;
 
 	//Trading
 	private TradeDemand tradeDemand;
@@ -123,6 +126,7 @@ public class LocalUI extends UI implements InputProcessor {
 	//End Screen 
 	private List<Player> player;
 
+	public int scrolled = 0;
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
 		this.framework = framework;
@@ -305,7 +309,12 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnShowDevelopmentCards);
 		if (showDevelopmentCards) {
 			i = 0;
+			sc = new ScrollContainer(this);
 			for (final DevCard card : state.my_player_data.getDevelopmentCards()) {
+				if(scrolled > 4)
+					scrolled = 4;
+				if(scrolled < -4)
+					scrolled = -4;
 				Button btnCard = new Button(Language.valueOf(card.type.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
 				btnCard.set_fill_color(new Color(0.2f, 0.3f, 0.67f, 0.9f));
 				btnCard.set_click_callback(new Runnable() {
@@ -316,9 +325,12 @@ public class LocalUI extends UI implements InputProcessor {
 						showDevelopmentCardWindow(card);
 					}
 				});
-				widgets.add(btnCard);
+				widgets.add(sc);
+				sc.addWidget(btnCard);
 				i++;
 			}
+			sc.calcBounds();
+			
 		}
 
 		// finished move button
@@ -677,6 +689,7 @@ public class LocalUI extends UI implements InputProcessor {
 				widgets.add(btnReject);
 				i++;
 			}
+			sc = new ScrollContainer(new Rectangle(window_size.x / 2, 200 , 300, (110 + 20) * i));
 			//Button Send demand
 			Button btnSendDemand = new Button("Send demand",
 					new Rectangle(window_size.x - 300, window_size.y - 100, 200, 70));
@@ -1642,6 +1655,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
+		sc.scrolled(amount);
 		return false;
 	}
 

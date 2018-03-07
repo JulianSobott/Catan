@@ -632,8 +632,7 @@ public class LocalCore extends Core {
 					uis.get(id).showDevelopmentCardWindow(card);
 				}else {
 					uis.get(id).show_informative_hint(Language.DO_MOVE, "");
-				}
-					
+				}		
 				break;
 			case POINT:
 				player.get(id).setScore(player.get(id).getScore() + 1);

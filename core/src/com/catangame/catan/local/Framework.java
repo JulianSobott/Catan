@@ -105,7 +105,14 @@ public class Framework extends ApplicationAdapter {
 		multiplexer.addProcessor(ui);
 		if (deviceMode == DeviceMode.DESKTOP)
 			multiplexer.addProcessor(new InputAdapter() {
-
+				int mouseX = 0;
+				int mouseY = 0;
+				@Override
+				public boolean mouseMoved(int screenX, int screenY) {
+					mouseX = screenX;
+					mouseY = screenY;
+					return super.mouseMoved(screenX, screenY);
+				}
 				@Override
 				public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 					if (button == Input.Buttons.RIGHT) {
@@ -130,6 +137,7 @@ public class Framework extends ApplicationAdapter {
 
 				@Override
 				public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+					System.out.println(screenX + " - " + screenY);
 					if (button == Input.Buttons.LEFT) {
 						gameLogic.mouse_click_input(reverse_transform_position(screenX, screenY, camera));
 						return true;
@@ -144,8 +152,13 @@ public class Framework extends ApplicationAdapter {
 
 				@Override
 				public boolean scrolled(int amount) {
-					camera.zoom *= Math.pow(0.9f, (float) -amount);
-					update_view(false);
+					if(ui.sc != null && ui.sc.isMouseInside(mouseX, mouseX)){
+						ui.scrolled(amount);
+						ui.rebuild_gui();	
+					}else {
+						camera.zoom *= Math.pow(0.9f, (float) -amount);
+						update_view(false);
+					}		
 					return true;
 				}
 			});

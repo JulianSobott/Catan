@@ -238,13 +238,15 @@ public class LocalGameLogic extends GameLogic {
 			Vector3i pos = Map.position_to_street_index(position);
 			core.buildRequest(id, Type.STREET, pos);
 			ui.switch_to_idle();
-		}else if(state.devCard.type.equals(DevCardType.FREE_STREETS)) {
-			if(((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets >= 1) {
-				Vector3i pos = Map.position_to_street_index(position);
-				((DevCard.FreeStreets) state.devCard.data).addPosition(pos);
-				((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets--;
-				core.playCard(id, state.devCard);
-			}
+		}else if(state.devCard != null) {
+			if(state.devCard.type.equals(DevCardType.FREE_STREETS)) {
+				if(((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets >= 1) {
+					Vector3i pos = Map.position_to_street_index(position);
+					((DevCard.FreeStreets) state.devCard.data).addPosition(pos);
+					((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets--;
+					core.playCard(id, state.devCard);
+				}
+			}	
 		}
 	}
 
