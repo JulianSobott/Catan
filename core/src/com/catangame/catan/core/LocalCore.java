@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -41,7 +42,9 @@ public class LocalCore extends Core {
 	private SavedGame savedGame = null;
 
 	Map map = new Map();
-
+	
+	//DevCard Stack
+	private List<DevCard> devCardStack;
 	// player data
 	int current_player;
 	boolean initial_round = true;
@@ -105,7 +108,7 @@ public class LocalCore extends Core {
 	public void create_new_map(int islandSize, int seed, float[] resourceRatio, GeneratorType generatorType,
 			int randomStartBuildings, int startResources) {
 		map.create_map(islandSize + 2, seed, islandSize, resourceRatio, generatorType);
-		map.createDevCardsStack(seed);
+		createDevCardsStack(seed);
 		map.calculate_available_places();
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
@@ -133,6 +136,36 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.update_new_map(map.getFields());
 			logic.update_buildings(new_buildings);
+		}
+	}
+
+	private void createDevCardsStack(int seed) {
+		Random rand = new Random(seed);
+		List<DevCard> sortedDevCardStack = new ArrayList<DevCard>();
+		devCardStack = new LinkedList<DevCard>();
+		int numCards = 50;
+		DevCard card;
+		double ratioSum = 0;
+		for(DevCardType type : DevCardType.values()) {
+			ratioSum += type.getRatio();
+		}
+		for(DevCardType type : DevCardType.values()) {
+			int num = (int) (numCards * type.getRatio() / ratioSum);
+			for(int i = 0; i < num; i++) {
+				card = new DevCard(type);
+				sortedDevCardStack.add(card);
+			}
+		}
+		//Shuffle Stack
+		for(int i = 0; i < numCards; i++) {
+			int idx = rand.nextInt(sortedDevCardStack.size());
+			devCardStack.add(sortedDevCardStack.get(idx));
+			sortedDevCardStack.remove(idx);
+		}
+		//TODO make unlimited Cards!?
+		for(int i = 0; i < 100; i++) {
+			card = new DevCard(DevCardType.KNIGHT);
+			sortedDevCardStack.add(card);
 		}
 	}
 
@@ -535,8 +568,8 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			if (player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1
 					&& player.get(id).get_resources(Resource.WOOL) >= 1) {
-				DevCard card = map.devCardStack.get(0);
-				map.devCardStack.remove(0);
+				DevCard card = devCardStack.get(0);
+				devCardStack.remove(0);
 				player.get(id).addDevelopmentCard(card);
 
 				player.get(id).take_resource(Resource.GRAIN, 1);

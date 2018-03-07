@@ -42,8 +42,6 @@ public class Map {
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
 	
-	//DevCard Stack
-	protected List<DevCard> devCardStack;
 
 	public static void update_constants() {
 		field_offset = field_size * 0.5f;
@@ -420,10 +418,10 @@ public class Map {
 		this.fields = fields;
 	}
 
-	public void createDevCardsStack(int seed) {
+	public LinkedList<DevCard> createDevCardsStack(int seed) {
 		Random rand = new Random(seed);
 		List<DevCard> sortedDevCardStack = new ArrayList<DevCard>();
-		devCardStack = new LinkedList<DevCard>();
+		LinkedList<DevCard> devCardStack = new LinkedList<DevCard>();
 		int numCards = 50;
 		DevCard card;
 		double ratioSum = 0;
@@ -448,5 +446,6 @@ public class Map {
 			card = new DevCard(DevCardType.KNIGHT);
 			sortedDevCardStack.add(card);
 		}
+		return devCardStack;
 	}
 }
