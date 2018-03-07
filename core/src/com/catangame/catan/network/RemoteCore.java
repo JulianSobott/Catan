@@ -11,6 +11,7 @@ import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
 import com.catangame.catan.superClasses.UI;
 import com.catangame.catan.core.Map.GeneratorType;
+import com.catangame.catan.core.Player;
 
 public class RemoteCore extends Core {
 	Client client;
@@ -82,5 +83,6 @@ public class RemoteCore extends Core {
 	public void playCard(int id, DevelopmentCard card) {
 		this.client.sendMessage(new Packet(Command.PLAY_DEVELOPMENTCARD, new Packet.Developmentcard(card)));
 	}
+
 
 }

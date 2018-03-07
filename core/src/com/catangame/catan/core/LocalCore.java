@@ -571,11 +571,4 @@ public class LocalCore extends Core {
 			}
 		}
 	}
-
-	@Override
-	public void updatePlayerData(int id, Player my_player_data) {
-		player.get(id).developmentCards = my_player_data.getDevelopmentCards();
-		player.get(id).resources = my_player_data.get_all_resources();
-	}
-
 }

@@ -36,5 +36,4 @@ public abstract class Core {
 
 	public abstract void playCard(int id, DevelopmentCard card);
 
-	public abstract void updatePlayerData(int id, Player my_player_data);
 }
