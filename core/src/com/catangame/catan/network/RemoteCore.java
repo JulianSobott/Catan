@@ -5,7 +5,6 @@ import com.catangame.catan.math.Vector3i;
 
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.data.DevCard;
-import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
 import com.catangame.catan.superClasses.Core;

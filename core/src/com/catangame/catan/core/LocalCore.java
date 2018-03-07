@@ -15,7 +15,7 @@ import com.catangame.catan.math.Vector3i;
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.core.Map.GeneratorType;
 import com.catangame.catan.data.DevCard;
-import com.catangame.catan.data.DevelopmentCard;
+import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.data.SavedGame;
@@ -105,6 +105,7 @@ public class LocalCore extends Core {
 	public void create_new_map(int islandSize, int seed, float[] resourceRatio, GeneratorType generatorType,
 			int randomStartBuildings, int startResources) {
 		map.create_map(islandSize + 2, seed, islandSize, resourceRatio, generatorType);
+		map.createDevCardsStack(seed);
 		map.calculate_available_places();
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
@@ -534,8 +535,8 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			if (player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1
 					&& player.get(id).get_resources(Resource.WOOL) >= 1) {
-				Random rand = new Random();
-				DevCard card = new DevCard(DevCard.Type.values()[rand.nextInt(DevelopmentCard.values().length )]);
+				DevCard card = map.devCardStack.get(0);
+				map.devCardStack.remove(0);
 				player.get(id).addDevelopmentCard(card);
 
 				player.get(id).take_resource(Resource.GRAIN, 1);
@@ -549,7 +550,15 @@ public class LocalCore extends Core {
 	@Override
 	public void playCard(int id, DevCard card) {
 		if (id == current_player) {
-			player.get(id).developmentCards.remove(card.type);
+			int i = 0;
+			for(DevCard tempCard : player.get(id).developmentCards) {
+				if(card.type.equals(tempCard.type)) {
+					player.get(id).developmentCards.remove(i);
+					break;
+				}
+				i++;
+			}
+			
 			switch (card.type) {
 			case FREE_RESOURCES:
 				for(java.util.Map.Entry<Resource, Integer> entry : ((DevCard.FreeResources) card.data).newResources.entrySet()) {
@@ -576,12 +585,12 @@ public class LocalCore extends Core {
 				break;
 			case POINT:
 				player.get(id).setScore(player.get(id).getScore() + 1);
-				player.get(id).developmentCards.remove(DevelopmentCard.POINT);
 				update_scoreboard_data();
 				break;
 			default:
 				System.err.println("Unknown Card reached core:" + card);
 			}
+			uis.get(id).update_player_data(player.get(id));
 		}
 	}
 

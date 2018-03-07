@@ -12,17 +12,20 @@ public class DevCard implements Serializable{
 		FREE_STREETS, //Get 2 free street
 		MONOPOL, //Get all Cards from all players from a specific resource 
 	}
-	
-	public Type type;
+	public DevCardType type;
 	public Serializable data;
 	
-	public DevCard(Type type, Serializable data) {
+	public DevCard(DevCardType type, Serializable data) {
 		this.type = type;
 		this.data = data;
 	}
 	
-	public DevCard(Type type) {
+	public DevCard(DevCardType type) {
 		this.type = type;
+	}
+
+	public DevCard() {
+		
 	}
 
 	public static class Knight implements Serializable{

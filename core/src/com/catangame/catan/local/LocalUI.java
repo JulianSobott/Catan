@@ -29,7 +29,7 @@ import com.catangame.catan.core.Map;
 import com.catangame.catan.core.Player;
 import com.catangame.catan.core.Map.GeneratorType;
 import com.catangame.catan.data.DevCard;
-import com.catangame.catan.data.DevelopmentCard;
+import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.data.SavedGame;
@@ -118,8 +118,6 @@ public class LocalUI extends UI implements InputProcessor {
 	private float color_pkr_hue = (float) Math.random();
 	private Color playerColor = Color.RED;
 	
-	//Developmentcards
-	private DevelopmentCard currentCard;
 	//Menu
 	List<SavedGame> allGames = null;
 	//End Screen 
@@ -918,7 +916,7 @@ public class LocalUI extends UI implements InputProcessor {
 		
 		switch(state.devCard.type) {
 		case FREE_RESOURCES:
-			state.devCard = new DevCard(DevCard.Type.FREE_RESOURCES, new DevCard.FreeResources());
+			state.devCard = new DevCard(DevCardType.FREE_RESOURCES, new DevCard.FreeResources());
 			int i = 0;		
 			for(Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
@@ -964,7 +962,7 @@ public class LocalUI extends UI implements InputProcessor {
 			
 			break;
 		case MONOPOL:
-			state.devCard = new DevCard(DevCard.Type.MONOPOL, new DevCard.Monopol());
+			state.devCard = new DevCard(DevCardType.MONOPOL, new DevCard.Monopol());
 			i = 0;
 			for(Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {

@@ -10,7 +10,6 @@ import java.util.Map;
 import com.catangame.catan.utils.Color;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCard.Type;
-import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Resource;
 
 public class Player implements Serializable {

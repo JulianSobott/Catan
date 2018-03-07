@@ -2,7 +2,6 @@ package com.catangame.catan.network;
 
 import com.catangame.catan.core.Player;
 import com.catangame.catan.data.DevCard;
-import com.catangame.catan.data.DevelopmentCard;
 import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
 

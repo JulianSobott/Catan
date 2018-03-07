@@ -8,7 +8,8 @@ import java.util.Random;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.math.Vector3i;
-
+import com.catangame.catan.data.DevCard;
+import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
 import com.catangame.catan.data.Resource;
 
@@ -40,6 +41,9 @@ public class Map {
 	private List<Vector3i> available_village_places = new LinkedList<Vector3i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
+	
+	//DevCard Stack
+	protected List<DevCard> devCardStack;
 
 	public static void update_constants() {
 		field_offset = field_size * 0.5f;
@@ -416,4 +420,33 @@ public class Map {
 		this.fields = fields;
 	}
 
+	public void createDevCardsStack(int seed) {
+		Random rand = new Random(seed);
+		List<DevCard> sortedDevCardStack = new ArrayList<DevCard>();
+		devCardStack = new LinkedList<DevCard>();
+		int numCards = 50;
+		DevCard card;
+		double ratioSum = 0;
+		for(DevCardType type : DevCardType.values()) {
+			ratioSum += type.getRatio();
+		}
+		for(DevCardType type : DevCardType.values()) {
+			int num = (int) (numCards * type.getRatio() / ratioSum);
+			for(int i = 0; i < num; i++) {
+				card = new DevCard(type);
+				sortedDevCardStack.add(card);
+			}
+		}
+		//Shuffle Stack
+		for(int i = 0; i < numCards; i++) {
+			int idx = rand.nextInt(sortedDevCardStack.size());
+			devCardStack.add(sortedDevCardStack.get(idx));
+			sortedDevCardStack.remove(idx);
+		}
+		//TODO make unlimited Cards!?
+		for(int i = 0; i < 100; i++) {
+			card = new DevCard(DevCardType.KNIGHT);
+			sortedDevCardStack.add(card);
+		}
+	}
 }
