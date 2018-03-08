@@ -69,7 +69,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private Framework framework;
 	private Vector2 window_size;
 	private OrthographicCamera camera;
-
+	private Vector2i mousePosition = new Vector2i(0,0);
 	// fonts
 	private BitmapFont std_font;
 
@@ -309,12 +309,8 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnShowDevelopmentCards);
 		if (showDevelopmentCards) {
 			i = 0;
-			sc = new ScrollContainer(this);
+			sc = new ScrollContainer(this, new Rectangle(215, 0, 300, window_size.y));
 			for (final DevCard card : state.my_player_data.getDevelopmentCards()) {
-				if(scrolled > 4)
-					scrolled = 4;
-				if(scrolled < -4)
-					scrolled = -4;
 				Button btnCard = new Button(Language.valueOf(card.type.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
 				btnCard.set_fill_color(new Color(0.2f, 0.3f, 0.67f, 0.9f));
 				btnCard.set_click_callback(new Runnable() {
@@ -325,10 +321,10 @@ public class LocalUI extends UI implements InputProcessor {
 						showDevelopmentCardWindow(card);
 					}
 				});
-				widgets.add(sc);
 				sc.addWidget(btnCard);
 				i++;
 			}
+			widgets.add(sc);
 			sc.calcBounds();
 			
 		}
@@ -689,7 +685,7 @@ public class LocalUI extends UI implements InputProcessor {
 				widgets.add(btnReject);
 				i++;
 			}
-			sc = new ScrollContainer(new Rectangle(window_size.x / 2, 200 , 300, (110 + 20) * i));
+			//sc = new ScrollContainer(new Rectangle(window_size.x / 2, 200 , 300, (110 + 20) * i));
 			//Button Send demand
 			Button btnSendDemand = new Button("Send demand",
 					new Rectangle(window_size.x - 300, window_size.y - 100, 200, 70));
@@ -861,6 +857,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		}
 		//Show all own offers (if multiple are made)
+		//sc = new ScrollContainer(this, new Rectangle(window_size.x / 2, 200 , window_size.x / 2 - 30, window_size.y - 200));
 		Label lblAllOffers = new Label("All own offers", new Rectangle(window_size.x / 2, 150, 300, 50));
 		lblAllOffers.set_text_color(Color.WHITE);
 		widgets.add(lblAllOffers);
@@ -1655,8 +1652,10 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		sc.scrolled(amount);
-		return false;
+		if(sc != null && sc.isMouseInside(Gdx.input.getX(), Gdx.input.getY())) {
+			sc.scrolled(amount);
+		}
+		return true;
 	}
 
 	void render(ShapeRenderer sr, SpriteBatch sb) {

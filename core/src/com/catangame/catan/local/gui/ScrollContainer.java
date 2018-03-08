@@ -10,21 +10,22 @@ import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.local.LocalUI;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.superClasses.UI;
+import com.catangame.catan.utils.Color;
 
 public class ScrollContainer extends Widget{
 	
 	List<Widget> widgets = new ArrayList<Widget>();
 	LocalUI ui;
 	int scrolled = 0;
+	private Rectangle maxBounds;
+	private boolean scrollable = true;
+	private boolean finalScrollable = true;
 	
-	public ScrollContainer(Rectangle bounds) {
-		super(bounds);
-		this.bounds = bounds;
-	}
 
-	public ScrollContainer(LocalUI ui) {
+	public ScrollContainer(LocalUI ui, Rectangle rectangle) {
 		super(new Rectangle(0,0,0,0));
 		this.ui = ui;
+		this.maxBounds = rectangle;
 	}
 
 	public boolean isMouseInside(int mouseX, int mouseY) {
@@ -51,6 +52,11 @@ public class ScrollContainer extends Widget{
 				bounds.y = widget.bounds.y;
 			}
 		}
+		if(bounds.height + this.bounds.y < this.maxBounds.height - this.maxBounds.y) {
+			finalScrollable = false;
+		}else {
+			finalScrollable = true;
+		}
 	}
 
 	@Override
@@ -59,18 +65,34 @@ public class ScrollContainer extends Widget{
 		bounds.y = pos.y;
 	}
 	public void scrolled(int amount) {
-		this.scrolled += amount;
-		for(Widget widget : widgets) {
-			widget.set_position(new Vector2(widget.bounds.x, widget.bounds.y + scrolled * 100 + 10));
-		}
-		
+		if(finalScrollable) {
+			this.scrolled += amount;
+			scrollable = false;
+			for(Widget widget : widgets) {
+				widget.set_position(new Vector2(widget.bounds.x, widget.bounds.y - amount * 50));
+				if(widget.bounds.y >= this.maxBounds.y && widget.bounds.y + widget.bounds.height <= this.maxBounds.y + this.maxBounds.height) {
+					scrollable = true;
+				}
+				
+			}
+			if(widgets.get(widgets.size()-1).bounds.y + widgets.get(widgets.size()-1).bounds.height*3 < this.maxBounds.height ||
+					widgets.get(0).bounds.y - widgets.get(0).bounds.height > this.maxBounds.y) {
+				scrollable = false;
+			}
+			if(!scrollable) {
+				scrolled(amount* (-1));
+			}
+
+		}	
 	}
 	
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		//TODO evaluate which widget should be rendered
 		for(Widget widget : widgets) {
-			widget.render(sr, sb);
+			if(widget.bounds.y + widget.bounds.height/2 > this.maxBounds.y && widget.bounds.y - widget.bounds.height/2 < this.maxBounds.y + this.maxBounds.height) {
+				widget.render(sr, sb);
+			}	
 		}
 	}
 
