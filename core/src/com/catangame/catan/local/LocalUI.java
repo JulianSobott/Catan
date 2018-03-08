@@ -206,7 +206,7 @@ public class LocalUI extends UI implements InputProcessor {
 		});
 		widgets.add(btn);
 
-		btn = new Button(Language.JOIN_GAME.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height), Textures.btnLoadGame);
+		btn = new Button(Language.JOIN_GAME.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
