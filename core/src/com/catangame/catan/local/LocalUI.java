@@ -13,8 +13,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
+import com.catangame.catan.utils.BoxShadow;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -26,7 +28,8 @@ import com.catangame.catan.core.LocalFilehandler;
 import com.catangame.catan.core.Map;
 import com.catangame.catan.core.Player;
 import com.catangame.catan.core.Map.GeneratorType;
-import com.catangame.catan.data.DevelopmentCard;
+import com.catangame.catan.data.DevCard;
+import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.data.SavedGame;
@@ -36,6 +39,7 @@ import com.catangame.catan.local.gui.Button;
 import com.catangame.catan.local.gui.Checkbox;
 import com.catangame.catan.local.gui.ColorPicker;
 import com.catangame.catan.local.gui.Label;
+import com.catangame.catan.local.gui.ScrollContainer;
 import com.catangame.catan.local.gui.TextField;
 import com.catangame.catan.local.gui.Widget;
 import com.catangame.catan.superClasses.Core;
@@ -65,7 +69,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private Framework framework;
 	private Vector2 window_size;
 	private OrthographicCamera camera;
-
+	private Vector2i mousePosition = new Vector2i(0,0);
 	// fonts
 	private BitmapFont std_font;
 
@@ -94,6 +98,8 @@ public class LocalUI extends UI implements InputProcessor {
 	private Label lblOreCards;
 	private Label lblInfo;
 	private Button btnTrade;
+	
+	public ScrollContainer sc;
 
 	//Trading
 	private TradeDemand tradeDemand;
@@ -115,13 +121,12 @@ public class LocalUI extends UI implements InputProcessor {
 	private float color_pkr_hue = (float) Math.random();
 	private Color playerColor = Color.RED;
 	
-	//Developmentcards
-	private DevelopmentCard currentCard;
 	//Menu
 	List<SavedGame> allGames = null;
 	//End Screen 
 	private List<Player> player;
 
+	public int scrolled = 0;
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
 		this.framework = framework;
@@ -208,6 +213,7 @@ public class LocalUI extends UI implements InputProcessor {
 				build_join_menu();
 			}
 		});
+		btn.addBoxShadow(new BoxShadow(new Color(126, 71, 20, 90), 0, 2, 2 , new BoxShadow(new Color(0, 0, 20, 90), 2, 0, 0 )));
 		widgets.add(btn);
 
 		btn = new Button(Language.LOAD_GAME.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
@@ -303,20 +309,24 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnShowDevelopmentCards);
 		if (showDevelopmentCards) {
 			i = 0;
-			for (final DevelopmentCard card : state.my_player_data.getDevelopmentCards()) {
-				Button btnCard = new Button(Language.valueOf(card.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
+			sc = new ScrollContainer(this, new Rectangle(215, 0, 300, window_size.y));
+			for (final DevCard card : state.my_player_data.getDevelopmentCards()) {
+				Button btnCard = new Button(Language.valueOf(card.type.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
 				btnCard.set_fill_color(new Color(0.2f, 0.3f, 0.67f, 0.9f));
 				btnCard.set_click_callback(new Runnable() {
 					
 					@Override
 					public void run() {
 						showDevelopmentCards = false;
-						core.playCard(id, card);
+						showDevelopmentCardWindow(card);
 					}
 				});
-				widgets.add(btnCard);
+				sc.addWidget(btnCard);
 				i++;
 			}
+			widgets.add(sc);
+			sc.calcBounds();
+			
 		}
 
 		// finished move button
@@ -675,6 +685,7 @@ public class LocalUI extends UI implements InputProcessor {
 				widgets.add(btnReject);
 				i++;
 			}
+			//sc = new ScrollContainer(new Rectangle(window_size.x / 2, 200 , 300, (110 + 20) * i));
 			//Button Send demand
 			Button btnSendDemand = new Button("Send demand",
 					new Rectangle(window_size.x - 300, window_size.y - 100, 200, 70));
@@ -846,6 +857,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		}
 		//Show all own offers (if multiple are made)
+		//sc = new ScrollContainer(this, new Rectangle(window_size.x / 2, 200 , window_size.x / 2 - 30, window_size.y - 200));
 		Label lblAllOffers = new Label("All own offers", new Rectangle(window_size.x / 2, 150, 300, 50));
 		lblAllOffers.set_text_color(Color.WHITE);
 		widgets.add(lblAllOffers);
@@ -909,34 +921,40 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnSendOffer);
 	}
 	
-	public void buildDevCardWindow() {
-		buildIngameWindow();
-		switch(this.currentCard) {
+	public void buildDevCardWindow() {		
+		switch(state.devCard.type) {
 		case FREE_RESOURCES:
-			int i = 0;
-			state.remainingFreeResources = 2;
+			buildIngameWindow();
+			state.devCard = new DevCard(DevCardType.FREE_RESOURCES, new DevCard.FreeResources());
+			int i = 0;		
 			for(Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
 					String str = Language.valueOf(r.name()).get_text() + ": ";
-					Label lblResource = new Label(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
+					int valResource;
+					if(((DevCard.FreeResources) state.devCard.data).newResources.containsKey(r))
+						valResource = ((DevCard.FreeResources) state.devCard.data).newResources.get(r) + state.my_player_data.get_resources(r);
+					else
+						valResource = state.my_player_data.get_resources(r);
+					Label lblResource = new Label(str + valResource, new Rectangle(100, 100 + i*100, 200, 90));
 					lblResource.set_fill_color(r.get_color());
 					widgets.add(lblResource);
 					Button btnAddresource = new Button("+", new Rectangle(320, 100 + i*100, 100, 90));
 					btnAddresource.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
-							
-							state.my_player_data.add_resource(r, 1);
+							((DevCard.FreeResources)state.devCard.data).addResource(r);
 							Gdx.app.postRunnable(new Runnable() {
 								@Override
 								public void run() {
-									lblResource.set_text(str + state.my_player_data.get_resources(r));	
+									int valResource = ((DevCard.FreeResources) state.devCard.data).newResources.get(r) + state.my_player_data.get_resources(r);
+									lblResource.set_text(str + valResource);	
 								}
 							});
-							state.remainingFreeResources--;
-							if(state.remainingFreeResources <= 0) {
+							((DevCard.FreeResources)state.devCard.data).remainedFreeresources--;
+							if(((DevCard.FreeResources)state.devCard.data).remainedFreeresources <= 0) {
 								mode = GUIMode.GAME;
-								state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
+								state.my_player_data.getDevelopmentCards().remove(DevCard.Type.FREE_RESOURCES);
+								core.playCard(id, state.devCard);
 								rebuild_gui();
 							}
 						}
@@ -947,51 +965,48 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 			break;
 		case FREE_STREETS:
+			if(state.devCard.data == null) {
+				state.devCard = new DevCard(DevCardType.FREE_STREETS, new DevCard.FreeStreets());
+			}	
+			mode = GUIMode.GAME;
+			show_informative_hint(Language.BUILD_FREE_STREETS, Integer.toString(((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets));
+			rebuild_gui();
 			
+			//state.devCard ;
 			break;
 		case KNIGHT:
 			
 			break;
 		case MONOPOL:
+			buildIngameWindow();
+			state.devCard = new DevCard(DevCardType.MONOPOL, new DevCard.Monopol());
 			i = 0;
 			for(Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
 					String str = Language.valueOf(r.name()).get_text() + ": ";
-					Label btnResource = new Label(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
+					Button btnResource = new Button(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
 					btnResource.set_fill_color(r.get_color());
-					widgets.add(btnResource);
-					Button btnAddresource = new Button("+", new Rectangle(320, 100 + i*100, 100, 90));
-					btnAddresource.set_click_callback(new Runnable() {
+					btnResource.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
-							
-							state.my_player_data.add_resource(r, 1);
-							Gdx.app.postRunnable(new Runnable() {
-								@Override
-								public void run() {
-									btnResource.set_text(str + state.my_player_data.get_resources(r));	
-								}
-							});
-							state.remainingFreeResources--;
-							if(state.remainingFreeResources <= 0) {
-								mode = GUIMode.GAME;
-								state.my_player_data.getDevelopmentCards().remove(DevelopmentCard.FREE_RESOURCES);
-								rebuild_gui();
-							}
+							((DevCard.Monopol)state.devCard.data).resource = r;
+							core.playCard(id, state.devCard);							
 						}
 					});
-					widgets.add(btnAddresource);
+					widgets.add(btnResource);
 					i++;
 				}
 			}
 			break;
 		case POINT:
-			
+			mode = GUIMode.GAME;
+			core.playCard(id, state.devCard);	
 			break;
 		default:
 			System.err.println("Unkown Card played");
 			break;
 		}
+		
 	}
 
 	private void buildIngameWindow() {
@@ -1637,7 +1652,10 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		return false;
+		if(sc != null && sc.isMouseInside(Gdx.input.getX(), Gdx.input.getY())) {
+			sc.scrolled(amount);
+		}
+		return true;
 	}
 
 	void render(ShapeRenderer sr, SpriteBatch sb) {
@@ -1823,8 +1841,8 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	@Override
-	public void showDevelopmentCardWindow(DevelopmentCard card) {
-		this.currentCard = card;
+	public void showDevelopmentCardWindow(DevCard card) {
+		state.devCard = card;
 		showDevelopmentCards = false;
 		mode = GUIMode.DEV_CARD;
 		rebuild_gui();

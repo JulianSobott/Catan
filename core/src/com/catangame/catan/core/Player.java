@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.catangame.catan.utils.Color;
-
-import com.catangame.catan.data.DevelopmentCard;
+import com.catangame.catan.data.DevCard;
+import com.catangame.catan.data.DevCard.Type;
 import com.catangame.catan.data.Resource;
 
 public class Player implements Serializable {
@@ -19,7 +19,7 @@ public class Player implements Serializable {
 	private Color color;
 	Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	List<Building> buildings = new LinkedList<Building>();
-	List<DevelopmentCard> developmentCards = new ArrayList<DevelopmentCard>();
+	List<DevCard> developmentCards = new ArrayList<DevCard>();
 
 	public Player(String name, int id, Color color) {
 		this.name = name;
@@ -85,11 +85,11 @@ public class Player implements Serializable {
 		}
 	}
 
-	public void addDevelopmentCard(DevelopmentCard card) {
+	public void addDevelopmentCard(DevCard card) {
 		this.developmentCards.add(card);
 	}
 	
-	public List<DevelopmentCard> getDevelopmentCards(){
+	public List<DevCard> getDevelopmentCards(){
 		return this.developmentCards;
 	}
 }

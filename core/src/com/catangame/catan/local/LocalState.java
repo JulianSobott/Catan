@@ -9,6 +9,7 @@ import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import com.catangame.catan.core.Player;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.Resource;
 
 public class LocalState {
@@ -40,6 +41,7 @@ public class LocalState {
 	Map<Integer, List<AbstractStreet>> streets = new HashMap<Integer, List<AbstractStreet>>();// maps players to building types to positions
 	
 	//DevCard Data
-	int remainingFreeResources; //TODO add value here??
+	DevCard devCard;
+	//int remainingFreeResources; //TODO add value here??
 
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -14,8 +15,10 @@ import com.catangame.catan.math.Vector3i;
 
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.core.Map.GeneratorType;
-import com.catangame.catan.data.DevelopmentCard;
+import com.catangame.catan.data.DevCard;
+import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
+import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.data.SavedGame;
 import com.catangame.catan.local.LocalPlayer;
@@ -41,6 +44,8 @@ public class LocalCore extends Core {
 
 	Map map = new Map();
 
+	//DevCard Stack
+	private List<DevCard> devCardStack;
 	// player data
 	int current_player;
 	boolean initial_round = true;
@@ -95,7 +100,7 @@ public class LocalCore extends Core {
 			}
 
 		}
-		for (UI ui : uis) {	
+		for (UI ui : uis) {
 			ui.update_player_data(player.get(ui.getID()));
 		}
 	}
@@ -104,6 +109,7 @@ public class LocalCore extends Core {
 	public void create_new_map(int islandSize, int seed, float[] resourceRatio, GeneratorType generatorType,
 			int randomStartBuildings, int startResources) {
 		map.create_map(islandSize + 2, seed, islandSize, resourceRatio, generatorType);
+		createDevCardsStack(seed);
 		map.calculate_available_places();
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
@@ -131,6 +137,36 @@ public class LocalCore extends Core {
 		for (GameLogic logic : logics) {
 			logic.update_new_map(map.getFields());
 			logic.update_buildings(new_buildings);
+		}
+	}
+
+	private void createDevCardsStack(int seed) {
+		Random rand = new Random(seed);
+		List<DevCard> sortedDevCardStack = new ArrayList<DevCard>();
+		devCardStack = new LinkedList<DevCard>();
+		int numCards = 50;
+		DevCard card;
+		double ratioSum = 0;
+		for(DevCardType type : DevCardType.values()) {
+			ratioSum += type.getRatio();
+		}
+		for(DevCardType type : DevCardType.values()) {
+			int num = (int) (numCards * type.getRatio() / ratioSum);
+			for(int i = 0; i < num; i++) {
+				card = new DevCard(type);
+				sortedDevCardStack.add(card);
+			}
+		}
+		//Shuffle Stack
+		for(int i = 0; i < numCards; i++) {
+			int idx = rand.nextInt(sortedDevCardStack.size());
+			devCardStack.add(sortedDevCardStack.get(idx));
+			sortedDevCardStack.remove(idx);
+		}
+		//TODO make unlimited Cards!?
+		for(int i = 0; i < 100; i++) {
+			card = new DevCard(DevCardType.KNIGHT);
+			sortedDevCardStack.add(card);
 		}
 	}
 
@@ -533,8 +569,8 @@ public class LocalCore extends Core {
 		if (id == current_player) {
 			if (player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1
 					&& player.get(id).get_resources(Resource.WOOL) >= 1) {
-				Random rand = new Random();
-				DevelopmentCard card = DevelopmentCard.values()[rand.nextInt(DevelopmentCard.values().length - 1)];
+				DevCard card = devCardStack.get(0);
+				devCardStack.remove(0);
 				player.get(id).addDevelopmentCard(card);
 
 				player.get(id).take_resource(Resource.GRAIN, 1);
@@ -546,29 +582,66 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void playCard(int id, DevelopmentCard card) {
+	public void playCard(int id, DevCard card) {
 		if (id == current_player) {
-			switch (card) {
+			int i = 0;
+			for(DevCard tempCard : player.get(id).developmentCards) {
+				if(card.type.equals(tempCard.type)) {
+					player.get(id).developmentCards.remove(i);
+					break;
+				}
+				i++;
+			}
+
+			switch (card.type) {
 			case FREE_RESOURCES:
-				uis.get(id).showDevelopmentCardWindow(card);
+				for(java.util.Map.Entry<Resource, Integer> entry : ((DevCard.FreeResources) card.data).newResources.entrySet()) {
+					player.get(id).add_resource(entry.getKey(), entry.getValue());
+				}
+				uis.get(id).update_player_data(player.get(id));
 				break;
 			case KNIGHT:
-				uis.get(id).showDevelopmentCardWindow(card);
+
 				break;
 			case MONOPOL:
-				uis.get(id).showDevelopmentCardWindow(card);
+				int addedResources = 0;
+				for(Player p : player) {
+					addedResources += p.get_resources(((DevCard.Monopol)card.data).resource);
+					p.take_resource(((DevCard.Monopol)card.data).resource, p.get_resources(((DevCard.Monopol)card.data).resource)); //Take all
+				}
+				player.get(id).add_resource(((DevCard.Monopol)card.data).resource, addedResources);
+				for(UI ui : uis) {
+					ui.update_player_data(player.get(ui.getID()));
+				}
 				break;
 			case FREE_STREETS:
-				uis.get(id).showDevelopmentCardWindow(card);
+				Vector3i position = ((DevCard.FreeStreets) card.data).places.get(((DevCard.FreeStreets) card.data).places.size()-1);
+				if (map.is_street_place_available(position)	&& owns_nearby_building(player.get(id), map.get_nearby_building_sites(position))) {
+					map.build_street(position);
+					player.get(id).buildings.add(new Building(Building.Type.STREET, position));
+					for (GameLogic logic : logics) {
+						logic.add_building(id, new Building(Building.Type.STREET, position));
+					}
+				}else {
+					((DevCard.FreeStreets) card.data).remainedFreeStreets++;
+				}
+				player.get(id).update_score();
+				update_scoreboard_data();
+				uis.get(id).update_player_data(player.get(id));
+				if(((DevCard.FreeStreets) card.data).remainedFreeStreets != 0) {
+					uis.get(id).showDevelopmentCardWindow(card);
+				}else {
+					uis.get(id).show_informative_hint(Language.DO_MOVE, "");
+				}
 				break;
 			case POINT:
 				player.get(id).setScore(player.get(id).getScore() + 1);
-				player.get(id).developmentCards.remove(DevelopmentCard.POINT);
 				update_scoreboard_data();
 				break;
 			default:
 				System.err.println("Unknown Card reached core:" + card);
 			}
+			uis.get(id).update_player_data(player.get(id));
 		}
 	}
 }

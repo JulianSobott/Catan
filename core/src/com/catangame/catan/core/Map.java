@@ -8,7 +8,8 @@ import java.util.Random;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.math.Vector3i;
-
+import com.catangame.catan.data.DevCard;
+import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
 import com.catangame.catan.data.Resource;
 
@@ -40,6 +41,7 @@ public class Map {
 	private List<Vector3i> available_village_places = new LinkedList<Vector3i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
+	
 
 	public static void update_constants() {
 		field_offset = field_size * 0.5f;

@@ -4,7 +4,7 @@ import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
 
 import com.catangame.catan.core.Building;
-import com.catangame.catan.data.DevelopmentCard;
+import com.catangame.catan.data.DevCard;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
 import com.catangame.catan.core.Map.GeneratorType;
@@ -34,6 +34,10 @@ public abstract class Core {
 
 	public abstract void buyDevelopmentCard(int id);
 
+<<<<<<< HEAD
 	public abstract void playCard(int id, DevelopmentCard card);
 
+=======
+	public abstract void playCard(int id, DevCard devCard);
+>>>>>>> DevCards
 }
