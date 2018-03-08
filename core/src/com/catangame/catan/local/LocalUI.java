@@ -1654,8 +1654,9 @@ public class LocalUI extends UI implements InputProcessor {
 	public boolean scrolled(int amount) {
 		if(sc != null && sc.isMouseInside(Gdx.input.getX(), Gdx.input.getY())) {
 			sc.scrolled(amount);
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	void render(ShapeRenderer sr, SpriteBatch sb) {

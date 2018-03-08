@@ -98,6 +98,10 @@ public class ScrollContainer extends Widget{
 
 	@Override
 	public void do_mouse_click(Vector2 pos) {
-		
+		for(Widget widget : widgets) {
+			if(widget.contains_cursor(pos)) {
+				widget.do_mouse_click(pos);
+			}	
+		}
 	}
 }
