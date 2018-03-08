@@ -34,10 +34,6 @@ public abstract class Core {
 
 	public abstract void buyDevelopmentCard(int id);
 
-<<<<<<< HEAD
-	public abstract void playCard(int id, DevelopmentCard card);
-
-=======
 	public abstract void playCard(int id, DevCard devCard);
->>>>>>> DevCards
+
 }
