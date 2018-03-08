@@ -67,6 +67,7 @@ public class LocalGameLogic extends GameLogic {
 	}
 
 	void init() {
+		Textures.init();
 		std_font = FontMgr.getFont(120);
 		std_font.getData().setScale(fontScale);
 		village_txtr = new Texture(Gdx.files.local("assets/res/village.png"), true);
