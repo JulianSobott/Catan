@@ -50,6 +50,7 @@ public enum Language {
 	FREE_RESOURCES("2 free Resources", "2 kostenlose Resourcen"),
 	FREE_STREETS("2 free streets","2 kostenlose Straﬂen"), 
 	MONOPOL("Monopol", "Monopol"),
+	SEND("Send", "Abschicken"),
 	//After Game
 	WINNER("{} won this game", "{} hat gewonnen"), ;
 

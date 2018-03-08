@@ -122,6 +122,9 @@ public class Client extends Networkmanager {
 		case SHOW_DEVELOPMENTCARD_WINDOW:
 			ui.showDevelopmentCardWindow(((Packet.Developmentcard) packet.data).getCard());
 			break;
+		case SHOW_TO_MUCH_RESOURCES:
+			ui.showToMuchResourcesWindow(((Packet.Num) packet.data).num.intValue());
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}

@@ -48,7 +48,7 @@ import com.catangame.catan.utils.FontMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
-		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES;
 	}
 
 	//TODO Either implement this modes or delete this enum!!
@@ -177,6 +177,8 @@ public class LocalUI extends UI implements InputProcessor {
 			build_vendor_trade_window();
 		}else if(mode == GUIMode.DEV_CARD) {
 			buildDevCardWindow();
+		}else if(mode == GUIMode.TO_MUCH_RESOURCES) {
+			buildToMuchResourcesWindow();
 		}else if (mode == GUIMode.LOAD) {
 			build_load_window();
 		} else if (mode == GUIMode.MENU) {
@@ -747,7 +749,7 @@ public class LocalUI extends UI implements InputProcessor {
 		i = 0;
 		for (final Resource r : Resource.values()) {
 			if (tradeDemand.offeredResources.containsKey(r)) {
-				Label lblResource = new Label(r.toString(),
+				Label lblResource = new Label(Language.valueOf(r.toString()).get_text(),
 						new Rectangle(start1, 270 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
 				lblResource.set_text_color(r.get_color());
 				widgets.add(lblResource);
@@ -802,7 +804,7 @@ public class LocalUI extends UI implements InputProcessor {
 		i = 0;
 		for (final Resource r : Resource.values()) {
 			if (tradeDemand.wantedResources.containsKey(r)) {
-				Label lblResource = new Label(r.toString(),
+				Label lblResource = new Label(Language.valueOf(r.toString()).get_text(),
 						new Rectangle(start, 270 + (lblHeight + btnSpace) * i, lblWidth, lblHeight));
 				lblResource.set_text_color(r.get_color());
 				widgets.add(lblResource);
@@ -901,7 +903,7 @@ public class LocalUI extends UI implements InputProcessor {
 			i++;
 		}
 		//Button Send offer
-		Button btnSendOffer = new Button("Send offer",
+		Button btnSendOffer = new Button(Language.SEND.get_text(),
 				new Rectangle(window_size.x - 300, window_size.y - 110, 200, 70));
 		btnSendOffer.set_fill_color(Color.GREEN);
 		btnSendOffer.set_click_callback(new Runnable() {
@@ -1008,7 +1010,112 @@ public class LocalUI extends UI implements InputProcessor {
 		}
 		
 	}
+	
+	private void buildToMuchResourcesWindow() {
+		buildIngameWindow();	
+		
+		float start1 = window_size.x / 2 - window_size.x / 4;
+		float containerWidth1 = window_size.x / 3;
+		float lblWidth1 = containerWidth1 / 2;
+		float btnWidth1 = 40;
+		float lblHeight = 50;
+		float btnSpace = 20;
+		int i = 0;
+		
+		Label lblNum = new Label(Integer.toString(state.numToRemove), new Rectangle(start1, 40, 100, 50));
+		lblNum.set_fill_color(Color.RED);
+		widgets.add(lblNum);
+		
+		for (final Resource r : Resource.values()) {
+			if (r != Resource.OCEAN) {
+				String str;
+				if(state.removedResources.containsKey(r)) {
+					str = Integer.toString(state.my_player_data.get_resources(r) - state.removedResources.get(r));
+				}else {
+					str = Integer.toString(state.my_player_data.get_resources(r));
+				}
+				System.out.println(r.toString());
+				System.out.println(Language.valueOf(r.toString()).get_text());
+				final Button btnResource = new Button((Language.valueOf(r.toString()).get_text())+ ": " + str ,
+						new Rectangle(start1, 170 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
+				if (state.removedResources.containsKey(r)) {
+					btnResource.set_fill_color(r.get_color());
+					btnResource.set_text_color(Color.WHITE);
+					btnResource.set_outline(Color.GREEN, 2);
+				} else {
+					Color c = r.get_color();
+					btnResource.set_text_color(Color.BLACK);
+					btnResource.set_fill_color(new Color(c.r, c.g, c.b, 0.4f));
+					btnResource.set_outline(Color.TRANSPARENT, 2);
+				}
+				widgets.add(btnResource);
 
+				Button btnMinus = new Button("-", new Rectangle(start1 + btnSpace + lblWidth1,
+						190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
+				btnMinus.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						if(state.removedResources.containsKey(r)) {
+							state.numToRemove++;
+							if(state.removedResources.get(r) == 1) {
+								state.removedResources.remove(r);
+							}else {
+								state.removedResources.put(r, state.removedResources.get(r) - 1);
+							}
+						}
+						rebuild_gui();
+					}
+				});
+				widgets.add(btnMinus);
+				String num = "0";
+				if (state.removedResources.containsKey(r)) {
+					num = state.removedResources.get(r).toString();
+				}
+				Label lblNumresources = new Label(num, new Rectangle(start1 + btnSpace * 2 + lblWidth1 + btnWidth1,
+						180 + (lblHeight + btnSpace) * i, btnWidth1, 50));
+				lblNumresources.set_fill_color(Color.WHITE);
+				widgets.add(lblNumresources);
+				Button btnPlus = new Button("+", new Rectangle(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2,
+						190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
+				btnPlus.set_click_callback(new Runnable() {
+					@Override
+					public void run() {
+						if(state.numToRemove != 0) {
+							if(state.removedResources.containsKey(r)) {
+								if(state.my_player_data.get_resources(r) - state.removedResources.get(r) > 0) {
+									state.removedResources.put(r, state.removedResources.get(r) + 1);
+									state.numToRemove--;
+									rebuild_gui();	
+								}	
+							}else {
+								if(state.my_player_data.get_resources(r) > 0) {
+									state.removedResources.put(r, 1);
+									state.numToRemove--;
+									rebuild_gui();	
+								}		
+							}
+						}	
+					}
+				});
+				widgets.add(btnPlus);
+				i++;
+			}
+		}
+		Button btnSend = new Button(Language.SEND.get_text(),
+				new Rectangle(window_size.x - 300, window_size.y - 110, 200, 70));
+		btnSend.set_fill_color(Color.GREEN);
+		btnSend.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				if(state.numToRemove == 0) {
+					core.removeResources(id, state.removedResources);
+					state.removedResources.clear();
+				}	
+			}
+		});
+		widgets.add(btnSend);
+	}
+	
 	private void buildIngameWindow() {
 		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
 		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
@@ -1849,4 +1956,13 @@ public class LocalUI extends UI implements InputProcessor {
 		rebuild_gui();
 	}
 
+	@Override
+	public void showToMuchResourcesWindow(int numToRemove) {
+		// TODO Auto-generated method stub
+		mode = GUIMode.TO_MUCH_RESOURCES;
+		state.numToRemove = numToRemove;
+		rebuild_gui();
+	}
+	
+	
 }

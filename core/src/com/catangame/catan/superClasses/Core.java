@@ -3,8 +3,11 @@ package com.catangame.catan.superClasses;
 import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
 
+import java.util.Map;
+
 import com.catangame.catan.core.Building;
 import com.catangame.catan.data.DevCard;
+import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
 import com.catangame.catan.core.Map.GeneratorType;
@@ -35,5 +38,7 @@ public abstract class Core {
 	public abstract void buyDevelopmentCard(int id);
 
 	public abstract void playCard(int id, DevCard devCard);
+
+	public abstract void removeResources(int id, Map<Resource, Integer> removedResources);
 
 }

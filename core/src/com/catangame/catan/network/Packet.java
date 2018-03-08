@@ -19,6 +19,20 @@ import com.catangame.catan.local.LocalState.GameMode;
 
 public class Packet implements Serializable {
 
+	public static class Resouces implements Serializable {
+		public Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
+		public Resouces(Map<Resource, Integer> resources) {
+			this.resources = resources;
+		}
+	}
+
+	public static class Num implements Serializable {
+		public Number num;
+		public Num(Number num) {
+			this.num = num;
+		}
+	}
+
 	public static  class PlayerList implements Serializable {
 		private List<Player> player;
 		public PlayerList(List<Player> player) {

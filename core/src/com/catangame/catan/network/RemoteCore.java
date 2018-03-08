@@ -3,8 +3,11 @@ package com.catangame.catan.network;
 import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
 
+import java.util.Map;
+
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.data.DevCard;
+import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
 import com.catangame.catan.superClasses.Core;
@@ -82,6 +85,11 @@ public class RemoteCore extends Core {
 	@Override
 	public void playCard(int id, DevCard card) {
 		this.client.sendMessage(new Packet(Command.PLAY_DEVELOPMENTCARD, new Packet.Developmentcard(card)));
+	}
+
+	@Override
+	public void removeResources(int id, Map<Resource, Integer> removedResources) {
+		this.client.sendMessage(new Packet(Command.TAKE_RESOURCE, new Packet.Resouces(removedResources)));
 	}
 
 

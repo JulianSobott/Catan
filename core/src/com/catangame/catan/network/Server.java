@@ -116,6 +116,9 @@ public class Server extends Networkmanager {
 		case PLAY_DEVELOPMENTCARD:
 			core.playCard(id, ((Packet.Developmentcard) packet.data).getCard());
 			break;
+		case TAKE_RESOURCE:
+			core.removeResources(id, ((Packet.Resouces) packet.data).resources);
+			break;
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}

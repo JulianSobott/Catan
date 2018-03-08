@@ -102,4 +102,9 @@ public class RemoteUI extends UI {
 		server.message_to_client(id, new Packet(Command.SHOW_DEVELOPMENTCARD_WINDOW, new Packet.Developmentcard(card)));
 	}
 
+	@Override
+	public void showToMuchResourcesWindow(int numToRemove) {
+		server.message_to_client(id, new Packet(Command.SHOW_TO_MUCH_RESOURCES, new Packet.Num(numToRemove)));
+	}
+
 }

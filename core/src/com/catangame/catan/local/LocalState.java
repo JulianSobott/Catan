@@ -42,6 +42,8 @@ public class LocalState {
 	
 	//DevCard Data
 	DevCard devCard;
-	//int remainingFreeResources; //TODO add value here??
+	
+	int numToRemove; //Num of resources that player has to remove because of 7
+	Map<Resource, Integer> removedResources = new HashMap<Resource, Integer>();
 
 }

@@ -82,26 +82,41 @@ public class LocalCore extends Core {
 
 	void dice() {
 		int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
+		
 		for (UI ui : uis) {
 			ui.show_dice_result((byte) diceResult);
 		}
-		//distributing resources
-		for (Player p : player) {
-			List<Building> villages = p.buildings;
-			for (Building building : villages) {
-				List<Field> surroundingFields = map.get_surrounding_field_objects(building);
-				for (Field field : surroundingFields) {
-					if (field.number == (byte) diceResult) {
-						int addCount = building.get_type() == Building.Type.VILLAGE ? 1
-								: building.get_type() == Building.Type.CITY ? 2 : 0;
-						p.add_resource(field.resource, addCount);
+		if(diceResult == 7) {
+			for(Player p : player) {
+				int numResources = 0;
+				for(Resource r : p.get_all_resources().keySet()) {
+					numResources += p.get_resources(r);
+				}
+				if(numResources > 7) { //Max 7 Resources
+					int numToRemove = (int) Math.floor(numResources/2);
+					uis.get(p.getId()).showToMuchResourcesWindow(numToRemove);
+				}
+			}
+			//TODO implement this method
+			//uis.get(current_player).showMoveRobber();
+		}else {
+			//distributing resources
+			for (Player p : player) {
+				List<Building> villages = p.buildings;
+				for (Building building : villages) {
+					List<Field> surroundingFields = map.get_surrounding_field_objects(building);
+					for (Field field : surroundingFields) {
+						if (field.number == (byte) diceResult) {
+							int addCount = building.get_type() == Building.Type.VILLAGE ? 1
+									: building.get_type() == Building.Type.CITY ? 2 : 0;
+							p.add_resource(field.resource, addCount);
+						}
 					}
 				}
 			}
-
-		}
-		for (UI ui : uis) {
-			ui.update_player_data(player.get(ui.getID()));
+			for (UI ui : uis) {
+				ui.update_player_data(player.get(ui.getID()));
+			}
 		}
 	}
 
@@ -643,5 +658,13 @@ public class LocalCore extends Core {
 			}
 			uis.get(id).update_player_data(player.get(id));
 		}
+	}
+
+	@Override
+	public void removeResources(int id, java.util.Map<Resource, Integer> removedResources) {
+		for(Resource r : removedResources.keySet()) {
+			player.get(id).take_resource(r, removedResources.get(r));
+		}
+		uis.get(id).update_player_data(player.get(id));
 	}
 }

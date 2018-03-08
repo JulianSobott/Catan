@@ -41,4 +41,5 @@ public abstract class UI {
 	public abstract void showEndScreen(int winnerID, List<Player> player);
 
 	public abstract void showDevelopmentCardWindow(DevCard card);
+	public abstract void showToMuchResourcesWindow(int numToRemove);
 }
