@@ -107,4 +107,9 @@ public class RemoteUI extends UI {
 		server.message_to_client(id, new Packet(Command.SHOW_TO_MUCH_RESOURCES, new Packet.Num(numToRemove)));
 	}
 
+	@Override
+	public void showMoveRobber() {
+		server.message_to_client(id, new Packet(Command.MOVE_ROBBER));
+	}
+
 }

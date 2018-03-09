@@ -5,6 +5,7 @@ import com.catangame.catan.math.Vector3i;
 
 import java.util.Map;
 
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.Resource;
@@ -40,5 +41,7 @@ public abstract class Core {
 	public abstract void playCard(int id, DevCard devCard);
 
 	public abstract void removeResources(int id, Map<Resource, Integer> removedResources);
+
+	public abstract void moveRobber(int id, Vector2 position);
 
 }

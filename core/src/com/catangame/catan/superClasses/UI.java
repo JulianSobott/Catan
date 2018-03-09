@@ -42,4 +42,6 @@ public abstract class UI {
 
 	public abstract void showDevelopmentCardWindow(DevCard card);
 	public abstract void showToMuchResourcesWindow(int numToRemove);
+
+	public abstract void showMoveRobber();
 }

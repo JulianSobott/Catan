@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.catangame.catan.utils.Color;
-
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
 
@@ -119,6 +119,8 @@ public class Server extends Networkmanager {
 		case TAKE_RESOURCE:
 			core.removeResources(id, ((Packet.Resouces) packet.data).resources);
 			break;
+		case MOVE_ROBBER:
+			core.moveRobber(id, (Vector2) ((Packet.Position) packet.data).position);
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}

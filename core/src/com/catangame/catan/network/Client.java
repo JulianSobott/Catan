@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.local.LocalGameLogic;
@@ -124,6 +125,13 @@ public class Client extends Networkmanager {
 			break;
 		case SHOW_TO_MUCH_RESOURCES:
 			ui.showToMuchResourcesWindow(((Packet.Num) packet.data).num.intValue());
+			break;
+		case MOVE_ROBBER:
+			if(((Packet.Position) packet.data).position != null) {
+				gameLogic.setRobberPosition((Vector2) (((Packet.Position) packet.data).position));
+			}else {
+				ui.showMoveRobber();
+			}	
 			break;
 		default:
 			System.err.println("Unknown Command reached Client");

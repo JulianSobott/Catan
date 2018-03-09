@@ -12,7 +12,7 @@ import java.util.TreeMap;
 import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.math.Vector3i;
-
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.core.Map.GeneratorType;
 import com.catangame.catan.data.DevCard;
@@ -43,7 +43,7 @@ public class LocalCore extends Core {
 	private SavedGame savedGame = null;
 
 	Map map = new Map();
-
+	Vector2 robberPosition = new Vector2(0,0);
 	//DevCard Stack
 	private List<DevCard> devCardStack;
 	// player data
@@ -86,7 +86,7 @@ public class LocalCore extends Core {
 		for (UI ui : uis) {
 			ui.show_dice_result((byte) diceResult);
 		}
-		if(diceResult == 7) {
+		if(diceResult != 7) {
 			for(Player p : player) {
 				int numResources = 0;
 				for(Resource r : p.get_all_resources().keySet()) {
@@ -98,7 +98,7 @@ public class LocalCore extends Core {
 				}
 			}
 			//TODO implement this method
-			//uis.get(current_player).showMoveRobber();
+			uis.get(0).showMoveRobber();
 		}else {
 			//distributing resources
 			for (Player p : player) {
@@ -141,11 +141,11 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-			player.get(i).add_resource(Resource.CLAY, 50);
+			/*player.get(i).add_resource(Resource.CLAY, 50);
 			player.get(i).add_resource(Resource.GRAIN, 50);
 			player.get(i).add_resource(Resource.ORE, 50);
 			player.get(i).add_resource(Resource.WOOD, 50);
-			player.get(i).add_resource(Resource.WOOL, 50);
+			player.get(i).add_resource(Resource.WOOL, 50);*/
 
 			uis.get(i).update_player_data(player.get(i));
 		}
@@ -399,16 +399,16 @@ public class LocalCore extends Core {
 						create_initial_resources(p);
 					}
 				}
-
+				// notify others about player change
+				String name = player.get(current_player).getName();
+				for (UI ui : uis) {
+					ui.set_current_player(name);
+				}
 				if (!initial_round)
 					dice();
 			}
 
-			// notify others about player change
-			String name = player.get(current_player).getName();
-			for (UI ui : uis) {
-				ui.set_current_player(name);
-			}
+			
 		}
 	}
 
@@ -664,5 +664,19 @@ public class LocalCore extends Core {
 			player.get(id).take_resource(r, removedResources.get(r));
 		}
 		uis.get(id).update_player_data(player.get(id));
+	}
+
+	@Override
+	public void moveRobber(int id, Vector2 position) {
+		Vector2i index = Map.position_to_index(position);
+		if(index.x == robberPosition.x && index.y == robberPosition.y) {
+			uis.get(id).showMoveRobber();
+		}else {
+			robberPosition.x = index.x;
+			robberPosition.y = index.y;
+			for(GameLogic logic : logics) {
+				logic.setRobberPosition(Map.index_to_position(robberPosition.x , robberPosition.y));
+			}
+		}
 	}
 }

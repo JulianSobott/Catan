@@ -1,5 +1,6 @@
 package com.catangame.catan.superClasses;
 
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.data.Field;
 import java.util.List;
@@ -21,4 +22,6 @@ public abstract class GameLogic {
 	public abstract void add_building(int user, Building building);
 
 	public abstract void setID(int id);
+
+	public abstract void setRobberPosition(Vector2 robberPosition);
 }

@@ -5,6 +5,7 @@ import com.catangame.catan.math.Vector3i;
 
 import java.util.Map;
 
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.Resource;
@@ -90,6 +91,11 @@ public class RemoteCore extends Core {
 	@Override
 	public void removeResources(int id, Map<Resource, Integer> removedResources) {
 		this.client.sendMessage(new Packet(Command.TAKE_RESOURCE, new Packet.Resouces(removedResources)));
+	}
+
+	@Override
+	public void moveRobber(int id, Vector2 position) {
+		this.client.sendMessage(new Packet(Command.MOVE_ROBBER, new Packet.Position(position)));
 	}
 
 

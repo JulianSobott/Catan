@@ -50,6 +50,7 @@ public class LocalGameLogic extends GameLogic {
 	Texture village_txtr;
 	Texture city_txtr;
 	Texture street_txtr;
+	Texture robber_txtr;
 
 	//DEBUG
 	Clock timer = new Clock();
@@ -75,6 +76,7 @@ public class LocalGameLogic extends GameLogic {
 		city_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 		street_txtr = new Texture(Gdx.files.local("assets/res/street.png"), true);
 		street_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
+		robber_txtr = new Texture(Gdx.files.local("assets/res/robber.png"));
 	}
 
 	@Override
@@ -221,6 +223,13 @@ public class LocalGameLogic extends GameLogic {
 							city_Sprite.getHeight() * 0.1f);
 				}
 			}
+			//Render Robber
+			Sprite spriteRobber = new Sprite(robber_txtr);
+			spriteRobber.flip(false, true);
+			//Vector2 pos = Map.index_to_position(state.robberPosition.x , state.robberPosition.y);
+			sb.draw(spriteRobber, state.robberPosition.x - spriteRobber.getWidth() * 0.05f,
+					state.robberPosition.y - spriteRobber.getHeight() * 0.05f, spriteRobber.getWidth() * 0.1f,
+					spriteRobber.getHeight() * 0.1f);
 			sb.end();
 		}
 	}
@@ -247,11 +256,20 @@ public class LocalGameLogic extends GameLogic {
 					core.playCard(id, state.devCard);
 				}
 			}	
+		}else if(state.curr_action == Action.moveRobber) {
+			core.moveRobber(id, position);
 		}
 	}
 
 	@Override
 	public void setID(int id) {
 		this.id = id;
+	}
+
+	@Override
+	public void setRobberPosition(Vector2 robberPosition) {
+		state.robberPosition = robberPosition;
+		state.curr_action = null;
+		ui.switch_to_idle();
 	}
 }

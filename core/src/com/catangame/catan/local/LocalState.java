@@ -25,7 +25,8 @@ public class LocalState {
 		idle,
 		build_village,
 		build_city,
-		build_street,
+		build_street, 
+		moveRobber,
 	}
 	Action curr_action = Action.idle;// describes the current action of the user;
 
@@ -39,6 +40,8 @@ public class LocalState {
 	Map<Integer, List<Vector2>> villages = new HashMap<Integer, List<Vector2>>();// maps players to building types to positions
 	Map<Integer, List<Vector2>> cities = new HashMap<Integer, List<Vector2>>();// maps players to building types to positions
 	Map<Integer, List<AbstractStreet>> streets = new HashMap<Integer, List<AbstractStreet>>();// maps players to building types to positions
+	
+	Vector2 robberPosition = new Vector2(0,0);
 	
 	//DevCard Data
 	DevCard devCard;

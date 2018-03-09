@@ -33,6 +33,7 @@ import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.data.SavedGame;
+import com.catangame.catan.local.LocalState.Action;
 import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.local.TradeDemand.Vendor;
 import com.catangame.catan.local.gui.Button;
@@ -1956,10 +1957,16 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public void showToMuchResourcesWindow(int numToRemove) {
-		// TODO Auto-generated method stub
 		mode = GUIMode.TO_MUCH_RESOURCES;
 		state.numToRemove = numToRemove;
 		rebuild_gui();
+	}
+
+	@Override
+	public void showMoveRobber() {
+		show_informative_hint(Language.MOVE_ROBBER, "");
+		state.curr_action = Action.moveRobber;
+		btnFinishedMove.set_enabled(false);
 	}
 	
 	

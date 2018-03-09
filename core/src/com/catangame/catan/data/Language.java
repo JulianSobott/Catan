@@ -51,8 +51,9 @@ public enum Language {
 	FREE_STREETS("2 free streets","2 kostenlose Straﬂen"), 
 	MONOPOL("Monopol", "Monopol"),
 	SEND("Send", "Abschicken"),
+	MOVE_ROBBER("Move Robber", "R\u00E4uber versetzen"),
 	//After Game
-	WINNER("{} won this game", "{} hat gewonnen"), ;
+	WINNER("{} won this game", "{} hat gewonnen"),  ;
 
 
 	

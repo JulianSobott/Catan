@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
-
+import com.badlogic.gdx.math.Vector;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.core.Player;
 import com.catangame.catan.data.DevCard;
@@ -18,6 +18,13 @@ import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.LocalState.GameMode;
 
 public class Packet implements Serializable {
+
+	public static class Position implements Serializable {
+		public Vector position;
+		public Position(Vector position) {
+			this.position = position;
+		}
+	}
 
 	public static class Resouces implements Serializable {
 		public Map<Resource, Integer> resources = new HashMap<Resource, Integer>();

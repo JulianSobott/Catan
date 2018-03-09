@@ -1,5 +1,6 @@
 package com.catangame.catan.network;
 
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.data.Field;
 import java.util.List;
@@ -38,6 +39,11 @@ public class RemoteGameLogic extends GameLogic {
 	public void setID(int id) {
 		this.id = id;
 		server.message_to_client(id, new Packet(Command.SET_ID, new Packet.ID(id)));
+	}
+
+	@Override
+	public void setRobberPosition(Vector2 robberPosition) {
+		server.message_to_client(id, new Packet(Command.MOVE_ROBBER, new Packet.Position(robberPosition)));
 	}
 
 }
