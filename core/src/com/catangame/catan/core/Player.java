@@ -17,9 +17,14 @@ public class Player implements Serializable {
 	private String name;
 	private int score = 0;
 	private Color color;
+	protected Action action;
 	Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	List<Building> buildings = new LinkedList<Building>();
 	List<DevCard> developmentCards = new ArrayList<DevCard>();
+	
+	public enum Action{
+		MOVING_ROBBER,
+	}
 
 	public Player(String name, int id, Color color) {
 		this.name = name;

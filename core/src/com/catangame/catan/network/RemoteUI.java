@@ -112,4 +112,9 @@ public class RemoteUI extends UI {
 		server.message_to_client(id, new Packet(Command.MOVE_ROBBER));
 	}
 
+	@Override
+	public void showSteelResource(List<Player> surroundingPlayers) {
+		server.message_to_client(id, new Packet(Command.STEEL_RESOURCE, new Packet.PlayerList(surroundingPlayers)));
+	}
+
 }

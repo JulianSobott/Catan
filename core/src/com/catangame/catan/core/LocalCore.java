@@ -15,6 +15,7 @@ import com.catangame.catan.math.Vector3i;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.core.Map.GeneratorType;
+import com.catangame.catan.core.Player.Action;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
@@ -613,7 +614,8 @@ public class LocalCore extends Core {
 				uis.get(id).update_player_data(player.get(id));
 				break;
 			case KNIGHT:
-
+				uis.get(id).showMoveRobber();
+				player.get(id).action = Action.MOVING_ROBBER;
 				break;
 			case MONOPOL:
 				int addedResources = 0;
@@ -670,13 +672,29 @@ public class LocalCore extends Core {
 	@Override
 	public void moveRobber(int id, Vector2 position) {
 		Vector2i index = Map.position_to_index(position);
-		if(index.x == robberPosition.x && index.y == robberPosition.y) {
+		if(index.x == robberPosition.x && index.y == robberPosition.y || map.getFields()[index.x][index.y].resource.equals(Resource.OCEAN)) {
 			uis.get(id).showMoveRobber();
 		}else {
 			robberPosition.x = index.x;
 			robberPosition.y = index.y;
 			for(GameLogic logic : logics) {
 				logic.setRobberPosition(Map.index_to_position(robberPosition.x , robberPosition.y));
+			}
+			if(player.get(id).action == Action.MOVING_ROBBER) {
+				List<Building> surroundingBuildings = map.getSurroundingBuildings(new Vector2i(index.x, index.y));
+				if(surroundingBuildings.size() != 0) {
+					List<Player> surroundingPlayers = new ArrayList<Player>();
+					for(Building building : surroundingBuildings) {
+						for(Player p : player) {
+							if(p.buildings.contains(building)) {
+								if(!surroundingPlayers.contains(p)) {
+									surroundingPlayers.add(p);
+								}
+							}
+						}
+					}
+					uis.get(id).showSteelResource(surroundingPlayers);
+				}
 			}
 		}
 	}

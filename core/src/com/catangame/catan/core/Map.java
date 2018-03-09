@@ -161,7 +161,12 @@ public class Map {
 		}
 		return surrounding_fields;
 	}
-
+	
+	public List<Building> getSurroundingBuildings(Vector2i fieldPosition){
+		List<Building> surroundingBuildings = new ArrayList<Building>();
+		//TODO Implement this method
+		return surroundingBuildings;
+	}
 	// returns a list of all possible building sites nearby a building
 	List<Vector3i> get_nearby_building_sites(Vector3i position) {
 		List<Vector3i> ret = new ArrayList<Vector3i>();

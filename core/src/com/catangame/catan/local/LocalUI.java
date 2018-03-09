@@ -1981,4 +1981,9 @@ public class LocalUI extends UI implements InputProcessor {
 		btnFinishedMove.set_enabled(enabled);
 		btnTrade.set_enabled(enabled);
 	}
+
+	@Override
+	public void showSteelResource(List<Player> surroundingPlayers) {
+		//TODO implement this
+	}
 }

@@ -17,6 +17,7 @@ public enum Command {
 	SHOW_TO_MUCH_RESOURCES,
 	TAKE_RESOURCE,
 	MOVE_ROBBER,
+	STEEL_RESOURCE,
 	//Pre Game Stuff
 	PLAYER_DATA,
 	NEW_MAP,

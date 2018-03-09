@@ -133,6 +133,11 @@ public class Client extends Networkmanager {
 				ui.showMoveRobber();
 			}	
 			break;
+		case STEEL_RESOURCE:
+			if(((Packet.PlayerList) packet.data).getPlayer() != null) {
+				ui.showSteelResource(((Packet.PlayerList) packet.data).getPlayer());
+			}
+			break;
 		default:
 			System.err.println("Unknown Command reached Client");
 		}

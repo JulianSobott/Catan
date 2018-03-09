@@ -44,4 +44,6 @@ public abstract class UI {
 	public abstract void showToMuchResourcesWindow(int numToRemove);
 
 	public abstract void showMoveRobber();
+
+	public abstract void showSteelResource(List<Player> surroundingPlayers);
 }
