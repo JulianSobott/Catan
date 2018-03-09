@@ -1034,8 +1034,6 @@ public class LocalUI extends UI implements InputProcessor {
 				}else {
 					str = Integer.toString(state.my_player_data.get_resources(r));
 				}
-				System.out.println(r.toString());
-				System.out.println(Language.valueOf(r.toString()).get_text());
 				final Button btnResource = new Button((Language.valueOf(r.toString()).get_text())+ ": " + str ,
 						new Rectangle(start1, 170 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
 				if (state.removedResources.containsKey(r)) {

@@ -52,7 +52,7 @@ public class LocalCore extends Core {
 	List<Player> player = new ArrayList<Player>();
 
 	//TODO add field at lobby to change this
-	int winningScore = 3; //Default Score to win a game
+	int winningScore = 10; //Default Score to win a game
 
 	//Filehandler
 	private LocalFilehandler fileHandler;
@@ -177,11 +177,6 @@ public class LocalCore extends Core {
 			int idx = rand.nextInt(sortedDevCardStack.size());
 			devCardStack.add(sortedDevCardStack.get(idx));
 			sortedDevCardStack.remove(idx);
-		}
-		//TODO make unlimited Cards!?
-		for(int i = 0; i < 100; i++) {
-			card = new DevCard(DevCardType.KNIGHT);
-			sortedDevCardStack.add(card);
 		}
 	}
 
@@ -613,6 +608,7 @@ public class LocalCore extends Core {
 				for(java.util.Map.Entry<Resource, Integer> entry : ((DevCard.FreeResources) card.data).newResources.entrySet()) {
 					player.get(id).add_resource(entry.getKey(), entry.getValue());
 				}
+				devCardStack.add(card);
 				uis.get(id).update_player_data(player.get(id));
 				break;
 			case KNIGHT:
@@ -628,6 +624,7 @@ public class LocalCore extends Core {
 				for(UI ui : uis) {
 					ui.update_player_data(player.get(ui.getID()));
 				}
+				devCardStack.add(card);
 				break;
 			case FREE_STREETS:
 				Vector3i position = ((DevCard.FreeStreets) card.data).places.get(((DevCard.FreeStreets) card.data).places.size()-1);
@@ -648,6 +645,7 @@ public class LocalCore extends Core {
 				}else {
 					uis.get(id).show_informative_hint(Language.DO_MOVE, "");
 				}
+				devCardStack.add(card);
 				break;
 			case POINT:
 				player.get(id).setScore(player.get(id).getScore() + 1);
