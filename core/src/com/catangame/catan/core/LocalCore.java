@@ -86,7 +86,7 @@ public class LocalCore extends Core {
 		for (UI ui : uis) {
 			ui.show_dice_result((byte) diceResult);
 		}
-		if(diceResult != 7) {
+		if(diceResult == 7) {
 			for(Player p : player) {
 				int numResources = 0;
 				for(Resource r : p.get_all_resources().keySet()) {
@@ -97,19 +97,20 @@ public class LocalCore extends Core {
 					uis.get(p.getId()).showToMuchResourcesWindow(numToRemove);
 				}
 			}
-			//TODO implement this method
 			uis.get(0).showMoveRobber();
 		}else {
 			//distributing resources
 			for (Player p : player) {
 				List<Building> villages = p.buildings;
 				for (Building building : villages) {
-					List<Field> surroundingFields = map.get_surrounding_field_objects(building);
-					for (Field field : surroundingFields) {
-						if (field.number == (byte) diceResult) {
-							int addCount = building.get_type() == Building.Type.VILLAGE ? 1
-									: building.get_type() == Building.Type.CITY ? 2 : 0;
-							p.add_resource(field.resource, addCount);
+					List<Vector2i> surroundingFieldsPos = map.get_surrounding_fields(building.get_position());
+					for(Vector2i position : surroundingFieldsPos) {
+						if(position.x != robberPosition.x || position.y != robberPosition.y) {
+							if(map.getFields()[position.x][position.y].number == (byte) diceResult) {
+								int addCount = building.get_type() == Building.Type.VILLAGE ? 1
+										: building.get_type() == Building.Type.CITY ? 2 : 0;
+								p.add_resource(map.getFields()[position.x][position.y].resource, addCount);
+							}
 						}
 					}
 				}
@@ -141,12 +142,12 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-			/*player.get(i).add_resource(Resource.CLAY, 50);
-			player.get(i).add_resource(Resource.GRAIN, 50);
-			player.get(i).add_resource(Resource.ORE, 50);
-			player.get(i).add_resource(Resource.WOOD, 50);
-			player.get(i).add_resource(Resource.WOOL, 50);*/
-
+			player.get(i).add_resource(Resource.CLAY, 0);
+			player.get(i).add_resource(Resource.GRAIN, 0);
+			player.get(i).add_resource(Resource.ORE, 0);
+			player.get(i).add_resource(Resource.WOOD, 0);
+			player.get(i).add_resource(Resource.WOOL, 7);
+			
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {

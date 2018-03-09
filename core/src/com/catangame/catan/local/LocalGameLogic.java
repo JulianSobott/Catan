@@ -271,5 +271,6 @@ public class LocalGameLogic extends GameLogic {
 		state.robberPosition = robberPosition;
 		state.curr_action = null;
 		ui.switch_to_idle();
+		ui.enableAllButton(state.isCurrentPlayer);
 	}
 }
