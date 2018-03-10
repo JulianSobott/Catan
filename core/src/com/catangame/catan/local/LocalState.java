@@ -49,4 +49,6 @@ public class LocalState {
 	int numToRemove; //Num of resources that player has to remove because of 7
 	Map<Resource, Integer> removedResources = new HashMap<Resource, Integer>();
 
+	List<Player> surroundingPlayers; //When played robber
+
 }

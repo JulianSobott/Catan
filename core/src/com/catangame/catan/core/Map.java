@@ -162,10 +162,21 @@ public class Map {
 		return surrounding_fields;
 	}
 	
-	public List<Building> getSurroundingBuildings(Vector2i fieldPosition){
-		List<Building> surroundingBuildings = new ArrayList<Building>();
-		//TODO Implement this method
-		return surroundingBuildings;
+	public List<Player> getSurroundingPlayers(Vector2i fieldPosition, List<Player> player){
+		List<Player> surroundingPlayers = new ArrayList<Player>();
+		for(Player p : player) {
+			for(Building b : p.buildings) {
+				if(b.get_type() != Building.Type.STREET) {
+					List<Vector2i> surroundingFields = get_surrounding_fields(b.get_position());
+					for(Vector2i field : surroundingFields) {
+						if(Vector2i.are_equal(fieldPosition, field)) {
+							surroundingPlayers.add(p);
+						}
+					}	
+				}
+			}
+		}
+		return surroundingPlayers;
 	}
 	// returns a list of all possible building sites nearby a building
 	List<Vector3i> get_nearby_building_sites(Vector3i position) {

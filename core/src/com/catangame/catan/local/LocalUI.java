@@ -49,7 +49,7 @@ import com.catangame.catan.utils.FontMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
-		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES, STEEL_RESOURCE;
 	}
 
 	//TODO Either implement this modes or delete this enum!!
@@ -163,7 +163,9 @@ public class LocalUI extends UI implements InputProcessor {
 	// this method is called when the window gets resized
 	public void rebuild_gui() {
 		destroy_widgets();
-		if (mode == GUIMode.LOBBY) {
+		if(state.numToRemove > 0) {
+			buildToMuchResourcesWindow();
+		}else if (mode == GUIMode.LOBBY) {
 			build_lobby();
 		} else if (mode == GUIMode.JOIN) {
 			build_join_menu();
@@ -181,13 +183,16 @@ public class LocalUI extends UI implements InputProcessor {
 			buildDevCardWindow();
 		}else if(mode == GUIMode.TO_MUCH_RESOURCES) {
 			buildToMuchResourcesWindow();
+		}else if(mode == GUIMode.STEEL_RESOURCE) {
+			buildSteelResource();
 		}else if (mode == GUIMode.LOAD) {
 			build_load_window();
 		} else if (mode == GUIMode.MENU) {
 			build_menu();
 		} else if (mode == GUIMode.END_SCREEN) {
 			buildEndScreen();
-		}	
+		}
+			
 		
 	}
 
@@ -979,7 +984,10 @@ public class LocalUI extends UI implements InputProcessor {
 			//state.devCard ;
 			break;
 		case KNIGHT:
-			
+			mode = GUIMode.GAME;
+			state.devCard = new DevCard(DevCardType.KNIGHT, new DevCard.Knight());
+			core.playCard(id, state.devCard);
+			rebuild_gui();
 			break;
 		case MONOPOL:
 			buildIngameWindow();
@@ -1114,6 +1122,24 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnSend);
+	}
+	
+	private void buildSteelResource() {
+		buildIngameWindow();
+		int i = 0;
+		int btnWidth = 200;
+		for(Player p : state.surroundingPlayers) {
+			Button btnPlayer = new Button(p.getName(), new Rectangle(window_size.x/2 + btnWidth, 100 + 60*i, btnWidth, 50));
+			btnPlayer.set_fill_color(p.getColor());
+			btnPlayer.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					core.steelResource(id, p.getId());	
+				}
+			});
+			btnPlayer.adjustWidth(10);
+			widgets.add(btnPlayer);
+		}
 	}
 	
 	private void buildIngameWindow() {
@@ -1984,6 +2010,8 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public void showSteelResource(List<Player> surroundingPlayers) {
-		//TODO implement this
+		state.surroundingPlayers = surroundingPlayers;
+		mode = GUIMode.STEEL_RESOURCE;
+		buildSteelResource();
 	}
 }

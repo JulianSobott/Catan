@@ -121,6 +121,10 @@ public class Server extends Networkmanager {
 			break;
 		case MOVE_ROBBER:
 			core.moveRobber(id, (Vector2) ((Packet.Position) packet.data).position);
+			break;
+		case STEEL_RESOURCE:
+			core.steelResource(id, (int) ((Packet.Num) packet.data).num);
+			break;
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}

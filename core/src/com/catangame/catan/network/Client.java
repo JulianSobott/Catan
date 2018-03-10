@@ -127,8 +127,10 @@ public class Client extends Networkmanager {
 			ui.showToMuchResourcesWindow(((Packet.Num) packet.data).num.intValue());
 			break;
 		case MOVE_ROBBER:
-			if(((Packet.Position) packet.data).position != null) {
-				gameLogic.setRobberPosition((Vector2) (((Packet.Position) packet.data).position));
+			if(packet.data != null) {
+				if(((Packet.Position) packet.data).position != null) {
+					gameLogic.setRobberPosition((Vector2) (((Packet.Position) packet.data).position));
+				}
 			}else {
 				ui.showMoveRobber();
 			}	

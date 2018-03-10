@@ -98,5 +98,10 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.MOVE_ROBBER, new Packet.Position(position)));
 	}
 
+	@Override
+	public void steelResource(int id, int player) {
+		this.client.sendMessage(new Packet(Command.STEEL_RESOURCE, new Packet.Num(player)));
+	}
+
 
 }

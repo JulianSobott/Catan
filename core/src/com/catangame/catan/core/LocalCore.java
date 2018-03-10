@@ -98,7 +98,7 @@ public class LocalCore extends Core {
 					uis.get(p.getId()).showToMuchResourcesWindow(numToRemove);
 				}
 			}
-			uis.get(0).showMoveRobber();
+			uis.get(current_player).showMoveRobber();
 		}else {
 			//distributing resources
 			for (Player p : player) {
@@ -143,10 +143,10 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-			player.get(i).add_resource(Resource.CLAY, 0);
-			player.get(i).add_resource(Resource.GRAIN, 0);
-			player.get(i).add_resource(Resource.ORE, 0);
-			player.get(i).add_resource(Resource.WOOD, 0);
+			player.get(i).add_resource(Resource.CLAY, 10);
+			player.get(i).add_resource(Resource.GRAIN, 10);
+			player.get(i).add_resource(Resource.ORE, 10);
+			player.get(i).add_resource(Resource.WOOD, 10);
 			player.get(i).add_resource(Resource.WOOL, 7);
 			
 			uis.get(i).update_player_data(player.get(i));
@@ -614,8 +614,8 @@ public class LocalCore extends Core {
 				uis.get(id).update_player_data(player.get(id));
 				break;
 			case KNIGHT:
-				uis.get(id).showMoveRobber();
 				player.get(id).action = Action.MOVING_ROBBER;
+				uis.get(id).showMoveRobber();
 				break;
 			case MONOPOL:
 				int addedResources = 0;
@@ -681,21 +681,35 @@ public class LocalCore extends Core {
 				logic.setRobberPosition(Map.index_to_position(robberPosition.x , robberPosition.y));
 			}
 			if(player.get(id).action == Action.MOVING_ROBBER) {
-				List<Building> surroundingBuildings = map.getSurroundingBuildings(new Vector2i(index.x, index.y));
-				if(surroundingBuildings.size() != 0) {
-					List<Player> surroundingPlayers = new ArrayList<Player>();
-					for(Building building : surroundingBuildings) {
-						for(Player p : player) {
-							if(p.buildings.contains(building)) {
-								if(!surroundingPlayers.contains(p)) {
-									surroundingPlayers.add(p);
-								}
-							}
-						}
+				List<Player> surroundingPlayers = map.getSurroundingPlayers(new Vector2i(index.x, index.y), player);
+				if(surroundingPlayers.size() > 0) {
+					if(surroundingPlayers.contains(this.player.get(id))) {
+						surroundingPlayers.remove(this.player.get(id));
 					}
 					uis.get(id).showSteelResource(surroundingPlayers);
-				}
+				}	
 			}
 		}
+	}
+
+	@Override
+	public void steelResource(int id, int player) {
+		//Steel two resources
+		Random rand = new Random(); 
+		for(int i = 0; i < 2; i++) {
+			boolean foundResource = false;
+			Resource r;
+			do {
+				r = Resource.values()[rand.nextInt(Resource.values().length-1)];
+				if(this.player.get(player).get_all_resources().containsKey(r)) {
+					foundResource = true;
+				}
+			}while(!foundResource);
+			this.player.get(player).take_resource(r, 1);
+			this.player.get(id).add_resource(r, 1);
+			//TODO add hint in UI 
+		}
+		uis.get(player).update_player_data(this.player.get(player));
+		uis.get(id).update_player_data(this.player.get(id));
 	}
 }
