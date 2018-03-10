@@ -76,12 +76,13 @@ public class Map {
 
 		LinkedList<Resource> available_resources = new LinkedList<Resource>();
 		for (Resource r : Resource.values()) {
-			if (r != Resource.OCEAN) {
+			if (r != Resource.OCEAN && r != Resource.DESERT) {
 				int count = (int) ((float) field_count * resource_ratio[r.ordinal()] / ratio_sum) + 1;
 				for (int i = 0; i < count; i++)
 					available_resources.push(r);
 			}
 		}
+		//available_resources.push(Resource.DESERT);
 		for (int i = available_resources.size(); i < field_count; i++)
 			available_resources.push(Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
 
@@ -136,17 +137,17 @@ public class Map {
 
 	List<Vector2i> get_surrounding_fields(Vector3i settlement_pos) {
 		List<Vector2i> ret = new ArrayList<Vector2i>();
-		if (fields[settlement_pos.x][settlement_pos.y].resource != Resource.OCEAN)
+		if (fields[settlement_pos.x][settlement_pos.y].resource != Resource.OCEAN && fields[settlement_pos.x][settlement_pos.y].resource != Resource.DESERT)
 			ret.add(new Vector2i(settlement_pos.x, settlement_pos.y));
 		if (settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y > 0 : settlement_pos.y < map_size_y - 1) {
 			int left_x = settlement_pos.y % 2 == 0 ? settlement_pos.x - 1 : settlement_pos.x;
 			int left_y = settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y - 1 : settlement_pos.y + 1;
 			if (settlement_pos.y > 0 && (settlement_pos.y % 2 != 0 || settlement_pos.x > 0)
-					&& fields[left_x][left_y].resource != Resource.OCEAN) {
+					&& fields[left_x][left_y].resource != Resource.OCEAN && fields[left_x][left_y].resource != Resource.DESERT) {
 				ret.add(new Vector2i(left_x, left_y));
 			}
 			if (settlement_pos.y > 0 && (settlement_pos.y % 2 == 0 || settlement_pos.x < map_size_x - 1)
-					&& fields[left_x + 1][left_y].resource != Resource.OCEAN) {
+					&& fields[left_x + 1][left_y].resource != Resource.OCEAN && fields[left_x + 1][left_y].resource != Resource.DESERT) {
 				ret.add(new Vector2i(left_x + 1, left_y));
 			}
 		}

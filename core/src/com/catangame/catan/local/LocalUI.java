@@ -936,15 +936,15 @@ public class LocalUI extends UI implements InputProcessor {
 			buildIngameWindow();
 			state.devCard = new DevCard(DevCardType.FREE_RESOURCES, new DevCard.FreeResources());
 			int i = 0;		
-			for(Resource r : Resource.values()) {
+			for(final Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
-					String str = Language.valueOf(r.name()).get_text() + ": ";
+					final String str = Language.valueOf(r.name()).get_text() + ": ";
 					int valResource;
 					if(((DevCard.FreeResources) state.devCard.data).newResources.containsKey(r))
 						valResource = ((DevCard.FreeResources) state.devCard.data).newResources.get(r) + state.my_player_data.get_resources(r);
 					else
 						valResource = state.my_player_data.get_resources(r);
-					Label lblResource = new Label(str + valResource, new Rectangle(100, 100 + i*100, 200, 90));
+					final Label lblResource = new Label(str + valResource, new Rectangle(100, 100 + i*100, 200, 90));
 					lblResource.set_fill_color(r.get_color());
 					widgets.add(lblResource);
 					Button btnAddresource = new Button("+", new Rectangle(320, 100 + i*100, 100, 90));
@@ -993,7 +993,7 @@ public class LocalUI extends UI implements InputProcessor {
 			buildIngameWindow();
 			state.devCard = new DevCard(DevCardType.MONOPOL, new DevCard.Monopol());
 			i = 0;
-			for(Resource r : Resource.values()) {
+			for(final Resource r : Resource.values()) {
 				if(r != Resource.OCEAN) {
 					String str = Language.valueOf(r.name()).get_text() + ": ";
 					Button btnResource = new Button(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
@@ -1128,7 +1128,7 @@ public class LocalUI extends UI implements InputProcessor {
 		buildIngameWindow();
 		int i = 0;
 		int btnWidth = 200;
-		for(Player p : state.surroundingPlayers) {
+		for(final Player p : state.surroundingPlayers) {
 			Button btnPlayer = new Button(p.getName(), new Rectangle(window_size.x/2 + btnWidth, 100 + 60*i, btnWidth, 50));
 			btnPlayer.set_fill_color(p.getColor());
 			btnPlayer.set_click_callback(new Runnable() {
