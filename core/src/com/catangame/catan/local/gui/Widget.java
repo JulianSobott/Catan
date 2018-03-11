@@ -1,6 +1,7 @@
 package com.catangame.catan.local.gui;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.catangame.catan.utils.BoxShadow;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,6 +20,10 @@ public abstract class Widget {
 	protected static Color default_disabled_outline_color;
 	protected static Color default_disabled_background_color;
 	protected static Color default_checkbox_color;
+	protected Runnable hoverEnter;
+	protected Runnable hoverLeave;
+	public boolean hasHover = false;
+	public boolean hovered = false;
 
 	public Widget(Rectangle bounds) {
 		update_bounds(bounds);
@@ -31,7 +36,21 @@ public abstract class Widget {
 	public boolean contains_cursor(Vector2 cursor_position) {
 		return bounds.contains(cursor_position);
 	}
-
+	
+	public void addHover(Runnable enter, Runnable leave) {
+		this.hoverEnter = enter;
+		this.hoverLeave = leave;
+		this.hasHover = true;
+	}
+	
+	public void enter() {
+		this.hovered = true;
+		this.hoverEnter.run();
+	}
+	public void leave() {
+		this.hovered = false;
+		this.hoverLeave.run();
+	}
 	// default setter
 
 	public static void set_default_font(BitmapFont BitmapFont) {
@@ -89,4 +108,22 @@ public abstract class Widget {
 	public abstract void render(ShapeRenderer sr, SpriteBatch sb);
 
 	public abstract void do_mouse_click(Vector2 pos);
+	
+	
+	//Hover Effects
+	public void addHoverEffect1() {
+		if(this instanceof Button) {
+			((Button)Widget.this).addHover(new Runnable() {	
+				@Override
+				public void run() {
+					((Button)Widget.this).addBoxShadow(new BoxShadow(new Color(126, 71, 20, 120), 0, 2, 2 , new BoxShadow(new Color(0, 0, 20, 90), 1, 0, 0 )));
+				}
+			}, new Runnable() {
+				@Override
+				public void run() {
+					((Button)Widget.this).addBoxShadow(new BoxShadow(new Color(126, 71, 20, 90), 0, 2, 2));
+				}
+			});
+		}	
+	}
 }

@@ -43,6 +43,14 @@ public enum Language {
 	ORE("Ore", "Erz"), 
 	
 	TRADE("Trade", "Handeln"), 
+	BANK("Bank", "Bank"),
+	PLAYER("Player", "Spieler"),
+	CMD_SELECT_WANTED("Select wanted resources", "Wähle Resourcen die du willst"),
+	CMD_SELECT_OFFERED("select resources that you offer", "Wähle Resourcen, die du anbietest"),
+	ALL_OFFERS("All offers", "Alle Angebote"),
+	OFFER("Offer", "Angebot"),
+	ACCEPT("Accept", "Annehmen"),
+	TO_MUCH_RESOURCES("You have {} resources overmuch", "Du hast {} Resourcen zu viel"),
 	SAVE("Save game", "Spiel speichern"), 
 	DEVELOPMENT_CARD("Development card", "Entwicklungskarte"),
 	SAVED_GAME("Successfully saved game", "Erfolgreich Spiel gespeichert"),
@@ -54,7 +62,7 @@ public enum Language {
 	SEND("Send", "Abschicken"),
 	MOVE_ROBBER("Move Robber", "R\u00E4uber versetzen"),
 	//After Game
-	WINNER("{} won this game", "{} hat gewonnen"),  ;
+	WINNER("{} won this game", "{} hat gewonnen"),    ;
 
 
 	

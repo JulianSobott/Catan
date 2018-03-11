@@ -12,11 +12,11 @@ public class Building implements Serializable {
 		STREET, VILLAGE, CITY;
 
 		// \p neededResources: order has to be equivalent to the definition order in Resources.java
-		void setNeededResources(Map<Resource, Integer> neededResources) {
+		public void setNeededResources(Map<Resource, Integer> neededResources) {
 			this.neededResources = neededResources;
 		}
 		
-		Map<Resource, Integer> getNeededResources() {
+		public Map<Resource, Integer> getNeededResources() {
 			return neededResources;
 		}
 		Map<Resource, Integer> neededResources;

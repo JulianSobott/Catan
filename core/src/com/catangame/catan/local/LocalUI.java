@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Rectangle;
 import com.catangame.catan.math.Vector2i;
+import com.catangame.catan.core.Building;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
 import com.catangame.catan.core.Map;
@@ -39,6 +40,7 @@ import com.catangame.catan.local.TradeDemand.Vendor;
 import com.catangame.catan.local.gui.Button;
 import com.catangame.catan.local.gui.Checkbox;
 import com.catangame.catan.local.gui.ColorPicker;
+import com.catangame.catan.local.gui.Container;
 import com.catangame.catan.local.gui.Label;
 import com.catangame.catan.local.gui.ScrollContainer;
 import com.catangame.catan.local.gui.TextField;
@@ -206,6 +208,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 		Button btn = new Button(Language.CREATE_NEW_GAME.get_text(),
 				new Rectangle(0, 0, mm_button_width, mm_button_height));
+		btn.addHoverEffect1();
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -222,10 +225,12 @@ public class LocalUI extends UI implements InputProcessor {
 				build_join_menu();
 			}
 		});
-		btn.addBoxShadow(new BoxShadow(new Color(126, 71, 20, 90), 0, 2, 2 , new BoxShadow(new Color(0, 0, 20, 90), 2, 0, 0 )));
+		btn.addBoxShadow(new BoxShadow(new Color(126, 71, 20, 90), 0, 2, 2));
+		btn.addHoverEffect1();
 		widgets.add(btn);
 
 		btn = new Button(Language.LOAD_GAME.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
+		btn.addHoverEffect1();
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -237,6 +242,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btn);
 
 		btn = new Button(Language.OPTIONS.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
+		btn.addHoverEffect1();
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -247,6 +253,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btn);
 
 		btn = new Button(Language.EXIT.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
+		btn.addHoverEffect1();
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -357,6 +364,32 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildVillage.set_enabled(buttonsEnabled);
+		Container cVillage = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 250, 200, 150));
+		btnBuildVillage.addHover(new Runnable() {	
+			@Override
+			public void run() {
+				if(cVillage.widgets.size() == 0) {
+					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 250, 200, 150));
+					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
+					cVillage.addWidget(lblContainer);
+					 java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
+					 String str = "";
+					 for(Resource r : neededresources.keySet()) {
+						 str += Language.valueOf(r.toString()).get_text() + ": " + neededresources.get(r) + "\r\n";
+					 }
+					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 260, 200, 200));
+					lblText.set_text_color(Color.WHITE);
+					cVillage.addWidget(lblText);
+				}
+				cVillage.visible = true;
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				cVillage.visible = false;
+			}
+		});
+		widgets.add(cVillage);
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
 			public void run() {		
@@ -374,9 +407,36 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnBuildVillage);
+		
 		btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildCity.set_enabled(buttonsEnabled);
+		Container cCity = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 250, 200, 150));
+		btnBuildCity.addHover(new Runnable() {	
+			@Override
+			public void run() {
+				if(cCity.widgets.size() == 0) {
+					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 250, 200, 150));
+					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
+					cCity.addWidget(lblContainer);
+					 java.util.Map<Resource, Integer> neededresources = Building.Type.CITY.getNeededResources();
+					 String str = "";
+					 for(Resource r : neededresources.keySet()) {
+						 str += Language.valueOf(r.toString()).get_text() + ": " + neededresources.get(r) + "\r\n";
+					 }
+					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 260, 200, 200));
+					lblText.set_text_color(Color.WHITE);
+					cCity.addWidget(lblText);
+				}	
+				cCity.visible = true;
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				cCity.visible = false;
+			}
+		});
+		widgets.add(cCity);
 		btnBuildCity.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -394,9 +454,36 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnBuildCity);
+		
 		btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildStreet.set_enabled(buttonsEnabled);
+		Container cStreet = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 260, 200, 200));
+		btnBuildStreet.addHover(new Runnable() {	
+			@Override
+			public void run() {
+				if(cStreet.widgets.size() == 0) {
+					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 250, 200, 150));
+					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
+					cStreet.addWidget(lblContainer);
+					 java.util.Map<Resource, Integer> neededresources = Building.Type.STREET.getNeededResources();
+					 String str = "";
+					 for(Resource r : neededresources.keySet()) {
+						 str += Language.valueOf(r.toString()).get_text() + ": " + neededresources.get(r) + "\r\n";
+					 }
+					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 260, 200, 200));
+					lblText.set_text_color(Color.WHITE);
+					cStreet.addWidget(lblText);
+				}
+				cStreet.visible = true;
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				cStreet.visible = false;
+			}
+		});
+		widgets.add(cStreet);
 		btnBuildStreet.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -467,7 +554,7 @@ public class LocalUI extends UI implements InputProcessor {
 	public void build__demander_trade_window() {
 		buildIngameWindow();
 		if (tradeDemand.getVendor() == null) {
-			Button btnAskBank = new Button("Bank", new Rectangle(200, window_size.y / 4, 200, 100));
+			Button btnAskBank = new Button(Language.BANK.get_text(), new Rectangle(200, window_size.y / 4, 200, 100));
 			btnAskBank.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
@@ -487,7 +574,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 			btnAskBank.set_enabled(enabled);
 			widgets.add(btnAskBank);
-			Button btnAskPlayer = new Button("Player", new Rectangle(500, window_size.y / 4, 200, 100));
+			Button btnAskPlayer = new Button(Language.PLAYER.get_text(), new Rectangle(500, window_size.y / 4, 200, 100));
 			btnAskPlayer.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
@@ -504,7 +591,7 @@ public class LocalUI extends UI implements InputProcessor {
 		//All wanted resources
 		//TODO Add phrases to Language
 		if (tradeDemand.getVendor() != null) {
-			Label lblWantedResources = new Label("Select Wanted Resopurces", new Rectangle(50, 100, 200, 50));
+			Label lblWantedResources = new Label(Language.CMD_SELECT_WANTED.get_text(), new Rectangle(50, 100, 200, 50));
 			lblWantedResources.set_text_color(Color.WHITE);
 			widgets.add(lblWantedResources);
 
@@ -516,7 +603,7 @@ public class LocalUI extends UI implements InputProcessor {
 			for (final Resource r : Resource.values()) {
 				if (r != Resource.OCEAN && r != Resource.DESERT) {
 
-					final Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()),
+					final Button btnWantedResource = new Button((Language.valueOf(r.toString()).get_text()),
 							new Rectangle(start1, 170 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
 					if (tradeDemand.getWantedResources().containsKey(r)) {
 						btnWantedResource.set_fill_color(r.get_color());
@@ -588,7 +675,7 @@ public class LocalUI extends UI implements InputProcessor {
 			//All Resources for offer
 			i = 0;
 			float start2 = window_size.x / 4 + 20;
-			Label lblOfferedResources = new Label("Select Resources That you offer", new Rectangle(370, 100, 300, 50));
+			Label lblOfferedResources = new Label(Language.CMD_SELECT_OFFERED.get_text(), new Rectangle(370, 100, 300, 50));
 			lblOfferedResources.set_text_color(Color.WHITE);
 			widgets.add(lblOfferedResources);
 			for (final Resource r : Resource.values()) {
@@ -597,7 +684,7 @@ public class LocalUI extends UI implements InputProcessor {
 						&& tradeDemand.getVendor() == Vendor.PLAYER
 						|| r != Resource.OCEAN && r != Resource.DESERT && state.my_player_data.get_resources(r) >= 4
 								&& tradeDemand.getVendor() == Vendor.BANK) {
-					String resourceString = (Language.valueOf(r.toString()).toString()) + ": "
+					String resourceString = (Language.valueOf(r.toString()).get_text()) + ": "
 							+ state.my_player_data.get_resources(r);
 					final Button btnOfferedResource = new Button(resourceString,
 							new Rectangle(start2, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
@@ -632,14 +719,14 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 			}
 
-			Label lblAllOffers = new Label("All Offers", new Rectangle(window_size.x / 2, 150, 300, 50));
+			Label lblAllOffers = new Label(Language.ALL_OFFERS.get_text(), new Rectangle(window_size.x / 2, 150, 300, 50));
 			lblAllOffers.set_text_color(Color.WHITE);
 			widgets.add(lblAllOffers);
 			//show all offers
 			i = 0;
 			for (final TradeOffer offer : allTradeOffer) {
 				//Offer Label
-				Label lblOfferID = new Label("Offer " + i,
+				Label lblOfferID = new Label(Language.OFFER.get_text() + i,
 						new Rectangle(window_size.x / 2, 200 + (110 + 20) * i, 300, 50));
 				lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
 				widgets.add(lblOfferID);
@@ -653,7 +740,7 @@ public class LocalUI extends UI implements InputProcessor {
 				int j = 0;
 				Label lblOfferedResource;
 				for (Resource r : offer.getOfferedResources().keySet()) {
-					lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r),
+					lblOfferedResource = new Label(Language.valueOf(r.toString()).get_text() + ": " + offer.getOfferedResources().get(r),
 							new Rectangle(window_size.x / 2 + 150 * j, 250 + (110 + 20) * i, 150, 50));
 					lblOfferedResource.set_fill_color(r.get_color());
 					lblOfferedResource.set_font(FontMgr.getFont(23));
@@ -661,7 +748,7 @@ public class LocalUI extends UI implements InputProcessor {
 					j++;
 				}
 				//Button accept
-				Button btnAccept = new Button("Accept",
+				Button btnAccept = new Button(Language.ACCEPT.get_text(),
 						new Rectangle(window_size.x - 110, 250 + (110 + 20) * i, 80, 50));
 				btnAccept.set_click_callback(new Runnable() {
 					@Override
@@ -696,7 +783,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 			//sc = new ScrollContainer(new Rectangle(window_size.x / 2, 200 , 300, (110 + 20) * i));
 			//Button Send demand
-			Button btnSendDemand = new Button("Send demand",
+			Button btnSendDemand = new Button(Language.SEND.get_text(),
 					new Rectangle(window_size.x - 300, window_size.y - 100, 200, 70));
 			btnSendDemand.set_fill_color(Color.GREEN);
 			btnSendDemand.set_click_callback(new Runnable() {
@@ -723,7 +810,7 @@ public class LocalUI extends UI implements InputProcessor {
 		lblAllWantedResources.set_text_color(Color.WHITE);
 		widgets.add(lblAllWantedResources);
 		for (Resource r : tradeDemand.wantedResources.keySet()) {
-			Label lblWantedResource = new Label(r.toString(),
+			Label lblWantedResource = new Label(Language.valueOf(r.toString()).get_text(),
 					new Rectangle((btnResourceWidth + btnSpace) * i + 50, 100, btnResourceWidth, 50));
 			lblWantedResource.set_fill_color(r.get_color());
 			widgets.add(lblWantedResource);
@@ -736,7 +823,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(allOfferedResources);
 		i = 0;
 		for (Resource r : tradeDemand.offeredResources.keySet()) {
-			Label lblWantedResource = new Label(r.toString(), new Rectangle(
+			Label lblWantedResource = new Label(Language.valueOf(r.toString()).get_text(), new Rectangle(
 					window_size.x / 2 + (btnResourceWidth + btnSpace) * i + 80, 100, btnResourceWidth, 50));
 			lblWantedResource.set_fill_color(r.get_color());
 			widgets.add(lblWantedResource);
@@ -887,7 +974,7 @@ public class LocalUI extends UI implements InputProcessor {
 			int j = 0;
 			Label lblOfferedResource;
 			for (Resource r : offer.getOfferedResources().keySet()) {
-				lblOfferedResource = new Label(r.toString() + ": " + offer.getOfferedResources().get(r),
+				lblOfferedResource = new Label(Language.valueOf(r.toString()).get_text() + ": " + offer.getOfferedResources().get(r),
 						new Rectangle(window_size.x / 2 + 120 * j, 250 + (150) * i, 120, 50));
 				lblOfferedResource.set_fill_color(r.get_color());
 				lblOfferedResource.set_font(FontMgr.getFont(23));
@@ -899,7 +986,7 @@ public class LocalUI extends UI implements InputProcessor {
 			j = 0;
 			Label lblWantedResource;
 			for (Resource r : offer.getDemandedResources().keySet()) {
-				lblWantedResource = new Label(r.toString() + ": " + offer.getDemandedResources().get(r),
+				lblWantedResource = new Label(Language.valueOf(r.toString()).get_text() + ": " + offer.getDemandedResources().get(r),
 						new Rectangle(window_size.x / 2 + 120 * j, 300 + (150) * i, 120, 50));
 				lblWantedResource.set_fill_color(r.get_color());
 				lblWantedResource.set_font(FontMgr.getFont(23));
@@ -1032,8 +1119,9 @@ public class LocalUI extends UI implements InputProcessor {
 		float btnSpace = 20;
 		int i = 0;
 		
-		Label lblNum = new Label(Integer.toString(state.numToRemove), new Rectangle(start1, 40, 100, 50));
+		Label lblNum = new Label(Language.TO_MUCH_RESOURCES.get_text(Integer.toString(state.numToRemove)), new Rectangle(start1, 40, 100, 50));
 		lblNum.set_fill_color(Color.RED);
+		lblNum.adjustWidth(7);
 		widgets.add(lblNum);
 		
 		for (final Resource r : Resource.values()) {
@@ -1784,6 +1872,18 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
+		for(int i = 0; i < widgets.size(); i++) {
+			Widget w = widgets.get(i);
+			if(w.contains_cursor(framework.reverse_transform_position(screenX, screenY, camera))) {
+				if(w.hasHover && !w.hovered) {
+					w.enter();
+				}
+			}else {
+				if(w.hasHover && w.hovered) {
+					w.leave();
+				}
+			}
+		}
 		return false;
 	}
 

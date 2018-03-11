@@ -616,7 +616,6 @@ public class LocalCore extends Core {
 			case KNIGHT:
 				player.get(id).action = Action.MOVING_ROBBER;
 				player.get(id).addKnight();
-				
 				if(player.get(id).getNumKnights() >= 3) {
 					Player mostKnights = null;
 					int numKnights = 0;
