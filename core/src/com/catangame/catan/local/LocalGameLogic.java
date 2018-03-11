@@ -100,6 +100,10 @@ public class LocalGameLogic extends GameLogic {
 					state.field_resources.get(fields[x][y].resource).add(pos);
 					if (fields[x][y].number != 0)
 						state.field_numbers.get(fields[x][y].number).add(pos);
+					else {
+						if(fields[x][y].resource == Resource.DESERT)
+							state.robberPosition = Map.index_to_position(x, y);
+					}
 				}
 			}
 		}
@@ -130,7 +134,14 @@ public class LocalGameLogic extends GameLogic {
 	@Override
 	public void add_building(int user, Building building) {
 		if (building.get_type() == Building.Type.VILLAGE) {
-			state.villages.get(user).add(Map.index_to_building_position(building.get_position()));
+			if(state.villages.containsKey(user)) {
+				state.villages.get(user).add(Map.index_to_building_position(building.get_position()));
+			}else {
+				List<Vector2> villages = new LinkedList<Vector2>();
+				villages.add(Map.index_to_building_position(building.get_position()));
+				state.villages.put(user, villages);
+			}
+			
 		} else if (building.get_type() == Building.Type.CITY) {
 			// remove old village
 			Vector2 building_pos = Map.index_to_building_position(building.get_position());

@@ -9,5 +9,5 @@ public class Field implements Serializable{
 	public Field(Resource resource, byte number ){
 		this.resource = resource;
 		this.number = number;
-	}
+	}	
 }

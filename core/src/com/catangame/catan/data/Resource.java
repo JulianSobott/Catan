@@ -8,7 +8,7 @@ public enum Resource {
 	GRAIN(new Color(0.86f, 0.71f, 0, 1)),
 	CLAY(new Color(0.63f, 0.31f, 0, 1)),
 	ORE(new Color(0.47f, 0.47f, 0.47f, 1)),
-	DESERT(new Color(0 , 0, 0, 251));
+	DESERT(new Color(0.7f, 0.6f, .1f, .4f));
 
 	// data
 	private Color color;

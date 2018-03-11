@@ -364,12 +364,12 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildVillage.set_enabled(buttonsEnabled);
-		Container cVillage = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 250, 200, 150));
+		Container cVillage = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
 		btnBuildVillage.addHover(new Runnable() {	
 			@Override
 			public void run() {
 				if(cVillage.widgets.size() == 0) {
-					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 250, 200, 150));
+					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
 					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
 					cVillage.addWidget(lblContainer);
 					 java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
@@ -377,7 +377,7 @@ public class LocalUI extends UI implements InputProcessor {
 					 for(Resource r : neededresources.keySet()) {
 						 str += Language.valueOf(r.toString()).get_text() + ": " + neededresources.get(r) + "\r\n";
 					 }
-					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 260, 200, 200));
+					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
 					lblText.set_text_color(Color.WHITE);
 					cVillage.addWidget(lblText);
 				}
@@ -411,12 +411,13 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildCity.set_enabled(buttonsEnabled);
-		Container cCity = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 250, 200, 150));
+		Container cCity = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 190, 200, 100));
+		btnBuildCity.addHoverEffect1();
 		btnBuildCity.addHover(new Runnable() {	
 			@Override
 			public void run() {
 				if(cCity.widgets.size() == 0) {
-					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 250, 200, 150));
+					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 190, 200, 100));
 					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
 					cCity.addWidget(lblContainer);
 					 java.util.Map<Resource, Integer> neededresources = Building.Type.CITY.getNeededResources();
@@ -424,10 +425,10 @@ public class LocalUI extends UI implements InputProcessor {
 					 for(Resource r : neededresources.keySet()) {
 						 str += Language.valueOf(r.toString()).get_text() + ": " + neededresources.get(r) + "\r\n";
 					 }
-					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 260, 200, 200));
+					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 190, 200, 100));
 					lblText.set_text_color(Color.WHITE);
 					cCity.addWidget(lblText);
-				}	
+				}
 				cCity.visible = true;
 			}
 		}, new Runnable() {
@@ -458,12 +459,13 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildStreet.set_enabled(buttonsEnabled);
-		Container cStreet = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 260, 200, 200));
+		Container cStreet = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 190, 200, 100));
+		btnBuildStreet.addHoverEffect1();
 		btnBuildStreet.addHover(new Runnable() {	
 			@Override
 			public void run() {
 				if(cStreet.widgets.size() == 0) {
-					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 250, 200, 150));
+					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 190, 200, 100));
 					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
 					cStreet.addWidget(lblContainer);
 					 java.util.Map<Resource, Integer> neededresources = Building.Type.STREET.getNeededResources();
@@ -471,7 +473,7 @@ public class LocalUI extends UI implements InputProcessor {
 					 for(Resource r : neededresources.keySet()) {
 						 str += Language.valueOf(r.toString()).get_text() + ": " + neededresources.get(r) + "\r\n";
 					 }
-					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 260, 200, 200));
+					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 190, 200, 100));
 					lblText.set_text_color(Color.WHITE);
 					cStreet.addWidget(lblText);
 				}
@@ -506,6 +508,28 @@ public class LocalUI extends UI implements InputProcessor {
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width + 100, 70));
 		btnBuyDevelopmentCard.adjustWidth(5);
 		btnBuyDevelopmentCard.set_enabled(buttonsEnabled);
+		Container cDevCard = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 3, window_size.y - 240, 200, 150));
+		btnBuyDevelopmentCard.addHover(new Runnable() {	
+			@Override
+			public void run() {
+				if(cDevCard.widgets.size() == 0) {
+					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 3, window_size.y - 240, 200, 150));
+					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
+					cDevCard.addWidget(lblContainer);
+					String str = Language.GRAIN.get_text() +": "+1 + "\r\n" + Language.ORE.get_text() +": "+1 + "\r\n" + Language.WOOL.get_text() +": "+1;
+					Label lblText = new Label(str, new Rectangle(orientationAnchor + (buttons_width + 5) * 3, window_size.y - 240, 200, 150));
+					lblText.set_text_color(Color.WHITE);
+					cDevCard.addWidget(lblText);
+				}
+				cDevCard.visible = true;
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				cDevCard.visible = false;
+			}
+		});
+		widgets.add(cDevCard);
 		btnBuyDevelopmentCard.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -1634,22 +1658,32 @@ public class LocalUI extends UI implements InputProcessor {
 				@Override
 				public void run() {
 					int islandSize = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
-					int seed = tf_value_seed.length() > 0 ? Integer.parseInt(tf_value_seed)
-							: ((int) Math.random() * 100) + 1;
+					int seed;
+					try {
+						 seed = tf_value_seed.length() > 0  ? Integer.parseInt(tf_value_seed)
+									: ((int) Math.random() * 100) + 1;
+					}catch(NumberFormatException e) {
+						seed = ((int) Math.random() * 100) + 1;
+					}
 					String user_name = tf_value_name.length() > 0 ? tf_value_name : "Anonymous";
 
 					((LocalCore) core).changePlayerProps(0, user_name, playerColor);
-					((LocalCore) core).create_new_map(islandSize, seed,
-							new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
-							cb_value_is_circle ? GeneratorType.CIRCLE : GeneratorType.HEXAGON, // something
-							Integer.parseInt(tf_value_random_houses), Integer.parseInt(tf_value_resource_houses));
-					((LocalCore) core).init_game();
+					try {
+						((LocalCore) core).create_new_map(islandSize, seed,
+								new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
+								cb_value_is_circle ? GeneratorType.CIRCLE : GeneratorType.HEXAGON, // something
+								Integer.parseInt(tf_value_random_houses), Integer.parseInt(tf_value_resource_houses));
+						((LocalCore) core).init_game();
 
-					Vector2 newCameraPos = Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2));
-					framework.camera.position.x = newCameraPos.x;
-					framework.camera.position.y = newCameraPos.y;
-					framework.update_view(false);
-
+						Vector2 newCameraPos = Map.index_to_position(new Vector2i(Map.map_size_x / 2, Map.map_size_y / 2));
+						framework.camera.position.x = newCameraPos.x;
+						framework.camera.position.y = newCameraPos.y;
+						framework.update_view(false);
+					}catch(NumberFormatException e) {
+						System.err.println("Entered String instead of Number");
+						tf_value_random_houses = "1";
+						tf_value_resource_houses = "1";
+					}
 				}
 			});
 		} else {
@@ -1900,6 +1934,7 @@ public class LocalUI extends UI implements InputProcessor {
 		ArrayList<Widget> currWidgets = widgets;
 		for (int i = 0; i < currWidgets.size(); i++) {
 			try {
+				currWidgets.get(i).addHoverEffect1();
 				currWidgets.get(i).render(sr, sb);
 			} catch (Exception e) {
 				e.printStackTrace();

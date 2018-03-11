@@ -83,7 +83,7 @@ public class Map {
 					available_resources.push(r);
 			}
 		}
-		//available_resources.push(Resource.DESERT);
+		available_resources.push(Resource.DESERT);
 		for (int i = available_resources.size(); i < field_count; i++)
 			available_resources.push(Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
 
@@ -122,7 +122,11 @@ public class Map {
 					}
 					int index_r = rand.nextInt(available_resources.size());
 					int index_n = rand.nextInt(available_numbers.size());
-					this.fields[x][y] = new Field(available_resources.get(index_r), available_numbers.get(index_n));
+					if(available_resources.get(index_r) == Resource.DESERT) {
+						this.fields[x][y] = new Field(available_resources.get(index_r), (byte) 0);
+					}else {
+						this.fields[x][y] = new Field(available_resources.get(index_r), available_numbers.get(index_n));
+					}		
 					available_resources.remove(index_r);
 					available_numbers.remove(index_n);
 				} else // is ocean
@@ -266,6 +270,9 @@ public class Map {
 		Random rand = new Random(seed);
 
 		List<Vector3i> new_cities = new ArrayList<Vector3i>();
+		if(house_count > available_village_places.size()) {
+			house_count = available_village_places.size();
+		}
 		for (int i = 0; i < house_count; i++) {
 			int index = rand.nextInt(available_village_places.size());
 			new_cities.add(available_village_places.get(index));

@@ -4,6 +4,7 @@ import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building.Type;
@@ -15,12 +16,28 @@ import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
 import com.catangame.catan.superClasses.UI;
 import com.catangame.catan.core.Map.GeneratorType;
+import com.catangame.catan.core.Building;
 import com.catangame.catan.core.Player;
 
 public class RemoteCore extends Core {
 	Client client;
 
 	public RemoteCore() {
+		// create initial resource database
+				TreeMap<Resource, Integer> neededResources = new TreeMap<Resource, Integer>();
+				neededResources.put(Resource.WOOD, 1);
+				neededResources.put(Resource.CLAY, 1);
+				Building.Type.STREET.setNeededResources(neededResources);
+				neededResources = new TreeMap<Resource, Integer>();
+				neededResources.put(Resource.WOOD, 1);
+				neededResources.put(Resource.WOOL, 1);
+				neededResources.put(Resource.GRAIN, 1);
+				neededResources.put(Resource.CLAY, 1);
+				Building.Type.VILLAGE.setNeededResources(neededResources);
+				neededResources = new TreeMap<Resource, Integer>();
+				neededResources.put(Resource.GRAIN, 2);
+				neededResources.put(Resource.ORE, 3);
+				Building.Type.CITY.setNeededResources(neededResources);
 	}
 
 	public void setClientConnection(Client client) {
@@ -103,5 +120,6 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.STEEL_RESOURCE, new Packet.Num(player)));
 	}
 
+	
 
 }

@@ -1,5 +1,8 @@
 package com.catangame.catan.local.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Camera;
 import com.catangame.catan.utils.BoxShadow;
 import com.catangame.catan.utils.Color;
@@ -20,11 +23,11 @@ public abstract class Widget {
 	protected static Color default_disabled_outline_color;
 	protected static Color default_disabled_background_color;
 	protected static Color default_checkbox_color;
-	protected Runnable hoverEnter;
-	protected Runnable hoverLeave;
+	protected List<Runnable> hoverEnter = new ArrayList<Runnable>();
+	protected List<Runnable> hoverLeave = new ArrayList<Runnable>();
 	public boolean hasHover = false;
 	public boolean hovered = false;
-
+	
 	public Widget(Rectangle bounds) {
 		update_bounds(bounds);
 	}
@@ -38,18 +41,22 @@ public abstract class Widget {
 	}
 	
 	public void addHover(Runnable enter, Runnable leave) {
-		this.hoverEnter = enter;
-		this.hoverLeave = leave;
+		this.hoverEnter.add(enter);
+		this.hoverLeave.add(leave);
 		this.hasHover = true;
 	}
 	
 	public void enter() {
 		this.hovered = true;
-		this.hoverEnter.run();
+		for(Runnable r : this.hoverEnter) {
+			r.run();
+		}
 	}
 	public void leave() {
 		this.hovered = false;
-		this.hoverLeave.run();
+		for(Runnable r : this.hoverLeave) {
+			r.run();
+		}
 	}
 	// default setter
 
