@@ -36,7 +36,7 @@ public class TradeOffer implements Serializable{
 			if(demandedResources.get(r) <= 1) {
 				demandedResources.remove(r);
 			}else {
-				demandedResources.put(r, offeredResources.get(r) - 1);
+				demandedResources.put(r, demandedResources.get(r) - 1);	
 			}
 		}
 	}

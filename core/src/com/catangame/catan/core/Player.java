@@ -21,6 +21,7 @@ public class Player implements Serializable {
 	Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	List<Building> buildings = new LinkedList<Building>();
 	List<DevCard> developmentCards = new ArrayList<DevCard>();
+	private int numKnights = 0;
 	
 	public enum Action{
 		MOVING_ROBBER,
@@ -96,5 +97,13 @@ public class Player implements Serializable {
 	
 	public List<DevCard> getDevelopmentCards(){
 		return this.developmentCards;
+	}
+
+	public void addKnight() {
+		this.numKnights++;
+	}
+	
+	public int getNumKnights() {
+		return this.numKnights;
 	}
 }

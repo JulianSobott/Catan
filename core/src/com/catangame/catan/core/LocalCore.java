@@ -615,6 +615,25 @@ public class LocalCore extends Core {
 				break;
 			case KNIGHT:
 				player.get(id).action = Action.MOVING_ROBBER;
+				player.get(id).addKnight();
+				
+				if(player.get(id).getNumKnights() >= 3) {
+					Player mostKnights = null;
+					int numKnights = 0;
+					for(Player p: player) {
+						if(p != player.get(id)) {
+							if(p.getNumKnights() > numKnights) {
+								numKnights = p.getNumKnights();
+								mostKnights = p;
+							}
+						}
+					}
+					if(player.get(id).getNumKnights() > numKnights) {
+						player.get(id).setScore(player.get(id).getScore() + 2);
+						mostKnights.setScore(mostKnights.getScore() + 2);
+					}
+				}
+				
 				uis.get(id).showMoveRobber();
 				break;
 			case MONOPOL:

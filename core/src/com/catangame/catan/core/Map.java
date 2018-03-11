@@ -93,8 +93,7 @@ public class Map {
 				int number;
 				while((number = rand.nextInt(NUMBER_COUNT) + 2) != 7)
 				available_numbers.push((byte) number);
-			}
-				
+			}	
 			else
 				available_numbers.push((byte) (i % (NUMBER_COUNT) + 2));
 		}

@@ -514,7 +514,7 @@ public class LocalUI extends UI implements InputProcessor {
 			float btnWidth1 = containerWidth1 / 6 - 5;
 			float lblHeight = 50;
 			for (final Resource r : Resource.values()) {
-				if (r != Resource.OCEAN) {
+				if (r != Resource.OCEAN && r != Resource.DESERT) {
 
 					final Button btnWantedResource = new Button((Language.valueOf(r.toString()).toString()),
 							new Rectangle(start1, 170 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
@@ -593,9 +593,9 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(lblOfferedResources);
 			for (final Resource r : Resource.values()) {
 
-				if (r != Resource.OCEAN && state.my_player_data.get_resources(r) >= 1
+				if (r != Resource.OCEAN && r != Resource.DESERT && state.my_player_data.get_resources(r) >= 1
 						&& tradeDemand.getVendor() == Vendor.PLAYER
-						|| r != Resource.OCEAN && state.my_player_data.get_resources(r) >= 4
+						|| r != Resource.OCEAN && r != Resource.DESERT && state.my_player_data.get_resources(r) >= 4
 								&& tradeDemand.getVendor() == Vendor.BANK) {
 					String resourceString = (Language.valueOf(r.toString()).toString()) + ": "
 							+ state.my_player_data.get_resources(r);
@@ -857,7 +857,7 @@ public class LocalUI extends UI implements InputProcessor {
 		//All own Resources
 		i = 0;
 		for (Resource r : Resource.values()) {
-			if (r != Resource.OCEAN) {
+			if (r != Resource.OCEAN && r != Resource.DESERT) {
 				String str = Language.valueOf(r.toString()).get_text() + ": " + state.my_player_data.get_resources(r);
 				Label lblResource = new Label(str, new Rectangle(40 + i * 130, window_size.y - 110, 110, 70));
 				lblResource.set_fill_color(r.get_color());
@@ -937,7 +937,7 @@ public class LocalUI extends UI implements InputProcessor {
 			state.devCard = new DevCard(DevCardType.FREE_RESOURCES, new DevCard.FreeResources());
 			int i = 0;		
 			for(final Resource r : Resource.values()) {
-				if(r != Resource.OCEAN) {
+				if(r != Resource.OCEAN && r != Resource.DESERT) {
 					final String str = Language.valueOf(r.name()).get_text() + ": ";
 					int valResource;
 					if(((DevCard.FreeResources) state.devCard.data).newResources.containsKey(r))
@@ -994,7 +994,7 @@ public class LocalUI extends UI implements InputProcessor {
 			state.devCard = new DevCard(DevCardType.MONOPOL, new DevCard.Monopol());
 			i = 0;
 			for(final Resource r : Resource.values()) {
-				if(r != Resource.OCEAN) {
+				if(r != Resource.OCEAN && r != Resource.DESERT) {
 					String str = Language.valueOf(r.name()).get_text() + ": ";
 					Button btnResource = new Button(str + state.my_player_data.get_resources(r), new Rectangle(100, 100 + i*100, 200, 90));
 					btnResource.set_fill_color(r.get_color());
@@ -1037,12 +1037,16 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(lblNum);
 		
 		for (final Resource r : Resource.values()) {
-			if (r != Resource.OCEAN) {
+			if (r != Resource.OCEAN && r != Resource.DESERT) {
 				String str;
 				if(state.removedResources.containsKey(r)) {
 					str = Integer.toString(state.my_player_data.get_resources(r) - state.removedResources.get(r));
 				}else {
-					str = Integer.toString(state.my_player_data.get_resources(r));
+					if(state.my_player_data.get_all_resources().containsKey(r)) {
+						str = Integer.toString(state.my_player_data.get_resources(r));
+					}else {
+						str = "0";
+					}
 				}
 				final Button btnResource = new Button((Language.valueOf(r.toString()).get_text())+ ": " + str ,
 						new Rectangle(start1, 170 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
