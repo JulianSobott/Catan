@@ -41,6 +41,7 @@ public class Map {
 	private List<Vector3i> available_village_places = new LinkedList<Vector3i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
+	private int number;
 	
 
 	public static void update_constants() {
@@ -88,8 +89,12 @@ public class Map {
 
 		LinkedList<Byte> available_numbers = new LinkedList<Byte>();
 		for (int i = 0; i < field_count; i++) {
-			if (i % (NUMBER_COUNT) + 2 == 7)
-				available_numbers.push((byte) (rand.nextInt(NUMBER_COUNT) + 2));
+			if (i % (NUMBER_COUNT) + 2 == 7) {
+				int number;
+				while((number = rand.nextInt(NUMBER_COUNT) + 2) != 7)
+				available_numbers.push((byte) number);
+			}
+				
 			else
 				available_numbers.push((byte) (i % (NUMBER_COUNT) + 2));
 		}
