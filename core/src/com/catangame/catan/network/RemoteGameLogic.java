@@ -3,6 +3,8 @@ package com.catangame.catan.network;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.data.Field;
+import com.catangame.catan.data.Harbour;
+
 import java.util.List;
 import java.util.Map;
 import com.catangame.catan.local.LocalState.GameMode;
@@ -44,6 +46,11 @@ public class RemoteGameLogic extends GameLogic {
 	@Override
 	public void setRobberPosition(Vector2 robberPosition) {
 		server.message_to_client(id, new Packet(Command.MOVE_ROBBER, new Packet.Position(robberPosition)));
+	}
+
+	@Override
+	public void updateHarbours(List<Harbour> harbours) {
+		server.message_to_client(id, new Packet(Command.UPDATE_HARBOURS, new Packet.Harbours(harbours)));
 	}
 
 }

@@ -23,6 +23,7 @@ public enum Command {
 	NEW_MAP,
 	BUILD_REQUEST,
 	UPDATE_BUILDINGS,
+	UPDATE_HARBOURS,
 	NEW_BUILDING,
 	NAME,
 	START_GAME, 
@@ -34,6 +35,6 @@ public enum Command {
 	SHOW_ALL_POSSIBLE_NAMES, 
 	SHOW_NEW_MEMBER, 
 	//After Game
-	END_SCREEN, ;
+	END_SCREEN,;
 	
 }

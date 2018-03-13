@@ -13,12 +13,19 @@ import com.catangame.catan.core.Building;
 import com.catangame.catan.core.Player;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.Field;
+import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.LocalState.GameMode;
 
 public class Packet implements Serializable {
-
+	
+	public static class Harbours implements Serializable{
+		public List<Harbour> harbours;
+		public Harbours(List<Harbour> harbours) {
+			this.harbours = harbours;
+		}
+	}
 	public static class Position implements Serializable {
 		public Vector position;
 		public Position(Vector position) {

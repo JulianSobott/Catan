@@ -28,6 +28,7 @@ import com.catangame.catan.core.Map;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
+import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.LocalState.Action;
 import com.catangame.catan.local.LocalState.GameMode;
@@ -242,6 +243,17 @@ public class LocalGameLogic extends GameLogic {
 					state.robberPosition.y - spriteRobber.getHeight() * 0.05f, spriteRobber.getWidth() * 0.1f,
 					spriteRobber.getHeight() * 0.1f);
 			sb.end();
+			
+			//Render harbors
+			for(Harbour harbour : state.harbours) {
+				sr.begin(ShapeType.Filled);
+				sr.setColor(harbour.resource.get_color().gdx());
+				sr.ellipse(harbour.position.x - Map.field_size / 2 + 30,
+						harbour.position.y - Map.field_size / 2 + 30, Map.field_size - 60,
+						Map.field_size - 60,  30, 6);		
+				sr.end();
+			}
+			
 		}
 	}
 
@@ -283,5 +295,10 @@ public class LocalGameLogic extends GameLogic {
 		state.curr_action = null;
 		ui.switch_to_idle();
 		ui.enableAllButton(state.isCurrentPlayer);
+	}
+
+	@Override
+	public void updateHarbours(List<Harbour> harbours) {
+		state.harbours = harbours;
 	}
 }

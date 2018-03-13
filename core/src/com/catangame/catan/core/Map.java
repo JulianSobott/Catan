@@ -11,6 +11,7 @@ import com.catangame.catan.math.Vector3i;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
+import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Resource;
 
 public class Map {
@@ -41,6 +42,8 @@ public class Map {
 	private List<Vector3i> available_village_places = new LinkedList<Vector3i>();
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
+	private List<Vector2i> availableHarbourPlaces = new ArrayList<Vector2i>();
+	private List<Vector2i> harbourPlaces = new ArrayList<Vector2i>(); 
 	private int number;
 	
 
@@ -135,6 +138,25 @@ public class Map {
 		}
 		System.out.println("Available resources: " + available_resources.size());
 		System.out.println("Available numbers: " + available_numbers.size());
+		
+		for(int x = 0; x < map_size_x; x++) {
+			for(int y = 0; y < map_size_y; y++) {
+				if(fields[x][y].resource == Resource.OCEAN) {
+					if(y % 2 == 0) {
+						if(fields[x-1<0 ? 0 : x-1][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x-1<0?0:x-1][y].resource != Resource.OCEAN ||
+								fields[x+1>map_size_x-1?map_size_x-1: x+1][y].resource != Resource.OCEAN || fields[x-1<0?0:x-1][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN || fields[x][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN) {
+							availableHarbourPlaces.add(new Vector2i(x, y));
+						}
+					}else {
+						if(fields[x][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x+1>map_size_x-1?map_size_x-1: x+1][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x-1<0 ? 0 : x-1][y].resource != Resource.OCEAN ||
+								fields[x+1>map_size_x-1?map_size_x-1: x+1][y].resource != Resource.OCEAN || fields[x][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN || fields[x+1>map_size_x-1?map_size_x-1: x+1][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN) {
+							availableHarbourPlaces.add(new Vector2i(x, y));
+						}
+					}
+					
+				}
+			}
+		}
 	}
 
 	public boolean is_inside_hexagon(Vector2 origin, float diameter, Vector2 position) {
@@ -444,6 +466,20 @@ public class Map {
 
 	public void set_fields(Field[][] fields) {
 		this.fields = fields;
+	}
+
+	public List<Harbour> addHarbours() {
+		List<Harbour> harbours = new ArrayList<Harbour>();
+		Random rand = new Random();
+		for(int i = 0; i < 9; i++) {
+			Harbour h = new Harbour();
+			int idx = rand.nextInt(availableHarbourPlaces.size()-1);
+			h.position = index_to_position(availableHarbourPlaces.get(idx));
+			availableHarbourPlaces.remove(idx);
+			h.resource = Resource.values()[rand.nextInt(Resource.values().length-1)];
+			harbours.add(h);
+		}
+		return harbours;
 	}
 
 }

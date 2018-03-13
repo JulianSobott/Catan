@@ -3,6 +3,8 @@ package com.catangame.catan.superClasses;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.data.Field;
+import com.catangame.catan.data.Harbour;
+
 import java.util.List;
 import com.catangame.catan.local.LocalState.GameMode;
 
@@ -24,4 +26,6 @@ public abstract class GameLogic {
 	public abstract void setID(int id);
 
 	public abstract void setRobberPosition(Vector2 robberPosition);
+
+	public abstract void updateHarbours(List<Harbour> harbours);
 }
