@@ -19,7 +19,6 @@ import com.catangame.catan.core.Player.Action;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
-import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Language;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.data.SavedGame;
@@ -129,7 +128,7 @@ public class LocalCore extends Core {
 		map.create_map(islandSize + 2, seed, islandSize, resourceRatio, generatorType);
 		createDevCardsStack(seed);
 		map.calculate_available_places();
-		List<Harbour > harbours = map.addHarbours();
+		java.util.Map<Vector2, Resource> harbours = map.addHarbours();
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
 			for (Vector3i pos : map.add_random_cities(seed, randomStartBuildings)) {
@@ -154,8 +153,7 @@ public class LocalCore extends Core {
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
-			logic.update_new_map(map.getFields());
-			logic.updateHarbours(harbours);
+			logic.update_new_map(map.getFields(), harbours);
 			logic.update_buildings(new_buildings);
 		}
 	}
@@ -574,7 +572,8 @@ public class LocalCore extends Core {
 		}
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
-			logic.update_new_map(map.getFields());
+			//FIXME add harbours to saved game
+			//logic.update_new_map(map.getFields());
 			logic.update_buildings(new_buildings);
 		}
 	}
@@ -714,7 +713,7 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void steelResource(int id, int player) {
+	public void stealResource(int id, int player) {
 		//Steel two resources
 		Random rand = new Random(); 
 		for(int i = 0; i < 2; i++) {

@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import com.catangame.catan.core.Player;
 import com.catangame.catan.data.DevCard;
-import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Resource;
 
 public class LocalState {
@@ -42,7 +41,7 @@ public class LocalState {
 	Map<Integer, List<Vector2>> cities = new HashMap<Integer, List<Vector2>>();// maps players to building types to positions
 	Map<Integer, List<AbstractStreet>> streets = new HashMap<Integer, List<AbstractStreet>>();// maps players to building types to positions
 	
-	public List<Harbour> harbours;
+	public Map<Vector2, Resource> harbours;
 	
 	Vector2 robberPosition = new Vector2(0,0);
 	

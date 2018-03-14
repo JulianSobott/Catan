@@ -1250,7 +1250,7 @@ public class LocalUI extends UI implements InputProcessor {
 			btnPlayer.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					core.steelResource(id, p.getId());	
+					core.stealResource(id, p.getId());	
 				}
 			});
 			btnPlayer.adjustWidth(10);

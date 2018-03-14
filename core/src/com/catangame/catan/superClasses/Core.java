@@ -44,6 +44,6 @@ public abstract class Core {
 
 	public abstract void moveRobber(int id, Vector2 position);
 
-	public abstract void steelResource(int id, int player);
+	public abstract void stealResource(int id, int player);
 
 }

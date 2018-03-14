@@ -77,13 +77,10 @@ public class Client extends Networkmanager {
 			this.ui.update_player_data(((Packet.PlayerData) packet.data).getPlayer());
 			break;
 		case NEW_MAP:
-			gameLogic.update_new_map(((Packet.New_Map) packet.data).getFields());
+			gameLogic.update_new_map(((Packet.New_Map) packet.data).getFields(), ((Packet.New_Map) packet.data).harbours);
 			break;
 		case UPDATE_BUILDINGS:
 			this.gameLogic.update_buildings(((Packet.UpdateBuildings) packet.data).getBuildings());
-			break;
-		case UPDATE_HARBOURS:
-			this.gameLogic.updateHarbours(((Packet.Harbours) packet.data).harbours);
 			break;
 		case NEW_BUILDING:
 			gameLogic.add_building(((Packet.NewBuilding) packet.data).getID(),

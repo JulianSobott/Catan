@@ -116,7 +116,7 @@ public class RemoteCore extends Core {
 	}
 
 	@Override
-	public void steelResource(int id, int player) {
+	public void stealResource(int id, int player) {
 		this.client.sendMessage(new Packet(Command.STEEL_RESOURCE, new Packet.Num(player)));
 	}
 

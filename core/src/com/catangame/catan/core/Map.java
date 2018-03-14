@@ -1,6 +1,7 @@
 package com.catangame.catan.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -11,7 +12,6 @@ import com.catangame.catan.math.Vector3i;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
-import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Resource;
 
 public class Map {
@@ -468,16 +468,18 @@ public class Map {
 		this.fields = fields;
 	}
 
-	public List<Harbour> addHarbours() {
-		List<Harbour> harbours = new ArrayList<Harbour>();
+	public java.util.Map<Vector2, Resource> addHarbours() {
+		java.util.Map<Vector2, Resource> harbours = new HashMap<Vector2, Resource>();
 		Random rand = new Random();
-		for(int i = 0; i < 9; i++) {
-			Harbour h = new Harbour();
+		for(int i = 0; i < 10; i++) {
 			int idx = rand.nextInt(availableHarbourPlaces.size()-1);
-			h.position = index_to_position(availableHarbourPlaces.get(idx));
+			Vector2 pos = index_to_position(availableHarbourPlaces.get(idx));
+			Resource r = Resource.values()[rand.nextInt(Resource.values().length-1)];
+			if(r == Resource.OCEAN || r == Resource.CLAY) {
+				r = null; //null equals 3 for 1
+			}
 			availableHarbourPlaces.remove(idx);
-			h.resource = Resource.values()[rand.nextInt(Resource.values().length-1)];
-			harbours.add(h);
+			harbours.put(pos, r);
 		}
 		return harbours;
 	}

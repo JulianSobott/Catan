@@ -9,23 +9,17 @@ import java.util.Map;
 import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector3i;
 import com.badlogic.gdx.math.Vector;
+import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.core.Player;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.Field;
-import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.LocalState.GameMode;
 
 public class Packet implements Serializable {
 	
-	public static class Harbours implements Serializable{
-		public List<Harbour> harbours;
-		public Harbours(List<Harbour> harbours) {
-			this.harbours = harbours;
-		}
-	}
 	public static class Position implements Serializable {
 		public Vector position;
 		public Position(Vector position) {
@@ -166,10 +160,12 @@ public class Packet implements Serializable {
 	}
 
 	public static class New_Map implements Serializable {
-		private Field[][] fields;
+		public Field[][] fields;
+		public java.util.Map<Vector2, Resource> harbours;
 
-		public New_Map(Field[][] fields) {
+		public New_Map(Field[][] fields, java.util.Map<Vector2, Resource> harbours) {
 			this.fields = fields;
+			this.harbours = harbours;
 		}
 
 		public Field[][] getFields() {

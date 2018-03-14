@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
+
 import com.badlogic.gdx.Gdx;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -28,7 +30,6 @@ import com.catangame.catan.core.Map;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCardType;
 import com.catangame.catan.data.Field;
-import com.catangame.catan.data.Harbour;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.LocalState.Action;
 import com.catangame.catan.local.LocalState.GameMode;
@@ -86,7 +87,8 @@ public class LocalGameLogic extends GameLogic {
 	}
 
 	@Override
-	public void update_new_map(Field[][] fields) {
+	public void update_new_map(Field[][] fields , java.util.Map<Vector2, Resource> harbours) {
+		state.harbours = harbours;
 		state.field_resources = new HashMap<Resource, List<Vector2>>();
 		for (Resource res : Resource.values())
 			state.field_resources.put(res, new ArrayList<Vector2>());
@@ -244,14 +246,23 @@ public class LocalGameLogic extends GameLogic {
 					spriteRobber.getHeight() * 0.1f);
 			sb.end();
 			
-			//Render harbors
-			for(Harbour harbour : state.harbours) {
-				sr.begin(ShapeType.Filled);
-				sr.setColor(harbour.resource.get_color().gdx());
-				sr.ellipse(harbour.position.x - Map.field_size / 2 + 30,
-						harbour.position.y - Map.field_size / 2 + 30, Map.field_size - 60,
-						Map.field_size - 60,  30, 6);		
-				sr.end();
+			for(Entry<Vector2, Resource> entry : state.harbours.entrySet()) {
+				if(entry.getValue() == null) { // null = 3 for 1
+					sr.begin(ShapeType.Filled);
+					sr.setColor(new Color(100, 100, 100, 250).gdx());
+					sr.ellipse(entry.getKey().x - Map.field_size / 2 + 30,
+							entry.getKey().y - Map.field_size / 2 + 30, Map.field_size - 60,
+							Map.field_size - 60,  30, 6);		
+					sr.end();
+				}else {
+					sr.begin(ShapeType.Filled);
+					sr.setColor(entry.getValue().get_color().gdx());
+					sr.ellipse(entry.getKey().x - Map.field_size / 2 + 30,
+							entry.getKey().y - Map.field_size / 2 + 30, Map.field_size - 60,
+							Map.field_size - 60,  30, 6);		
+					sr.end();
+				}
+				
 			}
 			
 		}
@@ -295,10 +306,5 @@ public class LocalGameLogic extends GameLogic {
 		state.curr_action = null;
 		ui.switch_to_idle();
 		ui.enableAllButton(state.isCurrentPlayer);
-	}
-
-	@Override
-	public void updateHarbours(List<Harbour> harbours) {
-		state.harbours = harbours;
 	}
 }

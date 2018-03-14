@@ -3,7 +3,7 @@ package com.catangame.catan.superClasses;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.data.Field;
-import com.catangame.catan.data.Harbour;
+import com.catangame.catan.data.Resource;
 
 import java.util.List;
 import com.catangame.catan.local.LocalState.GameMode;
@@ -19,13 +19,11 @@ public abstract class GameLogic {
 
 	public abstract void update_buildings(java.util.Map<Integer, List<Building>> buildings);
 
-	public abstract void update_new_map(Field[][] fields);
+	public abstract void update_new_map(Field[][] fields, java.util.Map<Vector2, Resource> harbours);
 
 	public abstract void add_building(int user, Building building);
 
 	public abstract void setID(int id);
 
 	public abstract void setRobberPosition(Vector2 robberPosition);
-
-	public abstract void updateHarbours(List<Harbour> harbours);
 }
