@@ -130,7 +130,6 @@ public class Framework extends ApplicationAdapter {
 
 				@Override
 				public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-					System.out.println(screenX + " - " + screenY);
 					if (button == Input.Buttons.LEFT) {
 						gameLogic.mouse_click_input(reverse_transform_position(screenX, screenY, camera));
 						return true;
@@ -150,7 +149,7 @@ public class Framework extends ApplicationAdapter {
 					return true;
 				}
 			});
-		else if (deviceMode == DeviceMode.MOBILE)
+		if (deviceMode == DeviceMode.MOBILE)
 			multiplexer.addProcessor(new GestureDetector(new GestureDetector.GestureAdapter() {
 
 				@Override
@@ -174,6 +173,13 @@ public class Framework extends ApplicationAdapter {
 					return true;
 				}
 			}));
+		multiplexer.addProcessor(new InputAdapter(){
+			@Override
+			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+				gameLogic.mouse_click_input(reverse_transform_position(screenX, screenY, camera));
+				return true;
+			}
+		});
 		Gdx.input.setInputProcessor(multiplexer);
 
 		gameLogic.init();

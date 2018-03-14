@@ -357,6 +357,7 @@ public class Map {
 		int y = Math.round((position.y - field_offset) / (Map.MAGIC_HEX_NUMBER * (field_size + field_distance)));
 		int x = Math.round((position.x - (field_offset + (y % 2 != 0 ? (field_size + field_distance) / 2.f : 0)))
 				/ (field_size + field_distance));
+		//FIXME Handle when click outside the map
 		return new Vector2i(x, y);
 	}
 
