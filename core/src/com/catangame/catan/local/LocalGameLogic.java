@@ -250,15 +250,15 @@ public class LocalGameLogic extends GameLogic {
 				if(entry.getValue() == null) { // null = 3 for 1
 					sr.begin(ShapeType.Filled);
 					sr.setColor(new Color(100, 100, 100, 250).gdx());
-					sr.ellipse(entry.getKey().x - Map.field_size / 2 + 30,
-							entry.getKey().y - Map.field_size / 2 + 30, Map.field_size - 60,
+					sr.ellipse(Map.index_to_position(entry.getKey().x, entry.getKey().y).x - Map.field_size / 2 + 30,
+							Map.index_to_position(entry.getKey().x, entry.getKey().y).y - Map.field_size / 2 + 30, Map.field_size - 60,
 							Map.field_size - 60,  30, 6);		
 					sr.end();
 				}else {
 					sr.begin(ShapeType.Filled);
 					sr.setColor(entry.getValue().get_color().gdx());
-					sr.ellipse(entry.getKey().x - Map.field_size / 2 + 30,
-							entry.getKey().y - Map.field_size / 2 + 30, Map.field_size - 60,
+					sr.ellipse(Map.index_to_position(entry.getKey().x, entry.getKey().y).x - Map.field_size / 2 + 30,
+							Map.index_to_position(entry.getKey().x, entry.getKey().y).y - Map.field_size / 2 + 30, Map.field_size - 60,
 							Map.field_size - 60,  30, 6);		
 					sr.end();
 				}
