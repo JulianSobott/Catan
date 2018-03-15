@@ -125,6 +125,7 @@ public class LocalCore extends Core {
 	// \p startResources are the initial resources measured by the count of villages
 	public void create_new_map(int islandSize, int seed, float[] resourceRatio, GeneratorType generatorType,
 			int randomStartBuildings, int startResources) {
+		islandSize = islandSize>100 ? 100 : islandSize;
 		map.create_map(islandSize + 2, seed, islandSize, resourceRatio, generatorType);
 		createDevCardsStack(seed);
 		map.calculate_available_places();
@@ -210,22 +211,9 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void register_new_user(String name, Color color) {
-		String playername = checkName(name);
-		int id = player.size();
-		player.add(new Player(playername, id, color));
-		UI ui = new RemoteUI(data_server);
-		ui.setID(id);
-		uis.add(ui);
-		GameLogic logic = new RemoteGameLogic(data_server);
-		logic.setID(id);
-		logics.add(logic);
-		uis.get(0).show_guest_at_lobby(playername);
-		data_server.set_id_last_joined(id);
-	}
-
-	public void register_new_user(String name, Color color, int communicatorID) {
+	public void register_new_user(String name, Color color) {	
 		boolean correctName = false;
+		int id = player.size();
 		if (savedGame != null) {
 			for (Player p : savedGame.getPlayer()) {
 				if (p.getName().equals(name)) {
@@ -235,13 +223,13 @@ public class LocalCore extends Core {
 			}
 			if (!correctName) {
 				UI ui = new RemoteUI(data_server);
-				ui.setID(communicatorID);
+				ui.setID(id);
 				((RemoteUI) ui).showAllPossibleNames(savedGame.getPlayer());
 			}
 		}
 		if (savedGame == null || correctName) {
+			data_server.set_id_last_joined(id);
 			String playername = checkName(name);
-			int id = player.size();
 			player.add(new Player(playername, id, color));
 			UI ui = new RemoteUI(data_server);
 			ui.setID(id);
@@ -249,10 +237,10 @@ public class LocalCore extends Core {
 			GameLogic logic = new RemoteGameLogic(data_server);
 			logic.setID(id);
 			logics.add(logic);
+			
 			for (UI tempUI : uis) {
 				tempUI.show_guest_at_lobby(name);
-			}
-			data_server.set_id_last_joined(id);
+			}	
 		}
 	}
 
@@ -368,7 +356,7 @@ public class LocalCore extends Core {
 	public void update_scoreboard_data() {
 		List<LocalPlayer> scoreboard_data = new ArrayList<LocalPlayer>();
 		for (Player p : player) {
-			scoreboard_data.add(new LocalPlayer(p.getName(), p.getScore(), p.getColor()));
+			scoreboard_data.add(new LocalPlayer(p.getName(), p.getScore(), p.getColor(), p.getId()));
 		}
 		for (UI ui : uis) {
 			ui.update_scoreboard(scoreboard_data);
@@ -730,24 +718,28 @@ public class LocalCore extends Core {
 	@Override
 	public void moveRobber(int id, Vector2 position) {
 		Vector2i index = Map.position_to_index(position);
-		if(index.x == robberPosition.x && index.y == robberPosition.y || map.getFields()[index.x][index.y].resource.equals(Resource.OCEAN)) {
+		if(index.x >= map.map_size_x || index.y >= map.map_size_y || index.x < 0 || index.y < 0) {
 			uis.get(id).showMoveRobber();
 		}else {
-			robberPosition.x = index.x;
-			robberPosition.y = index.y;
-			for(GameLogic logic : logics) {
-				logic.setRobberPosition(Map.index_to_position(robberPosition.x , robberPosition.y));
+			if(index.x == robberPosition.x && index.y == robberPosition.y || map.getFields()[index.x][index.y].resource.equals(Resource.OCEAN)) {
+				uis.get(id).showMoveRobber();
+			}else {
+				robberPosition.x = index.x;
+				robberPosition.y = index.y;
+				for(GameLogic logic : logics) {
+					logic.setRobberPosition(Map.index_to_position(robberPosition.x , robberPosition.y));
+				}
+				if(player.get(id).action == Action.MOVING_ROBBER) {
+					List<Player> surroundingPlayers = map.getSurroundingPlayers(new Vector2i(index.x, index.y), player);
+					if(surroundingPlayers.size() > 0) {
+						if(surroundingPlayers.contains(this.player.get(id))) {
+							surroundingPlayers.remove(this.player.get(id));
+						}
+						uis.get(id).showSteelResource(surroundingPlayers);
+					}	
+				}
 			}
-			if(player.get(id).action == Action.MOVING_ROBBER) {
-				List<Player> surroundingPlayers = map.getSurroundingPlayers(new Vector2i(index.x, index.y), player);
-				if(surroundingPlayers.size() > 0) {
-					if(surroundingPlayers.contains(this.player.get(id))) {
-						surroundingPlayers.remove(this.player.get(id));
-					}
-					uis.get(id).showSteelResource(surroundingPlayers);
-				}	
-			}
-		}
+		}	
 	}
 
 	@Override

@@ -79,6 +79,7 @@ public class Map {
 		System.out.println("field_count: " + field_count);
 
 		LinkedList<Resource> available_resources = new LinkedList<Resource>();
+		available_resources.push(Resource.DESERT);
 		for (Resource r : Resource.values()) {
 			if (r != Resource.OCEAN && r != Resource.DESERT) {
 				int count = (int) ((float) field_count * resource_ratio[r.ordinal()] / ratio_sum) + 1;
@@ -86,7 +87,7 @@ public class Map {
 					available_resources.push(r);
 			}
 		}
-		available_resources.push(Resource.DESERT);
+		
 		for (int i = available_resources.size(); i < field_count; i++)
 			available_resources.push(Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
 

@@ -2,6 +2,7 @@ package com.catangame.catan.data;
 public enum Language {
 
 	NO_TEXT("NO TEXT FOUND", "KEIN TEXT GEFUNDEN"),
+	FROM("from", "von"),
 	//Start Window
 	CREATE_NEW_GAME("Create new Game", "Neues Spiel erstellen"),
 	JOIN_GAME("Join game", "Spiel beitreten"),
@@ -62,7 +63,7 @@ public enum Language {
 	SEND("Send", "Abschicken"),
 	MOVE_ROBBER("Move Robber", "R\u00E4uber versetzen"),
 	//After Game
-	WINNER("{} won this game", "{} hat gewonnen"),    ;
+	WINNER("{} won this game", "{} hat gewonnen"), ;
 
 
 	

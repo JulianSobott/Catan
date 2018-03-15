@@ -76,6 +76,7 @@ public class Server extends Networkmanager {
 
 	public void addNewClient(Socket client) {
 		//TODO maybe add setting ID communicator here
+		this.numClients++;
 		ClientCommunicator communicator = new ClientCommunicator(this, client);
 		clients.add(communicator);
 		communicator.start();
@@ -89,7 +90,7 @@ public class Server extends Networkmanager {
 		case NAME:
 			String name = ((Packet.Name) packet.data).getName();
 			Color color = ((Packet.Name) packet.data).getColor();
-			core.register_new_user(name, color, id);
+			core.register_new_user(name, color);
 			break;
 		case BUILD_REQUEST:
 			core.buildRequest(id, ((Packet.BuildRequest) packet.data).getBuildingType(),

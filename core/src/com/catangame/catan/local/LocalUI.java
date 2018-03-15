@@ -75,6 +75,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private Vector2i mousePosition = new Vector2i(0,0);
 	// fonts
 	private BitmapFont std_font;
+	public float scale = 2;
 
 	// gui data
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
@@ -763,62 +764,87 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(lblAllOffers);
 			//show all offers
 			i = 0;
-			for (final TradeOffer offer : allTradeOffer) {
-				//Offer Label
-				Label lblOfferID = new Label(Language.OFFER.get_text() + i,
-						new Rectangle(window_size.x / 2, 200 + (110 + 20) * i, 300, 50));
-				lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
-				widgets.add(lblOfferID);
-				Label lblOfferContainer = new Label("",
-						new Rectangle(window_size.x / 2, 200 + (110 + 20) * i, window_size.x / 2 - 30, 110));
-				lblOfferContainer.set_fill_color(new Color(1.f, 1.f, 1.f, 0.3f)); //TODO Maybe change to player color
-				widgets.add(lblOfferContainer);
-				//Demanded resources?? Neccessary??
+			for(final LocalPlayer p : state.player_data) {
+				if(p.getID() != id) {
+					Label lblPlayer = new Label(p.getName(), new Rectangle(window_size.x / 2, 260 + i*50, 300, 50));
+					lblPlayer.set_text_color(p.getColor());
+					widgets.add(lblPlayer);
+					int offerI = 0;
+					for(final TradeOffer offer : allTradeOffer) {
+						if(offer.getVendor_id() == p.getID()) {
+							Label lblOfferID = new Label(Language.OFFER.get_text() + offerI + " "+Language.FROM.get_text()+ " " + p.getName(),
+									new Rectangle(window_size.x / 2, 200 + (150) * offerI, 300, 50));
+							lblOfferID.set_text_color(state.player_data.get(offer.getVendor_id()).getColor());
+							lblOfferID.set_font(FontMgr.getFont(23));
+							widgets.add(lblOfferID);
+							Label lblOfferContainer = new Label("",
+									new Rectangle(window_size.x / 2, 200 + (150 + 3) * offerI, window_size.x / 2 - 30, 150));
+							lblOfferContainer.set_fill_color(new Color(1.f, 1.f, 1.f, 0.3f)); //TODO Maybe change to player color
+							widgets.add(lblOfferContainer);
 
-				//Offered resources
-				int j = 0;
-				Label lblOfferedResource;
-				for (Resource r : offer.getOfferedResources().keySet()) {
-					lblOfferedResource = new Label(Language.valueOf(r.toString()).get_text() + ": " + offer.getOfferedResources().get(r),
-							new Rectangle(window_size.x / 2 + 150 * j, 250 + (110 + 20) * i, 150, 50));
-					lblOfferedResource.set_fill_color(r.get_color());
-					lblOfferedResource.set_font(FontMgr.getFont(23));
-					widgets.add(lblOfferedResource);
-					j++;
-				}
-				//Button accept
-				Button btnAccept = new Button(Language.ACCEPT.get_text(),
-						new Rectangle(window_size.x - 110, 250 + (110 + 20) * i, 80, 50));
-				btnAccept.set_click_callback(new Runnable() {
-					@Override
-					public void run() {
-						java.util.Map<Resource, Integer> demandedResources = new HashMap<Resource, Integer>();
-						for (Resource r : tradeDemand.getWantedResources().keySet()) {
-							demandedResources.put(r, tradeDemand.getWantedResources().get(r));
-						}
-						offer.setDemandedResources(demandedResources);
-						core.acceptOffer(offer);
-					}
-				});
-				widgets.add(btnAccept);
-				Button btnReject = new Button("X", new Rectangle(window_size.x - 80, 200 + (110 + 20) * i, 50, 30));
-				btnReject.set_text_color(Color.RED);
-				btnReject.set_click_callback(new Runnable() {
-					private List<TradeOffer> newAllTradeOffer = new ArrayList<TradeOffer>();
-
-					@Override
-					public void run() {
-						for (TradeOffer innerOffer : allTradeOffer) {
-							if (innerOffer != offer) {
-								newAllTradeOffer.add(innerOffer);
+							//Offered resources
+							int j = 0;
+							Label lblOfferedResource;
+							for (Resource r : offer.getOfferedResources().keySet()) {
+								lblOfferedResource = new Label(Language.valueOf(r.toString()).get_text() + ": " + offer.getOfferedResources().get(r),
+										new Rectangle(window_size.x / 2 + 120 * j, 250 + (150) * offerI, 120, 50));
+								lblOfferedResource.set_fill_color(r.get_color());
+								lblOfferedResource.set_font(FontMgr.getFont(23));
+								lblOfferedResource.set_text_color(Color.GREEN);
+								widgets.add(lblOfferedResource);
+								j++;
 							}
+							//Wanted Resources
+							j = 0;
+							Label lblWantedResource;
+							for (Resource r : offer.getDemandedResources().keySet()) {
+								lblWantedResource = new Label(Language.valueOf(r.toString()).get_text() + ": " + offer.getDemandedResources().get(r),
+										new Rectangle(window_size.x / 2 + 120 * j, 300 + (150) * offerI, 120, 50));
+								lblWantedResource.set_fill_color(r.get_color());
+								lblWantedResource.set_font(FontMgr.getFont(23));
+								lblWantedResource.set_text_color(Color.RED);
+								widgets.add(lblWantedResource);
+								j++;
+							}
+							
+							//Button accept
+							Button btnAccept = new Button(Language.ACCEPT.get_text(),
+									new Rectangle(window_size.x - 140, 250 + (110 + 20) * offerI, 80, 50));
+							btnAccept.set_click_callback(new Runnable() {
+								@Override
+								public void run() {
+									java.util.Map<Resource, Integer> demandedResources = new HashMap<Resource, Integer>();
+									for (Resource r : tradeDemand.getWantedResources().keySet()) {
+										demandedResources.put(r, tradeDemand.getWantedResources().get(r));
+									}
+									offer.setDemandedResources(demandedResources);
+									core.acceptOffer(offer);
+								}
+							});
+							btnAccept.adjustWidth(2);
+							widgets.add(btnAccept);
+							Button btnReject = new Button("X", new Rectangle(window_size.x - 80, 200 + (110 + 20) * offerI, 50, 30));
+							btnReject.set_text_color(Color.RED);
+							btnReject.set_click_callback(new Runnable() {
+								private List<TradeOffer> newAllTradeOffer = new ArrayList<TradeOffer>();
+
+								@Override
+								public void run() {
+									for (TradeOffer innerOffer : allTradeOffer) {
+										if (innerOffer != offer) {
+											newAllTradeOffer.add(innerOffer);
+										}
+									}
+									allTradeOffer = newAllTradeOffer;
+									rebuild_gui();
+								}
+							});
+							widgets.add(btnReject);
+							offerI++;
 						}
-						allTradeOffer = newAllTradeOffer;
-						rebuild_gui();
 					}
-				});
-				widgets.add(btnReject);
-				i++;
+					i++;
+				}
 			}
 			//sc = new ScrollContainer(new Rectangle(window_size.x / 2, 200 , 300, (110 + 20) * i));
 			//Button Send demand
@@ -978,9 +1004,7 @@ public class LocalUI extends UI implements InputProcessor {
 				i++;
 			}
 		}
-
-		//Send offers
-		//All own Resources
+		//Player resources
 		i = 0;
 		for (Resource r : Resource.values()) {
 			if (r != Resource.OCEAN && r != Resource.DESERT) {

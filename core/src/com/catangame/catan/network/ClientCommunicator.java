@@ -22,7 +22,6 @@ public class ClientCommunicator extends Thread{
 	public ClientCommunicator(Server localDataServer, Socket client) {
 		this.localDataServer = localDataServer;
 		this.client = client;
-		this.id = this.localDataServer.getNumClients();
 	}
 	
 	public void run() {
@@ -61,7 +60,6 @@ public class ClientCommunicator extends Thread{
 	
 	public void message(Packet p) {
 		try {
-			int i = 0;
 			this.output.writeObject(p);
 			this.output.flush();
 			this.output.reset();

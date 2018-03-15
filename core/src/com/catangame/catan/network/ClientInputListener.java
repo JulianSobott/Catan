@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import com.badlogic.gdx.Gdx;
-import com.catangame.catan.data.Resource;
 
 public class ClientInputListener extends Thread{
 	
