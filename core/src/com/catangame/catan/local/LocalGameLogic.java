@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
+
 import com.badlogic.gdx.Gdx;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -85,7 +87,8 @@ public class LocalGameLogic extends GameLogic {
 	}
 
 	@Override
-	public void update_new_map(Field[][] fields) {
+	public void update_new_map(Field[][] fields , java.util.Map<Vector2, Resource> harbours) {
+		state.harbours = harbours;
 		state.field_resources = new HashMap<Resource, List<Vector2>>();
 		for (Resource res : Resource.values())
 			state.field_resources.put(res, new ArrayList<Vector2>());
@@ -242,6 +245,26 @@ public class LocalGameLogic extends GameLogic {
 					state.robberPosition.y - spriteRobber.getHeight() * 0.05f, spriteRobber.getWidth() * 0.1f,
 					spriteRobber.getHeight() * 0.1f);
 			sb.end();
+			
+			for(Entry<Vector2, Resource> entry : state.harbours.entrySet()) {
+				if(entry.getValue() == null) { // null = 3 for 1
+					sr.begin(ShapeType.Filled);
+					sr.setColor(new Color(100, 100, 100, 250).gdx());
+					sr.ellipse(Map.index_to_position(entry.getKey().x, entry.getKey().y).x - Map.field_size / 2 + 30,
+							Map.index_to_position(entry.getKey().x, entry.getKey().y).y - Map.field_size / 2 + 30, Map.field_size - 60,
+							Map.field_size - 60,  30, 6);		
+					sr.end();
+				}else {
+					sr.begin(ShapeType.Filled);
+					sr.setColor(entry.getValue().get_color().gdx());
+					sr.ellipse(Map.index_to_position(entry.getKey().x, entry.getKey().y).x - Map.field_size / 2 + 30,
+							Map.index_to_position(entry.getKey().x, entry.getKey().y).y - Map.field_size / 2 + 30, Map.field_size - 60,
+							Map.field_size - 60,  30, 6);		
+					sr.end();
+				}
+				
+			}
+			
 		}
 	}
 

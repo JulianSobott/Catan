@@ -589,6 +589,14 @@ public class LocalUI extends UI implements InputProcessor {
 			java.util.Map<Resource, Integer> playerResources = state.my_player_data.get_all_resources();
 			boolean enabled = false;
 			for (Resource r : playerResources.keySet()) {
+				if(playerResources.get(r) >= 2 && state.my_player_data.harbours.contains(r)) {
+					enabled = true;
+					break;
+				}
+				if(playerResources.get(r) >= 3 && state.my_player_data.harbours.contains(null)) {
+					enabled = true;
+					break;
+				}
 				if (playerResources.get(r) >= 4) {
 					enabled = true;
 					break;
@@ -706,10 +714,16 @@ public class LocalUI extends UI implements InputProcessor {
 
 				if (r != Resource.OCEAN && r != Resource.DESERT && state.my_player_data.get_resources(r) >= 1
 						&& tradeDemand.getVendor() == Vendor.PLAYER
-						|| r != Resource.OCEAN && r != Resource.DESERT && state.my_player_data.get_resources(r) >= 4
+						|| r != Resource.OCEAN && r != Resource.DESERT && (state.my_player_data.get_resources(r) >= 4 || state.my_player_data.get_resources(r) >= 3 && state.my_player_data.harbours.contains(null) 
+						|| state.my_player_data.get_resources(r) >= 2 && state.my_player_data.harbours.contains(r))
 								&& tradeDemand.getVendor() == Vendor.BANK) {
 					String resourceString = (Language.valueOf(r.toString()).get_text()) + ": "
 							+ state.my_player_data.get_resources(r);
+					if(state.my_player_data.harbours.contains(null) && tradeDemand.getVendor() == Vendor.BANK) {
+						resourceString += " (3-1)";
+					}else if(state.my_player_data.harbours.contains(r) && tradeDemand.getVendor() == Vendor.BANK) {
+						resourceString += " (2-1)";
+					}
 					final Button btnOfferedResource = new Button(resourceString,
 							new Rectangle(start2, (btnHeight + btnSpace) * i + 200, 150, btnHeight));
 					if (tradeDemand.getOfferedResources().containsKey(r)) {
@@ -738,6 +752,7 @@ public class LocalUI extends UI implements InputProcessor {
 							}
 						}
 					});
+					btnOfferedResource.adjustWidth(2);
 					widgets.add(btnOfferedResource);
 					i++;
 				}
@@ -1250,7 +1265,7 @@ public class LocalUI extends UI implements InputProcessor {
 			btnPlayer.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					core.steelResource(id, p.getId());	
+					core.stealResource(id, p.getId());	
 				}
 			});
 			btnPlayer.adjustWidth(10);

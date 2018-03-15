@@ -104,7 +104,7 @@ public class LocalCore extends Core {
 			for (Player p : player) {
 				List<Building> villages = p.buildings;
 				for (Building building : villages) {
-					List<Vector2i> surroundingFieldsPos = map.get_surrounding_fields(building.get_position());
+					List<Vector2i> surroundingFieldsPos = map.get_surrounding_fields(building.get_position(), false);
 					for(Vector2i position : surroundingFieldsPos) {
 						if(position.x != robberPosition.x || position.y != robberPosition.y) {
 							if(map.getFields()[position.x][position.y].number == (byte) diceResult) {
@@ -128,6 +128,7 @@ public class LocalCore extends Core {
 		map.create_map(islandSize + 2, seed, islandSize, resourceRatio, generatorType);
 		createDevCardsStack(seed);
 		map.calculate_available_places();
+		java.util.Map<Vector2, Resource> harbours = map.addHarbours();
 		java.util.Map<Integer, List<Building>> new_buildings = new HashMap<Integer, List<Building>>();
 		for (int i = 0; i < player.size(); i++) {
 			for (Vector3i pos : map.add_random_cities(seed, randomStartBuildings)) {
@@ -143,16 +144,16 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-			/*player.get(i).add_resource(Resource.CLAY, 10);
-			player.get(i).add_resource(Resource.GRAIN, 10);
-			player.get(i).add_resource(Resource.ORE, 10);
-			player.get(i).add_resource(Resource.WOOD, 10);
-			player.get(i).add_resource(Resource.WOOL, 7);*/
+			player.get(i).add_resource(Resource.CLAY, 2);
+			player.get(i).add_resource(Resource.GRAIN, 2);
+			player.get(i).add_resource(Resource.ORE, 2);
+			player.get(i).add_resource(Resource.WOOD, 2);
+			player.get(i).add_resource(Resource.WOOL, 2);
 			
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
-			logic.update_new_map(map.getFields());
+			logic.update_new_map(map.getFields(), harbours);
 			logic.update_buildings(new_buildings);
 		}
 	}
@@ -186,10 +187,11 @@ public class LocalCore extends Core {
 	private void create_initial_resources(Player p) {
 		List<Vector2i> fields = new ArrayList<Vector2i>();
 		for (Building building : p.buildings) {
-			fields.addAll(map.get_surrounding_fields(building.get_position()));
+			fields.addAll(map.get_surrounding_fields(building.get_position(), false));
 		}
 		for (Vector2i pos : fields) {
-			p.add_resource(map.getFields()[pos.x][pos.y].resource, 1);
+			if(map.getFields()[pos.x][pos.y].resource != Resource.DESERT)
+				p.add_resource(map.getFields()[pos.x][pos.y].resource, 1);
 		}
 	}
 
@@ -286,6 +288,14 @@ public class LocalCore extends Core {
 							map.build_village(position);
 							build_sth = true;
 							this_player.buildings.add(new Building(Building.Type.VILLAGE, position));
+							//harbour check
+							List<Vector2i> surrFields = map.get_surrounding_fields(position, true);
+							for(Vector2i pos : surrFields) {
+								Vector2 pos2 = new Vector2(pos.x, pos.y);
+								if(map.harbours.containsKey(pos2)) {
+									this_player.harbours.add(map.harbours.get(pos2));
+								}
+							}
 						}
 					}
 				} else if (buildType == Building.Type.CITY) {
@@ -419,20 +429,49 @@ public class LocalCore extends Core {
 		if (tradeDemand.getVendor() == Vendor.BANK) {
 			int neededResources = 0;
 			int availableResources = 0;
-			for (Resource r : tradeDemand.getOfferedResources().keySet()) {
-				if (player.get(tradeDemand.get_demander_id()).get_resources(r) >= 4) {
-					availableResources += player.get(tradeDemand.get_demander_id()).get_resources(r);
+			for (Resource r : player.get(0).get_all_resources().keySet()) {
+				boolean resourceAddedOffered = false;
+				boolean resourceAddedWanted = false;
+				if(player.get(tradeDemand.get_demander_id()).get_resources(r) >= 2 && player.get(tradeDemand.get_demander_id()).harbours.contains(r)) {
+					if(tradeDemand.getOfferedResources().containsKey(r)) {
+						availableResources += player.get(tradeDemand.get_demander_id()).get_resources(r);
+						resourceAddedOffered = true;
+					}else if(tradeDemand.getWantedResources().containsKey(r)) {
+						neededResources += 2;
+						resourceAddedWanted = true;
+					}
 				}
-			}
-			for (Resource r : tradeDemand.getWantedResources().keySet()) {
-				neededResources += 4;
+				if(player.get(tradeDemand.get_demander_id()).get_resources(r) >= 3 && player.get(tradeDemand.get_demander_id()).harbours.contains(null)) {
+					if(!resourceAddedOffered && tradeDemand.getOfferedResources().containsKey(r)) {
+						availableResources += player.get(tradeDemand.get_demander_id()).get_resources(r);
+						resourceAddedOffered = true;
+					}else if(!resourceAddedWanted && tradeDemand.getWantedResources().containsKey(r)) {
+						neededResources += 3;
+						resourceAddedWanted = true;
+					}
+				}
+				if (! resourceAddedOffered && player.get(tradeDemand.get_demander_id()).get_resources(r) >= 4) {
+					if(!resourceAddedOffered && tradeDemand.getOfferedResources().containsKey(r)) {
+						availableResources += player.get(tradeDemand.get_demander_id()).get_resources(r);
+						resourceAddedOffered = true;
+					}else if(!resourceAddedWanted && tradeDemand.getWantedResources().containsKey(r)) {
+						neededResources += 4;
+						resourceAddedWanted = true;
+					}
+				}
 			}
 			if (neededResources <= availableResources) {
 				for (Resource r : tradeDemand.getWantedResources().keySet()) {
 					player.get(tradeDemand.get_demander_id()).add_resource(r, 1);
 				}
 				for (Resource r : tradeDemand.getOfferedResources().keySet()) {
-					player.get(tradeDemand.get_demander_id()).take_resource(r, 4);
+					if(player.get(tradeDemand.get_demander_id()).harbours.contains(r)) {
+						player.get(tradeDemand.get_demander_id()).take_resource(r, 2);
+					}else if(player.get(tradeDemand.get_demander_id()).harbours.contains(null)) {
+						player.get(tradeDemand.get_demander_id()).take_resource(r, 3);
+					}else {
+						player.get(tradeDemand.get_demander_id()).take_resource(r, 4);
+					}
 				}
 				uis.get(tradeDemand.get_demander_id()).update_player_data(player.get(tradeDemand.get_demander_id()));
 				uis.get(tradeDemand.get_demander_id()).closeTradeWindow();
@@ -571,7 +610,8 @@ public class LocalCore extends Core {
 		}
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
-			logic.update_new_map(map.getFields());
+			//FIXME add harbours to saved game
+			//logic.update_new_map(map.getFields());
 			logic.update_buildings(new_buildings);
 		}
 	}
@@ -711,7 +751,7 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void steelResource(int id, int player) {
+	public void stealResource(int id, int player) {
 		//Steel two resources
 		Random rand = new Random(); 
 		for(int i = 0; i < 2; i++) {
