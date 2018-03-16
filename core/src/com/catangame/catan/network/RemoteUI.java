@@ -117,4 +117,9 @@ public class RemoteUI extends UI {
 		server.message_to_client(id, new Packet(Command.STEEL_RESOURCE, new Packet.PlayerList(surroundingPlayers)));
 	}
 
+	@Override
+	public void showDemandDeclined(int id) {
+		server.message_to_client(id, new Packet(Command.DEMAND_DECLINED, new Packet.ID(id)));
+	}
+
 }

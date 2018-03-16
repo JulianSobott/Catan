@@ -13,6 +13,7 @@ public class LocalPlayer implements Serializable{
 	private Color color;
 	private Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
 	private int ID;
+	public boolean declinedOffer = false;
 	
 	public LocalPlayer(String name, int score, Color color, int ID) {
 		this.name = name;

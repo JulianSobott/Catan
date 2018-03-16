@@ -46,4 +46,6 @@ public abstract class Core {
 
 	public abstract void stealResource(int id, int player);
 
+	public abstract void declineTradeDemand(int id);
+
 }

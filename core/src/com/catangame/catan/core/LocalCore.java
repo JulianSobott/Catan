@@ -469,12 +469,14 @@ public class LocalCore extends Core {
 				if (p.getId() != tradeDemand.get_demander_id()) {
 					boolean showTrade = true;
 					for (Resource r : tradeDemand.getWantedResources().keySet()) {
-						if (p.resources.get(r) < 1) {
+						if (p.resources.get(r) < tradeDemand.getWantedResources().get(r)) {
 							showTrade = false;
 						}
 					}
 					if (showTrade) {
 						uis.get(p.getId()).show_trade_demand(tradeDemand);
+					}else {
+						uis.get(tradeDemand.get_demander_id()).showDemandDeclined(p.getId());
 					}
 				}
 			}
@@ -484,10 +486,10 @@ public class LocalCore extends Core {
 	@Override
 	public void new_trade_offer(TradeOffer tradeOffer) {
 		java.util.Map<Resource, Integer> demanderPlayerResources = player.get(tradeOffer.getDemanderID()).resources;
-		java.util.Map<Resource, Integer> offeredResources = tradeOffer.getOfferedResources();
+		java.util.Map<Resource, Integer> demandedResources = tradeOffer.getDemandedResources();
 		boolean sendOffer = true;
-		for (Resource r : offeredResources.keySet()) {
-			if (offeredResources.get(r) > demanderPlayerResources.get(r)) {
+		for (Resource r : demandedResources.keySet()) {
+			if (demandedResources.get(r) > demanderPlayerResources.get(r)) {
 				sendOffer = false;
 			}
 		}
@@ -499,12 +501,12 @@ public class LocalCore extends Core {
 	@Override
 	public void acceptOffer(TradeOffer offer) {
 		for (Resource r : offer.getDemandedResources().keySet()) {
-			player.get(offer.getDemanderID()).add_resource(r, offer.getDemandedResources().get(r));
-			player.get(offer.getVendor_id()).take_resource(r, offer.getDemandedResources().get(r));
+			player.get(offer.getDemanderID()).take_resource(r, offer.getDemandedResources().get(r));
+			player.get(offer.getVendor_id()).add_resource(r, offer.getDemandedResources().get(r));
 		}
 		for (Resource r : offer.getOfferedResources().keySet()) {
-			player.get(offer.getDemanderID()).take_resource(r, offer.getOfferedResources().get(r));
-			player.get(offer.getVendor_id()).add_resource(r, offer.getOfferedResources().get(r));
+			player.get(offer.getDemanderID()).add_resource(r, offer.getOfferedResources().get(r));
+			player.get(offer.getVendor_id()).take_resource(r, offer.getOfferedResources().get(r));
 		}
 		for (UI ui : uis) {
 			ui.update_player_data(player.get(ui.getID()));
@@ -761,5 +763,10 @@ public class LocalCore extends Core {
 		}
 		uis.get(player).update_player_data(this.player.get(player));
 		uis.get(id).update_player_data(this.player.get(id));
+	}
+
+	@Override
+	public void declineTradeDemand(int id) {
+		uis.get(current_player).showDemandDeclined(id);
 	}
 }

@@ -60,10 +60,6 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.NAME, new Packet.Name(name, color)));
 	}
 
-	public void addLogic(GameLogic gameLogic) {
-		// TODO delete?
-
-	}
 
 	@Override
 	public void nextTurn(int id) {
@@ -118,6 +114,11 @@ public class RemoteCore extends Core {
 	@Override
 	public void stealResource(int id, int player) {
 		this.client.sendMessage(new Packet(Command.STEEL_RESOURCE, new Packet.Num(player)));
+	}
+
+	@Override
+	public void declineTradeDemand(int id) {
+		this.client.sendMessage(new Packet(Command.DEMAND_DECLINED, new Packet.ID(id)));
 	}
 
 	

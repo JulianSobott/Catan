@@ -111,6 +111,9 @@ public class Server extends Networkmanager {
 		case CLOSE_TRADE_WINDOW:
 			core.closeTrade();
 			break;
+		case DEMAND_DECLINED:
+			core.declineTradeDemand(((Packet.ID) packet.data).getID());
+			break;
 		case BUY_DEVELOPMENT_CARD:
 			core.buyDevelopmentCard(id);
 			break;

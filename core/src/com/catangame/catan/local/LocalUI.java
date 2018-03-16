@@ -763,9 +763,11 @@ public class LocalUI extends UI implements InputProcessor {
 			lblAllOffers.set_text_color(Color.WHITE);
 			widgets.add(lblAllOffers);
 			//show all offers
+			//TODO for every player one scrollable Container
+			//TODO show when player rejected trade demand
 			i = 0;
 			for(final LocalPlayer p : state.player_data) {
-				if(p.getID() != id) {
+				if(p.getID() != id && !p.declinedOffer) {
 					Label lblPlayer = new Label(p.getName(), new Rectangle(window_size.x / 2, 260 + i*50, 300, 50));
 					lblPlayer.set_text_color(p.getColor());
 					widgets.add(lblPlayer);
@@ -794,7 +796,7 @@ public class LocalUI extends UI implements InputProcessor {
 								widgets.add(lblOfferedResource);
 								j++;
 							}
-							//Wanted Resources
+							//vendor Wanted Resources
 							j = 0;
 							Label lblWantedResource;
 							for (Resource r : offer.getDemandedResources().keySet()) {
@@ -813,11 +815,6 @@ public class LocalUI extends UI implements InputProcessor {
 							btnAccept.set_click_callback(new Runnable() {
 								@Override
 								public void run() {
-									java.util.Map<Resource, Integer> demandedResources = new HashMap<Resource, Integer>();
-									for (Resource r : tradeDemand.getWantedResources().keySet()) {
-										demandedResources.put(r, tradeDemand.getWantedResources().get(r));
-									}
-									offer.setDemandedResources(demandedResources);
 									core.acceptOffer(offer);
 								}
 							});
@@ -854,7 +851,11 @@ public class LocalUI extends UI implements InputProcessor {
 			btnSendDemand.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
+					for(LocalPlayer p : state.player_data){
+						p.declinedOffer = false;
+					}
 					core.new_trade_demand(tradeDemand);
+					rebuild_gui();
 				}
 			});
 			widgets.add(btnSendDemand);
@@ -863,8 +864,19 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	public void build_vendor_trade_window() {
-		buildIngameWindow();
-
+		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
+		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
+		widgets.add(lblWindow);
+		Button btnClose = new Button("X", new Rectangle(window_size.x - 70, 25, 40, 40));
+		btnClose.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				core.declineTradeDemand(id);
+				mode = GUIMode.GAME;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnClose);
 		int i = 0;
 		int btnWidth = 50;
 		int btnResourceWidth = 120;
@@ -908,41 +920,42 @@ public class LocalUI extends UI implements InputProcessor {
 		i = 0;
 		for (final Resource r : Resource.values()) {
 			if (tradeDemand.offeredResources.containsKey(r)) {
+				String num = "0";
+				if (tradeOffer.getDemandedResources().containsKey(r)) {
+					num = tradeOffer.getDemandedResources().get(r).toString();
+				}
+				final Label lblNumresources = new Label(num, new Rectangle(start1 + btnSpace * 2 + lblWidth1 + btnWidth1,
+						280 + (lblHeight + btnSpace) * i, btnWidth1, 50));
+				lblNumresources.set_fill_color(Color.WHITE);;
+				widgets.add(lblNumresources);
+				
 				Label lblResource = new Label(Language.valueOf(r.toString()).get_text(),
 						new Rectangle(start1, 270 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
 				lblResource.set_text_color(r.get_color());
 				widgets.add(lblResource);
 				Button btnMinus = new Button("-",
 						new Rectangle(start1 + btnSpace + lblWidth1, 290 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-				/*btnMinus.set_text_position(start1 + btnSpace + lblWidth1 + btnWidth1 / 2,
-						290 + (lblHeight + btnSpace) * i);*/// TODO del
-				//btnMinus.adjustWidth(2);
 				btnMinus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
-						tradeOffer.substractOfferedResource(r);
-						rebuild_gui();
+						tradeOffer.substractWantedResource(r);
+						if(tradeOffer.getDemandedResources().containsKey(r)) {
+							lblNumresources.set_text(tradeOffer.getDemandedResources().get(r).toString());
+						}else {
+							lblNumresources.set_text("0");
+						}
+						
 					}
 				});
 				widgets.add(btnMinus);
-				String num = "0";
-				if (tradeOffer.getOfferedResources().containsKey(r)) {
-					num = tradeOffer.getOfferedResources().get(r).toString();
-				}
-				Label lblNumresources = new Label(num, new Rectangle(start1 + btnSpace * 2 + lblWidth1 + btnWidth1,
-						280 + (lblHeight + btnSpace) * i, btnWidth1, 50));
-				lblNumresources.set_fill_color(Color.WHITE);
-				widgets.add(lblNumresources);
+				
 				Button btnPlus = new Button("+", new Rectangle(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2,
 						290 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-				/*btnPlus.set_text_position(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2.5f,
-						295 + (lblHeight + btnSpace) * i);*/ // TODO del
-				//btnPlus.adjustWidth(2);
 				btnPlus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
-						tradeOffer.addOfferedResource(r);
-						rebuild_gui();
+						tradeOffer.addWantedResource(r);
+						lblNumresources.set_text(tradeOffer.getDemandedResources().get(r).toString());
 					}
 				});
 				widgets.add(btnPlus);
@@ -963,41 +976,42 @@ public class LocalUI extends UI implements InputProcessor {
 		i = 0;
 		for (final Resource r : Resource.values()) {
 			if (tradeDemand.wantedResources.containsKey(r)) {
+				String num = Integer.toString(tradeOffer.getOfferedResources().get(r));
+				if (tradeOffer.getOfferedResources().containsKey(r)) {
+					num = tradeOffer.getOfferedResources().get(r).toString();
+				}
+				final Label lblNumresources = new Label(num, new Rectangle(start + btnSpace * 2 + lblWidth + btnWidths,
+						280 + (lblHeight + btnSpace) * i, btnWidths, 50));
+				lblNumresources.set_fill_color(Color.WHITE);
+				widgets.add(lblNumresources);
 				Label lblResource = new Label(Language.valueOf(r.toString()).get_text(),
 						new Rectangle(start, 270 + (lblHeight + btnSpace) * i, lblWidth, lblHeight));
 				lblResource.set_text_color(r.get_color());
 				widgets.add(lblResource);
 				Button btnMinus = new Button("-",
 						new Rectangle(start + btnSpace + lblWidth, 290 + (lblHeight + btnSpace) * i, btnWidths, 30));
-				/*btnMinus.set_text_position(start + btnSpace + lblWidth + btnWidths / 2,
-						290 + (lblHeight + btnSpace) * i);*/ // TODO del
-				//btnMinus.adjustWidth(2);
 				btnMinus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
-						tradeOffer.substractWantedResource(r);
-						rebuild_gui();
+						tradeOffer.substractOfferedResource(r);
+						if(tradeOffer.getOfferedResources().containsKey(r)) {
+							lblNumresources.set_text(tradeOffer.getOfferedResources().get(r).toString());
+						}else {
+							lblNumresources.set_text("0");
+						}
 					}
 				});
 				widgets.add(btnMinus);
-				String num = Integer.toString(tradeDemand.getWantedResources().get(r));
-				if (tradeOffer.getDemandedResources().containsKey(r)) {
-					num = tradeOffer.getDemandedResources().get(r).toString();
-				}
-				Label lblNumresources = new Label(num, new Rectangle(start + btnSpace * 2 + lblWidth + btnWidths,
-						280 + (lblHeight + btnSpace) * i, btnWidths, 50));
-				lblNumresources.set_fill_color(Color.WHITE);
-				widgets.add(lblNumresources);
+				
 				Button btnPlus = new Button("+", new Rectangle(start + btnSpace * 3 + lblWidth + btnWidths * 2,
 						290 + (lblHeight + btnSpace) * i, btnWidths, 30));
-				/*btnPlus.set_text_position(start + btnSpace * 3 + lblWidth + btnWidths * 2.5f,
-						295 + (lblHeight + btnSpace) * i);*/ // TODO del
-				//btnPlus.adjustWidth(2);
 				btnPlus.set_click_callback(new Runnable() {
 					@Override
 					public void run() {
-						tradeOffer.addWantedResource(r);
-						rebuild_gui();
+						if(state.my_player_data.get_resources(r) >= tradeOffer.getOfferedResources().get(r) + 1) {
+							tradeOffer.addOfferedResource(r);
+							lblNumresources.set_text(tradeOffer.getOfferedResources().get(r).toString());
+						}
 					}
 				});
 				widgets.add(btnPlus);
@@ -1009,7 +1023,7 @@ public class LocalUI extends UI implements InputProcessor {
 		for (Resource r : Resource.values()) {
 			if (r != Resource.OCEAN && r != Resource.DESERT) {
 				String str = Language.valueOf(r.toString()).get_text() + ": " + state.my_player_data.get_resources(r);
-				Label lblResource = new Label(str, new Rectangle(40 + i * 130, window_size.y - 110, 110, 70));
+				Label lblResource = new Label(str, new Rectangle(40 + i * 150, window_size.y - 110, 140, 70));
 				lblResource.set_fill_color(r.get_color());
 				widgets.add(lblResource);
 				i++;
@@ -1073,7 +1087,8 @@ public class LocalUI extends UI implements InputProcessor {
 				tradeOffer = new TradeOffer();
 				tradeOffer.setVendor_id(id);
 				tradeOffer.setDemanderID(tradeDemand.get_demander_id());
-				tradeOffer.setDemandedResources(t.getWantedResources());
+				tradeOffer.setDemandedResources(t.getOfferedResources());
+				tradeOffer.setOfferedresources(t.getWantedResources());
 				rebuild_gui();
 			}
 		});
@@ -2094,7 +2109,8 @@ public class LocalUI extends UI implements InputProcessor {
 		tradeOffer = new TradeOffer();
 		tradeOffer.setVendor_id(this.id);
 		tradeOffer.setDemanderID(tradeDemand.get_demander_id());
-		tradeOffer.setDemandedResources(tradeDemand.getWantedResources());
+		tradeOffer.setDemandedResources(tradeDemand.getOfferedResources());
+		tradeOffer.setOfferedresources(tradeDemand.getWantedResources());
 		this.tradeDemand = tradeDemand;
 		mode = GUIMode.TRADE_VENDOR;
 		rebuild_gui();
@@ -2191,5 +2207,11 @@ public class LocalUI extends UI implements InputProcessor {
 		state.surroundingPlayers = surroundingPlayers;
 		mode = GUIMode.STEEL_RESOURCE;
 		buildSteelResource();
+	}
+
+	@Override
+	public void showDemandDeclined(int id) {
+		state.player_data.get(id).declinedOffer = true;
+		rebuild_gui();
 	}
 }

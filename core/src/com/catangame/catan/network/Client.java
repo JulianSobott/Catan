@@ -98,6 +98,9 @@ public class Client extends Networkmanager {
 		case TRADE_DEMAND:
 			ui.show_trade_demand(((Packet.TradeDemand) packet.data).getTradeDemand());
 			break;
+		case DEMAND_DECLINED:
+			ui.showDemandDeclined(((Packet.ID)packet.data).getID());
+			break;
 		case ADD_TRADE_OFFER:
 			ui.addTradeOffer(((Packet.TradeOffer) packet.data).getTradeOffer());
 			break;

@@ -46,4 +46,6 @@ public abstract class UI {
 	public abstract void showMoveRobber();
 
 	public abstract void showSteelResource(List<Player> surroundingPlayers);
+
+	public abstract void showDemandDeclined(int id);
 }
