@@ -748,7 +748,7 @@ public class LocalCore extends Core {
 	public void stealResource(int id, int player) {
 		//Steel two resources
 		Random rand = new Random(); 
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < 1; i++) {
 			boolean foundResource = false;
 			Resource r;
 			do {

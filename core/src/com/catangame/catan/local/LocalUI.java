@@ -577,7 +577,19 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	public void build__demander_trade_window() {
-		buildIngameWindow();
+		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
+		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
+		widgets.add(lblWindow);
+		Button btnClose = new Button("X", new Rectangle(window_size.x - 70, 25, 40, 40));
+		btnClose.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				core.closeTrade();
+				mode = GUIMode.GAME;
+				rebuild_gui();
+			}
+		});
+		widgets.add(btnClose);
 		if (tradeDemand.getVendor() == null) {
 			Button btnAskBank = new Button(Language.BANK.get_text(), new Rectangle(200, window_size.y / 4, 200, 100));
 			btnAskBank.set_click_callback(new Runnable() {
