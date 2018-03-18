@@ -20,6 +20,7 @@ public enum Command {
 	MOVE_ROBBER,
 	STEEL_RESOURCE,
 	//Pre Game Stuff
+	SHOW_ALL_JOINABLE_GAMES,
 	PLAYER_DATA,
 	NEW_MAP,
 	BUILD_REQUEST,
@@ -35,6 +36,6 @@ public enum Command {
 	SHOW_ALL_POSSIBLE_NAMES, 
 	SHOW_NEW_MEMBER, 
 	//After Game
-	END_SCREEN,;
+	END_SCREEN, ;
 	
 }

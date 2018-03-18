@@ -13,8 +13,9 @@ import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
+import com.catangame.catan.superClasses.Server;
 
-public class Server extends Networkmanager {
+public class LocalServer extends Server {
 
 	private ServerSocket server;
 	private String localServerIP;
@@ -28,7 +29,7 @@ public class Server extends Networkmanager {
 
 	private LocalCore core;
 
-	public Server(LocalCore core) {
+	public LocalServer(LocalCore core) {
 		this.core = core;
 		//Getting the local IP Adress
 		DatagramSocket ds;
@@ -81,7 +82,8 @@ public class Server extends Networkmanager {
 		clients.add(communicator);
 		communicator.start();
 	}
-
+	
+	
 	public void message_from_client(int id, Packet packet) {
 		switch (packet.getCommand()) {
 		case STRING:
@@ -133,7 +135,8 @@ public class Server extends Networkmanager {
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}
 	}
-
+	
+	@Override
 	public void message_to_client(int id, Packet packet) {
 		for (ClientCommunicator client : clients) {
 			if (client.getID() == id) {

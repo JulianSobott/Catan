@@ -7,13 +7,13 @@ import java.net.Socket;
 
 public class NewClientListener extends Thread{
 	
-	private Server localDataServer;
+	private LocalServer localDataServer;
 	private ServerSocket server;
 	private Socket client;
 	
 	private boolean listenForNewClients = true;
 
-	public NewClientListener(Server localDataServer, ServerSocket server) {
+	public NewClientListener(LocalServer localDataServer, ServerSocket server) {
 		this.localDataServer = localDataServer;
 		this.server = server;
 	}
@@ -25,6 +25,7 @@ public class NewClientListener extends Thread{
 			}catch(IOException e) {
 				System.err.println("Can't accept new Clients");
 			}
+			System.out.println("Added new Client");
 			this.localDataServer.addNewClient(client);
 		}
 		return;

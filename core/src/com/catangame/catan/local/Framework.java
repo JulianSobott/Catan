@@ -1,6 +1,9 @@
 package com.catangame.catan.local;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -29,9 +32,12 @@ import com.catangame.catan.core.Map;
 import com.catangame.catan.local.LocalGameLogic;
 import com.catangame.catan.local.LocalUI;
 import com.catangame.catan.network.Client;
+import com.catangame.catan.network.Command;
 import com.catangame.catan.network.Networkmanager;
+import com.catangame.catan.network.Packet;
 import com.catangame.catan.network.RemoteCore;
-import com.catangame.catan.network.Server;
+import com.catangame.catan.network.LocalServer;
+import com.catangame.catan.server.MainServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
@@ -257,8 +263,8 @@ public class Framework extends ApplicationAdapter {
 		ui.setCore(core);
 		((LocalCore) core).addUI(ui);
 		((LocalCore) core).addLogic(gameLogic);
-		data_connection = new Server((LocalCore) core);
-		((LocalCore) core).setServer((Server) data_connection);
+		data_connection = new LocalServer((LocalCore) core);
+		((LocalCore) core).setServer((LocalServer) data_connection);
 		gameLogic.setCore(core);
 		gameLogic.setUI(ui);
 	}
@@ -285,5 +291,20 @@ public class Framework extends ApplicationAdapter {
 	public void reset_game() {
 		data_connection.closeAllResources();
 		data_connection = null;
+	}
+
+	public void goOnline() {
+		String serverIP = "192.168.2.118"; //TODO change this to a valid IP-adress
+		//Init Output and Input to Server 
+		
+		try {
+			data_connection = new Client(ui, gameLogic, serverIP);
+			System.out.println("Show all joinable games");
+			((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
+			
+		} catch (IOException e) {
+			System.err.println("Server is not online");
+		}
+		
 	}
 }

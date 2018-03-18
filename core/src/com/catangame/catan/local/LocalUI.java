@@ -120,6 +120,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private String tf_value_random_houses = "1";
 	private String tf_value_resource_houses = "1";
 	private boolean cb_value_is_circle = false;
+	private boolean cbValueIsLocal = true;
 	private String lbl_value_info = "";
 	private String lbl_value_dice = "0";
 	private String tf_game_name = "";
@@ -263,7 +264,15 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btn);
-
+		
+		Button btnOnlineGame = new Button("OnlineGameDebug", new Rectangle(0, 0, mm_button_width, mm_button_height));
+		btnOnlineGame.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				framework.goOnline();
+			}
+		});
+		widgets.add(btnOnlineGame);
 		// rearrange buttons
 		for (int i = 0; i < widgets.size(); i++) {
 			Button button = (Button) widgets.get(i);
@@ -1528,6 +1537,9 @@ public class LocalUI extends UI implements InputProcessor {
 			lbl = new Label(Language.IS_CIRCLE.get_text(), new Rectangle(column0 + 180 + textfield_height + 5,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
+			lbl = new Label(Language.LOCAL.get_text(), new Rectangle(column0 + 180 + textfield_height + 5,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
 
 			row_count = 2;
 			final TextField tfMapSize = new TextField(new Rectangle(column0 + 200,
@@ -1638,6 +1650,22 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 			});
 			widgets.add(cbCircleMap);
+			final Checkbox cbLocalgame = new Checkbox(new Rectangle(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++ + textfield_height * .15f,
+					textfield_height * .7f, textfield_height * .7f));
+			cbLocalgame.setSelected(cbValueIsLocal);
+			cbLocalgame.set_click_callback(new Runnable() {
+				Checkbox cb = cbLocalgame;
+
+				@Override
+				public void run() {
+					cbValueIsLocal = cb.isSelected();
+					if(!cbValueIsLocal) {
+						
+					}
+				}
+			});
+			widgets.add(cbLocalgame);
 		}
 		//Row1 ==> members
 		Label lbl = new Label(Language.MEMBERS.get_text(), new Rectangle(column1, 10, 100, 100));

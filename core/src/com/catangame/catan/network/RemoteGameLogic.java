@@ -11,9 +11,9 @@ import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.superClasses.GameLogic;
 
 public class RemoteGameLogic extends GameLogic {
-	private Server server;
+	private LocalServer server;
 	
-	public RemoteGameLogic(Server server) {
+	public RemoteGameLogic(LocalServer server) {
 		this.server = server;
 	}
 

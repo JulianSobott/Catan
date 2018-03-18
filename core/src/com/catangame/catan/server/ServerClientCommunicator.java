@@ -1,4 +1,4 @@
-package com.catangame.catan.network;
+package com.catangame.catan.server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -6,21 +6,24 @@ import java.net.Socket;
 
 import com.badlogic.gdx.Gdx;
 import com.catangame.catan.data.Resource;
+import com.catangame.catan.network.Packet;
 
 //TODO Rename Method "message"
 
-public class ClientCommunicator extends Thread{
+public class ServerClientCommunicator extends Thread{
 	
-	private LocalServer localDataServer;
+	private MainServer mainServer;
 	private Socket client;
-	private int id; 
+	private long publicID;
+	private int gameID;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
+	private ServerGame serverGame;
 	
 	private boolean running = true;
 	
-	public ClientCommunicator(LocalServer localDataServer, Socket client) {
-		this.localDataServer = localDataServer;
+	public ServerClientCommunicator(MainServer mainServer, Socket client) {
+		this.mainServer = mainServer;
 		this.client = client;
 	}
 	
@@ -40,13 +43,12 @@ public class ClientCommunicator extends Thread{
 			final Packet packet;
 			try {
 				packet = (Packet) input.readObject();
-				Gdx.app.postRunnable(new Runnable() {
-					@Override
-					public void run() {
-						localDataServer.message_from_client(id, packet);
-					}
-				});
-				
+				if(serverGame == null) {
+					mainServer.messageFromClient(this, packet);	
+				}else {
+					serverGame.messageFromClient(this, packet);	
+				}
+					
 			}catch(IOException e) {
 				System.err.println("End of File Exception at ClientCommunicator => stopped running");
 				this.running = false;
@@ -79,10 +81,20 @@ public class ClientCommunicator extends Thread{
 		}
 	}
 
-	public void setID(int id) {
-		this.id = id;
+
+	public void setPublicID(long publicID) {
+		this.publicID = publicID;
 	}
-	public int getID() {
-		return this.id;
+
+	public int getGameID() {
+		return gameID;
+	}
+
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
+	}
+
+	public long getPublicID() {
+		return publicID;
 	}
 }

@@ -272,6 +272,13 @@ public class Packet implements Serializable {
 			return this.card;
 		}
 	}
+	
+	public static class ListData implements Serializable{
+		public List list;
+		public ListData(List list) {
+			this.list = list;
+		}
+	}
 	private Command cmd;
 	Serializable data;
 

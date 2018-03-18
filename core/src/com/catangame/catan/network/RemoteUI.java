@@ -15,9 +15,9 @@ import com.catangame.catan.local.TradeOffer;
 import com.catangame.catan.superClasses.UI;
 
 public class RemoteUI extends UI {
-	private Server server;
+	private LocalServer server;
 
-	public RemoteUI(Server server) {
+	public RemoteUI(LocalServer server) {
 		this.server = server;
 	}
 	
