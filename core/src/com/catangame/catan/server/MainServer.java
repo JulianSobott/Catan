@@ -16,6 +16,7 @@ import com.catangame.catan.network.Client;
 import com.catangame.catan.network.Command;
 import com.catangame.catan.network.NewClientListener;
 import com.catangame.catan.network.Packet;
+import com.catangame.catan.utils.Color;
 
 
 public class MainServer {
@@ -86,7 +87,12 @@ public class MainServer {
 	public void messageFromClient(ServerClientCommunicator clientCommunicator, Packet packet) {
 		switch(packet.getCommand()) {
 		case SHOW_ALL_JOINABLE_GAMES:
-			clientCommunicator.message(new Packet(Command.SHOW_ALL_JOINABLE_GAMES, new Packet.ListData(this.allJoinableServerGames)));
+			//TODO create Packet Joinable games with mor information
+			List<Integer> allIDs = new ArrayList<Integer>();
+			for(ServerGame game : allJoinableServerGames) {
+				allIDs.add(game.gameID);
+			}
+			clientCommunicator.message(new Packet(Command.SHOW_ALL_JOINABLE_GAMES, new Packet.ListData(allIDs)));
 			break;
 		case CREATE_NEW_GAME:
 			ServerGame game = new ServerGame(clientCommunicator);
@@ -95,6 +101,8 @@ public class MainServer {
 			game.gameID = availableGameIDs.get(idx);
 			availableGameIDs.remove(idx);
 			allJoinableServerGames.add(game);
+			clientCommunicator.setServerGame(game);
+			clientCommunicator.setGameID(game.gameID);
 			System.out.println("Successfully created new Game with ID: " + game.gameID);
 			break;
 		case JOIN_GAME:
@@ -103,12 +111,14 @@ public class MainServer {
 					game1.allClients.add(clientCommunicator);
 					clientCommunicator.setGameID(game1.gameID);
 					clientCommunicator.setServerGame(game1);
+					game1.host.message(new Packet(Command.NAME, new Packet.Name("NEW USER", Color.GREEN)));
 					break;
 				}
 			}
 			break;
 		default:
 			//Send to receiver
+			System.err.println("Unknown command reaches server: " + packet.getCommand());
 			for(ServerClientCommunicator client : allClients) {
 				if(client.getClientGameID() == packet.receiver && client.getGameID() == clientCommunicator.getGameID()) {
 					client.message(packet);
@@ -136,6 +146,21 @@ public class MainServer {
 	private void initGameIDs(int maxGames) {
 		for(int i = 100; i < 100 + maxGames; i++) { //Max 200 Clients
 			this.availableGameIDs.add(i);
+		}
+	}
+
+	public void removeGame(int gameID) {
+		for(int i = 0; i < allActiveServerGames.size(); i++) {
+			if(allActiveServerGames.get(i).gameID == gameID) {
+				allActiveServerGames.get(i).removeGame();
+				allActiveServerGames.remove(i);
+			}
+		}
+		for(int i = 0; i < allJoinableServerGames.size(); i++) {
+			if(allJoinableServerGames.get(i).gameID == gameID) {
+				allJoinableServerGames.get(i).removeGame();
+				allJoinableServerGames.remove(i);
+			}
 		}
 	}
 }

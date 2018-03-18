@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Rectangle;
 import com.catangame.catan.math.Vector2i;
+import com.catangame.catan.server.ServerGame;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
@@ -51,7 +52,7 @@ import com.catangame.catan.utils.FontMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
-		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES, STEEL_RESOURCE;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES, STEEL_RESOURCE, JOINABLE_GAMES;
 	}
 
 	//TODO Either implement this modes or delete this enum!!
@@ -129,6 +130,7 @@ public class LocalUI extends UI implements InputProcessor {
 	
 	//Menu
 	List<SavedGame> allGames = null;
+	List<Integer> allJoinableGames;
 	//End Screen 
 	private List<Player> player;
 
@@ -195,6 +197,8 @@ public class LocalUI extends UI implements InputProcessor {
 			build_menu();
 		} else if (mode == GUIMode.END_SCREEN) {
 			buildEndScreen();
+		}else if(mode == GUIMode.JOINABLE_GAMES) {
+			buildAllJoinableGamesWindow();
 		}
 			
 		
@@ -266,15 +270,6 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btn);
-		
-		Button btnOnlineGame = new Button("OnlineGameDebug", new Rectangle(0, 0, mm_button_width, mm_button_height));
-		btnOnlineGame.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				framework.goOnline();
-			}
-		});
-		widgets.add(btnOnlineGame);
 		// rearrange buttons
 		for (int i = 0; i < widgets.size(); i++) {
 			Button button = (Button) widgets.get(i);
@@ -1457,8 +1452,39 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnBack);
+		
+		//Online stuff
+		Button btnOnlineLobby = new Button("Online lobby", new Rectangle(window_size.x /2 -80, window_size.y -90, 160, 50));
+		btnOnlineLobby.set_fill_color(Color.GREEN);
+		btnOnlineLobby.set_text_color(Color.WHITE);
+		btnOnlineLobby.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				framework.initOnlineGuestGame();
+			}
+		});
+		widgets.add(btnOnlineLobby);
 	}
-
+	public void buildAllJoinableGamesWindow() {
+		List<Integer> allGames = allJoinableGames;
+		ScrollContainer c = new ScrollContainer(this, new Rectangle(100, 100, window_size.x -100, window_size.y -100));
+		int i = 0;
+		for(final Integer gameID : allGames) {
+			Button btnGame = new Button("Game: " + gameID, new Rectangle(100, 100 + 120*i, 300, 100));
+			btnGame.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					core.joinGameLobby(gameID);				
+				}
+			});
+			c.addWidget(btnGame);
+			i++;
+			System.out.println(gameID);
+		}
+		c.calcBounds();
+		widgets.add(c);
+		
+	}
 	public void build_guest_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.GUEST_LOBBY;
@@ -2254,6 +2280,13 @@ public class LocalUI extends UI implements InputProcessor {
 	@Override
 	public void showDemandDeclined(int id) {
 		state.player_data.get(id).declinedOffer = true;
+		rebuild_gui();
+	}
+
+	public void showAllJoinableGames(List list) {
+		// TODO Auto-generated method stub
+		this.allJoinableGames = list;
+		mode = GUIMode.JOINABLE_GAMES;
 		rebuild_gui();
 	}
 }

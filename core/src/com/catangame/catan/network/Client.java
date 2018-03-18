@@ -145,8 +145,11 @@ public class Client extends Networkmanager {
 				ui.showSteelResource(((Packet.PlayerList) packet.data).getPlayer());
 			}
 			break;
+		case SHOW_ALL_JOINABLE_GAMES:
+			ui.showAllJoinableGames(((Packet.ListData)packet.data).list);
+			break;
 		default:
-			System.err.println("Unknown Command reached Client");
+			System.err.println("Unknown Command reached Client: " + packet.getCommand());
 		}
 	}
 

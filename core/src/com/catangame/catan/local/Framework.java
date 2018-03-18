@@ -299,23 +299,23 @@ public class Framework extends ApplicationAdapter {
 		return true;
 	}
 	
+	public void initOnlineGuestGame() {
+		String serverIp = "localhost"; //TODO change when server is online
+		try {
+			data_connection = new Client(ui, gameLogic, serverIp);
+		} catch (IOException e) {
+			System.err.println("Wrong IP or server is not online");
+		}
+		core = new RemoteCore();
+		ui.setCore(core);
+		((RemoteCore) core).setClientConnection((Client) data_connection);
+		gameLogic.setCore(core);
+		gameLogic.setUI(ui);
+		((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
+	}
+	
 	public void reset_game() {
 		data_connection.closeAllResources();
 		data_connection = null;
-	}
-
-	public void goOnline() {
-		String serverIP = "192.168.2.118"; //TODO change this to a valid IP-adress
-		//Init Output and Input to Server 
-		
-		try {
-			data_connection = new Client(ui, gameLogic, serverIP);
-			System.out.println("Show all joinable games");
-			((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
-			
-		} catch (IOException e) {
-			System.err.println("Server is not online");
-		}
-		
-	}
+	}	
 }

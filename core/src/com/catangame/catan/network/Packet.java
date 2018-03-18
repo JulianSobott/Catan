@@ -301,6 +301,13 @@ public class Packet implements Serializable {
 		this.cmd = cmd;
 		this.data = data;
 	}
+	
+	public Packet(int sender, int receiver, Command cmd) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.cmd = cmd;
+	}
+	
 	public Command getCommand() {
 		return this.cmd;
 	}
@@ -309,6 +316,8 @@ public class Packet implements Serializable {
 		this.cmd = Command.STRING;
 		this.debugString = str;
 	}
+
+	
 
 	public String getDebugString() {
 		return this.debugString;

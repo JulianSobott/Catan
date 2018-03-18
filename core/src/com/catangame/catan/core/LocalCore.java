@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import com.catangame.catan.utils.Color;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.math.Vector3i;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.core.Map.GeneratorType;
@@ -403,8 +404,9 @@ public class LocalCore extends Core {
 				}
 				// notify others about player change
 				String name = player.get(current_player).getName();
-				for (UI ui : uis) {
+				for (final UI ui : uis) {
 					ui.set_current_player(name);
+					
 				}
 				if (!initial_round)
 					dice();
@@ -770,5 +772,10 @@ public class LocalCore extends Core {
 	@Override
 	public void declineTradeDemand(int id) {
 		uis.get(current_player).showDemandDeclined(id);
+	}
+
+	@Override
+	public void joinGameLobby(Integer gameID) {
+		System.err.println("Should not be possible to join game in LocalCore");
 	}
 }

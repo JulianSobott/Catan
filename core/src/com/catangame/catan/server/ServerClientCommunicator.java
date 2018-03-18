@@ -2,6 +2,7 @@ package com.catangame.catan.server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
 import com.badlogic.gdx.Gdx;
@@ -10,7 +11,7 @@ import com.catangame.catan.network.Packet;
 
 //TODO Rename Method "message"
 
-public class ServerClientCommunicator extends Thread{
+public class ServerClientCommunicator extends Thread implements Serializable{
 	
 	private MainServer mainServer;
 	private Socket client;
@@ -60,6 +61,8 @@ public class ServerClientCommunicator extends Thread{
 					
 			}catch(IOException e) {
 				System.err.println("End of File Exception at ClientCommunicator => stopped running");
+				mainServer.removeClient(publicID);
+				mainServer.removeGame(gameID);
 				this.running = false;
 			} catch (ClassNotFoundException e) {
 				System.err.println("Object is from unknown Class");

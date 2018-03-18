@@ -63,12 +63,12 @@ public class RemoteCore extends Core {
 
 	@Override
 	public void nextTurn(int id) {
-		this.client.sendMessage(new Packet(Command.NEXT_TURN));
+		this.client.sendMessage(new Packet(id, 0, Command.NEXT_TURN));
 	}
 
 	@Override
 	public void buildRequest(int id, Type buildType, Vector3i position) {
-		this.client.sendMessage(new Packet(Command.BUILD_REQUEST, new Packet.BuildRequest(buildType, position)));
+		this.client.sendMessage(new Packet(id, 0, Command.BUILD_REQUEST, new Packet.BuildRequest(buildType, position)));
 	}
 
 	@Override
@@ -93,32 +93,37 @@ public class RemoteCore extends Core {
 
 	@Override
 	public void buyDevelopmentCard(int id) {
-		this.client.sendMessage(new Packet(Command.BUY_DEVELOPMENT_CARD));
+		this.client.sendMessage(new Packet(id, 0, Command.BUY_DEVELOPMENT_CARD));
 	}
 
 	@Override
 	public void playCard(int id, DevCard card) {
-		this.client.sendMessage(new Packet(Command.PLAY_DEVELOPMENTCARD, new Packet.Developmentcard(card)));
+		this.client.sendMessage(new Packet(id, 0, Command.PLAY_DEVELOPMENTCARD, new Packet.Developmentcard(card)));
 	}
 
 	@Override
 	public void removeResources(int id, Map<Resource, Integer> removedResources) {
-		this.client.sendMessage(new Packet(Command.TAKE_RESOURCE, new Packet.Resouces(removedResources)));
+		this.client.sendMessage(new Packet(id, 0, Command.TAKE_RESOURCE, new Packet.Resouces(removedResources)));
 	}
 
 	@Override
 	public void moveRobber(int id, Vector2 position) {
-		this.client.sendMessage(new Packet(Command.MOVE_ROBBER, new Packet.Position(position)));
+		this.client.sendMessage(new Packet(id, 0, Command.MOVE_ROBBER, new Packet.Position(position)));
 	}
 
 	@Override
 	public void stealResource(int id, int player) {
-		this.client.sendMessage(new Packet(Command.STEEL_RESOURCE, new Packet.Num(player)));
+		this.client.sendMessage(new Packet(id, 0, Command.STEEL_RESOURCE, new Packet.Num(player)));
 	}
 
 	@Override
 	public void declineTradeDemand(int id) {
-		this.client.sendMessage(new Packet(Command.DEMAND_DECLINED, new Packet.ID(id)));
+		this.client.sendMessage(new Packet(id, 0, Command.DEMAND_DECLINED, new Packet.ID(id)));
+	}
+
+	@Override
+	public void joinGameLobby(Integer gameID) {
+		this.client.sendMessage(new Packet(Command.JOIN_GAME, new Packet.ID(gameID)));
 	}
 
 	
