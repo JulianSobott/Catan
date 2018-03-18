@@ -15,11 +15,20 @@ public class ServerClientCommunicator extends Thread{
 	private MainServer mainServer;
 	private Socket client;
 	private long publicID;
+	private int clientGameID;
 	private int gameID;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	private ServerGame serverGame;
 	
+	public ServerGame getServerGame() {
+		return serverGame;
+	}
+
+	public void setServerGame(ServerGame serverGame) {
+		this.serverGame = serverGame;
+	}
+
 	private boolean running = true;
 	
 	public ServerClientCommunicator(MainServer mainServer, Socket client) {
@@ -96,5 +105,13 @@ public class ServerClientCommunicator extends Thread{
 
 	public long getPublicID() {
 		return publicID;
+	}
+
+	public int getClientGameID() {
+		return clientGameID;
+	}
+
+	public void setClientGameID(int clientGameID) {
+		this.clientGameID = clientGameID;
 	}
 }

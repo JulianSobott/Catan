@@ -29,17 +29,19 @@ import com.catangame.catan.local.LocalUI;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
 import com.catangame.catan.network.RemoteGameLogic;
+import com.catangame.catan.network.RemoteServer;
 import com.catangame.catan.network.RemoteUI;
 import com.catangame.catan.network.LocalServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
+import com.catangame.catan.superClasses.Server;
 import com.catangame.catan.superClasses.UI;
 
 public class LocalCore extends Core {
 	List<UI> uis = new ArrayList<UI>();
 	List<GameLogic> logics = new ArrayList<GameLogic>();
 	// data server
-	LocalServer data_server;
+	Server data_server;
 
 	private SavedGame savedGame = null;
 
@@ -371,8 +373,8 @@ public class LocalCore extends Core {
 		uis.add(ui);
 	}
 
-	public void setServer(LocalServer server) {
-		this.data_server = server;
+	public void setServer(Server data_connection) {
+		this.data_server = data_connection;
 	}
 
 	public void changePlayerProps(int id, String newName, Color color) {

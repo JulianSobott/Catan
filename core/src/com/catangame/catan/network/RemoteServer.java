@@ -36,6 +36,13 @@ public class RemoteServer extends Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		//Create new Online Game
+		try {
+			output.writeObject(new Packet(Command.CREATE_NEW_GAME));
+		} catch (IOException e) {
+			System.err.println("Cant Create new Game");
+			e.printStackTrace();
+		}
 		start();
 	}
 
@@ -52,24 +59,41 @@ public class RemoteServer extends Server {
 	}
 	
 	private void start() {
-		while(connectionToServer && this.input != null) {
-			try {
-				final Packet packet;
-				packet = (Packet) input.readObject();
-				messageFromServer(packet);			
-			}catch(IOException e) {
-				e.printStackTrace();
-				System.err.println("Connection to Server closed (ClientInputListener Line 26)");
-				this.connectionToServer = false;
-			}catch(ClassNotFoundException e) {
-				System.err.println("Object is from unknown Class");
-				e.printStackTrace();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(connectionToServer && input != null) {
+					try {
+						final Packet packet;
+						packet = (Packet) input.readObject();
+						messageFromServer(packet);			
+					}catch(IOException e) {
+						e.printStackTrace();
+						System.err.println("Connection to Server closed (ClientInputListener Line 26)");
+						connectionToServer = false;
+					}catch(ClassNotFoundException e) {
+						System.err.println("Object is from unknown Class");
+						e.printStackTrace();
+					}
+				}
+				return;
 			}
-		}
-		return;
+		}).start();	
 	}
 
 	private void messageFromServer(Packet packet) {
+		
+	}
+
+	@Override
+	public void set_id_last_joined(int id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void remove_client(int id) {
+		// TODO Auto-generated method stub
 		
 	}
 

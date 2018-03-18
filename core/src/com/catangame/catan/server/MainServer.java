@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.catangame.catan.network.Client;
 import com.catangame.catan.network.Command;
 import com.catangame.catan.network.NewClientListener;
@@ -30,6 +31,7 @@ public class MainServer {
 	private List<ServerGame> allJoinableServerGames = new ArrayList<ServerGame>();
 	
 	private List<Long> availablePublicIDs;
+	List<Integer> availableGameIDs = new ArrayList<Integer>();
 	public static void main(String[] args) {
 		new MainServer();
 	}
@@ -56,23 +58,18 @@ public class MainServer {
 			System.err.println("Couldn't create Server Socket");
 			e.printStackTrace();
 		}
-		availablePublicIDs = initPublicIDs();
-		//NewClientListener listener = new NewClientListener(null, serverSocket);
-		//listener.start();
+		availablePublicIDs = initPublicIDs(100);
+		this.initGameIDs(30);
 		newClientListener = new NewServerClientListener(this, serverSocket);
 		newClientListener.start();
 	}
-	
-	private void start() {
-		
-	}
+
 
 	public void addNewClient(Socket clientSocket) {
 		ServerClientCommunicator clientCommunicator = new ServerClientCommunicator(this, clientSocket);
 		clientCommunicator.start();
 		long publicID = getPublicID();
 		clientCommunicator.setPublicID(publicID);
-		clientCommunicator.message(new Packet(Command.ACCEPT_OFFER));
 		this.allClients.add(clientCommunicator);
 	}
 	
@@ -91,8 +88,33 @@ public class MainServer {
 		case SHOW_ALL_JOINABLE_GAMES:
 			clientCommunicator.message(new Packet(Command.SHOW_ALL_JOINABLE_GAMES, new Packet.ListData(this.allJoinableServerGames)));
 			break;
+		case CREATE_NEW_GAME:
+			ServerGame game = new ServerGame(clientCommunicator);
+			Random rand = new Random();
+			int idx = rand.nextInt(availableGameIDs.size());
+			game.gameID = availableGameIDs.get(idx);
+			availableGameIDs.remove(idx);
+			allJoinableServerGames.add(game);
+			System.out.println("Successfully created new Game with ID: " + game.gameID);
+			break;
+		case JOIN_GAME:
+			for(ServerGame game1 : allJoinableServerGames) {
+				if(game1.gameID == ((Packet.ID) packet.data).getID()){
+					game1.allClients.add(clientCommunicator);
+					clientCommunicator.setGameID(game1.gameID);
+					clientCommunicator.setServerGame(game1);
+					break;
+				}
+			}
+			break;
 		default:
-			System.err.println("Unknown Command reached mainserver: " + packet.getCommand());
+			//Send to receiver
+			for(ServerClientCommunicator client : allClients) {
+				if(client.getClientGameID() == packet.receiver && client.getGameID() == clientCommunicator.getGameID()) {
+					client.message(packet);
+					break;
+				}
+			}
 		}
 	}
 	
@@ -104,11 +126,16 @@ public class MainServer {
 		return id;
 	}
 	
-	private List<Long> initPublicIDs(){
+	private List<Long> initPublicIDs(int maxClients){
 		List<Long> ids = new ArrayList<Long>();
-		for(long i = 100; i < 300; i++) { //Max 200 Clients
+		for(long i = 100; i < 100 + maxClients; i++) { //Max 200 Clients
 			ids.add(i);
 		}
 		return ids;
+	}
+	private void initGameIDs(int maxGames) {
+		for(int i = 100; i < 100 + maxGames; i++) { //Max 200 Clients
+			this.availableGameIDs.add(i);
+		}
 	}
 }

@@ -15,4 +15,8 @@ public abstract class Server extends Networkmanager{
 	
 	public abstract void message_to_client(int id, Packet packet);
 
+	public abstract void set_id_last_joined(int id);
+
+	public abstract void remove_client(int id);
+
 }

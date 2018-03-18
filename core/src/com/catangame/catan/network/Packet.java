@@ -280,7 +280,9 @@ public class Packet implements Serializable {
 		}
 	}
 	private Command cmd;
-	Serializable data;
+	public Serializable data;
+	public int sender; //Own ClientGameID
+	public int receiver; //0 = Host, else ClientGameID
 
 	String debugString;
 
@@ -292,7 +294,13 @@ public class Packet implements Serializable {
 		this.cmd = cmd;
 		this.data = data;
 	}
-
+	
+	public Packet(int sender, int receiver, Command cmd, Serializable data) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.cmd = cmd;
+		this.data = data;
+	}
 	public Command getCommand() {
 		return this.cmd;
 	}

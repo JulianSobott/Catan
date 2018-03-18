@@ -36,6 +36,7 @@ import com.catangame.catan.network.Command;
 import com.catangame.catan.network.Networkmanager;
 import com.catangame.catan.network.Packet;
 import com.catangame.catan.network.RemoteCore;
+import com.catangame.catan.network.RemoteServer;
 import com.catangame.catan.network.LocalServer;
 import com.catangame.catan.server.MainServer;
 import com.catangame.catan.superClasses.Core;
@@ -265,6 +266,16 @@ public class Framework extends ApplicationAdapter {
 		((LocalCore) core).addLogic(gameLogic);
 		data_connection = new LocalServer((LocalCore) core);
 		((LocalCore) core).setServer((LocalServer) data_connection);
+		gameLogic.setCore(core);
+		gameLogic.setUI(ui);
+	}
+	void initOnlineHostGame() {
+		core = new LocalCore();
+		ui.setCore(core);
+		((LocalCore) core).addUI(ui);
+		((LocalCore) core).addLogic(gameLogic);
+		data_connection = new RemoteServer((LocalCore) core);
+		((LocalCore) core).setServer((RemoteServer) data_connection);
 		gameLogic.setCore(core);
 		gameLogic.setUI(ui);
 	}

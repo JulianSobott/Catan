@@ -214,7 +214,9 @@ public class LocalUI extends UI implements InputProcessor {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				framework.init_host_game();
+				//framework.init_host_game();
+				//TODO Change to above when server is online
+				framework.initOnlineHostGame();
 				build_host_lobby_window();
 			}
 		});
