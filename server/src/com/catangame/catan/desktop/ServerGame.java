@@ -1,4 +1,4 @@
-package com.catangame.catan.server;
+package com.catangame.catan.desktop;
 
 import java.io.Serializable;
 import java.util.ArrayList;

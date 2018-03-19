@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -38,7 +39,6 @@ import com.catangame.catan.network.Packet;
 import com.catangame.catan.network.RemoteCore;
 import com.catangame.catan.network.RemoteServer;
 import com.catangame.catan.network.LocalServer;
-import com.catangame.catan.server.MainServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
@@ -300,18 +300,29 @@ public class Framework extends ApplicationAdapter {
 	}
 	
 	public void initOnlineGuestGame() {
-		String serverIp = "localhost"; //TODO change when server is online
+		String serverIP;
 		try {
-			data_connection = new Client(ui, gameLogic, serverIp);
-		} catch (IOException e) {
-			System.err.println("Wrong IP or server is not online");
+			serverIP = java.net.InetAddress.getByName("catan.zapto.org").getHostAddress();
+			try {
+				data_connection = new Client(ui, gameLogic, serverIP);
+			} catch (IOException e) {
+				System.err.println("Wrong IP or server is not online");
+			}
+			core = new RemoteCore();
+			ui.setCore(core);
+			((RemoteCore) core).setClientConnection((Client) data_connection);
+			gameLogic.setCore(core);
+			gameLogic.setUI(ui);
+			((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
 		}
-		core = new RemoteCore();
-		ui.setCore(core);
-		((RemoteCore) core).setClientConnection((Client) data_connection);
-		gameLogic.setCore(core);
-		gameLogic.setUI(ui);
-		((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
+		
+	}
+	
+	public void publicizeGame() {
+		reset_game();
+		initOnlineHostGame();
 	}
 	
 	public void reset_game() {

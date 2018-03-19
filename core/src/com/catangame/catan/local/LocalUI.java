@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Rectangle;
 import com.catangame.catan.math.Vector2i;
-import com.catangame.catan.server.ServerGame;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
@@ -218,9 +217,9 @@ public class LocalUI extends UI implements InputProcessor {
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				//framework.init_host_game();
+				framework.init_host_game();
 				//TODO Change to above when server is online
-				framework.initOnlineHostGame();
+				//framework.initOnlineHostGame();
 				build_host_lobby_window();
 			}
 		});
@@ -1689,7 +1688,7 @@ public class LocalUI extends UI implements InputProcessor {
 				public void run() {
 					cbValueIsLocal = cb.isSelected();
 					if(!cbValueIsLocal) {
-						
+						framework.publicizeGame();
 					}
 				}
 			});

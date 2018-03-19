@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -14,7 +15,7 @@ import com.catangame.catan.utils.Color;
 public class RemoteServer extends Server {
 	
 	private Socket socket;
-	private String serverIP = "127.0.0.1";
+	private String serverIP;
 	private final int PORT = 56789;
 	
 	private ObjectOutputStream output;
@@ -25,29 +26,35 @@ public class RemoteServer extends Server {
 	private boolean connectionToServer = false;
 	
 	public RemoteServer(LocalCore core) {
-		this.core = core;
 		try {
-			this.socket = new Socket(this.serverIP, PORT);
+			serverIP = java.net.InetAddress.getByName("catan.zapto.org").getHostAddress();
+			this.core = core;
 			try {
-				output = new ObjectOutputStream(this.socket.getOutputStream());
-				input = new ObjectInputStream(this.socket.getInputStream());
-				connectionToServer = true;
-			}catch(IOException e) {
+				this.socket = new Socket(this.serverIP, PORT);
+				try {
+					output = new ObjectOutputStream(this.socket.getOutputStream());
+					input = new ObjectInputStream(this.socket.getInputStream());
+					connectionToServer = true;
+				}catch(IOException e) {
+					e.printStackTrace();
+				}
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			//Create new Online Game
+			try {
+				output.writeObject(new Packet(Command.CREATE_NEW_GAME));
+				output.flush();
+				output.reset();
+			} catch (IOException e) {
+				System.err.println("Cant Create new Game");
+				e.printStackTrace();
+			}
+			start();
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
 		}
-		//Create new Online Game
-		try {
-			output.writeObject(new Packet(Command.CREATE_NEW_GAME));
-			output.flush();
-			output.reset();
-		} catch (IOException e) {
-			System.err.println("Cant Create new Game");
-			e.printStackTrace();
-		}
-		start();
+		
 	}
 
 	@Override
