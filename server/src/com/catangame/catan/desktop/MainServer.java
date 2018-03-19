@@ -11,23 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.catangame.catan.network.Client;
 import com.catangame.catan.network.Command;
-import com.catangame.catan.network.NewClientListener;
 import com.catangame.catan.network.Packet;
 import com.catangame.catan.utils.Color;
 
 
 public class MainServer {
-	public static String getIP;
 	private final int PORT = 56789;
-	private String serverIPAdress;
+	public static final String SERVER_DOMAIN = "catan.zapto.org";
 	
 	private ServerSocket serverSocket;
 	private NewServerClientListener newClientListener;
 	
 	private List<ServerClientCommunicator> allClients = new ArrayList<ServerClientCommunicator>();
+	private List<ServerClientCommunicator> clientsInLobby = new ArrayList<ServerClientCommunicator>();
 	private List<ServerGame> allActiveServerGames = new ArrayList<ServerGame>();
 	private List<ServerGame> allJoinableServerGames = new ArrayList<ServerGame>();
 	
@@ -38,19 +35,6 @@ public class MainServer {
 	}
 	
 	public MainServer() {
-		//Getting the local IP Adress
-		//TODO delete this when server has static Ip
-		DatagramSocket ds;
-		try {
-			ds = new DatagramSocket();
-			ds.connect(InetAddress.getByName("8.8.8.8"), 1002);
-			this.serverIPAdress = ds.getLocalAddress().getHostAddress();
-			System.out.printf("Local IP-adress from Server: %s\r\n", this.serverIPAdress);
-		} catch (SocketException e1) {
-			e1.printStackTrace();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
 		//Open Server at Port
 		try {
 			serverSocket = new ServerSocket(PORT);
@@ -72,6 +56,7 @@ public class MainServer {
 		long publicID = getPublicID();
 		clientCommunicator.setPublicID(publicID);
 		this.allClients.add(clientCommunicator);
+		this.clientsInLobby.add(clientCommunicator);
 	}
 	
 	public void removeClient(long publicID) {
@@ -88,11 +73,7 @@ public class MainServer {
 		switch(packet.getCommand()) {
 		case SHOW_ALL_JOINABLE_GAMES:
 			//TODO create Packet Joinable games with mor information
-			List<Integer> allIDs = new ArrayList<Integer>();
-			for(ServerGame game : allJoinableServerGames) {
-				allIDs.add(game.gameID);
-			}
-			clientCommunicator.message(new Packet(Command.SHOW_ALL_JOINABLE_GAMES, new Packet.ListData(allIDs)));
+			updateLobby();
 			break;
 		case CREATE_NEW_GAME:
 			ServerGame game = new ServerGame(clientCommunicator);
@@ -103,6 +84,8 @@ public class MainServer {
 			allJoinableServerGames.add(game);
 			clientCommunicator.setServerGame(game);
 			clientCommunicator.setGameID(game.gameID);
+			this.clientsInLobby.remove(clientCommunicator);
+			updateLobby();
 			System.out.println("Successfully created new Game with ID: " + game.gameID);
 			break;
 		case JOIN_GAME:
@@ -112,6 +95,7 @@ public class MainServer {
 					clientCommunicator.setGameID(game1.gameID);
 					clientCommunicator.setServerGame(game1);
 					game1.host.message(new Packet(Command.NAME, new Packet.Name("NEW USER", Color.GREEN)));
+					this.clientsInLobby.remove(clientCommunicator);
 					break;
 				}
 			}
@@ -128,6 +112,15 @@ public class MainServer {
 		}
 	}
 	
+	private void updateLobby() {
+		List<Packet.JoinableGame> allGames = new ArrayList<Packet.JoinableGame>();
+		for(ServerGame game : allJoinableServerGames) {
+			allGames.add(new Packet.JoinableGame(game.gameID, game.gameName, game.allClients.size()));
+		}
+		for(ServerClientCommunicator client : clientsInLobby) {
+			client.message(new Packet(Command.SHOW_ALL_JOINABLE_GAMES, new Packet.JoinableGames(allGames)));
+		}
+	}
 	private long getPublicID() {
 		Random random = new Random();
 		int idx = random.nextInt(availablePublicIDs.size());

@@ -19,7 +19,7 @@ import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.LocalState.GameMode;
 
 public class Packet implements Serializable {
-	
+
 	private static final long serialVersionUID = 10001L;
 	
 	public static class Position implements Serializable {
@@ -274,9 +274,32 @@ public class Packet implements Serializable {
 	}
 	
 	public static class ListData implements Serializable{
+		private static final long serialVersionUID = 10021L;
 		public List list;
 		public ListData(List list) {
 			this.list = list;
+		}
+	}
+	
+	public static  class JoinableGames implements Serializable {
+		private static final long serialVersionUID = 10022L;
+		public List<JoinableGame> allJoinableGames = new ArrayList<JoinableGame>();
+		public JoinableGames(List<JoinableGame> games) {
+			for(JoinableGame game : games) {
+				allJoinableGames.add(game);
+			}
+		}
+	}
+	public static class JoinableGame implements Serializable{
+		private static final long serialVersionUID = 10023L;
+		public int gameID;
+		public String gameName;
+		public int numPlayer;
+		
+		public JoinableGame(int gameID, String gameName, int numPlayer) {
+			this.gameID = gameID;
+			this.gameName = gameName;
+			this.numPlayer = numPlayer;
 		}
 	}
 	private Command cmd;

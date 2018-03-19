@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Rectangle;
 import com.catangame.catan.math.Vector2i;
+import com.catangame.catan.network.Packet;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
@@ -126,10 +127,12 @@ public class LocalUI extends UI implements InputProcessor {
 	private String tf_game_name = "";
 	private float color_pkr_hue = (float) Math.random();
 	private Color playerColor = Color.RED;
+	private boolean onlineLobby = false;
+	private String btnJoinText = Language.JOIN_GAME.get_text();;
 	
 	//Menu
 	List<SavedGame> allGames = null;
-	List<Integer> allJoinableGames;
+	List<Packet.JoinableGame> allJoinableGames;
 	//End Screen 
 	private List<Player> player;
 
@@ -1351,7 +1354,24 @@ public class LocalUI extends UI implements InputProcessor {
 		float mm_tf_width = 400;
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
-
+		
+		final Checkbox cbOnlineLobby = new Checkbox(new Rectangle(window_size.x /2 + 100, 200, 35, 35));
+		cbOnlineLobby.setSelected(onlineLobby);
+		cbOnlineLobby.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				onlineLobby = !onlineLobby;
+				cbOnlineLobby.setSelected(onlineLobby);
+				if(onlineLobby) {
+					btnJoinText = "Online Lobby";
+				}else {
+					btnJoinText = Language.JOIN_GAME.get_text();
+				}
+				
+				rebuild_gui();
+			}
+		});
+		widgets.add(cbOnlineLobby);
 		final TextField tfIp = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text(tf_value_ip);
 		tfIp.set_input_callback(new Runnable() {
@@ -1362,8 +1382,9 @@ public class LocalUI extends UI implements InputProcessor {
 				tf_value_ip = textField.get_text();
 			}
 		});
-		widgets.add(tfIp);
-
+		if(!onlineLobby) {
+			widgets.add(tfIp);
+		}
 		final TextField tfName = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		tfName.set_text(tf_value_name);
 		tfName.set_input_callback(new Runnable() {
@@ -1391,11 +1412,11 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(colorPicker);
 
 		final Label lblConnecting;
-		lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(),
+		lblConnecting = new Label("Try to Connect to: " + tf_value_ip,
 				new Rectangle(window_size.x / 2, window_size.y - 200, 100, 50));
 		lblConnecting.set_visible(false);
 
-		Button btn = new Button(Language.JOIN.get_text(), new Rectangle(0, 0, mm_tf_width, mm_tf_height));
+		Button btn = new Button(btnJoinText, new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		btn.set_position(new Vector2((window_size.x - mm_tf_width) * 0.5f + 200,
 				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 2));
 		btn.set_fill_color(new Color(0.24f, 1.f, 0.24f, 0.4f));
@@ -1407,11 +1428,16 @@ public class LocalUI extends UI implements InputProcessor {
 					//Entered wrong Ip or server is not online
 					new Thread(new Runnable() {
 						public void run() {
-							if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
-								System.out.println("Not accepted");
-								tfIp.set_outline(Color.RED, 2);
-								lblConnecting.set_text("Entered wrong IP or the server is not online");
+							if(onlineLobby) {
+								framework.initOnlineGuestGame();
+							}else {
+								if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
+									System.out.println("Not accepted");
+									tfIp.set_outline(Color.RED, 2);
+									lblConnecting.set_text("Entered wrong IP or the server is not online");
+								}
 							}
+							
 						}
 					}).start();
 				} else {
@@ -1433,11 +1459,12 @@ public class LocalUI extends UI implements InputProcessor {
 					(window_size.y - (mm_tf_height + mm_tf_spacing) * widgets.size()) * 0.5f
 							+ (mm_tf_height + mm_tf_spacing) * i));
 		}
-
-		Label lbl = new Label("Enter IP: ",
-				new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, mm_tf_width, mm_tf_height));
-		widgets.add(lbl);
-		lbl = new Label("Enter Name: ", new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
+		if(!onlineLobby) {
+			Label lbl = new Label("Enter IP: ",
+					new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, mm_tf_width, mm_tf_height));
+			widgets.add(lbl);
+		}	
+		Label lbl = new Label("Enter Name: ", new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
 				mm_tf_width, mm_tf_height));
 		widgets.add(lbl);
 		widgets.add(lblConnecting);
@@ -1453,6 +1480,8 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnBack);
 		
 		//Online stuff
+		Label lblOnlineLobby = new Label("Online lobby", new Rectangle((window_size.x - mm_tf_width) * 0.5f, cbOnlineLobby.get_position().y, mm_tf_width, mm_tf_height));
+		widgets.add(lblOnlineLobby);
 		Button btnOnlineLobby = new Button("Online lobby", new Rectangle(window_size.x /2 -80, window_size.y -90, 160, 50));
 		btnOnlineLobby.set_fill_color(Color.GREEN);
 		btnOnlineLobby.set_text_color(Color.WHITE);
@@ -1465,20 +1494,22 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnOnlineLobby);
 	}
 	public void buildAllJoinableGamesWindow() {
-		List<Integer> allGames = allJoinableGames;
+		List<Packet.JoinableGame> allGames = allJoinableGames;
+		Label lblHeader = new Label("There are " + allGames.size() + " joinable games online", new Rectangle(20, 20, 100,50));
+		lblHeader.adjustWidth(10);
+		widgets.add(lblHeader);
 		ScrollContainer c = new ScrollContainer(this, new Rectangle(100, 100, window_size.x -100, window_size.y -100));
 		int i = 0;
-		for(final Integer gameID : allGames) {
-			Button btnGame = new Button("Game: " + gameID, new Rectangle(100, 100 + 120*i, 300, 100));
+		for(final Packet.JoinableGame game : allGames) {
+			Button btnGame = new Button("Game: "+ game.gameID + " - " + game.gameName, new Rectangle(100, 100 + 120*i, 300, 100));
 			btnGame.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					core.joinGameLobby(gameID);				
+					core.joinGameLobby(game.gameID);				
 				}
 			});
 			c.addWidget(btnGame);
 			i++;
-			System.out.println(gameID);
 		}
 		c.calcBounds();
 		widgets.add(c);
@@ -2282,7 +2313,7 @@ public class LocalUI extends UI implements InputProcessor {
 		rebuild_gui();
 	}
 
-	public void showAllJoinableGames(List list) {
+	public void showAllJoinableGames(List<Packet.JoinableGame> list) {
 		// TODO Auto-generated method stub
 		this.allJoinableGames = list;
 		mode = GUIMode.JOINABLE_GAMES;

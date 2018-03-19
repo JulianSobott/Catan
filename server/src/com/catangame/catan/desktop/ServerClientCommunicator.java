@@ -8,6 +8,7 @@ import java.net.Socket;
 import com.badlogic.gdx.Gdx;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.network.Packet;
+import com.catangame.catan.network.Packet;
 
 //TODO Rename Method "message"
 

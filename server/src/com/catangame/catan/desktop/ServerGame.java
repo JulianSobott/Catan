@@ -6,12 +6,14 @@ import java.util.List;
 
 import com.catangame.catan.network.Command;
 import com.catangame.catan.network.Packet;
+import com.catangame.catan.network.Packet.ID;
 
 public class ServerGame implements Serializable{
 
 	public ServerClientCommunicator host;
 	public List<ServerClientCommunicator> allClients = new ArrayList<ServerClientCommunicator>();
 	public int gameID;
+	public String gameName;
 	
 	public ServerGame(ServerClientCommunicator clientCommunicator) {
 		this.host = clientCommunicator;
@@ -39,6 +41,15 @@ public class ServerGame implements Serializable{
 		//TODO maybe change this and just notify
 		for(ServerClientCommunicator client : allClients) {
 			client.stopRunning();
+		}
+	}
+	
+	public class SerializedGame implements Serializable{
+		public int ID = gameID;
+		
+		
+		public SerializedGame getGame() {
+			return this;
 		}
 	}
 
