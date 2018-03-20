@@ -148,6 +148,9 @@ public class Client extends Networkmanager {
 		case SHOW_ALL_JOINABLE_GAMES:
 			ui.showAllJoinableGames(((Packet.JoinableGames)packet.data).allJoinableGames);
 			break;
+		case SHOW_GUEST_LOBBY:
+			ui.showGuestLobby(((Packet.StringData)packet.data).string);
+			break;
 		default:
 			System.err.println("Unknown Command reached Client: " + packet.getCommand());
 		}

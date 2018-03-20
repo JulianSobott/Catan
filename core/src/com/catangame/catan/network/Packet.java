@@ -302,6 +302,24 @@ public class Packet implements Serializable {
 			this.numPlayer = numPlayer;
 		}
 	}
+	public static class JoinGame implements Serializable{
+		private static final long serialVersionUID = 10024L;
+		public int gameID;
+		public String playerName;
+		public Color color;
+		public JoinGame(int gameID, String playerName, Color color) {
+			this.gameID = gameID;
+			this.playerName = playerName;
+			this.color = color;
+		}
+	}
+	public static class StringData implements Serializable{
+		private static final long serialVersionUID = 10025L;
+		public String string;
+		public StringData(String str) {
+			this.string = str;
+		}
+	}
 	private Command cmd;
 	public Serializable data;
 	public int sender; //Own ClientGameID

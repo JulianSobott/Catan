@@ -260,6 +260,9 @@ public class Framework extends ApplicationAdapter {
 
 	// creates a new game with this machine as host
 	void init_host_game() {
+		if(data_connection instanceof RemoteServer) {
+			data_connection.closeAllResources();
+		}
 		core = new LocalCore();
 		ui.setCore(core);
 		((LocalCore) core).addUI(ui);

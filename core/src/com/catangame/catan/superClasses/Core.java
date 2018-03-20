@@ -48,6 +48,6 @@ public abstract class Core {
 
 	public abstract void declineTradeDemand(int id);
 
-	public abstract void joinGameLobby(Integer gameID);
+	public abstract void joinGameLobby(Integer gameID, String tf_value_name, Color color);
 
 }

@@ -171,5 +171,16 @@ public class RemoteServer extends Server {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void closeAllResources() {
+		try {
+			output.writeObject(new Packet(Command.EXIT));
+			output.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+		super.closeAllResources();
+	}
 
 }

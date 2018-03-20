@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -84,31 +85,41 @@ public class MainServer {
 			allJoinableServerGames.add(game);
 			clientCommunicator.setServerGame(game);
 			clientCommunicator.setGameID(game.gameID);
+			clientCommunicator.setHost(true);
 			this.clientsInLobby.remove(clientCommunicator);
 			updateLobby();
 			System.out.println("Successfully created new Game with ID: " + game.gameID);
 			break;
 		case JOIN_GAME:
+			Packet.JoinGame joinGame = ((Packet.JoinGame) packet.data);
 			for(ServerGame game1 : allJoinableServerGames) {
-				if(game1.gameID == ((Packet.ID) packet.data).getID()){
+				if(game1.gameID == joinGame.gameID){
 					game1.allClients.add(clientCommunicator);
 					clientCommunicator.setGameID(game1.gameID);
 					clientCommunicator.setServerGame(game1);
-					game1.host.message(new Packet(Command.NAME, new Packet.Name("NEW USER", Color.GREEN)));
+					game1.host.message(new Packet(Command.NAME, new Packet.Name(joinGame.playerName, joinGame.color)));
+					for(ServerClientCommunicator client : game1.allClients) {
+						client.message(new Packet(Command.SHOW_NEW_MEMBER, new Packet.Name(joinGame.playerName, joinGame.color)));
+					}
+					//TODO add Names from all Players
+					clientCommunicator.message(new Packet(Command.SHOW_GUEST_LOBBY, new Packet.StringData(game1.gameName)));
 					this.clientsInLobby.remove(clientCommunicator);
 					break;
 				}
 			}
 			break;
+		case EXIT:
+			//TODO add implementation
+			//inform ingame
+			//left lobby
+			if(clientCommunicator.isHost()) {
+				//TODO maybe inform guests
+				removeGame(clientCommunicator.getGameID());
+			}
+			break;
 		default:
 			//Send to receiver
-			System.err.println("Unknown command reaches server: " + packet.getCommand());
-			for(ServerClientCommunicator client : allClients) {
-				if(client.getClientGameID() == packet.receiver && client.getGameID() == clientCommunicator.getGameID()) {
-					client.message(packet);
-					break;
-				}
-			}
+			System.err.println("Unknown command reached mainServer: " + packet.getCommand());
 		}
 	}
 	
@@ -151,9 +162,12 @@ public class MainServer {
 		}
 		for(int i = 0; i < allJoinableServerGames.size(); i++) {
 			if(allJoinableServerGames.get(i).gameID == gameID) {
-				allJoinableServerGames.get(i).removeGame();
-				allJoinableServerGames.remove(i);
+				if(allJoinableServerGames.size() > 0) {
+					allJoinableServerGames.get(i).removeGame();
+					allJoinableServerGames.remove(i);
+				}
 			}
 		}
 	}
+	
 }

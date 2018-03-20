@@ -19,6 +19,7 @@ public class ServerClientCommunicator extends Thread implements Serializable{
 	private long publicID;
 	private int clientGameID;
 	private int gameID;
+	private boolean isHost = false;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	private ServerGame serverGame;
@@ -117,5 +118,13 @@ public class ServerClientCommunicator extends Thread implements Serializable{
 
 	public void setClientGameID(int clientGameID) {
 		this.clientGameID = clientGameID;
+	}
+
+	public boolean isHost() {
+		return isHost;
+	}
+
+	public void setHost(boolean isHost) {
+		this.isHost = isHost;
 	}
 }

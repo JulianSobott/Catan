@@ -240,10 +240,7 @@ public class LocalCore extends Core {
 			GameLogic logic = new RemoteGameLogic(data_server);
 			logic.setID(id);
 			logics.add(logic);
-			
-			for (UI tempUI : uis) {
-				tempUI.show_guest_at_lobby(name);
-			}	
+			uis.get(0).show_guest_at_lobby(name);
 		}
 	}
 
@@ -775,7 +772,7 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void joinGameLobby(Integer gameID) {
+	public void joinGameLobby(Integer gameID, String playerName, Color color) {
 		System.err.println("Should not be possible to join game in LocalCore");
 	}
 }

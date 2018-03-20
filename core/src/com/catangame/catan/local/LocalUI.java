@@ -128,7 +128,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private float color_pkr_hue = (float) Math.random();
 	private Color playerColor = Color.RED;
 	private boolean onlineLobby = false;
-	private String btnJoinText = Language.JOIN_GAME.get_text();;
+	private String btnJoinText = Language.JOIN_GAME.get_text();
 	
 	//Menu
 	List<SavedGame> allGames = null;
@@ -1429,6 +1429,7 @@ public class LocalUI extends UI implements InputProcessor {
 					new Thread(new Runnable() {
 						public void run() {
 							if(onlineLobby) {
+								
 								framework.initOnlineGuestGame();
 							}else {
 								if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
@@ -1505,7 +1506,7 @@ public class LocalUI extends UI implements InputProcessor {
 			btnGame.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					core.joinGameLobby(game.gameID);				
+					core.joinGameLobby(game.gameID, tf_value_name, playerColor);				
 				}
 			});
 			c.addWidget(btnGame);
@@ -1513,7 +1514,15 @@ public class LocalUI extends UI implements InputProcessor {
 		}
 		c.calcBounds();
 		widgets.add(c);
-		
+		Button btnBack = new Button(Language.BACK.get_text(), new Rectangle(20, window_size.y - 70, 100, 50));
+		btnBack.adjustWidth(5);
+		btnBack.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				build_lobby();
+			}
+		});
+		widgets.add(btnBack);
 	}
 	public void build_guest_lobby_window() {
 		destroy_widgets();
@@ -1534,7 +1543,7 @@ public class LocalUI extends UI implements InputProcessor {
 				i++;
 			}
 		} else {
-			Label lbl = new Label("Successfully joined Lobby with: ", new Rectangle(0, 0, 100, 100));
+			Label lbl = new Label("Successfully joined " +state.gameName + " Lobby with: ", new Rectangle(0, 0, 100, 100));
 			widgets.add(lbl);
 			int i = 0;
 			for (String guestName : guests) {
@@ -1546,12 +1555,23 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 
 		}
+		Button btnBack = new Button(Language.EXIT.get_text(), new Rectangle(20, window_size.y - 70, 100, 50));
+		btnBack.adjustWidth(5);
+		btnBack.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				//TODO inform server
+				resetData(false);
+				build_lobby();
+			}
+		});
+		widgets.add(btnBack);
 	}
 
 	public void build_host_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.HOST_LOBBY;
-		Label lblHostIp = new Label(serverIP, new Rectangle(window_size.x / 2, 0, 100, 30));
+		final Label lblHostIp = new Label(serverIP, new Rectangle(window_size.x / 2, 0, 100, 30));
 		widgets.add(lblHostIp);
 		float column0 = 0;
 		float column1 = window_size.x / 2 > 300 ? window_size.x / 2 : 300;
@@ -1719,7 +1739,13 @@ public class LocalUI extends UI implements InputProcessor {
 				public void run() {
 					cbValueIsLocal = cb.isSelected();
 					if(!cbValueIsLocal) {
+						serverIP = "Online";
+						lblHostIp.set_text(serverIP);
 						framework.publicizeGame();
+					}else {
+						framework.init_host_game();
+						//serverIP = "Online";
+						lblHostIp.set_text(serverIP);
 					}
 				}
 			});
@@ -2244,6 +2270,7 @@ public class LocalUI extends UI implements InputProcessor {
 	@Override
 	public void show_kicked() {
 		mode = GUIMode.LOBBY;
+		resetData(false);
 		rebuild_gui();
 	}
 
@@ -2319,4 +2346,46 @@ public class LocalUI extends UI implements InputProcessor {
 		mode = GUIMode.JOINABLE_GAMES;
 		rebuild_gui();
 	}
+
+	public void showGuestLobby(String gameName) {
+		mode = GUIMode.GUEST_LOBBY;
+		state.gameName = gameName;
+		rebuild_gui();
+	}
+	
+	private void resetData(boolean textFields) {
+		guests.clear();
+		tradeOffer = null;
+		tradeDemand = null;
+		if(allGames != null) {
+			allGames.clear();
+		}
+		allJoinableGames.clear();
+		allPossiblePlayer.clear();
+		allTradeOffer.clear();
+		onlineLobby = false;
+		if(player != null) {
+			player.clear();
+		}
+		
+		if(textFields) {
+			serverIP = "";
+			tf_value_ip = "127.0.0.1";
+			tf_value_name = "Anonymous";
+			tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
+			tf_value_size = "5";
+			tf_value_random_houses = "1";
+			tf_value_resource_houses = "1";
+			cb_value_is_circle = false;
+			cbValueIsLocal = true;
+			lbl_value_info = "";
+			lbl_value_dice = "0";
+			tf_game_name = "";
+			color_pkr_hue = (float) Math.random();
+			playerColor = Color.RED;
+			onlineLobby = false;
+			btnJoinText = Language.JOIN_GAME.get_text();
+		}
+	}
 }
+

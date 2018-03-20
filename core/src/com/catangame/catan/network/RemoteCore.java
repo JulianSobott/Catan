@@ -122,8 +122,8 @@ public class RemoteCore extends Core {
 	}
 
 	@Override
-	public void joinGameLobby(Integer gameID) {
-		this.client.sendMessage(new Packet(Command.JOIN_GAME, new Packet.ID(gameID)));
+	public void joinGameLobby(Integer gameID, String playerName, Color color) {
+		this.client.sendMessage(new Packet(Command.JOIN_GAME, new Packet.JoinGame(gameID, playerName, color)));
 	}
 
 	
