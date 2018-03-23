@@ -3,6 +3,7 @@ package com.catangame.catan.local;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -42,6 +43,7 @@ import com.catangame.catan.local.gui.Checkbox;
 import com.catangame.catan.local.gui.ColorPicker;
 import com.catangame.catan.local.gui.Container;
 import com.catangame.catan.local.gui.Label;
+import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.local.gui.ScrollContainer;
 import com.catangame.catan.local.gui.TextField;
 import com.catangame.catan.local.gui.Widget;
@@ -82,6 +84,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
 	private TextField activeTF;
 	private boolean showDevelopmentCards = false;
+	private List<Message> messages = new LinkedList<Message>();
 
 	// lobby
 	private SavedGame savedGame = null;
@@ -300,7 +303,7 @@ public class LocalUI extends UI implements InputProcessor {
 			Resource r = pair.getKey();
 			int num = pair.getValue();
 			Label lblResource = new Label(Language.valueOf(r.name()).get_text() + ":\n" + num,
-					new Rectangle(5, 200 + 100 * i, cards_width, 80));
+					new Rectangle(5, 200 + 60 * i, cards_width, 55));
 			lblResource.set_fill_color(r.get_color());
 			lblResource.set_outline(Color.BLACK, 2);
 			lblResource.setTexture(TextureMgr.getTexture(r.name()));
@@ -309,6 +312,31 @@ public class LocalUI extends UI implements InputProcessor {
 		}
 		Widget.set_default_outline_color(Color.TRANSPARENT);
 
+		//Chat and information
+		//TODO adjust bounds
+		//TODO Add scrollable container
+		ScrollContainer sc = new ScrollContainer(this, new Rectangle(0, 500, 200, 500));
+		i = 0;
+		int additionalMargin = 0;
+		for(int j = messages.size()-1; j > 0; j--) {
+			Message msg = messages.get(j);
+			if(msg.sender != null) {
+				Label lblSender = new Label(msg.sender.getName()+ ": ", new Rectangle(5, window_size.y - 36 * msg.lines - i*14 - additionalMargin - 50, 200, 18));
+				lblSender.set_font(FontMgr.getFont(FontMgr.Type.ROBOTO_LIGHT, 14));
+				lblSender.set_text_color(msg.sender.getColor());
+				lblSender.adjustWidth(1);
+				sc.addWidget(lblSender);
+			}
+			Label lblMessage = new Label(msg.msg, new Rectangle(5, window_size.y - 5 - 36 * msg.lines - i*14 - additionalMargin + 5, 200, msg.lines * (14+10) ));
+			lblMessage.set_font(FontMgr.getFont(FontMgr.Type.OPEN_SANS_REGULAR, 14));
+			sc.addWidget(lblMessage);
+			additionalMargin += msg.lines * 20;
+			i++;
+		}
+		sc.calcBounds();
+		widgets.add(sc);
+		
+		
 		//player Development Cards
 		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(),
 				new Rectangle(5, 100, 220, 50));
@@ -2226,6 +2254,15 @@ public class LocalUI extends UI implements InputProcessor {
 	@Override
 	public void showDemandDeclined(int id) {
 		state.player_data.get(id).declinedOffer = true;
+		rebuild_gui();
+	}
+	
+	@Override
+	public void addNewMessage(Message msg) {
+		// TODO Auto-generated method stub
+		msg.format(35);
+		this.messages.add(msg);
+		
 		rebuild_gui();
 	}
 }

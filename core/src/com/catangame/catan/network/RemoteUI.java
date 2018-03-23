@@ -12,6 +12,7 @@ import com.catangame.catan.utils.Color;
 import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
+import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.superClasses.UI;
 
 public class RemoteUI extends UI {
@@ -120,6 +121,11 @@ public class RemoteUI extends UI {
 	@Override
 	public void showDemandDeclined(int id) {
 		server.message_to_client(id, new Packet(Command.DEMAND_DECLINED, new Packet.ID(id)));
+	}
+
+	@Override
+	public void addNewMessage(Message msg) {
+		server.message_to_client(id, new Packet(Command.MESSAGE, new Packet.MessageData(msg)));
 	}
 
 }

@@ -19,6 +19,7 @@ public enum Command {
 	TAKE_RESOURCE,
 	MOVE_ROBBER,
 	STEEL_RESOURCE,
+	MESSAGE,
 	//Pre Game Stuff
 	PLAYER_DATA,
 	NEW_MAP,

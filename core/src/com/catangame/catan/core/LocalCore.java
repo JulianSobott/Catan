@@ -28,6 +28,7 @@ import com.catangame.catan.local.TradeDemand.Vendor;
 import com.catangame.catan.local.LocalUI;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
+import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.network.RemoteGameLogic;
 import com.catangame.catan.network.RemoteUI;
 import com.catangame.catan.network.Server;
@@ -320,6 +321,9 @@ public class LocalCore extends Core {
 
 				for (GameLogic logic : logics) {
 					logic.add_building(id, new Building(buildType, position));
+				}
+				for(UI ui : uis) {
+					ui.addNewMessage(new Message(this_player.toLocalPlayer(), "Build a house wwwwwwwwwwwwwzfdtzddtdtdddddddddddddddddddddddddddddddddddddzjggggggggggggggggggggggwwwwwwwwwwwwwwwwwwwwwwwwoooooooooooasdddddddasdf"));
 				}
 				this_player.update_score();
 				update_scoreboard_data();

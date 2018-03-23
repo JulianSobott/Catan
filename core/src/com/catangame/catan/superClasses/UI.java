@@ -8,6 +8,7 @@ import java.util.List;
 import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
+import com.catangame.catan.local.gui.Message;
 
 public abstract class UI {
 	
@@ -48,4 +49,5 @@ public abstract class UI {
 	public abstract void showSteelResource(List<Player> surroundingPlayers);
 
 	public abstract void showDemandDeclined(int id);
+	public abstract void addNewMessage(Message msg);
 }
