@@ -39,13 +39,18 @@ public class Label extends Widget {
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		if (this.visible) {
-			sr.begin(ShapeType.Filled);
-			Gdx.gl.glEnable(GL20.GL_BLEND);
-			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-			sr.setColor(backColor.gdx());
-			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-			sr.end();
-			Gdx.gl.glDisable(GL20.GL_BLEND);
+			if(this.texture != null) {
+				super.render(sr, sb);
+			}else {
+				sr.begin(ShapeType.Filled);
+				Gdx.gl.glEnable(GL20.GL_BLEND);
+				Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+				sr.setColor(backColor.gdx());
+				sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+				sr.end();
+				Gdx.gl.glDisable(GL20.GL_BLEND);
+			}
+			
 
 			if (outlineThickness > 0) {
 				sr.begin(ShapeType.Line);

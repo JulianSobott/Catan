@@ -37,6 +37,7 @@ import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
+import com.catangame.catan.utils.TextureMgr;
 
 public class LocalGameLogic extends GameLogic {
 	// state, ui & connection
@@ -203,11 +204,11 @@ public class LocalGameLogic extends GameLogic {
 			std_font.getData().setScale(fontScale);// reset
 
 			// render buildings
-			Sprite village_sprite = new Sprite(village_txtr);
+			Sprite village_sprite = new Sprite(TextureMgr.getTexture("village"));
 			village_sprite.flip(false, true);
-			Sprite city_Sprite = new Sprite(city_txtr);
+			Sprite city_Sprite = new Sprite(TextureMgr.getTexture("city"));
 			city_Sprite.flip(false, true);
-			Sprite street_Sprite = new Sprite(street_txtr);
+			Sprite street_Sprite = new Sprite(TextureMgr.getTexture("street"));
 			street_Sprite.flip(false, true);
 
 			sb.begin();

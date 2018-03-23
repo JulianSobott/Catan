@@ -35,6 +35,7 @@ import com.catangame.catan.network.Server;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
+import com.catangame.catan.utils.TextureMgr;
 
 public class Framework extends ApplicationAdapter {
 	public enum DeviceMode {
@@ -95,7 +96,8 @@ public class Framework extends ApplicationAdapter {
 		// BitmapFont
 		FontMgr.init();
 		std_font = FontMgr.getFont(30); // font size 12 pixels
-
+		//Textures
+		TextureMgr.init();
 		// rendering
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();

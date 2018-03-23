@@ -48,6 +48,7 @@ import com.catangame.catan.local.gui.Widget;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.UI;
 import com.catangame.catan.utils.FontMgr;
+import com.catangame.catan.utils.TextureMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
@@ -302,6 +303,7 @@ public class LocalUI extends UI implements InputProcessor {
 					new Rectangle(5, 200 + 100 * i, cards_width, 80));
 			lblResource.set_fill_color(r.get_color());
 			lblResource.set_outline(Color.BLACK, 2);
+			lblResource.setTexture(TextureMgr.getTexture(r.name()));
 			widgets.add(lblResource);
 			i++;
 		}

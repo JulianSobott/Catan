@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Texture;
 import com.catangame.catan.utils.BoxShadow;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,6 +29,8 @@ public abstract class Widget {
 	protected List<Runnable> hoverLeave = new ArrayList<Runnable>();
 	public boolean hasHover = false;
 	public boolean hovered = false;
+	
+	protected Texture texture = null;
 	
 	public Widget(Rectangle bounds) {
 		update_bounds(bounds);
@@ -110,9 +114,21 @@ public abstract class Widget {
 		return default_outline_color;
 	}
 
+	public void setTexture(Texture texture) {
+		this.texture = texture;
+	}
 	// abstract methods
 
-	public abstract void render(ShapeRenderer sr, SpriteBatch sb);
+	public void render(ShapeRenderer sr, SpriteBatch sb) {
+		if(this.texture != null) {
+			Sprite sprite = new Sprite(texture);
+			sprite.flip(false, true);
+			sb.begin();
+			sb.setColor(sprite.getColor());
+			sb.draw(sprite, bounds.x, bounds.y, bounds.width, bounds.height);
+			sb.end();
+		}
+	}
 
 	public abstract void do_mouse_click(Vector2 pos);
 	
