@@ -111,7 +111,9 @@ public class LocalCore extends Core {
 							if(map.getFields()[position.x][position.y].number == (byte) diceResult) {
 								int addCount = building.get_type() == Building.Type.VILLAGE ? 1
 										: building.get_type() == Building.Type.CITY ? 2 : 0;
-								p.add_resource(map.getFields()[position.x][position.y].resource, addCount);
+								Resource r = map.getFields()[position.x][position.y].resource;
+								p.add_resource(r, addCount);
+								uis.get(p.getId()).addNewMessage(new Message("You´ve got " + addCount + " " + r.name()));
 							}
 						}
 					}
@@ -146,11 +148,11 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-			player.get(i).add_resource(Resource.CLAY, 60);
-			player.get(i).add_resource(Resource.GRAIN, 60);
-			player.get(i).add_resource(Resource.ORE, 60);
-			player.get(i).add_resource(Resource.WOOD, 60);
-			player.get(i).add_resource(Resource.WOOL, 60);
+			player.get(i).add_resource(Resource.CLAY, 1);
+			player.get(i).add_resource(Resource.GRAIN, 1);
+			player.get(i).add_resource(Resource.ORE, 1);
+			player.get(i).add_resource(Resource.WOOD, 0);
+			player.get(i).add_resource(Resource.WOOL, 0);
 			
 			uis.get(i).update_player_data(player.get(i));
 		}
@@ -323,7 +325,17 @@ public class LocalCore extends Core {
 					logic.add_building(id, new Building(buildType, position));
 				}
 				for(UI ui : uis) {
-					ui.addNewMessage(new Message(this_player.toLocalPlayer(), "Build a house ssssssssssssssssssssssssssssssssssssqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" + this.player.get(0).buildings.size()));
+					switch(buildType) {
+					case STREET:
+						ui.addNewMessage(new Message(this_player.toLocalPlayer(), "Build a street"));
+						break;
+					case VILLAGE:
+						ui.addNewMessage(new Message(this_player.toLocalPlayer(), "Build a village"));
+						break;
+					case CITY:
+						ui.addNewMessage(new Message(this_player.toLocalPlayer(), "Build a city"));
+						break;
+					}
 				}
 				this_player.update_score();
 				update_scoreboard_data();
@@ -671,12 +683,18 @@ public class LocalCore extends Core {
 				break;
 			case MONOPOL:
 				int addedResources = 0;
+				Resource r = ((DevCard.Monopol)card.data).resource;
 				for(Player p : player) {
-					addedResources += p.get_resources(((DevCard.Monopol)card.data).resource);
-					p.take_resource(((DevCard.Monopol)card.data).resource, p.get_resources(((DevCard.Monopol)card.data).resource)); //Take all
+					addedResources += p.get_resources(r);
+					p.take_resource(r, p.get_resources(r)); //Take all
 				}
-				player.get(id).add_resource(((DevCard.Monopol)card.data).resource, addedResources);
+				player.get(id).add_resource(r, addedResources);
 				for(UI ui : uis) {
+					if(ui.getID() != current_player) {
+						ui.addNewMessage(new Message(player.get(id).toLocalPlayer(), "played Monopol and took all your " + r.name()));
+					}else {
+						ui.addNewMessage(new Message(player.get(id).toLocalPlayer(), "you´ve got " + addedResources + " " + r.name()));
+					}
 					ui.update_player_data(player.get(ui.getID()));
 				}
 				devCardStack.add(card);
@@ -742,6 +760,10 @@ public class LocalCore extends Core {
 							surroundingPlayers.remove(this.player.get(id));
 						}
 						uis.get(id).showSteelResource(surroundingPlayers);
+						for(UI ui : uis) {
+							ui.addNewMessage(new Message(player.get(id).toLocalPlayer(), "Moved Robber"));
+						}
+						
 					}	
 				}
 			}
@@ -763,7 +785,7 @@ public class LocalCore extends Core {
 			}while(!foundResource);
 			this.player.get(player).take_resource(r, 1);
 			this.player.get(id).add_resource(r, 1);
-			//TODO add hint in UI 
+			uis.get(player).addNewMessage(new Message(this.player.get(id).toLocalPlayer(), "Stole one " + r.name()));
 		}
 		uis.get(player).update_player_data(this.player.get(player));
 		uis.get(id).update_player_data(this.player.get(id));

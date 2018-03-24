@@ -23,8 +23,11 @@ public class MessageField extends Widget{
 		super(bounds);
 		this.msg = msg;
 		font = FontMgr.getFont(FontMgr.Type.OPEN_SANS_REGULAR, 12);
-		GlyphLayout senderContainer = new GlyphLayout(font, msg.sender.getName());
-		senderWidth = senderContainer.width;	
+		if(msg.sender != null) {
+			GlyphLayout senderContainer = new GlyphLayout(font, msg.sender.getName());
+			senderWidth = senderContainer.width;	
+		}
+		
 		
 		if(!formatted && !msg.msg.contains("\n")) {
 			format();
@@ -38,9 +41,14 @@ public class MessageField extends Widget{
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		//super.render(sr, sb);
 		sb.begin();
-		font.setColor(msg.sender.getColor().gdx());
-		font.draw(sb, msg.sender.getName(), bounds.x, bounds.y );
-		font.setColor(Color.BLACK);
+		if(msg.sender != null) {
+			font.setColor(msg.sender.getColor().gdx());
+			font.draw(sb, msg.sender.getName(), bounds.x, bounds.y );
+			font.setColor(Color.BLACK);
+		}else {
+			font.setColor(new Color(100,100,100, 255));
+		}
+		
 		font.draw(sb, this.msg.firstLine, bounds.x + senderWidth + 10, bounds.y );
 		font.draw(sb, msg.msg, bounds.x, bounds.y);
 		sb.end();
@@ -89,7 +97,12 @@ public class MessageField extends Widget{
 				this.msg.msg = new StringBuilder(this.msg.msg).insert(currentCut, "\r\n").toString();
 			}
 		}
-		bounds.height = new GlyphLayout(font, msg.msg).height + new GlyphLayout(font, msg.sender.getName()).height;
+		if(msg.sender != null) {
+			bounds.height = new GlyphLayout(font, msg.msg).height + new GlyphLayout(font, msg.sender.getName()).height;
+		}else {
+			bounds.height = new GlyphLayout(font, msg.msg).height + 10;
+		}
+		
 		bounds.width = new GlyphLayout(font, msg.msg).width + new GlyphLayout(font, msg.firstLine).width;
 		formatted = true;
 	}

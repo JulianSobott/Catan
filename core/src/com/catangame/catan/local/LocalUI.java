@@ -322,7 +322,7 @@ public class LocalUI extends UI implements InputProcessor {
 		for(int j = messages.size()-1; j >= 0; j--) {
 			Message msg = messages.get(j);
 			MessageField dummymfMessage = new MessageField(msg, new Rectangle(0,0, 200, 200));
-			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 60, 100, 200));
+			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 60, 170, 200));
 			sc.addWidget(mfMessage);
 			additionalMargin += dummymfMessage.getHeight();
 			i++;
@@ -330,7 +330,12 @@ public class LocalUI extends UI implements InputProcessor {
 		sc.calcBounds();
 		allScrollContainer.add(sc);
 		widgets.add(sc);
+		TextField tfChat = new TextField(new Rectangle(5, window_size.y - 70, 200, 20));
+		tfChat.set_font(FontMgr.getFont(FontMgr.Type.ROBOTO_LIGHT, 16));
+		widgets.add(tfChat);
 		
+		Button btnSend = new Button("->", new Rectangle(209, window_size.y - 70, 30, 20));
+		widgets.add(btnSend);
 		
 		//player Development Cards
 		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(),

@@ -59,7 +59,7 @@ public class ScrollContainer extends Widget{
 				bounds.y = widget.bounds.y;
 			}
 		}
-		if(bounds.height + this.bounds.y < this.maxBounds.height - this.maxBounds.y) {
+		if(bounds.height < this.maxBounds.height) {
 			finalScrollable = false;
 		}else {
 			finalScrollable = true;
