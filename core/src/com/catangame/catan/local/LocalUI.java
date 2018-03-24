@@ -44,6 +44,7 @@ import com.catangame.catan.local.gui.ColorPicker;
 import com.catangame.catan.local.gui.Container;
 import com.catangame.catan.local.gui.Label;
 import com.catangame.catan.local.gui.Message;
+import com.catangame.catan.local.gui.MessageField;
 import com.catangame.catan.local.gui.ScrollContainer;
 import com.catangame.catan.local.gui.TextField;
 import com.catangame.catan.local.gui.Widget;
@@ -85,6 +86,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private TextField activeTF;
 	private boolean showDevelopmentCards = false;
 	private List<Message> messages = new LinkedList<Message>();
+	private List<ScrollContainer> allScrollContainer = new ArrayList<ScrollContainer>();
 
 	// lobby
 	private SavedGame savedGame = null;
@@ -107,7 +109,6 @@ public class LocalUI extends UI implements InputProcessor {
 	private Label lblInfo;
 	private Button btnTrade;
 	
-	public ScrollContainer sc;
 	boolean buttonsEnabled = true;
 
 	//Trading
@@ -164,6 +165,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 	public void destroy_widgets() {
 		widgets.clear();
+		allScrollContainer.clear();
 		activeTF = null;
 	}
 
@@ -292,6 +294,7 @@ public class LocalUI extends UI implements InputProcessor {
 		}
 
 		//player resources
+		Label lblResource = null;
 		int pos_count = 1;
 		float cards_width = 120;
 		final float orientationAnchor = (window_size.x / 2) - 200;
@@ -302,7 +305,7 @@ public class LocalUI extends UI implements InputProcessor {
 			java.util.Map.Entry<Resource, Integer> pair = (java.util.Map.Entry<Resource, Integer>) it.next();
 			Resource r = pair.getKey();
 			int num = pair.getValue();
-			Label lblResource = new Label(Language.valueOf(r.name()).get_text() + ":\n" + num,
+			lblResource = new Label(Language.valueOf(r.name()).get_text() + ":\n" + num,
 					new Rectangle(5, 200 + 60 * i, cards_width, 55));
 			lblResource.set_fill_color(r.get_color());
 			lblResource.set_outline(Color.BLACK, 2);
@@ -313,27 +316,19 @@ public class LocalUI extends UI implements InputProcessor {
 		Widget.set_default_outline_color(Color.TRANSPARENT);
 
 		//Chat and information
-		//TODO adjust bounds
-		//TODO Add scrollable container
-		ScrollContainer sc = new ScrollContainer(this, new Rectangle(0, 500, 200, 500));
+		ScrollContainer sc = new ScrollContainer(this, new Rectangle(0, lblResource.get_position().y + 120, 400, window_size.y -  lblResource.get_position().y- 70));
 		i = 0;
 		int additionalMargin = 0;
-		for(int j = messages.size()-1; j > 0; j--) {
+		for(int j = messages.size()-1; j >= 0; j--) {
 			Message msg = messages.get(j);
-			if(msg.sender != null) {
-				Label lblSender = new Label(msg.sender.getName()+ ": ", new Rectangle(5, window_size.y - 36 * msg.lines - i*14 - additionalMargin - 50, 200, 18));
-				lblSender.set_font(FontMgr.getFont(FontMgr.Type.ROBOTO_LIGHT, 14));
-				lblSender.set_text_color(msg.sender.getColor());
-				lblSender.adjustWidth(1);
-				sc.addWidget(lblSender);
-			}
-			Label lblMessage = new Label(msg.msg, new Rectangle(5, window_size.y - 5 - 36 * msg.lines - i*14 - additionalMargin + 5, 200, msg.lines * (14+10) ));
-			lblMessage.set_font(FontMgr.getFont(FontMgr.Type.OPEN_SANS_REGULAR, 14));
-			sc.addWidget(lblMessage);
-			additionalMargin += msg.lines * 20;
+			MessageField dummymfMessage = new MessageField(msg, new Rectangle(0,0, 200, 200));
+			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 60, 100, 200));
+			sc.addWidget(mfMessage);
+			additionalMargin += dummymfMessage.getHeight();
 			i++;
 		}
 		sc.calcBounds();
+		allScrollContainer.add(sc);
 		widgets.add(sc);
 		
 		
@@ -371,6 +366,7 @@ public class LocalUI extends UI implements InputProcessor {
 				sc.addWidget(btnCard);
 				i++;
 			}
+			allScrollContainer.add(sc);
 			widgets.add(sc);
 			sc.calcBounds();
 			
@@ -2019,10 +2015,12 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		if(sc != null && sc.isMouseInside(Gdx.input.getX(), Gdx.input.getY())) {
-			sc.scrolled(amount);
-			return true;
-		}
+		for(ScrollContainer sc : allScrollContainer) {
+			if(sc != null && sc.isMouseInside(Gdx.input.getX(), Gdx.input.getY())) {
+				sc.scrolled(amount);
+				return true;
+			}
+		}	
 		return false;
 	}
 
@@ -2260,7 +2258,6 @@ public class LocalUI extends UI implements InputProcessor {
 	@Override
 	public void addNewMessage(Message msg) {
 		// TODO Auto-generated method stub
-		msg.format(35);
 		this.messages.add(msg);
 		
 		rebuild_gui();

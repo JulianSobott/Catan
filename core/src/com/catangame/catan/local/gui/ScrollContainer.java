@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.local.LocalUI;
@@ -28,6 +29,7 @@ public class ScrollContainer extends Widget{
 		this.maxBounds = rectangle;
 	}
 
+
 	public boolean isMouseInside(int mouseX, int mouseY) {
 		if(mouseX >= bounds.x && mouseX <= bounds.x + bounds.width && mouseY >= bounds.y && mouseY <= bounds.y + bounds.height) {
 			return true;
@@ -37,14 +39,19 @@ public class ScrollContainer extends Widget{
 	
 	public void addWidget(Widget w) {
 		widgets.add(w);
+		calcBounds();
 	}
 	
 	public void calcBounds() {
 		bounds.x = 9000; //Just for calculating
 		bounds.y = 90000;
+		bounds.width = 0;
+		bounds.height = 0;
 		for(Widget widget : widgets) {
 			bounds.height += widget.bounds.height;
-			bounds.width = widget.bounds.width;
+			if(bounds.width < widget.bounds.width) {
+				bounds.width = widget.bounds.width;
+			}
 			if(widget.bounds.x < bounds.x) {
 				bounds.x = widget.bounds.x;
 			}
@@ -75,12 +82,20 @@ public class ScrollContainer extends Widget{
 				}
 				
 			}
-			if(widgets.get(widgets.size()-1).bounds.y + widgets.get(widgets.size()-1).bounds.height*3 < this.maxBounds.height ||
-					widgets.get(0).bounds.y - widgets.get(0).bounds.height > this.maxBounds.y) {
-				scrollable = false;
+			if(widgets.get(widgets.size()-1).bounds.y > widgets.get(0).bounds.y) {
+				if(widgets.get(widgets.size()-1).bounds.y + widgets.get(widgets.size()-1).bounds.height*3 < this.maxBounds.height ||
+						widgets.get(0).bounds.y - widgets.get(0).bounds.height > this.maxBounds.y) {
+					scrollable = false;
+				}
+			}else {
+				if(widgets.get(0).bounds.y + widgets.get(0).bounds.height*3 < this.maxBounds.height + this.maxBounds.y||
+						widgets.get(widgets.size()-1).bounds.y -  widgets.get(widgets.size()-1).bounds.height > this.maxBounds.y) {
+					scrollable = false;
+				}
 			}
+			
 			if(!scrollable) {
-				scrolled(amount* (-1));
+				scrolled(amount * (-1));
 			}
 
 		}	

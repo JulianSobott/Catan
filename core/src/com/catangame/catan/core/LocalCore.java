@@ -146,11 +146,11 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-			player.get(i).add_resource(Resource.CLAY, 2);
-			player.get(i).add_resource(Resource.GRAIN, 2);
-			player.get(i).add_resource(Resource.ORE, 2);
-			player.get(i).add_resource(Resource.WOOD, 2);
-			player.get(i).add_resource(Resource.WOOL, 2);
+			player.get(i).add_resource(Resource.CLAY, 60);
+			player.get(i).add_resource(Resource.GRAIN, 60);
+			player.get(i).add_resource(Resource.ORE, 60);
+			player.get(i).add_resource(Resource.WOOD, 60);
+			player.get(i).add_resource(Resource.WOOL, 60);
 			
 			uis.get(i).update_player_data(player.get(i));
 		}
@@ -323,7 +323,7 @@ public class LocalCore extends Core {
 					logic.add_building(id, new Building(buildType, position));
 				}
 				for(UI ui : uis) {
-					ui.addNewMessage(new Message(this_player.toLocalPlayer(), "Build a house wwwwwwwwwwwwwzfdtzddtdtdddddddddddddddddddddddddddddddddddddzjggggggggggggggggggggggwwwwwwwwwwwwwwwwwwwwwwwwoooooooooooasdddddddasdf"));
+					ui.addNewMessage(new Message(this_player.toLocalPlayer(), "Build a house ssssssssssssssssssssssssssssssssssssqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" + this.player.get(0).buildings.size()));
 				}
 				this_player.update_score();
 				update_scoreboard_data();
