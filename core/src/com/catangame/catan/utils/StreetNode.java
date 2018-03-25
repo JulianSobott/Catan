@@ -62,12 +62,33 @@ public class StreetNode {
 	public int getLevel() {
 		return this.level;
 	}
-	public StreetNode singleContains(StreetNode child1){
+	public StreetNode singleContains(StreetNode child){
 		for(StreetNode c : this.children) {
-			if(c.isEnd() && Vector3i.are_equal(c.getStreet().get_position(), child1.getStreet().get_position())) {
+			if(c.isEnd() && Vector3i.are_equal(c.getStreet().get_position(), child.getStreet().get_position())) {
 				return c;
 			}
 		}
 		return null;
+	}
+
+	public StreetNode multyContains(Building end) {	
+		if(isEnd()) {
+			if(Vector3i.are_equal(this.getStreet().get_position(), end.get_position())) {
+				return this;
+			}
+		}else {
+			for(StreetNode s : children) {
+				StreetNode node = s.multyContains(end);;
+				if(node != null) {
+					return node;
+				}	
+			}
+		}	
+		return null;
+	}
+
+	private StreetNode singleContains(Building end) {
+		StreetNode node = new StreetNode(end);
+		return singleContains(node);
 	}
 }

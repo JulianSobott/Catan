@@ -804,27 +804,31 @@ public class LocalCore extends Core {
 		
 		for(Building start : allEndStreets) {
 			//build street tree
-			StreetNode rootStreet = addChildrenStreets(start, start, allStreets, null);
+			StreetNode rootStreet = addChildrenStreets(start, start, allStreets, null, null);
 			for(Building end : allEndStreets) {
-				int length = calcLength(rootStreet, end);
-				if(maxStreetlength < length) {
-					maxStreetlength = length;
-				}
-				
+				if(!start.equals(end)) {
+					int length = calcLength(rootStreet, end);
+					if(maxStreetlength < length) {
+						maxStreetlength = length;
+						System.out.println(maxStreetlength);
+					}
+				}	
 			}
 		}
 	}
 	
 	private int calcLength(StreetNode rootStreet, Building end) {
-		int length = 0;
-		
-		return length;
+		StreetNode returnedEnd = rootStreet.multyContains(end);
+		if(returnedEnd != null) {
+			return returnedEnd.getLevel() + 1; //+1 because level starts at 0
+		}
+		return 1;
 	}
 	
 	private StreetNode checkHasChild(StreetNode parent, StreetNode child){
 		return null;
 	}
-	StreetNode addChildrenStreets(Building street, Building parent, List<Building> allStreets, List<Building> parentConnections) {
+	StreetNode addChildrenStreets(Building street, Building parent, List<Building> allStreets, List<Building> parentConnections, StreetNode parentNode) {
 		List<Building> connectedStreets = getConnectedStreets(street, allStreets);
 		for(Building b : connectedStreets) {
 			boolean removed = false;
@@ -847,8 +851,11 @@ public class LocalCore extends Core {
 			}
 		}
 		StreetNode node = new StreetNode(street);
+		if(parentNode != null) {
+			node.addParent(parentNode);
+		}
 		for(Building b : connectedStreets) {
-			StreetNode child = addChildrenStreets(b, street, allStreets, connectedStreets);
+			StreetNode child = addChildrenStreets(b, street, allStreets, connectedStreets, node);
 			if(child.isEnd()) {
 				node.addChild(b);
 			}else {
