@@ -2228,4 +2228,5 @@ public class LocalUI extends UI implements InputProcessor {
 		state.player_data.get(id).declinedOffer = true;
 		rebuild_gui();
 	}
+
 }

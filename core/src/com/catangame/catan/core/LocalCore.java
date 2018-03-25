@@ -9,7 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
+
+import javax.swing.text.ChangedCharSetException;
+
 import com.catangame.catan.utils.Color;
+import com.catangame.catan.utils.StreetNode;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.math.Vector3i;
 import com.badlogic.gdx.math.Vector2;
@@ -145,11 +149,11 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-			player.get(i).add_resource(Resource.CLAY, 2);
-			player.get(i).add_resource(Resource.GRAIN, 2);
-			player.get(i).add_resource(Resource.ORE, 2);
-			player.get(i).add_resource(Resource.WOOD, 2);
-			player.get(i).add_resource(Resource.WOOL, 2);
+			player.get(i).add_resource(Resource.CLAY, 20);
+			player.get(i).add_resource(Resource.GRAIN, 20);
+			player.get(i).add_resource(Resource.ORE, 20);
+			player.get(i).add_resource(Resource.WOOD, 20);
+			player.get(i).add_resource(Resource.WOOL, 20);
 			
 			uis.get(i).update_player_data(player.get(i));
 		}
@@ -311,6 +315,7 @@ public class LocalCore extends Core {
 						map.build_street(position);
 						build_sth = true;
 						this_player.buildings.add(new Building(Building.Type.STREET, position));
+						calcLongestStreet(this_player.buildings);
 					}
 				}
 			}
@@ -768,5 +773,122 @@ public class LocalCore extends Core {
 	@Override
 	public void declineTradeDemand(int id) {
 		uis.get(current_player).showDemandDeclined(id);
+	}
+	
+	private void calcLongestStreet(List<Building> playerBuildings) {
+		List<Building> allStreets = new ArrayList<Building>();
+		List<Building> allEndStreets = new ArrayList<Building>();
+		int maxStreetlength = 0;
+		//get all Streets
+		for(Building b : playerBuildings) {
+			if(b.get_type() == Type.STREET) {
+				allStreets.add(b);
+			}
+		}
+		
+		for(Building b: allStreets) {
+			List<Building> connectedStreets = getConnectedStreets(b, allStreets);
+			if(connectedStreets.size() < 2) {
+				allEndStreets.add(b);
+			}else if(connectedStreets.size() < 3){
+				List<Building> innerConnectedStreets = getConnectedStreets(connectedStreets.get(0), allStreets);
+				for(Building s : innerConnectedStreets) {
+					if(Vector3i.are_equal(connectedStreets.get(1).get_position(), s.get_position())){
+						allEndStreets.add(b);
+						break;
+					}
+				}
+			}
+			
+		}
+		
+		for(Building start : allEndStreets) {
+			//build street tree
+			StreetNode rootStreet = addChildrenStreets(start, start, allStreets, null);
+			for(Building end : allEndStreets) {
+				int length = calcLength(rootStreet, end);
+				if(maxStreetlength < length) {
+					maxStreetlength = length;
+				}
+				
+			}
+		}
+	}
+	
+	private int calcLength(StreetNode rootStreet, Building end) {
+		int length = 0;
+		
+		return length;
+	}
+	
+	private StreetNode checkHasChild(StreetNode parent, StreetNode child){
+		return null;
+	}
+	StreetNode addChildrenStreets(Building street, Building parent, List<Building> allStreets, List<Building> parentConnections) {
+		List<Building> connectedStreets = getConnectedStreets(street, allStreets);
+		for(Building b : connectedStreets) {
+			boolean removed = false;
+			if(parentConnections != null) {
+				for(Building s : parentConnections) {
+					if(Vector3i.are_equal(b.get_position(), s.get_position())) {
+						connectedStreets.remove(b);
+						removed = true;
+						break;
+					}
+				}
+			}	
+			if(removed)
+				break;
+		}
+		for(Building b : connectedStreets) {
+			if(Vector3i.are_equal(b.get_position(), parent.get_position())) {
+				connectedStreets.remove(b);
+				break;
+			}
+		}
+		StreetNode node = new StreetNode(street);
+		for(Building b : connectedStreets) {
+			StreetNode child = addChildrenStreets(b, street, allStreets, connectedStreets);
+			if(child.isEnd()) {
+				node.addChild(b);
+			}else {
+				node.addChild(child);
+			}	
+		}
+		return node;
+	}
+	
+	List<Building> getConnectedStreets(Building street, List<Building> allStreets){
+		final int LAYER_NORTH_STREET = 2;
+		final int LAYER_EAST_STREET = 3;
+		final int LAYER_WEST_STREET = 4;
+		List<Building> connectedStreets = new ArrayList<Building>();
+		int left_x = street.get_position().y % 2 == 0 ? street.get_position().x - 1 : street.get_position().x;
+		for(Building b : allStreets) {
+			
+			if (street.get_position().z == LAYER_NORTH_STREET) {
+				if(Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x, street.get_position().y, LAYER_WEST_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x, street.get_position().y, LAYER_EAST_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x - 1, street.get_position().y, LAYER_EAST_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(left_x + 1, street.get_position().y - 1, LAYER_WEST_STREET))){
+							connectedStreets.add(b);
+						}
+			} else if (street.get_position().z == LAYER_EAST_STREET) {
+				if(Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x, street.get_position().y, LAYER_NORTH_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x + 1, street.get_position().y, LAYER_WEST_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(left_x + 1, street.get_position().y - 1, LAYER_WEST_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x + 1, street.get_position().y, LAYER_NORTH_STREET))){
+							connectedStreets.add(b);
+						}
+			} else if (street.get_position().z == LAYER_WEST_STREET) {
+				if(Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x, street.get_position().y, LAYER_NORTH_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(left_x, street.get_position().y + 1, LAYER_EAST_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(left_x, street.get_position().y + 1, LAYER_NORTH_STREET)) ||
+						Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x - 1, street.get_position().y, LAYER_EAST_STREET))){
+							connectedStreets.add(b);
+						}
+			}
+		}
+		return connectedStreets;
 	}
 }
