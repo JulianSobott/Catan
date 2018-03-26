@@ -36,6 +36,6 @@ public enum Command {
 	SHOW_ALL_POSSIBLE_NAMES, 
 	SHOW_NEW_MEMBER, 
 	//After Game
-	END_SCREEN,;
+	END_SCREEN, ;
 	
 }

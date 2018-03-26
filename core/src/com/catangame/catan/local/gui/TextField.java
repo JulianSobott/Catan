@@ -25,6 +25,7 @@ public class TextField extends Widget {
 	private Vector2 textPosition;
 	private boolean is_active = false;
 	private Runnable input_event;
+	private Runnable enterCallBack;
 
 	public TextField(Rectangle bounds) {
 		super(bounds);
@@ -72,6 +73,11 @@ public class TextField extends Widget {
 	}
 
 	public void text_input(char character) {
+		if(character == '\n' || character =='\r') {
+			if(this.enterCallBack != null) {
+				this.enterCallBack.run();
+			}	
+		}
 		if (character != 0 && character != 0x7F && character != '\n' && character != '\r' && character != '\b' && character != '\t') {
 			text += character;
 			if (input_event != null)
@@ -103,6 +109,7 @@ public class TextField extends Widget {
 
 	public void set_font(BitmapFont bitmapFont) {
 		font = bitmapFont;
+		textPosition = new Vector2(bounds.x+5, bounds.y + (int)(bounds.height - font.getLineHeight()*.7) * 0.5f);
 	}
 
 	public void set_text(String string) {
@@ -138,5 +145,8 @@ public class TextField extends Widget {
 	public void set_input_callback(Runnable input_event) {
 		this.input_event = input_event;
 	}
-
+	
+	public void setEnterCallback(Runnable r) {
+		this.enterCallBack = r;
+	}
 }

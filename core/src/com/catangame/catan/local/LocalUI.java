@@ -321,21 +321,27 @@ public class LocalUI extends UI implements InputProcessor {
 		int additionalMargin = 0;
 		for(int j = messages.size()-1; j >= 0; j--) {
 			Message msg = messages.get(j);
+			
 			MessageField dummymfMessage = new MessageField(msg, new Rectangle(0,0, 200, 200));
-			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 60, 170, 200));
+			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 72, 170, 200));
 			sc.addWidget(mfMessage);
-			additionalMargin += dummymfMessage.getHeight();
+			additionalMargin += dummymfMessage.getHeight()+2;
 			i++;
 		}
 		sc.calcBounds();
 		allScrollContainer.add(sc);
 		widgets.add(sc);
-		TextField tfChat = new TextField(new Rectangle(5, window_size.y - 70, 200, 20));
-		tfChat.set_font(FontMgr.getFont(FontMgr.Type.ROBOTO_LIGHT, 16));
-		widgets.add(tfChat);
 		
-		Button btnSend = new Button("->", new Rectangle(209, window_size.y - 70, 30, 20));
-		widgets.add(btnSend);
+		final TextField tfChat = new TextField(new Rectangle(5, window_size.y - 70, 220, 20));
+		tfChat.set_font(FontMgr.getFont(FontMgr.Type.ROBOTO_LIGHT, 16));
+		tfChat.setEnterCallback(new Runnable() {
+			@Override
+			public void run() {
+				addNewMessage(new Message(state.player_data.get(id), tfChat.get_text()));
+				core.newChatMessage(new Message(state.player_data.get(id), tfChat.get_text()));
+			}
+		});
+		widgets.add(tfChat);
 		
 		//player Development Cards
 		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(),

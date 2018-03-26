@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.utils.FontMgr;
+import com.catangame.catan.utils.FontMgr.Type;
 
 public class MessageField extends Widget{
 	private Message msg;
@@ -29,17 +30,21 @@ public class MessageField extends Widget{
 		}
 		
 		
-		if(!formatted && !msg.msg.contains("\n")) {
+		if(!formatted && !msg.msg.contains("\r\n") && msg.msg.length() > 0) {
 			format();
 		}else {
-			bounds.height = new GlyphLayout(font, msg.msg).height;
-			bounds.width = new GlyphLayout(font, msg.msg).width;
+			bounds.height = new GlyphLayout(font, msg.msg).height + new GlyphLayout(font, msg.firstLine).height;
+			if(this.msg.sender != null) {
+				bounds.width = new GlyphLayout(font, msg.firstLine).width + new GlyphLayout(font, msg.sender.getName()).width + 10;
+			}else {
+				bounds.width = new GlyphLayout(font, msg.firstLine).width;
+			}
+			
 		}
 	}
 	
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
-		//super.render(sr, sb);
 		sb.begin();
 		if(msg.sender != null) {
 			font.setColor(msg.sender.getColor().gdx());
@@ -70,45 +75,55 @@ public class MessageField extends Widget{
 	private void format() {
 		formatted = true;
 		float messageWidth =  new GlyphLayout(font, msg.msg).width;
-		if(this.msg.sender != null) {
-			int currentCut = 5;
-			float lineWidth = 0;
-			do {
-				lineWidth =  new GlyphLayout(font, msg.msg.substring(0, currentCut)).width;
-				currentCut = currentCut + 2;
-			}while(lineWidth + senderWidth < bounds.width && currentCut < this.msg.msg.length()-1);
-			this.firstLine = this.msg.msg.substring(0, currentCut);
-			this.msg.firstLine = firstLine;
-			this.msg.msg = "\r\n" + this.msg.msg.substring(currentCut);
+		int currentCut = 0;
+		float lineWidth = 0;
+		while(lineWidth + senderWidth < bounds.width && currentCut < this.msg.msg.length()-1) {
+			lineWidth =  new GlyphLayout(font, msg.msg.substring(0, currentCut)).width;
+			currentCut = currentCut + 1;
+		};
+		this.firstLine = this.msg.msg.substring(0, currentCut+1);
+		this.msg.firstLine = firstLine;
+		this.msg.msg = "\r\n" + this.msg.msg.substring(currentCut+1);
+		if(msg.msg.length() == 2) {
+			this.msg.msg = "";
 		}
 		
 		int lastCut = 0;
-		messageWidth = new GlyphLayout(font, msg.msg).width;
-		if(bounds.width < messageWidth) {
-			int numLines = Math.round(messageWidth / bounds.width);
-			int currentCut = 0;
-			for(int i  = 0; i < numLines; i++) {
-				float lineWidth = messageWidth;
-				do {
-					lineWidth =  new GlyphLayout(font, msg.msg.substring(lastCut, currentCut)).width;
-					currentCut = currentCut + 2;
-				}while(lineWidth < bounds.width && currentCut < this.msg.msg.length()-1);
-				lastCut = currentCut;
-				this.msg.msg = new StringBuilder(this.msg.msg).insert(currentCut, "\r\n").toString();
+		if(this.msg.msg != null) {
+			messageWidth = new GlyphLayout(font, msg.msg).width;
+			if(bounds.width < messageWidth) {
+				int numLines = Math.round(messageWidth / bounds.width);
+				currentCut = 0;
+				for(int i  = 0; i < numLines; i++) {
+					lineWidth = 0;
+					while(lineWidth < bounds.width && currentCut < this.msg.msg.length()-1) {
+						lineWidth =  new GlyphLayout(font, msg.msg.substring(lastCut, currentCut)).width;
+						currentCut = currentCut + 1;
+					};
+					lastCut = currentCut;
+					this.msg.msg = new StringBuilder(this.msg.msg).insert(currentCut+1, "\r\n").toString();
+				}
 			}
 		}
+		
 		if(msg.sender != null) {
 			bounds.height = new GlyphLayout(font, msg.msg).height + new GlyphLayout(font, msg.sender.getName()).height;
+			bounds.width = new GlyphLayout(font, msg.sender.getName()).width + 10 + new GlyphLayout(font, msg.firstLine).width;
 		}else {
-			bounds.height = new GlyphLayout(font, msg.msg).height + 10;
+			bounds.height = new GlyphLayout(font, msg.msg).height;
+			bounds.width = new GlyphLayout(font, msg.firstLine).width;
 		}
 		
-		bounds.width = new GlyphLayout(font, msg.msg).width + new GlyphLayout(font, msg.firstLine).width;
 		formatted = true;
 	}
 	
 	public float getHeight() {
 		return this.bounds.height;
+	}
+	
+	public void setSenderName(String name) {
+		this.msg.sender.setName(name);
+		format();
 	}
 
 }

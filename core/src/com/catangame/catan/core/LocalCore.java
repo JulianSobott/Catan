@@ -795,4 +795,13 @@ public class LocalCore extends Core {
 	public void declineTradeDemand(int id) {
 		uis.get(current_player).showDemandDeclined(id);
 	}
+
+	@Override
+	public void newChatMessage(Message msg) {
+		for(UI ui : uis) {
+			if(ui.getID() != msg.sender.getID()) {
+				ui.addNewMessage(msg);
+			}
+		}
+	}
 }

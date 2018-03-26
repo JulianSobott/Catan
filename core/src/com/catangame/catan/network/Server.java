@@ -129,6 +129,9 @@ public class Server extends Networkmanager {
 		case STEEL_RESOURCE:
 			core.stealResource(id, (int) ((Packet.Num) packet.data).num);
 			break;
+		case MESSAGE:
+			core.newChatMessage(((Packet.MessageData)packet.data).msg);
+			break;
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}

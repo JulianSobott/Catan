@@ -11,6 +11,7 @@ import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
+import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.core.Map.GeneratorType;
 import com.catangame.catan.core.Player;
 
@@ -47,5 +48,7 @@ public abstract class Core {
 	public abstract void stealResource(int id, int player);
 
 	public abstract void declineTradeDemand(int id);
+
+	public abstract void newChatMessage(Message msg);
 
 }

@@ -143,8 +143,11 @@ public class Client extends Networkmanager {
 				ui.showSteelResource(((Packet.PlayerList) packet.data).getPlayer());
 			}
 			break;
+		case MESSAGE:
+			ui.addNewMessage(((Packet.MessageData) packet.data).msg);
+			break;
 		default:
-			System.err.println("Unknown Command reached Client");
+			System.err.println("Unknown Command reached Client" + packet.getCommand());
 		}
 	}
 

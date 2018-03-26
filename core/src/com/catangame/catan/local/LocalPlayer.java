@@ -45,4 +45,8 @@ public class LocalPlayer implements Serializable{
 	public int getID() {
 		return this.ID;
 	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }
