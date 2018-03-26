@@ -87,8 +87,23 @@ public class StreetNode {
 		return null;
 	}
 
-	private StreetNode singleContains(Building end) {
+	public StreetNode singleContains(Building end) {
 		StreetNode node = new StreetNode(end);
 		return singleContains(node);
+	}
+	
+	public StreetNode getParent() {
+		return this.parents.get(0);
+	}
+
+	public StreetNode getRoot() {
+		if(this.isRoot()) {
+			return this;
+		}else {
+			for(StreetNode parent : parents) {
+				return parent.getRoot();
+			}
+		}
+		return null;
 	}
 }

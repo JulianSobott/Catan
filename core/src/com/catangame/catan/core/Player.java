@@ -23,6 +23,7 @@ public class Player implements Serializable {
 	List<DevCard> developmentCards = new ArrayList<DevCard>();
 	public List<Resource> harbours = new ArrayList<Resource>();
 	private int numKnights = 0;
+	private boolean longestStreet = false;
 	
 	public enum Action{
 		MOVING_ROBBER,
@@ -80,7 +81,9 @@ public class Player implements Serializable {
 	public void take_resource(Resource r, int count) {
 		resources.put(r, resources.get(r) - count);
 	}
-
+	public void addScore(int score) {
+		this.score += score;
+	}
 	public void update_score() {
 		score = 0;
 		for (Building b : buildings) {
@@ -106,5 +109,13 @@ public class Player implements Serializable {
 	
 	public int getNumKnights() {
 		return this.numKnights;
+	}
+	
+	public void setLongestStreet(boolean hasLongest) {
+		this.longestStreet = hasLongest;
+		this.score += hasLongest ? 1 : -1;
+	}
+	public boolean hasLongestStreet() {
+		return this.longestStreet;
 	}
 }

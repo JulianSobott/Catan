@@ -58,6 +58,7 @@ public class LocalCore extends Core {
 
 	//TODO add field at lobby to change this
 	int winningScore = 10; //Default Score to win a game
+	int maxStreetlength = 0;
 
 	//Filehandler
 	private LocalFilehandler fileHandler;
@@ -777,39 +778,29 @@ public class LocalCore extends Core {
 	
 	private void calcLongestStreet(List<Building> playerBuildings) {
 		List<Building> allStreets = new ArrayList<Building>();
-		List<Building> allEndStreets = new ArrayList<Building>();
-		int maxStreetlength = 0;
 		//get all Streets
 		for(Building b : playerBuildings) {
 			if(b.get_type() == Type.STREET) {
 				allStreets.add(b);
 			}
 		}
-		
-		for(Building b: allStreets) {
-			List<Building> connectedStreets = getConnectedStreets(b, allStreets);
-			if(connectedStreets.size() < 2) {
-				allEndStreets.add(b);
-			}else if(connectedStreets.size() < 3){
-				List<Building> innerConnectedStreets = getConnectedStreets(connectedStreets.get(0), allStreets);
-				for(Building s : innerConnectedStreets) {
-					if(Vector3i.are_equal(connectedStreets.get(1).get_position(), s.get_position())){
-						allEndStreets.add(b);
-						break;
-					}
-				}
-			}
-			
-		}
-		
-		for(Building start : allEndStreets) {
-			//build street tree
-			StreetNode rootStreet = addChildrenStreets(start, start, allStreets, null, null);
-			for(Building end : allEndStreets) {
-				if(!start.equals(end)) {
+		//for every street calculate longest way
+		for(Building street : allStreets) {
+			StreetNode rootStreet = buildStreetTree(street, street, allStreets, null, null);
+			for(Building end : allStreets) {
+				if(!street.equals(end)) {
 					int length = calcLength(rootStreet, end);
 					if(maxStreetlength < length) {
 						maxStreetlength = length;
+						for(Player p : this.player) {
+							if(p.hasLongestStreet() && !p.equals(this.player.get(current_player))) {
+								p.setLongestStreet(false);
+								//TODO Add message here
+							}
+						}
+						this.player.get(current_player).setLongestStreet(true);
+						//TODO Add message here
+						update_scoreboard_data();
 						System.out.println(maxStreetlength);
 					}
 				}	
@@ -824,11 +815,9 @@ public class LocalCore extends Core {
 		}
 		return 1;
 	}
-	
-	private StreetNode checkHasChild(StreetNode parent, StreetNode child){
-		return null;
-	}
-	StreetNode addChildrenStreets(Building street, Building parent, List<Building> allStreets, List<Building> parentConnections, StreetNode parentNode) {
+
+	StreetNode buildStreetTree(Building street, Building parent, List<Building> allStreets, List<Building> parentConnections, StreetNode parentNode) {
+		List<Building> remainingStreets = new ArrayList<>(allStreets);
 		List<Building> connectedStreets = getConnectedStreets(street, allStreets);
 		for(Building b : connectedStreets) {
 			boolean removed = false;
@@ -851,16 +840,26 @@ public class LocalCore extends Core {
 			}
 		}
 		StreetNode node = new StreetNode(street);
+		for(Building b : remainingStreets) {
+			if(Vector3i.are_equal(b.get_position(), street.get_position())) {
+				remainingStreets.remove(b);
+				break;
+			}
+		}
 		if(parentNode != null) {
 			node.addParent(parentNode);
 		}
 		for(Building b : connectedStreets) {
-			StreetNode child = addChildrenStreets(b, street, allStreets, connectedStreets, node);
-			if(child.isEnd()) {
-				node.addChild(b);
+			if(node.getRoot().multyContains(b) == null) {
+				StreetNode child = buildStreetTree(b, street, remainingStreets, connectedStreets, node);
+				if(child.isEnd()) {
+					node.addChild(b);
+				}else {
+					node.addChild(child);
+				}	
 			}else {
-				node.addChild(child);
-			}	
+				//Circle detected (but no problem)
+			}
 		}
 		return node;
 	}
