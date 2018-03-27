@@ -12,6 +12,7 @@ import org.jsfml.graphics.FloatRect;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
 import com.catangame.catan.utils.BoxShadow;
@@ -136,6 +137,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private boolean onlineLobby = false;
 	private String btnJoinText = Language.JOIN_GAME.get_text();
 	
+	
 	//Menu
 	List<SavedGame> allGames = null;
 	List<Packet.JoinableGame> allJoinableGames;
@@ -234,6 +236,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btn);
+		
 
 		btn = new Button(Language.JOIN_GAME.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.set_click_callback(new Runnable() {
@@ -286,7 +289,6 @@ public class LocalUI extends UI implements InputProcessor {
 					(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
 							+ (mm_button_height + mm_button_spacing) * i));
 		}
-
 	}
 
 	public void build_game_menu() {
@@ -1534,16 +1536,6 @@ public class LocalUI extends UI implements InputProcessor {
 		//Online stuff
 		Label lblOnlineLobby = new Label("Online lobby", new Rectangle((window_size.x - mm_tf_width) * 0.5f, cbOnlineLobby.get_position().y, mm_tf_width, mm_tf_height));
 		widgets.add(lblOnlineLobby);
-		Button btnOnlineLobby = new Button("Online lobby", new Rectangle(window_size.x /2 -80, window_size.y -90, 160, 50));
-		btnOnlineLobby.set_fill_color(Color.GREEN);
-		btnOnlineLobby.set_text_color(Color.WHITE);
-		btnOnlineLobby.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				framework.initOnlineGuestGame();
-			}
-		});
-		widgets.add(btnOnlineLobby);
 	}
 	public void buildAllJoinableGamesWindow() {
 		List<Packet.JoinableGame> allGames = allJoinableGames;
@@ -1886,11 +1878,15 @@ public class LocalUI extends UI implements InputProcessor {
 			btnStart.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					int islandSize = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
+					int islandSize;
+					try {
+						islandSize = tf_value_size.length() > 0 ? Integer.parseInt(tf_value_size) : 5;
+					}catch(NumberFormatException e) {
+						islandSize = 5;
+					}
 					int seed;
 					try {
-						 seed = tf_value_seed.length() > 0  ? Integer.parseInt(tf_value_seed)
-									: ((int) Math.random() * 100) + 1;
+						 seed = tf_value_seed.length() > 0  ? Integer.parseInt(tf_value_seed): ((int) Math.random() * 100) + 1;
 					}catch(NumberFormatException e) {
 						seed = ((int) Math.random() * 100) + 1;
 					}
@@ -1976,6 +1972,7 @@ public class LocalUI extends UI implements InputProcessor {
 					mode = GUIMode.LOBBY;
 					state.mode = GameMode.main_menu;
 					framework.reset_game();
+					resetData(false);
 					rebuild_gui();
 				}
 			});
@@ -2424,10 +2421,15 @@ public class LocalUI extends UI implements InputProcessor {
 		if(allGames != null) {
 			allGames.clear();
 		}
-		allJoinableGames.clear();
-		allPossiblePlayer.clear();
+		allJoinableGames = null;
+		allPossiblePlayer = null;
 		allTradeOffer.clear();
 		onlineLobby = false;
+		state.field_resources = new HashMap<Resource, List<Vector2>>();
+		state.field_numbers = new HashMap<Byte, List<Vector2>>();
+		state.villages = new HashMap<Integer, List<Vector2>>();
+		state.cities = new HashMap<Integer, List<Vector2>>();
+		state.streets = new HashMap<Integer, List<AbstractStreet>>();
 		if(player != null) {
 			player.clear();
 		}

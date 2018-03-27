@@ -132,6 +132,11 @@ public class RemoteCore extends Core {
 		this.client.sendMessage(new Packet(Command.MESSAGE, new Packet.MessageData(message)));
 	}
 
+	@Override
+	public void resetGame() {
+		//Do nothing ??
+	}
+
 	
 
 }

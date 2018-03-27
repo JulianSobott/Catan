@@ -9,6 +9,8 @@ import com.catangame.catan.local.Framework;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.fullscreen = false;
+		config.title = "Catan";
 		config.width = 1200;
 		config.height = 800;
 		config.addIcon("assets/res/icon.png", FileType.Internal);

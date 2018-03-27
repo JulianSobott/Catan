@@ -632,7 +632,7 @@ public class LocalCore extends Core {
 
 	@Override
 	public void buyDevelopmentCard(int id) {
-		if (id == current_player) {
+		if (id == current_player && !initial_round) {
 			if (player.get(id).get_resources(Resource.GRAIN) >= 1 && player.get(id).get_resources(Resource.ORE) >= 1
 					&& player.get(id).get_resources(Resource.WOOL) >= 1) {
 				DevCard card = devCardStack.get(0);
@@ -937,6 +937,15 @@ public class LocalCore extends Core {
 				ui.addNewMessage(msg);
 			}
 		}
+	}
+
+	@Override
+	public void resetGame() {
+		this.current_player = 0;
+		this.devCardStack = new ArrayList<DevCard>();
+		this.initial_round = true;
+		this.map = null;
+		this.player.clear();
 	}
 
 }
