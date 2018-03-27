@@ -1,26 +1,41 @@
-package com.catangame.catan.network;
+package com.catangame.catan.desktop;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
 import com.badlogic.gdx.Gdx;
 import com.catangame.catan.data.Resource;
+import com.catangame.catan.network.Packet;
+import com.catangame.catan.network.Packet;
 
 //TODO Rename Method "message"
 
-public class ClientCommunicator extends Thread{
+public class ServerClientCommunicator extends Thread implements Serializable{
 	
-	private LocalServer localDataServer;
+	private MainServer mainServer;
 	private Socket client;
-	private int id; 
+	private long publicID;
+	private int clientGameID;
+	private int gameID;
+	private boolean isHost = false;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
+	private ServerGame serverGame;
 	
+	public ServerGame getServerGame() {
+		return serverGame;
+	}
+
+	public void setServerGame(ServerGame serverGame) {
+		this.serverGame = serverGame;
+	}
+
 	private boolean running = true;
 	
-	public ClientCommunicator(LocalServer localDataServer, Socket client) {
-		this.localDataServer = localDataServer;
+	public ServerClientCommunicator(MainServer mainServer, Socket client) {
+		this.mainServer = mainServer;
 		this.client = client;
 	}
 	
@@ -40,15 +55,16 @@ public class ClientCommunicator extends Thread{
 			final Packet packet;
 			try {
 				packet = (Packet) input.readObject();
-				Gdx.app.postRunnable(new Runnable() {
-					@Override
-					public void run() {
-						localDataServer.message_from_client(id, packet);
-					}
-				});
-				
+				if(serverGame == null) {
+					mainServer.messageFromClient(this, packet);	
+				}else {
+					serverGame.messageFromClient(this, packet);	
+				}
+					
 			}catch(IOException e) {
 				System.err.println("End of File Exception at ClientCommunicator => stopped running");
+				mainServer.removeClient(publicID);
+				mainServer.removeGame(gameID);
 				this.running = false;
 			} catch (ClassNotFoundException e) {
 				System.err.println("Object is from unknown Class");
@@ -79,10 +95,36 @@ public class ClientCommunicator extends Thread{
 		}
 	}
 
-	public void setID(int id) {
-		this.id = id;
+
+	public void setPublicID(long publicID) {
+		this.publicID = publicID;
 	}
-	public int getID() {
-		return this.id;
+
+	public int getGameID() {
+		return gameID;
+	}
+
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
+	}
+
+	public long getPublicID() {
+		return publicID;
+	}
+
+	public int getClientGameID() {
+		return clientGameID;
+	}
+
+	public void setClientGameID(int clientGameID) {
+		this.clientGameID = clientGameID;
+	}
+
+	public boolean isHost() {
+		return isHost;
+	}
+
+	public void setHost(boolean isHost) {
+		this.isHost = isHost;
 	}
 }

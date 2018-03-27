@@ -16,6 +16,7 @@ import com.catangame.catan.utils.Color;
 import com.catangame.catan.utils.StreetNode;
 import com.catangame.catan.math.Vector2i;
 import com.catangame.catan.math.Vector3i;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.Building.Type;
 import com.catangame.catan.core.Map.GeneratorType;
@@ -33,10 +34,12 @@ import com.catangame.catan.local.LocalUI;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
 import com.catangame.catan.network.RemoteGameLogic;
+import com.catangame.catan.network.RemoteServer;
 import com.catangame.catan.network.RemoteUI;
-import com.catangame.catan.network.Server;
+import com.catangame.catan.network.LocalServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
+import com.catangame.catan.superClasses.Server;
 import com.catangame.catan.superClasses.UI;
 
 public class LocalCore extends Core {
@@ -88,7 +91,7 @@ public class LocalCore extends Core {
 
 	void dice() {
 		int diceResult = (int) (Math.random() * 6.) + (int) (Math.random() * 6.) + 2;
-		
+
 		for (UI ui : uis) {
 			ui.show_dice_result((byte) diceResult);
 		}
@@ -155,7 +158,7 @@ public class LocalCore extends Core {
 			player.get(i).add_resource(Resource.ORE, 20);
 			player.get(i).add_resource(Resource.WOOD, 20);
 			player.get(i).add_resource(Resource.WOOL, 20);
-			
+
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
@@ -216,7 +219,7 @@ public class LocalCore extends Core {
 	}
 
 	@Override
-	public void register_new_user(String name, Color color) {	
+	public void register_new_user(String name, Color color) {
 		boolean correctName = false;
 		int id = player.size();
 		if (savedGame != null) {
@@ -242,10 +245,7 @@ public class LocalCore extends Core {
 			GameLogic logic = new RemoteGameLogic(data_server);
 			logic.setID(id);
 			logics.add(logic);
-			
-			for (UI tempUI : uis) {
-				tempUI.show_guest_at_lobby(name);
-			}	
+			uis.get(0).show_guest_at_lobby(name);
 		}
 	}
 
@@ -377,8 +377,8 @@ public class LocalCore extends Core {
 		uis.add(ui);
 	}
 
-	public void setServer(Server server) {
-		this.data_server = server;
+	public void setServer(Server data_connection) {
+		this.data_server = data_connection;
 	}
 
 	public void changePlayerProps(int id, String newName, Color color) {
@@ -407,14 +407,15 @@ public class LocalCore extends Core {
 				}
 				// notify others about player change
 				String name = player.get(current_player).getName();
-				for (UI ui : uis) {
+				for (final UI ui : uis) {
 					ui.set_current_player(name);
+
 				}
 				if (!initial_round)
 					dice();
 			}
 
-			
+
 		}
 	}
 
@@ -668,7 +669,7 @@ public class LocalCore extends Core {
 						mostKnights.setScore(mostKnights.getScore() + 2);
 					}
 				}
-				
+
 				uis.get(id).showMoveRobber();
 				break;
 			case MONOPOL:
@@ -744,16 +745,16 @@ public class LocalCore extends Core {
 							surroundingPlayers.remove(this.player.get(id));
 						}
 						uis.get(id).showSteelResource(surroundingPlayers);
-					}	
+					}
 				}
 			}
-		}	
+		}
 	}
 
 	@Override
 	public void stealResource(int id, int player) {
 		//Steel two resources
-		Random rand = new Random(); 
+		Random rand = new Random();
 		for(int i = 0; i < 1; i++) {
 			boolean foundResource = false;
 			Resource r;
@@ -765,7 +766,7 @@ public class LocalCore extends Core {
 			}while(!foundResource);
 			this.player.get(player).take_resource(r, 1);
 			this.player.get(id).add_resource(r, 1);
-			//TODO add hint in UI 
+			//TODO add hint in UI
 		}
 		uis.get(player).update_player_data(this.player.get(player));
 		uis.get(id).update_player_data(this.player.get(id));
@@ -775,7 +776,7 @@ public class LocalCore extends Core {
 	public void declineTradeDemand(int id) {
 		uis.get(current_player).showDemandDeclined(id);
 	}
-	
+
 	private void calcLongestStreet(List<Building> playerBuildings) {
 		List<Building> allStreets = new ArrayList<Building>();
 		//get all Streets
@@ -803,11 +804,11 @@ public class LocalCore extends Core {
 						update_scoreboard_data();
 						System.out.println(maxStreetlength);
 					}
-				}	
+				}
 			}
 		}
 	}
-	
+
 	private int calcLength(StreetNode rootStreet, Building end) {
 		StreetNode returnedEnd = rootStreet.multyContains(end);
 		if(returnedEnd != null) {
@@ -829,7 +830,7 @@ public class LocalCore extends Core {
 						break;
 					}
 				}
-			}	
+			}
 			if(removed)
 				break;
 		}
@@ -856,14 +857,14 @@ public class LocalCore extends Core {
 					node.addChild(b);
 				}else {
 					node.addChild(child);
-				}	
+				}
 			}else {
 				//Circle detected (but no problem)
 			}
 		}
 		return node;
 	}
-	
+
 	List<Building> getConnectedStreets(Building street, List<Building> allStreets){
 		final int LAYER_NORTH_STREET = 2;
 		final int LAYER_EAST_STREET = 3;
@@ -871,7 +872,7 @@ public class LocalCore extends Core {
 		List<Building> connectedStreets = new ArrayList<Building>();
 		int left_x = street.get_position().y % 2 == 0 ? street.get_position().x - 1 : street.get_position().x;
 		for(Building b : allStreets) {
-			
+
 			if (street.get_position().z == LAYER_NORTH_STREET) {
 				if(Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x, street.get_position().y, LAYER_WEST_STREET)) ||
 						Vector3i.are_equal(b.get_position(), new Vector3i(street.get_position().x, street.get_position().y, LAYER_EAST_STREET)) ||
@@ -897,4 +898,8 @@ public class LocalCore extends Core {
 		}
 		return connectedStreets;
 	}
+	@Override
+	public void joinGameLobby(Integer gameID, String playerName, Color color) {
+		System.err.println("Should not be possible to join game in LocalCore");
+	}	
 }

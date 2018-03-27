@@ -12,13 +12,14 @@ import com.catangame.catan.utils.Color;
 import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
+import com.catangame.catan.superClasses.Server;
 import com.catangame.catan.superClasses.UI;
 
 public class RemoteUI extends UI {
 	private Server server;
 
-	public RemoteUI(Server server) {
-		this.server = server;
+	public RemoteUI(Server data_server) {
+		this.server = data_server;
 	}
 	
 	@Override 

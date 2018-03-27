@@ -1,6 +1,7 @@
 package com.catangame.catan.network;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -39,6 +40,7 @@ public class Client extends Networkmanager {
 		try {
 			output = new ObjectOutputStream(server.getOutputStream());
 			input = new ObjectInputStream(server.getInputStream());
+			System.out.println("Connected");
 		} catch (IOException e) {
 			System.err.println("Can't create input and output streams to server");
 			e.printStackTrace();
@@ -143,8 +145,14 @@ public class Client extends Networkmanager {
 				ui.showSteelResource(((Packet.PlayerList) packet.data).getPlayer());
 			}
 			break;
+		case SHOW_ALL_JOINABLE_GAMES:
+			ui.showAllJoinableGames(((Packet.JoinableGames)packet.data).allJoinableGames);
+			break;
+		case SHOW_GUEST_LOBBY:
+			ui.showGuestLobby(((Packet.StringData)packet.data).string);
+			break;
 		default:
-			System.err.println("Unknown Command reached Client");
+			System.err.println("Unknown Command reached Client: " + packet.getCommand());
 		}
 	}
 

@@ -1,15 +1,16 @@
 buildscript {
-    
+
 
     repositories {
         mavenLocal()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
+	      google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        
+
 
     }
 }
@@ -36,19 +37,6 @@ allprojects {
     }
 }
 
-project(":desktop") {
-    apply plugin: "java"
-
-
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        
-    }
-}
-
 project(":android") {
     apply plugin: "android"
 
@@ -68,9 +56,22 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
-        
+
     }
 }
+project(":desktop") {
+    apply plugin: "java"
+
+
+    dependencies {
+        compile project(":core")
+        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+
+    }
+}
+
 
 project(":core") {
     apply plugin: "java"
@@ -84,6 +85,12 @@ project(":core") {
     }
 }
 
+project(":server") {
+    apply plugin: "java"
+    dependencies {
+        compile project(":core")
+    }
+}
 tasks.eclipse.doLast {
     delete ".project"
 }

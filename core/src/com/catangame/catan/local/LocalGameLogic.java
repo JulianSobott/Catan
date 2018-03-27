@@ -79,7 +79,8 @@ public class LocalGameLogic extends GameLogic {
 		city_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 		street_txtr = new Texture(Gdx.files.local("assets/res/street.png"), true);
 		street_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-		robber_txtr = new Texture(Gdx.files.local("assets/res/robber.png"));
+		robber_txtr = new Texture(Gdx.files.local("assets/res/robber.png"), true);
+		robber_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 	}
 
 	@Override

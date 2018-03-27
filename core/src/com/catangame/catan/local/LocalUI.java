@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Rectangle;
 import com.catangame.catan.math.Vector2i;
+import com.catangame.catan.network.Packet;
 import com.catangame.catan.core.Building;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
@@ -52,7 +53,7 @@ import com.catangame.catan.utils.TextureMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
-		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES, STEEL_RESOURCE;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES, STEEL_RESOURCE, JOINABLE_GAMES;
 	}
 
 	//TODO Either implement this modes or delete this enum!!
@@ -121,14 +122,18 @@ public class LocalUI extends UI implements InputProcessor {
 	private String tf_value_random_houses = "1";
 	private String tf_value_resource_houses = "1";
 	private boolean cb_value_is_circle = false;
+	private boolean cbValueIsLocal = true;
 	private String lbl_value_info = "";
 	private String lbl_value_dice = "0";
 	private String tf_game_name = "";
 	private float color_pkr_hue = (float) Math.random();
 	private Color playerColor = Color.RED;
+	private boolean onlineLobby = false;
+	private String btnJoinText = Language.JOIN_GAME.get_text();
 	
 	//Menu
 	List<SavedGame> allGames = null;
+	List<Packet.JoinableGame> allJoinableGames;
 	//End Screen 
 	private List<Player> player;
 
@@ -195,6 +200,8 @@ public class LocalUI extends UI implements InputProcessor {
 			build_menu();
 		} else if (mode == GUIMode.END_SCREEN) {
 			buildEndScreen();
+		}else if(mode == GUIMode.JOINABLE_GAMES) {
+			buildAllJoinableGamesWindow();
 		}
 			
 		
@@ -215,6 +222,8 @@ public class LocalUI extends UI implements InputProcessor {
 			@Override
 			public void run() {
 				framework.init_host_game();
+				//TODO Change to above when server is online
+				//framework.initOnlineHostGame();
 				build_host_lobby_window();
 			}
 		});
@@ -264,7 +273,6 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btn);
-
 		// rearrange buttons
 		for (int i = 0; i < widgets.size(); i++) {
 			Button button = (Button) widgets.get(i);
@@ -1348,7 +1356,24 @@ public class LocalUI extends UI implements InputProcessor {
 		float mm_tf_width = 400;
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
-
+		
+		final Checkbox cbOnlineLobby = new Checkbox(new Rectangle(window_size.x /2 + 100, 200, 35, 35));
+		cbOnlineLobby.setSelected(onlineLobby);
+		cbOnlineLobby.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				onlineLobby = !onlineLobby;
+				cbOnlineLobby.setSelected(onlineLobby);
+				if(onlineLobby) {
+					btnJoinText = "Online Lobby";
+				}else {
+					btnJoinText = Language.JOIN_GAME.get_text();
+				}
+				
+				rebuild_gui();
+			}
+		});
+		widgets.add(cbOnlineLobby);
 		final TextField tfIp = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		tfIp.set_text(tf_value_ip);
 		tfIp.set_input_callback(new Runnable() {
@@ -1359,8 +1384,9 @@ public class LocalUI extends UI implements InputProcessor {
 				tf_value_ip = textField.get_text();
 			}
 		});
-		widgets.add(tfIp);
-
+		if(!onlineLobby) {
+			widgets.add(tfIp);
+		}
 		final TextField tfName = new TextField(new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		tfName.set_text(tf_value_name);
 		tfName.set_input_callback(new Runnable() {
@@ -1388,11 +1414,11 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(colorPicker);
 
 		final Label lblConnecting;
-		lblConnecting = new Label("Try to Connect to: " + tfIp.get_text(),
+		lblConnecting = new Label("Try to Connect to: " + tf_value_ip,
 				new Rectangle(window_size.x / 2, window_size.y - 200, 100, 50));
 		lblConnecting.set_visible(false);
 
-		Button btn = new Button(Language.JOIN.get_text(), new Rectangle(0, 0, mm_tf_width, mm_tf_height));
+		Button btn = new Button(btnJoinText, new Rectangle(0, 0, mm_tf_width, mm_tf_height));
 		btn.set_position(new Vector2((window_size.x - mm_tf_width) * 0.5f + 200,
 				(window_size.y - (mm_tf_height + mm_tf_spacing) * 2) * 0.5f + (mm_tf_height + mm_tf_spacing) * 2));
 		btn.set_fill_color(new Color(0.24f, 1.f, 0.24f, 0.4f));
@@ -1404,11 +1430,17 @@ public class LocalUI extends UI implements InputProcessor {
 					//Entered wrong Ip or server is not online
 					new Thread(new Runnable() {
 						public void run() {
-							if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
-								System.out.println("Not accepted");
-								tfIp.set_outline(Color.RED, 2);
-								lblConnecting.set_text("Entered wrong IP or the server is not online");
+							if(onlineLobby) {
+								
+								framework.initOnlineGuestGame();
+							}else {
+								if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
+									System.out.println("Not accepted");
+									tfIp.set_outline(Color.RED, 2);
+									lblConnecting.set_text("Entered wrong IP or the server is not online");
+								}
 							}
+							
 						}
 					}).start();
 				} else {
@@ -1430,11 +1462,12 @@ public class LocalUI extends UI implements InputProcessor {
 					(window_size.y - (mm_tf_height + mm_tf_spacing) * widgets.size()) * 0.5f
 							+ (mm_tf_height + mm_tf_spacing) * i));
 		}
-
-		Label lbl = new Label("Enter IP: ",
-				new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, mm_tf_width, mm_tf_height));
-		widgets.add(lbl);
-		lbl = new Label("Enter Name: ", new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
+		if(!onlineLobby) {
+			Label lbl = new Label("Enter IP: ",
+					new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, mm_tf_width, mm_tf_height));
+			widgets.add(lbl);
+		}	
+		Label lbl = new Label("Enter Name: ", new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
 				mm_tf_width, mm_tf_height));
 		widgets.add(lbl);
 		widgets.add(lblConnecting);
@@ -1448,8 +1481,51 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnBack);
+		
+		//Online stuff
+		Label lblOnlineLobby = new Label("Online lobby", new Rectangle((window_size.x - mm_tf_width) * 0.5f, cbOnlineLobby.get_position().y, mm_tf_width, mm_tf_height));
+		widgets.add(lblOnlineLobby);
+		Button btnOnlineLobby = new Button("Online lobby", new Rectangle(window_size.x /2 -80, window_size.y -90, 160, 50));
+		btnOnlineLobby.set_fill_color(Color.GREEN);
+		btnOnlineLobby.set_text_color(Color.WHITE);
+		btnOnlineLobby.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				framework.initOnlineGuestGame();
+			}
+		});
+		widgets.add(btnOnlineLobby);
 	}
-
+	public void buildAllJoinableGamesWindow() {
+		List<Packet.JoinableGame> allGames = allJoinableGames;
+		Label lblHeader = new Label("There are " + allGames.size() + " joinable games online", new Rectangle(20, 20, 100,50));
+		lblHeader.adjustWidth(10);
+		widgets.add(lblHeader);
+		ScrollContainer c = new ScrollContainer(this, new Rectangle(100, 100, window_size.x -100, window_size.y -100));
+		int i = 0;
+		for(final Packet.JoinableGame game : allGames) {
+			Button btnGame = new Button("Game: "+ game.gameID + " - " + game.gameName, new Rectangle(100, 100 + 120*i, 300, 100));
+			btnGame.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					core.joinGameLobby(game.gameID, tf_value_name, playerColor);				
+				}
+			});
+			c.addWidget(btnGame);
+			i++;
+		}
+		c.calcBounds();
+		widgets.add(c);
+		Button btnBack = new Button(Language.BACK.get_text(), new Rectangle(20, window_size.y - 70, 100, 50));
+		btnBack.adjustWidth(5);
+		btnBack.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				build_lobby();
+			}
+		});
+		widgets.add(btnBack);
+	}
 	public void build_guest_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.GUEST_LOBBY;
@@ -1469,7 +1545,7 @@ public class LocalUI extends UI implements InputProcessor {
 				i++;
 			}
 		} else {
-			Label lbl = new Label("Successfully joined Lobby with: ", new Rectangle(0, 0, 100, 100));
+			Label lbl = new Label("Successfully joined " +state.gameName + " Lobby with: ", new Rectangle(0, 0, 100, 100));
 			widgets.add(lbl);
 			int i = 0;
 			for (String guestName : guests) {
@@ -1481,12 +1557,23 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 
 		}
+		Button btnBack = new Button(Language.EXIT.get_text(), new Rectangle(20, window_size.y - 70, 100, 50));
+		btnBack.adjustWidth(5);
+		btnBack.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				//TODO inform server
+				resetData(false);
+				build_lobby();
+			}
+		});
+		widgets.add(btnBack);
 	}
 
 	public void build_host_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.HOST_LOBBY;
-		Label lblHostIp = new Label(serverIP, new Rectangle(window_size.x / 2, 0, 100, 30));
+		final Label lblHostIp = new Label(serverIP, new Rectangle(window_size.x / 2, 0, 100, 30));
 		widgets.add(lblHostIp);
 		float column0 = 0;
 		float column1 = window_size.x / 2 > 300 ? window_size.x / 2 : 300;
@@ -1528,6 +1615,9 @@ public class LocalUI extends UI implements InputProcessor {
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
 			lbl = new Label(Language.IS_CIRCLE.get_text(), new Rectangle(column0 + 180 + textfield_height + 5,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
+			lbl = new Label(Language.LOCAL.get_text(), new Rectangle(column0 + 180 + textfield_height + 5,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
 
@@ -1640,6 +1730,28 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 			});
 			widgets.add(cbCircleMap);
+			final Checkbox cbLocalgame = new Checkbox(new Rectangle(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++ + textfield_height * .15f,
+					textfield_height * .7f, textfield_height * .7f));
+			cbLocalgame.setSelected(cbValueIsLocal);
+			cbLocalgame.set_click_callback(new Runnable() {
+				Checkbox cb = cbLocalgame;
+
+				@Override
+				public void run() {
+					cbValueIsLocal = cb.isSelected();
+					if(!cbValueIsLocal) {
+						serverIP = "Online";
+						lblHostIp.set_text(serverIP);
+						framework.publicizeGame();
+					}else {
+						framework.init_host_game();
+						//serverIP = "Online";
+						lblHostIp.set_text(serverIP);
+					}
+				}
+			});
+			widgets.add(cbLocalgame);
 		}
 		//Row1 ==> members
 		Label lbl = new Label(Language.MEMBERS.get_text(), new Rectangle(column1, 10, 100, 100));
@@ -2160,6 +2272,7 @@ public class LocalUI extends UI implements InputProcessor {
 	@Override
 	public void show_kicked() {
 		mode = GUIMode.LOBBY;
+		resetData(false);
 		rebuild_gui();
 	}
 
@@ -2229,4 +2342,52 @@ public class LocalUI extends UI implements InputProcessor {
 		rebuild_gui();
 	}
 
+	public void showAllJoinableGames(List<Packet.JoinableGame> list) {
+		// TODO Auto-generated method stub
+		this.allJoinableGames = list;
+		mode = GUIMode.JOINABLE_GAMES;
+		rebuild_gui();
+	}
+
+	public void showGuestLobby(String gameName) {
+		mode = GUIMode.GUEST_LOBBY;
+		state.gameName = gameName;
+		rebuild_gui();
+	}
+	
+	private void resetData(boolean textFields) {
+		guests.clear();
+		tradeOffer = null;
+		tradeDemand = null;
+		if(allGames != null) {
+			allGames.clear();
+		}
+		allJoinableGames.clear();
+		allPossiblePlayer.clear();
+		allTradeOffer.clear();
+		onlineLobby = false;
+		if(player != null) {
+			player.clear();
+		}
+		
+		if(textFields) {
+			serverIP = "";
+			tf_value_ip = "127.0.0.1";
+			tf_value_name = "Anonymous";
+			tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
+			tf_value_size = "5";
+			tf_value_random_houses = "1";
+			tf_value_resource_houses = "1";
+			cb_value_is_circle = false;
+			cbValueIsLocal = true;
+			lbl_value_info = "";
+			lbl_value_dice = "0";
+			tf_game_name = "";
+			color_pkr_hue = (float) Math.random();
+			playerColor = Color.RED;
+			onlineLobby = false;
+			btnJoinText = Language.JOIN_GAME.get_text();
+		}
+	}
 }
+

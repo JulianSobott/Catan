@@ -19,7 +19,7 @@ import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.LocalState.GameMode;
 
 public class Packet implements Serializable {
-	
+
 	private static final long serialVersionUID = 10001L;
 	
 	public static class Position implements Serializable {
@@ -272,8 +272,58 @@ public class Packet implements Serializable {
 			return this.card;
 		}
 	}
+	
+	public static class ListData implements Serializable{
+		private static final long serialVersionUID = 10021L;
+		public List list;
+		public ListData(List list) {
+			this.list = list;
+		}
+	}
+	
+	public static  class JoinableGames implements Serializable {
+		private static final long serialVersionUID = 10022L;
+		public List<JoinableGame> allJoinableGames = new ArrayList<JoinableGame>();
+		public JoinableGames(List<JoinableGame> games) {
+			for(JoinableGame game : games) {
+				allJoinableGames.add(game);
+			}
+		}
+	}
+	public static class JoinableGame implements Serializable{
+		private static final long serialVersionUID = 10023L;
+		public int gameID;
+		public String gameName;
+		public int numPlayer;
+		
+		public JoinableGame(int gameID, String gameName, int numPlayer) {
+			this.gameID = gameID;
+			this.gameName = gameName;
+			this.numPlayer = numPlayer;
+		}
+	}
+	public static class JoinGame implements Serializable{
+		private static final long serialVersionUID = 10024L;
+		public int gameID;
+		public String playerName;
+		public Color color;
+		public JoinGame(int gameID, String playerName, Color color) {
+			this.gameID = gameID;
+			this.playerName = playerName;
+			this.color = color;
+		}
+	}
+	public static class StringData implements Serializable{
+		private static final long serialVersionUID = 10025L;
+		public String string;
+		public StringData(String str) {
+			this.string = str;
+		}
+	}
 	private Command cmd;
-	Serializable data;
+	public Serializable data;
+	public int sender; //Own ClientGameID
+	public int receiver; //0 = Host, else ClientGameID
 
 	String debugString;
 
@@ -285,7 +335,20 @@ public class Packet implements Serializable {
 		this.cmd = cmd;
 		this.data = data;
 	}
-
+	
+	public Packet(int sender, int receiver, Command cmd, Serializable data) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.cmd = cmd;
+		this.data = data;
+	}
+	
+	public Packet(int sender, int receiver, Command cmd) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.cmd = cmd;
+	}
+	
 	public Command getCommand() {
 		return this.cmd;
 	}
@@ -294,6 +357,8 @@ public class Packet implements Serializable {
 		this.cmd = Command.STRING;
 		this.debugString = str;
 	}
+
+	
 
 	public String getDebugString() {
 		return this.debugString;

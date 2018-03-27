@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Map;
 import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.superClasses.GameLogic;
+import com.catangame.catan.superClasses.Server;
 
 public class RemoteGameLogic extends GameLogic {
 	private Server server;
 	
-	public RemoteGameLogic(Server server) {
-		this.server = server;
+	public RemoteGameLogic(Server data_server) {
+		this.server = data_server;
 	}
 
 	@Override
