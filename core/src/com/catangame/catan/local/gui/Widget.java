@@ -29,6 +29,7 @@ public abstract class Widget {
 	protected List<Runnable> hoverLeave = new ArrayList<Runnable>();
 	public boolean hasHover = false;
 	public boolean hovered = false;
+	protected boolean isVisible = true;
 	
 	protected Texture texture = null;
 	
@@ -117,17 +118,27 @@ public abstract class Widget {
 	public void setTexture(Texture texture) {
 		this.texture = texture;
 	}
+	
+	public void setVisible(boolean visible) {
+		this.isVisible = visible;
+	}
+	
+	public boolean isVisible() {
+		return this.isVisible;
+	}
 	// abstract methods
 
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
-		if(this.texture != null) {
-			Sprite sprite = new Sprite(texture);
-			sprite.flip(false, true);
-			sb.begin();
-			sb.setColor(sprite.getColor());
-			sb.draw(sprite, bounds.x, bounds.y, bounds.width, bounds.height);
-			sb.end();
-		}
+		if(isVisible) {
+			if(this.texture != null) {
+				Sprite sprite = new Sprite(texture);
+				sprite.flip(false, true);
+				sb.begin();
+				sb.setColor(sprite.getColor());
+				sb.draw(sprite, bounds.x, bounds.y, bounds.width, bounds.height);
+				sb.end();
+			}
+		}	
 	}
 
 	public abstract void do_mouse_click(Vector2 pos);

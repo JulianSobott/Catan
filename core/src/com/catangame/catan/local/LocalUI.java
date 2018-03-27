@@ -84,6 +84,7 @@ public class LocalUI extends UI implements InputProcessor {
 	// gui data
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
 	private TextField activeTF;
+	private boolean showChatTf = false;
 	private boolean showDevelopmentCards = false;
 	private List<Message> messages = new LinkedList<Message>();
 	private List<ScrollContainer> allScrollContainer = new ArrayList<ScrollContainer>();
@@ -152,8 +153,8 @@ public class LocalUI extends UI implements InputProcessor {
 		Widget.set_default_back_color(Color.WHITE);
 		Widget.set_default_text_color(new Color(0.08f, 0.2f, 0.2f, 1.f));
 		Widget.set_default_outline_color(Color.TRANSPARENT);
-		Widget.set_default_outline_highlight_color(new Color(0.8f, 0.55f, 0.8f, 1.f));
-		Widget.set_default_disabled_outline_color(Color.BLACK);
+		Widget.set_default_outline_highlight_color(new Color(0.1f, 0.1f, 0.9f, .9f));
+		Widget.set_default_disabled_outline_color(new Color(0.3f, 0.3f, 0.3f, .9f));
 		Widget.set_default_disabled_background_color(new Color(0.4f, 0.4f, 0.4f, 1.f));
 		Widget.set_default_checkbox_color(Color.BLACK);
 		build_lobby();
@@ -331,16 +332,28 @@ public class LocalUI extends UI implements InputProcessor {
 		sc.calcBounds();
 		allScrollContainer.add(sc);
 		widgets.add(sc);
-		
-		final TextField tfChat = new TextField(new Rectangle(5, window_size.y - 70, 220, 20));
+		final TextField tfChat = new TextField(new Rectangle(5, window_size.y - 70, 300, 20));
 		tfChat.set_font(FontMgr.getFont(FontMgr.Type.ROBOTO_LIGHT, 16));
 		tfChat.setEnterCallback(new Runnable() {
 			@Override
 			public void run() {
-				addNewMessage(new Message(state.player_data.get(id), tfChat.get_text()));
-				core.newChatMessage(new Message(state.player_data.get(id), tfChat.get_text()));
+				if(!tfChat.get_text().trim().isEmpty()) {
+					addNewMessage(new Message(state.player_data.get(id), tfChat.get_text()));
+					core.newChatMessage(new Message(state.player_data.get(id), tfChat.get_text()));
+					check_on_click_widgets(new Vector2(10, window_size.y - 68));
+					showChatTf = false;
+					widgets.get(7).setVisible(false);
+					activeTF = null;
+					//rebuild_gui();
+				}
+				
 			}
 		});
+		if(showChatTf) {
+			tfChat.setVisible(true);
+		}else {
+			tfChat.setVisible(false);
+		}
 		widgets.add(tfChat);
 		
 		//player Development Cards
@@ -1988,7 +2001,18 @@ public class LocalUI extends UI implements InputProcessor {
 				return true;
 			} else
 				return false;
-		} else
+		}else  if(keycode == Keys.ENTER) {
+			this.showChatTf = !this.showChatTf;
+			if(showChatTf) {
+				//FIXME change this when widgets have names
+				check_on_click_widgets(new Vector2(10, window_size.y - 68));
+				activeTF.setVisible(true);
+			}else {
+				
+			}
+			//rebuild_gui();
+			return true;
+		}else
 			return false;
 	}
 

@@ -3,6 +3,7 @@ package com.catangame.catan.local.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.catangame.catan.utils.Color;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -41,30 +42,35 @@ public class TextField extends Widget {
 
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
-		sr.begin(ShapeType.Filled);
-		sr.setColor(backColor.gdx());
-		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-		sr.end();
+		Gdx.gl.glEnable(GL30.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+		if(isVisible) {
+			sr.begin(ShapeType.Filled);
+			sr.setColor(backColor.gdx());
+			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+			sr.end();
 
-		sr.begin(ShapeType.Line);
-		if (is_active)
-			sr.setColor(outlineColor.gdx());
-		else
-			sr.setColor(disabledOutlineColor.gdx());
-		Gdx.gl.glLineWidth(outlineThickness);
-		sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-		sr.end();
+			sr.begin(ShapeType.Line);
+			if (is_active)
+				sr.setColor(outlineColor.gdx());
+			else
+				sr.setColor(disabledOutlineColor.gdx());
+			Gdx.gl.glLineWidth(outlineThickness);
+			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+			sr.end();
 
-		sb.begin();
-		font.setColor(textColor.gdx());
-		font.draw(sb, text, textPosition.x, textPosition.y);
-		sb.end();
+			sb.begin();
+			font.setColor(textColor.gdx());
+			font.draw(sb, text, textPosition.x, textPosition.y);
+			sb.end();
+		}	
 	}
 
 	@Override
 	public void do_mouse_click(Vector2 pos) {
 		is_active = true;
 		outlineColor = default_outline_highlight_color;
+		set_outline(default_outline_highlight_color, 1.5f);
 		Gdx.input.setOnscreenKeyboardVisible(true);
 	}
 
