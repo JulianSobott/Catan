@@ -19,6 +19,7 @@ public enum Command {
 	TAKE_RESOURCE,
 	MOVE_ROBBER,
 	STEEL_RESOURCE,
+	MESSAGE,
 	//Pre Game Stuff
 	CREATE_NEW_GAME,
 	SHOW_GUEST_LOBBY,
@@ -40,5 +41,5 @@ public enum Command {
 	SHOW_NEW_MEMBER, 
 	//After Game
 	END_SCREEN, ID_LAST_JOINED, EXIT;
-	
+
 }

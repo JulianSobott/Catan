@@ -11,6 +11,7 @@ import com.catangame.catan.utils.Color;
 import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.DevCard.Type;
 import com.catangame.catan.data.Resource;
+import com.catangame.catan.local.LocalPlayer;
 
 public class Player implements Serializable {
 	private int id = 0;
@@ -117,5 +118,9 @@ public class Player implements Serializable {
 	}
 	public boolean hasLongestStreet() {
 		return this.longestStreet;
+	}
+	public LocalPlayer toLocalPlayer() {
+		return new LocalPlayer(name, score, color, id);
+
 	}
 }

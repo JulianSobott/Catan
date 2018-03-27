@@ -12,6 +12,7 @@ import com.catangame.catan.data.DevCard;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.TradeDemand;
 import com.catangame.catan.local.TradeOffer;
+import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.GameLogic;
 import com.catangame.catan.superClasses.UI;
@@ -124,6 +125,11 @@ public class RemoteCore extends Core {
 	@Override
 	public void joinGameLobby(Integer gameID, String playerName, Color color) {
 		this.client.sendMessage(new Packet(Command.JOIN_GAME, new Packet.JoinGame(gameID, playerName, color)));
+	}
+
+	@Override
+	public void newChatMessage(Message message) {
+		this.client.sendMessage(new Packet(Command.MESSAGE, new Packet.MessageData(message)));
 	}
 
 	

@@ -151,8 +151,11 @@ public class Client extends Networkmanager {
 		case SHOW_GUEST_LOBBY:
 			ui.showGuestLobby(((Packet.StringData)packet.data).string);
 			break;
+		case MESSAGE:
+			ui.addNewMessage(((Packet.MessageData) packet.data).msg);
+			break;
 		default:
-			System.err.println("Unknown Command reached Client: " + packet.getCommand());
+			System.err.println("Unknown Command reached Client" + packet.getCommand());
 		}
 	}
 

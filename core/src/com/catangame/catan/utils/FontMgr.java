@@ -15,7 +15,7 @@ public class FontMgr {
     static private HashMap<FontSpec, BitmapFont> fontMap = new HashMap<>();
 
     public enum Type {
-        DEFAULT,
+        DEFAULT, ROBOTO_LIGHT, OPEN_SANS_REGULAR
     }
 
     static class FontSpec {
@@ -29,7 +29,9 @@ public class FontMgr {
     }
 
     public static void init() {
-        fontGenerator.put(Type.DEFAULT, new FreeTypeFontGenerator(Gdx.files.local("assets/res/Canterbury.ttf")));
+        fontGenerator.put(Type.DEFAULT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Canterbury.ttf")));
+        fontGenerator.put(Type.ROBOTO_LIGHT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Roboto-Light.ttf")));
+        fontGenerator.put(Type.OPEN_SANS_REGULAR, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/OpenSans-Regular.ttf")));
 
     }
 

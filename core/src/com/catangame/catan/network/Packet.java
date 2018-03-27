@@ -17,6 +17,7 @@ import com.catangame.catan.data.Field;
 import com.catangame.catan.data.Resource;
 import com.catangame.catan.local.LocalPlayer;
 import com.catangame.catan.local.LocalState.GameMode;
+import com.catangame.catan.local.gui.Message;
 
 public class Packet implements Serializable {
 
@@ -318,6 +319,15 @@ public class Packet implements Serializable {
 		public String string;
 		public StringData(String str) {
 			this.string = str;
+		}
+	}
+	
+	public static class MessageData implements Serializable{
+		private static final long serialVersionUID = 10021L;
+		public Message msg;
+		public MessageData(Message msg) {
+			this.msg = msg;
+
 		}
 	}
 	private Command cmd;
