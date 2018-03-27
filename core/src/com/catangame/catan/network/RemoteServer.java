@@ -28,6 +28,7 @@ public class RemoteServer extends Server {
 	public RemoteServer(LocalCore core) {
 		try {
 			serverIP = java.net.InetAddress.getByName("catan.zapto.org").getHostAddress();
+			serverIP = "93.222.148.241";
 			this.core = core;
 			try {
 				this.socket = new Socket(this.serverIP, PORT);

@@ -304,22 +304,18 @@ public class Framework extends ApplicationAdapter {
 	
 	public void initOnlineGuestGame() {
 		String serverIP;
+		serverIP = "93.222.148.241";
 		try {
-			serverIP = java.net.InetAddress.getByName("catan.zapto.org").getHostAddress();
-			try {
-				data_connection = new Client(ui, gameLogic, serverIP);
-			} catch (IOException e) {
-				System.err.println("Wrong IP or server is not online");
-			}
-			core = new RemoteCore();
-			ui.setCore(core);
-			((RemoteCore) core).setClientConnection((Client) data_connection);
-			gameLogic.setCore(core);
-			gameLogic.setUI(ui);
-			((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
+			data_connection = new Client(ui, gameLogic, serverIP);
+		} catch (IOException e) {
+			System.err.println("Wrong IP or server is not online");
 		}
+		core = new RemoteCore();
+		ui.setCore(core);
+		((RemoteCore) core).setClientConnection((Client) data_connection);
+		gameLogic.setCore(core);
+		gameLogic.setUI(ui);
+		((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
 		
 	}
 	
