@@ -18,8 +18,8 @@ import com.catangame.catan.utils.Color;
 
 
 public class MainServer {
-	private final int PORT = 56789;
-	public static final String SERVER_DOMAIN = "catan.zapto.org";
+	private final int PORT = 56780;
+	public static final String SERVER_DOMAIN = "93.222.148.241";
 	
 	private ServerSocket serverSocket;
 	private NewServerClientListener newClientListener;

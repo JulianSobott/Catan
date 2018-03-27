@@ -1,5 +1,6 @@
 package com.catangame.catan.utils;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -16,16 +17,13 @@ public class TextureMgr {
 	
 	public static void init() {
 		//Load all resources 
-		String folderPath = "/desktop/assets/res";
-		File folder = new File(new File(Paths.get("").toAbsolutePath().toString()).getParent() + folderPath);
-		for(final File file : folder.listFiles()) {
-			if(!file.isDirectory()) {	
-				if(getNameWithoutExtension(file.getName()).length() > 1 && file.getName().substring(file.getName().lastIndexOf('.')).equals(".png") || file.getName().substring(file.getName().lastIndexOf('.')).equals(".jpg")) {
-					FileHandle gdxFile = Gdx.files.absolute(file.getAbsolutePath());
-					TextureMgr.textures.put(getNameWithoutExtension(file.getName()), new Texture(gdxFile, true));
-					TextureMgr.textures.get(getNameWithoutExtension(file.getName())).setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-				}		
-			}
+		String folderPath = "assets/res/";
+		System.out.println(Gdx.files.getLocalStoragePath());
+		File folder = new File(Gdx.files.getLocalStoragePath() + folderPath);
+		FileHandle[] images = Gdx.files.local("assets/res/").list();
+		for(final FileHandle img : images) {
+			TextureMgr.textures.put(getNameWithoutExtension(img.name()), new Texture(img, true));
+			TextureMgr.textures.get(getNameWithoutExtension(img.name())).setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 		}		
 	}
 	

@@ -314,11 +314,12 @@ public class LocalUI extends UI implements InputProcessor {
 			java.util.Map.Entry<Resource, Integer> pair = (java.util.Map.Entry<Resource, Integer>) it.next();
 			Resource r = pair.getKey();
 			int num = pair.getValue();
-			lblResource = new Label(Language.valueOf(r.name()).get_text() + ":\n" + num,
+			lblResource = new Label("   " + Integer.toString(num),
 					new Rectangle(5, 200 + 60 * i, cards_width, 55));
 			lblResource.set_fill_color(r.get_color());
 			lblResource.set_outline(Color.BLACK, 2);
 			lblResource.setTexture(TextureMgr.getTexture(r.name()));
+			lblResource.set_text_color(Color.WHITE);
 			widgets.add(lblResource);
 			i++;
 		}

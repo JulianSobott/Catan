@@ -16,7 +16,7 @@ public class RemoteServer extends Server {
 	
 	private Socket socket;
 	private String serverIP;
-	private final int PORT = 56789;
+	private final int PORT = 56780;
 	
 	private ObjectOutputStream output;
 	private ObjectInputStream input;

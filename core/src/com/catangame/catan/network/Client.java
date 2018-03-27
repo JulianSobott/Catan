@@ -18,7 +18,7 @@ import com.catangame.catan.superClasses.UI;
 //TODO Error handling when Entered a wrong IP address (reentering)
 public class Client extends Networkmanager {
 	private Socket server;
-	private static final int PORT = 56789;
+	private static final int PORT = 56780;
 	private String serverIP;
 
 	private ObjectOutputStream output;

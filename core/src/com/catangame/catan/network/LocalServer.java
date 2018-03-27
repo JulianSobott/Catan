@@ -19,7 +19,7 @@ public class LocalServer extends Server {
 
 	private ServerSocket server;
 	private String localServerIP;
-	private static final int PORT = 56789;
+	private static final int PORT = 56780;
 
 	private int numClients = 0;
 
