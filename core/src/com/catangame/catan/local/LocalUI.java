@@ -40,11 +40,13 @@ import com.catangame.catan.data.SavedGame;
 import com.catangame.catan.local.LocalState.Action;
 import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.local.TradeDemand.Vendor;
+import com.catangame.catan.local.gui.Background;
 import com.catangame.catan.local.gui.Button;
 import com.catangame.catan.local.gui.Checkbox;
 import com.catangame.catan.local.gui.ColorPicker;
 import com.catangame.catan.local.gui.Container;
 import com.catangame.catan.local.gui.Label;
+import com.catangame.catan.local.gui.LobbyBackground;
 import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.local.gui.MessageField;
 import com.catangame.catan.local.gui.ScrollContainer;
@@ -223,6 +225,9 @@ public class LocalUI extends UI implements InputProcessor {
 		int mm_button_height = 100;
 		int mm_button_spacing = 10;
 
+		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
+		widgets.add(background);
+		
 		Button btn = new Button(Language.CREATE_NEW_GAME.get_text(),
 				new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.addHoverEffect1();
@@ -284,11 +289,17 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btn);
 		// rearrange buttons
 		for (int i = 0; i < widgets.size(); i++) {
-			Button button = (Button) widgets.get(i);
-			button.set_position(new Vector2((window_size.x - mm_button_width) * 0.5f,
-					(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
-							+ (mm_button_height + mm_button_spacing) * i));
+			if(widgets.get(i) instanceof Button) {
+				Button button = (Button) widgets.get(i);
+				button.set_position(new Vector2((window_size.x - mm_button_width) * 0.5f,
+						(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
+								+ (mm_button_height + mm_button_spacing) * i));
+			}
+			
 		}
+		
+		
+		
 	}
 
 	public void build_game_menu() {

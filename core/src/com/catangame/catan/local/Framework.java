@@ -53,7 +53,7 @@ public class Framework extends ApplicationAdapter {
 	public static Color clearColor = new Color(0.04f, 0.57f, 1, 1);
 
 	// view & camera
-	private Vector2 windowSize = new Vector2();
+	public static Vector2 windowSize = new Vector2();
 	OrthographicCamera camera;
 	OrthographicCamera guiCamera;
 	float lastZoom;
