@@ -289,7 +289,7 @@ public class LocalUI extends UI implements InputProcessor {
 		//player resources
 		int pos_count = 1;
 		float cards_width = 120;
-		float orientationAnchor = (window_size.x / 2) - 200;
+		final float orientationAnchor = (window_size.x / 2) - 200;
 		Widget.set_default_outline_color(Color.WHITE);
 		Iterator<Entry<Resource, Integer>> it = state.my_player_data.get_all_resources().entrySet().iterator();
 		int i = 0;
@@ -360,11 +360,11 @@ public class LocalUI extends UI implements InputProcessor {
 
 		//build menu
 		pos_count = 0;
-		float buttons_width = 110;
+		final float buttons_width = 110;
 		btnBuildVillage = new Button(Language.BUILD_VILLAGE.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildVillage.set_enabled(buttonsEnabled);
-		Container cVillage = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
+		final Container cVillage = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
 		btnBuildVillage.addHover(new Runnable() {	
 			@Override
 			public void run() {
@@ -411,7 +411,7 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildCity.set_enabled(buttonsEnabled);
-		Container cCity = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 190, 200, 100));
+		final Container cCity = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 190, 200, 100));
 		btnBuildCity.addHoverEffect1();
 		btnBuildCity.addHover(new Runnable() {	
 			@Override
@@ -459,7 +459,7 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildStreet.set_enabled(buttonsEnabled);
-		Container cStreet = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 190, 200, 100));
+		final Container cStreet = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 190, 200, 100));
 		btnBuildStreet.addHoverEffect1();
 		btnBuildStreet.addHover(new Runnable() {	
 			@Override
@@ -508,7 +508,7 @@ public class LocalUI extends UI implements InputProcessor {
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width + 100, 70));
 		btnBuyDevelopmentCard.adjustWidth(5);
 		btnBuyDevelopmentCard.set_enabled(buttonsEnabled);
-		Container cDevCard = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 3, window_size.y - 240, 200, 150));
+		final Container cDevCard = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 3, window_size.y - 240, 200, 150));
 		btnBuyDevelopmentCard.addHover(new Runnable() {	
 			@Override
 			public void run() {

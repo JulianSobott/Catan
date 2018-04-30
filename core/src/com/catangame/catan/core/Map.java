@@ -104,6 +104,8 @@ public class Map {
 		Vector2 island_center = Map.index_to_position(new Vector2i(map_size_x / 2, map_size_y / 2));
 
 		this.fields = new Field[map_size_x][map_size_y];
+		
+		boolean addedDesert = false;
 		for (int x = 0; x < map_size_x; x++) {
 			for (int y = 0; y < map_size_y; y++) {
 				Vector2 pos = Map.index_to_position(new Vector2i(x, y));
@@ -127,6 +129,7 @@ public class Map {
 					int index_n = rand.nextInt(available_numbers.size());
 					if(available_resources.get(index_r) == Resource.DESERT) {
 						this.fields[x][y] = new Field(available_resources.get(index_r), (byte) 0);
+						addedDesert = true;
 					}else {
 						this.fields[x][y] = new Field(available_resources.get(index_r), available_numbers.get(index_n));
 					}		
@@ -135,6 +138,9 @@ public class Map {
 				} else // is ocean
 					this.fields[x][y] = new Field(Resource.OCEAN, (byte) 0);
 			}
+		}
+		if(!addedDesert) {
+			this.fields[rand.nextInt(map_size_x)][rand.nextInt(map_size_y)] = new Field(Resource.DESERT, (byte) 0);
 		}
 		System.out.println("Available resources: " + available_resources.size());
 		System.out.println("Available numbers: " + available_numbers.size());
