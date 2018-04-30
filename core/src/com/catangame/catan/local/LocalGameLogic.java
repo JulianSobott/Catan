@@ -237,19 +237,11 @@ public class LocalGameLogic extends GameLogic {
 							city_Sprite.getHeight() * 0.1f);
 				}
 			}
-			//Render Robber
-			Sprite spriteRobber = new Sprite(robber_txtr);
-			spriteRobber.flip(false, true);
-			//Vector2 pos = Map.index_to_position(state.robberPosition.x , state.robberPosition.y);
-			sb.draw(spriteRobber, state.robberPosition.x - spriteRobber.getWidth() * 0.05f,
-					state.robberPosition.y - spriteRobber.getHeight() * 0.05f, spriteRobber.getWidth() * 0.1f,
-					spriteRobber.getHeight() * 0.1f);
-			sb.end();
 			
 			for(Entry<Vector2, Resource> entry : state.harbours.entrySet()) {
 				if(entry.getValue() == null) { // null = 3 for 1
 					sr.begin(ShapeType.Filled);
-					sr.setColor(new Color(100, 100, 100, 250).gdx());
+					sr.setColor(new Color(0, 0, 0, 250).gdx());
 					sr.ellipse(Map.index_to_position(entry.getKey().x, entry.getKey().y).x - Map.field_size / 2 + 30,
 							Map.index_to_position(entry.getKey().x, entry.getKey().y).y - Map.field_size / 2 + 30, Map.field_size - 60,
 							Map.field_size - 60,  30, 6);		
@@ -264,6 +256,17 @@ public class LocalGameLogic extends GameLogic {
 				}
 				
 			}
+			
+			//Render Robber
+			Sprite spriteRobber = new Sprite(robber_txtr);
+			spriteRobber.flip(false, true);
+			//Vector2 pos = Map.index_to_position(state.robberPosition.x , state.robberPosition.y);
+			sb.draw(spriteRobber, state.robberPosition.x - spriteRobber.getWidth() * 0.05f,
+					state.robberPosition.y - spriteRobber.getHeight() * 0.05f, spriteRobber.getWidth() * 0.1f,
+					spriteRobber.getHeight() * 0.1f);
+			sb.end();
+			
+			
 			
 		}
 	}
