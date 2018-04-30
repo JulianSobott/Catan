@@ -64,6 +64,8 @@ public class Button extends Widget {
 			sr.end();
 		}
 		if (outlineThickness > 0) {
+			if(sr.isDrawing())
+				sr.end();
 			sr.begin(ShapeType.Line);
 			sr.setColor(outlineColor.gdx());
 			Gdx.gl.glLineWidth(outlineThickness);
@@ -81,7 +83,6 @@ public class Button extends Widget {
 		}else {
 			super.render(sr, sb);
 		}
-	
 		sb.begin();
 		font.setColor(textColor.gdx());
 		font.draw(sb, text, textPosition.x, textPosition.y);

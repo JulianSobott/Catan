@@ -14,6 +14,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,6 +43,7 @@ import com.catangame.catan.network.LocalServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
+import com.catangame.catan.utils.SoundMgr;
 import com.catangame.catan.utils.TextureMgr;
 
 public class Framework extends ApplicationAdapter {
@@ -99,7 +101,10 @@ public class Framework extends ApplicationAdapter {
 		guiCamera = new OrthographicCamera();
 		guiCamera.setToOrtho(true, windowSize.x, windowSize.y);
 		update_view(true);
-
+		
+		//Music
+		SoundMgr.init();
+		//SoundMgr.shuffleMusic();
 		// BitmapFont
 		FontMgr.init();
 		std_font = FontMgr.getFont(30); // font size 12 pixels
@@ -212,6 +217,7 @@ public class Framework extends ApplicationAdapter {
 		sr.setProjectionMatrix(guiCamera.combined);
 		sb.setProjectionMatrix(guiCamera.combined);
 		ui.render(sr, sb);
+		
 
 		// pause
 		long time = Math.max(0,

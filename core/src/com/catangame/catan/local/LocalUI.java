@@ -2190,7 +2190,9 @@ public class LocalUI extends UI implements InputProcessor {
 				e.printStackTrace();
 				System.err.println(i);
 			}
+			
 		}
+		
 	}
 
 	// returns true if was on a widget
@@ -2211,7 +2213,7 @@ public class LocalUI extends UI implements InputProcessor {
 				widget.do_mouse_click(cursor_position);
 				//Neccessary for the trading window
 				if (!(widget instanceof Label)) {
-					break;
+					//break;
 				}
 			}
 		}
