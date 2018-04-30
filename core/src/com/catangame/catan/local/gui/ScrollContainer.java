@@ -32,7 +32,8 @@ public class ScrollContainer extends Widget{
 
 	public boolean isMouseInside(int mouseX, int mouseY) {
 		if(mouseX >= bounds.x && mouseX <= bounds.x + bounds.width && mouseY >= bounds.y && mouseY <= bounds.y + bounds.height) {
-			return true;
+			if(mouseX >= maxBounds.x && mouseX <= maxBounds.x + maxBounds.width && mouseY >= maxBounds.y && mouseY <= maxBounds.y + maxBounds.height)
+				return true;
 		}
 		return false;
 	}
@@ -74,30 +75,33 @@ public class ScrollContainer extends Widget{
 	public void scrolled(int amount) {
 		if(finalScrollable) {
 			this.scrolled += amount;
-			scrollable = false;
-			for(Widget widget : widgets) {
-				widget.set_position(new Vector2(widget.bounds.x, widget.bounds.y - amount * 50));
-				if(widget.bounds.y >= this.maxBounds.y && widget.bounds.y + widget.bounds.height <= this.maxBounds.y + this.maxBounds.height) {
-					scrollable = true;
+			scrollable = true;
+			if(amount > 0) { //Scroll down
+				if(widgets.get(widgets.size()-1).bounds.y > widgets.get(0).bounds.y) { //last Widget is at the bottom
+					if(widgets.get(widgets.size()-1).bounds.y + widgets.get(widgets.size()-1).bounds.height < this.maxBounds.height) {
+						scrollable = false;
+					}
+				}else { //first Widget is at the bottom
+					if(widgets.get(0).bounds.y + widgets.get(0).bounds.height <= this.maxBounds.height + this.maxBounds.y) {
+						scrollable = false;
+					}
 				}
-				
-			}
-			if(widgets.get(widgets.size()-1).bounds.y > widgets.get(0).bounds.y) {
-				if(widgets.get(widgets.size()-1).bounds.y + widgets.get(widgets.size()-1).bounds.height*3 < this.maxBounds.height ||
-						widgets.get(0).bounds.y - widgets.get(0).bounds.height > this.maxBounds.y) {
-					scrollable = false;
-				}
-			}else {
-				if(widgets.get(0).bounds.y + widgets.get(0).bounds.height*3 < this.maxBounds.height + this.maxBounds.y||
-						widgets.get(widgets.size()-1).bounds.y -  widgets.get(widgets.size()-1).bounds.height > this.maxBounds.y) {
-					scrollable = false;
+			}else { // scroll up
+				if(widgets.get(widgets.size()-1).bounds.y > widgets.get(0).bounds.y) { //last Widget is at the bottom
+					if(widgets.get(0).bounds.y >= this.maxBounds.y) {
+						scrollable = false;
+					}
+				}else { //first Widget is at the bottom
+					if(widgets.get(widgets.size()-1).bounds.y >= this.maxBounds.y) {
+						scrollable = false;
+					}
 				}
 			}
-			
-			if(!scrollable) {
-				scrolled(amount * (-1));
+			if(scrollable) {
+				for(Widget widget : widgets) {
+					widget.set_position(new Vector2(widget.bounds.x, widget.bounds.y - amount * 50));					
+				}
 			}
-
 		}	
 	}
 	
@@ -105,9 +109,9 @@ public class ScrollContainer extends Widget{
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		//TODO evaluate which widget should be rendered
 		for(Widget widget : widgets) {
-			if(widget.bounds.y + widget.bounds.height/2 > this.maxBounds.y && widget.bounds.y - widget.bounds.height/2 < this.maxBounds.y + this.maxBounds.height) {
+			if(widget.bounds.y > this.maxBounds.y && widget.bounds.y + widget.bounds.height < this.maxBounds.y + this.maxBounds.height) {
 				widget.render(sr, sb);
-			}	
+			}
 		}
 	}
 

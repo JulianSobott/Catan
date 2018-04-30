@@ -328,14 +328,14 @@ public class LocalUI extends UI implements InputProcessor {
 		Widget.set_default_outline_color(Color.TRANSPARENT);
 
 		//Chat and information
-		ScrollContainer sc = new ScrollContainer(this, new Rectangle(0, lblResource.get_position().y + 120, 400, window_size.y -  lblResource.get_position().y- 70));
+		ScrollContainer sc = new ScrollContainer(this, new Rectangle(0, lblResource.get_position().y + lblResource.get_size().y + 10, 400, window_size.y -  lblResource.get_position().y - lblResource.get_size().y - 90));
 		i = 0;
 		int additionalMargin = 0;
 		for(int j = messages.size()-1; j >= 0; j--) {
 			Message msg = messages.get(j);
 			
 			MessageField dummymfMessage = new MessageField(msg, new Rectangle(0,0, 200, 200));
-			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 72, 170, 200));
+			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 90, 170, 200));
 			sc.addWidget(mfMessage);
 			additionalMargin += dummymfMessage.getHeight()+2;
 			i++;
@@ -348,16 +348,18 @@ public class LocalUI extends UI implements InputProcessor {
 		tfChat.setEnterCallback(new Runnable() {
 			@Override
 			public void run() {
-				if(!tfChat.get_text().trim().isEmpty()) {
-					addNewMessage(new Message(state.player_data.get(id), tfChat.get_text()));
-					core.newChatMessage(new Message(state.player_data.get(id), tfChat.get_text()));
-					check_on_click_widgets(new Vector2(10, window_size.y - 68));
+				if(showChatTf){
+					if(!tfChat.get_text().trim().isEmpty()) {
+						addNewMessage(new Message(state.player_data.get(id), tfChat.get_text()));
+						core.newChatMessage(new Message(state.player_data.get(id), tfChat.get_text()));
+					}
 					showChatTf = false;
 					widgets.get(7).setVisible(false);
-					activeTF = null;
-					//rebuild_gui();
+					activeTF = null;						
+				}else {
+					showChatTf = true;
+					widgets.get(7).setVisible(true);
 				}
-				
 			}
 		});
 		if(showChatTf) {
@@ -2112,14 +2114,7 @@ public class LocalUI extends UI implements InputProcessor {
 			} else
 				return false;
 		}else  if(keycode == Keys.ENTER) {
-			this.showChatTf = !this.showChatTf;
-			if(showChatTf) {
-				//FIXME change this when widgets have names
-				check_on_click_widgets(new Vector2(10, window_size.y - 68));
-				activeTF.setVisible(true);
-			}else {
-				
-			}
+			check_on_click_widgets(new Vector2(10, window_size.y - 68));
 			//rebuild_gui();
 			return true;
 		}else
