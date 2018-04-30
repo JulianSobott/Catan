@@ -47,8 +47,8 @@ public enum Language {
 	TRADE("Trade", "Handeln"), 
 	BANK("Bank", "Bank"),
 	PLAYER("Player", "Spieler"),
-	CMD_SELECT_WANTED("Select wanted resources", "W\00C4hle Resourcen die du willst"),
-	CMD_SELECT_OFFERED("select resources that you offer", "W\00C4hle Resourcen, die du anbietest"),
+	CMD_SELECT_WANTED("I want", "Ich fordere"),
+	CMD_SELECT_OFFERED("I offer", "Ich biete"),
 	ALL_OFFERS("All offers", "Alle Angebote"),
 	OFFER("Offer", "Angebot"),
 	ACCEPT("Accept", "Annehmen"),
@@ -63,6 +63,9 @@ public enum Language {
 	MONOPOL("Monopol", "Monopol"),
 	SEND("Send", "Abschicken"),
 	MOVE_ROBBER("Move Robber", "R\u00E4uber versetzen"),
+	CONNECTION_LOST("{} lost connection to the game","{} hat die Verbindung zum Spiel verloren"),
+	WAIT("Wait", "Warten"),
+	BACK_TO_LOBBY("Back to Lobby", "Zur\u00FCck zum Hauptmen\u00FC"),
 	//After Game
 	WINNER("{} won this game", "{} hat gewonnen"), ;
 

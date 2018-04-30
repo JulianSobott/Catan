@@ -327,6 +327,7 @@ public class Framework extends ApplicationAdapter {
 	}
 	
 	public void reset_game() {
+		gameLogic.resetGame();
 		data_connection.closeAllResources();
 		data_connection = null;
 	}	

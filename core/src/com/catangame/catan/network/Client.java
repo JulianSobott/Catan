@@ -154,6 +154,9 @@ public class Client extends Networkmanager {
 		case MESSAGE:
 			ui.addNewMessage(((Packet.MessageData) packet.data).msg);
 			break;
+		case CONNECTION_LOST:
+			ui.showConnectionLost(((Packet.StringData) packet.data).string);
+			break;
 		default:
 			System.err.println("Unknown Command reached Client" + packet.getCommand());
 		}

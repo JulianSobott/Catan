@@ -47,6 +47,7 @@ import com.catangame.catan.local.gui.Container;
 import com.catangame.catan.local.gui.Label;
 import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.local.gui.MessageField;
+import com.catangame.catan.local.gui.PopUp;
 import com.catangame.catan.local.gui.ScrollContainer;
 import com.catangame.catan.local.gui.TextField;
 import com.catangame.catan.local.gui.Widget;
@@ -78,7 +79,6 @@ public class LocalUI extends UI implements InputProcessor {
 	private Framework framework;
 	private Vector2 window_size;
 	private OrthographicCamera camera;
-	private Vector2i mousePosition = new Vector2i(0,0);
 	// fonts
 	private BitmapFont std_font;
 	public float scale = 2;
@@ -217,6 +217,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 	public void build_lobby() {
 		destroy_widgets();
+
 		mode = GUIMode.LOBBY;
 
 		int mm_button_width = 400;
@@ -284,10 +285,12 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btn);
 		// rearrange buttons
 		for (int i = 0; i < widgets.size(); i++) {
-			Button button = (Button) widgets.get(i);
-			button.set_position(new Vector2((window_size.x - mm_button_width) * 0.5f,
-					(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
-							+ (mm_button_height + mm_button_spacing) * i));
+			if(widgets.get(i) instanceof Button) {
+				Button button = (Button) widgets.get(i);
+				button.set_position(new Vector2((window_size.x - mm_button_width) * 0.5f,
+						(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
+								+ (mm_button_height + mm_button_spacing) * i));
+			}		
 		}
 	}
 
@@ -644,6 +647,7 @@ public class LocalUI extends UI implements InputProcessor {
 		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
 		widgets.add(lblWindow);
 		Button btnClose = new Button("X", new Rectangle(window_size.x - 70, 25, 40, 40));
+		btnClose.set_text_color(Color.RED);
 		btnClose.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -783,7 +787,7 @@ public class LocalUI extends UI implements InputProcessor {
 			//All Resources for offer
 			i = 0;
 			float start2 = window_size.x / 4 + 20;
-			Label lblOfferedResources = new Label(Language.CMD_SELECT_OFFERED.get_text(), new Rectangle(370, 100, 300, 50));
+			Label lblOfferedResources = new Label(Language.CMD_SELECT_OFFERED.get_text(), new Rectangle(start2, 100, 300, 50));
 			lblOfferedResources.set_text_color(Color.WHITE);
 			widgets.add(lblOfferedResources);
 			for (final Resource r : Resource.values()) {
@@ -2410,30 +2414,37 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 	
 	private void resetData(boolean textFields) {
-		guests.clear();
-		tradeOffer = null;
+		// gui data
+		activeTF = null;
+		showChatTf = false;
+		showDevelopmentCards = false;
+		messages = new LinkedList<Message>();
+		allScrollContainer = new ArrayList<ScrollContainer>();
+
+		// lobby
+		savedGame = null;
+		guests = new ArrayList<String>();
+		allPossiblePlayer = new ArrayList<Player>();
+		idxPlayer = 0;
+		tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
+		
+		buttonsEnabled = true;
+
+		//Trading
 		tradeDemand = null;
-		if(allGames != null) {
-			allGames.clear();
-		}
+		tradeOffer = null;
+		allTradeOffer = new ArrayList<TradeOffer>();
+	
+		//Menu
+		allGames = null;
 		allJoinableGames = null;
-		allPossiblePlayer = null;
-		allTradeOffer.clear();
-		onlineLobby = false;
-		state.field_resources = new HashMap<Resource, List<Vector2>>();
-		state.field_numbers = new HashMap<Byte, List<Vector2>>();
-		state.villages = new HashMap<Integer, List<Vector2>>();
-		state.cities = new HashMap<Integer, List<Vector2>>();
-		state.streets = new HashMap<Integer, List<AbstractStreet>>();
-		if(player != null) {
-			player.clear();
-		}
+		//End Screen 
+		player = null;
 		
 		if(textFields) {
 			serverIP = "";
 			tf_value_ip = "127.0.0.1";
 			tf_value_name = "Anonymous";
-			tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
 			tf_value_size = "5";
 			tf_value_random_houses = "1";
 			tf_value_resource_houses = "1";
@@ -2451,10 +2462,37 @@ public class LocalUI extends UI implements InputProcessor {
 	
 	@Override
 	public void addNewMessage(Message msg) {
-		// TODO Auto-generated method stub
 		this.messages.add(msg);
-		
 		rebuild_gui();
+	}
+
+	public void showConnectionLost(String playerName) {
+		final PopUp p = new PopUp(Language.CONNECTION_LOST.get_text(playerName), new Rectangle(50, Gdx.graphics.getHeight()/2 - 125, Gdx.graphics.getWidth() - 100, 250));
+		p.set_font(FontMgr.getFont(30));
+		p.setFontColor(new com.badlogic.gdx.graphics.Color(158/255, 31/255, 31/255, .95f));
+		widgets.add(p);
+		Button btnWait = new Button(Language.WAIT.get_text(), new Rectangle(100, p.get_size().y - 60, 60, 50));
+		btnWait.adjustWidth(10);
+		btnWait.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				widgets.remove(p);
+			}
+		});
+		p.addWidget(btnWait);
+		Button btnBackToLobby = new Button(Language.BACK_TO_LOBBY.get_text(), new Rectangle(300, p.get_size().y - 60, 160, 50));
+		btnBackToLobby.adjustWidth(10);
+		btnBackToLobby.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				mode = GUIMode.LOBBY;
+				state.mode = GameMode.main_menu;
+				framework.reset_game();
+				resetData(false);
+				rebuild_gui();
+			}
+		});
+		p.addWidget(btnBackToLobby);
 	}
 }
 
