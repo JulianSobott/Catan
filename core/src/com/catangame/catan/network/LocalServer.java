@@ -134,6 +134,12 @@ public class LocalServer extends Server {
 		case MESSAGE:
 			core.newChatMessage(((Packet.MessageData)packet.data).msg);
 			break;
+		case CONNECTION_LOST:
+			if(packet.data == null) {
+				core.clientLostConnection(id);
+				break;
+			}
+			
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}

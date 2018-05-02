@@ -37,7 +37,7 @@ public abstract class UI {
 
 	public abstract void closeTradeWindow();
 
-	public abstract void show_kicked();
+	public abstract void show_kicked(String string);
 	public abstract void showAllPossibleNames(List<Player> player);
 	public abstract void showEndScreen(int winnerID, List<Player> player);
 
@@ -50,4 +50,5 @@ public abstract class UI {
 
 	public abstract void showDemandDeclined(int id);
 	public abstract void addNewMessage(Message msg);
+	public abstract void showConnectionLost(String playerName);
 }

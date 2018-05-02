@@ -114,7 +114,7 @@ public class Client extends Networkmanager {
 			gameLogic.setID(((Packet.ID) packet.data).getID());
 			break;
 		case SHOW_KICKED:
-			ui.show_kicked();
+			ui.show_kicked(((Packet.StringData)packet.data).string);
 			break;
 		case SHOW_ALL_POSSIBLE_NAMES:
 			ui.showAllPossibleNames(((Packet.PlayerList)packet.data).getPlayer());	

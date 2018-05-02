@@ -137,6 +137,11 @@ public class RemoteCore extends Core {
 		//Do nothing ??
 	}
 
+	@Override
+	public void clientLeaveGame(int id) {
+		this.client.sendMessage(new Packet(Command.CONNECTION_LOST));
+	}
+
 	
 
 }

@@ -19,7 +19,7 @@ public class ClientInputListener extends Thread{
 	
 	public void run() {
 		while(connectionToServer) {
-			if(input != null) {		
+			if(input != null && connectionToServer == true) {		
 				try {
 					final Packet packet;
 					packet = (Packet) input.readObject();

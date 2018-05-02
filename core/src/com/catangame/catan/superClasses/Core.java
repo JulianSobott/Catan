@@ -54,4 +54,6 @@ public abstract class Core {
 
 	public abstract void resetGame();
 
+	public abstract void clientLeaveGame(int id);
+
 }

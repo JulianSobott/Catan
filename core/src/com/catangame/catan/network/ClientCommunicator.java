@@ -50,6 +50,13 @@ public class ClientCommunicator extends Thread{
 			}catch(IOException e) {
 				System.err.println("End of File Exception at ClientCommunicator => stopped running");
 				this.running = false;
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						localDataServer.message_from_client(id, new Packet(Command.CONNECTION_LOST));
+					}
+				});
+				
 			} catch (ClassNotFoundException e) {
 				System.err.println("Object is from unknown Class");
 				e.printStackTrace();

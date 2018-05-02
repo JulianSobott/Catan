@@ -86,8 +86,8 @@ public class RemoteUI extends UI {
 	}
 
 	@Override
-	public void show_kicked() {
-		server.message_to_client(id, new Packet(Command.SHOW_KICKED));
+	public void show_kicked(String name) {
+		server.message_to_client(id, new Packet(Command.SHOW_KICKED, new Packet.StringData(name)));
 	}
 	@Override
 	public void showAllPossibleNames(List<Player> player) {
@@ -127,6 +127,11 @@ public class RemoteUI extends UI {
 	@Override
 	public void addNewMessage(Message msg) {
 		server.message_to_client(id, new Packet(Command.MESSAGE, new Packet.MessageData(msg)));
+	}
+
+	@Override
+	public void showConnectionLost(String playerName) {
+		server.message_to_client(id, new Packet(Command.CONNECTION_LOST, new Packet.StringData(playerName)));
 	}
 
 }

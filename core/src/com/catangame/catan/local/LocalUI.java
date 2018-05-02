@@ -1610,6 +1610,7 @@ public class LocalUI extends UI implements InputProcessor {
 			@Override
 			public void run() {
 				//TODO inform server
+				core.clientLeaveGame(id);
 				resetData(false);
 				build_lobby();
 			}
@@ -2328,10 +2329,15 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	@Override
-	public void show_kicked() {
-		mode = GUIMode.LOBBY;
-		resetData(false);
-		rebuild_gui();
+	public void show_kicked(String name) {
+		if(name == this.tf_value_name) {
+			mode = GUIMode.LOBBY;
+			resetData(false);
+			rebuild_gui();
+		}else {
+			guests.remove(name);
+		}
+		
 	}
 
 	public void showIpInLobby(String ip) {
@@ -2467,32 +2473,39 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	public void showConnectionLost(String playerName) {
-		final PopUp p = new PopUp(Language.CONNECTION_LOST.get_text(playerName), new Rectangle(50, Gdx.graphics.getHeight()/2 - 125, Gdx.graphics.getWidth() - 100, 250));
-		p.set_font(FontMgr.getFont(30));
-		p.setFontColor(new com.badlogic.gdx.graphics.Color(158/255, 31/255, 31/255, .95f));
-		widgets.add(p);
-		Button btnWait = new Button(Language.WAIT.get_text(), new Rectangle(100, p.get_size().y - 60, 60, 50));
-		btnWait.adjustWidth(10);
-		btnWait.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				widgets.remove(p);
-			}
-		});
-		p.addWidget(btnWait);
-		Button btnBackToLobby = new Button(Language.BACK_TO_LOBBY.get_text(), new Rectangle(300, p.get_size().y - 60, 160, 50));
-		btnBackToLobby.adjustWidth(10);
-		btnBackToLobby.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				mode = GUIMode.LOBBY;
-				state.mode = GameMode.main_menu;
-				framework.reset_game();
-				resetData(false);
-				rebuild_gui();
-			}
-		});
-		p.addWidget(btnBackToLobby);
+		if(mode == GUIMode.HOST_LOBBY) {
+			guests.remove(playerName);
+			rebuild_gui();
+		}else {
+			final PopUp p = new PopUp(Language.CONNECTION_LOST.get_text(playerName), new Rectangle(50, Gdx.graphics.getHeight()/2 - 125, Gdx.graphics.getWidth() - 100, 250));
+			p.set_font(FontMgr.getFont(30));
+			p.setFontColor(new com.badlogic.gdx.graphics.Color(158/255, 31/255, 31/255, .95f));
+			widgets.add(p);
+			Button btnWait = new Button(Language.WAIT.get_text(), new Rectangle(100, p.get_size().y - 60, 60, 50));
+			btnWait.adjustWidth(10);
+			btnWait.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					widgets.remove(p);
+				}
+			});
+			p.addWidget(btnWait);
+			Button btnBackToLobby = new Button(Language.BACK_TO_LOBBY.get_text(), new Rectangle(300, p.get_size().y - 60, 160, 50));
+			btnBackToLobby.adjustWidth(10);
+			btnBackToLobby.set_click_callback(new Runnable() {
+				@Override
+				public void run() {
+					core.clientLeaveGame(id);
+					mode = GUIMode.LOBBY;
+					state.mode = GameMode.main_menu;
+					framework.reset_game();
+					resetData(false);
+					rebuild_gui();
+				}
+			});
+			p.addWidget(btnBackToLobby);
+		}
+		
 	}
 }
 

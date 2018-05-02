@@ -575,14 +575,9 @@ public class LocalCore extends Core {
 			}
 		}
 		for (UI ui : uis) {
-			if (ui.getID() == id) {
-				ui.show_kicked();
-			}
+			ui.show_kicked(name);
 		}
-		player.remove(id);
-		uis.remove(id);
-		logics.remove(id);
-		data_server.remove_client(id);
+		removePlayer(id);
 	}
 
 	public boolean getLoadedGame() {
@@ -948,4 +943,38 @@ public class LocalCore extends Core {
 		this.player.clear();
 	}
 
+	public void clientLostConnection(int id) {
+		int idx;
+		for(idx = 0; idx < this.player.size(); idx++) {
+			if(player.get(idx).getId() == id) {
+				break;
+			}
+		}
+		String name = this.player.get(idx).getName();
+		removePlayer(id);
+		for(UI ui : uis) {
+			ui.showConnectionLost(name);
+		}
+	}
+
+	private void removePlayer(int id) {
+		int idx;
+		for(idx = 0; idx < this.player.size(); idx++) {
+			if(player.get(idx).getId() == id) {
+				break;
+			}
+		}
+		player.remove(idx);
+		uis.remove(idx);
+		logics.remove(idx);
+		data_server.remove_client(id);
+	}
+
+	@Override
+	public void clientLeaveGame(int id) {
+		removePlayer(id);
+		for(UI ui : uis) {
+			ui.show_kicked(player.get(id).getName());
+		}
+	}
 }
