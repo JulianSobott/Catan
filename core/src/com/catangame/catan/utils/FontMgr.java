@@ -2,8 +2,6 @@ package com.catangame.catan.utils;
 
 import java.util.Map.Entry;
 import java.util.HashMap;
-import java.util.TreeMap;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -15,7 +13,7 @@ public class FontMgr {
     static private HashMap<FontSpec, BitmapFont> fontMap = new HashMap<>();
 
     public enum Type {
-        DEFAULT, ROBOTO_LIGHT, OPEN_SANS_REGULAR
+        DEFAULT, ROBOTO_LIGHT, OPEN_SANS_REGULAR, Amatic, Quicksand
     }
 
     static class FontSpec {
@@ -32,6 +30,8 @@ public class FontMgr {
         fontGenerator.put(Type.DEFAULT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Canterbury.ttf")));
         fontGenerator.put(Type.ROBOTO_LIGHT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Roboto-Light.ttf")));
         fontGenerator.put(Type.OPEN_SANS_REGULAR, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/OpenSans-Regular.ttf")));
+        fontGenerator.put(Type.Amatic, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Quicksand-Bold.otf")));
+        fontGenerator.put(Type.Quicksand, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/AmaticSC-Regular.ttf")));
 
     }
 

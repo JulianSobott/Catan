@@ -1277,7 +1277,11 @@ public class LocalUI extends UI implements InputProcessor {
 		int i = 0;
 		
 		Label lblNum = new Label(Language.TO_MUCH_RESOURCES.get_text(Integer.toString(state.numToRemove)), new Rectangle(start1, 40, 100, 50));
-		lblNum.set_fill_color(Color.RED);
+		if(state.numToRemove > 0) {
+			lblNum.set_fill_color(Color.RED);
+		}else {
+			lblNum.set_fill_color(Color.GREEN);
+		}	
 		lblNum.adjustWidth(7);
 		widgets.add(lblNum);
 		
@@ -1298,7 +1302,7 @@ public class LocalUI extends UI implements InputProcessor {
 				if (state.removedResources.containsKey(r)) {
 					btnResource.set_fill_color(r.get_color());
 					btnResource.set_text_color(Color.WHITE);
-					btnResource.set_outline(Color.GREEN, 2);
+					btnResource.set_outline(Color.RED, 2);
 				} else {
 					Color c = r.get_color();
 					btnResource.set_text_color(Color.BLACK);
@@ -1360,6 +1364,11 @@ public class LocalUI extends UI implements InputProcessor {
 		}
 		Button btnSend = new Button(Language.SEND.get_text(),
 				new Rectangle(window_size.x - 300, window_size.y - 110, 200, 70));
+		if(state.numToRemove > 0) {
+			btnSend.set_enabled(false);
+		}else {
+			btnSend.set_enabled(true);
+		}
 		btnSend.set_fill_color(Color.GREEN);
 		btnSend.set_click_callback(new Runnable() {
 			@Override
@@ -2056,6 +2065,15 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(btnGame);
 			i++;
 		}
+		Button btnBack = new Button(Language.BACK.get_text(), new Rectangle(20, window_size.y - 70, 100, 50));
+		btnBack.adjustWidth(5);
+		btnBack.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+				build_lobby();
+			}
+		});
+		widgets.add(btnBack);
 	}
 
 	public void buildEndScreen() {

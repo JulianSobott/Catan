@@ -552,9 +552,9 @@ public class LocalCore extends Core {
 	public void saveGame(String game_name) {
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
-		SavedGame game = new SavedGame(map.getFields(), player, date, current_player);
+		SavedGame game = new SavedGame(map.getFields(), player, date, current_player, map.harbours);
 		if (game_name.isEmpty()) {
-			game_name = "QuickSave_" + c.get(c.YEAR) + "_" + c.get(c.MONTH) + 1 + "_" + c.get(c.DAY_OF_MONTH) + "_"
+			game_name = "QuickSave_" + c.get(c.YEAR) + "_" + (c.get(c.MONTH) + 1) + "_" + c.get(c.DAY_OF_MONTH) + "_"
 					+ c.get(c.HOUR_OF_DAY);
 		}
 		game.setName(game_name);
@@ -605,6 +605,7 @@ public class LocalCore extends Core {
 		newPlayerdata.add(savedGame.getPlayer().get(0)); //Always add Host
 		player = newPlayerdata;
 		map.set_fields(savedGame.getFields());
+		map.harbours = savedGame.getHarbours();
 		update_scoreboard_data();
 		for (UI ui : uis) {
 			ui.build_game_menu();
@@ -619,9 +620,9 @@ public class LocalCore extends Core {
 		}
 		for (GameLogic logic : logics) {
 			logic.set_mode(GameMode.game);
-			//FIXME add harbours to saved game
-			//logic.update_new_map(map.getFields());
+			logic.update_new_map(map.getFields(), map.harbours);
 			logic.update_buildings(new_buildings);
+
 		}
 	}
 

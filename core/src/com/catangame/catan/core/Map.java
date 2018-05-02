@@ -43,7 +43,7 @@ public class Map {
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
 	private List<Vector2i> availableHarbourPlaces = new ArrayList<Vector2i>();
-	java.util.Map<Vector2, Resource> harbours = new HashMap<Vector2, Resource>(); 
+	public java.util.Map<Vector2, Resource> harbours = new HashMap<Vector2, Resource>(); 
 	private int number;
 	
 
@@ -485,5 +485,5 @@ public class Map {
 		}
 		return harbours;
 	}
-
+	
 }

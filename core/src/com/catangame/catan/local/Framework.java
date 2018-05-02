@@ -42,6 +42,7 @@ import com.catangame.catan.network.LocalServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
+import com.catangame.catan.utils.FontMgr.Type;
 import com.catangame.catan.utils.TextureMgr;
 
 public class Framework extends ApplicationAdapter {

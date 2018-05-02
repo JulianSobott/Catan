@@ -40,6 +40,7 @@ public class ClientInputListener extends Thread{
 						}
 					});			
 				}catch(IOException e) {
+					this.connectionToServer = false;
 					e.printStackTrace();
 				}catch(ClassNotFoundException e) {
 					System.err.println("Object is from unknown Class");
