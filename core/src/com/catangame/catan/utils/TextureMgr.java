@@ -18,7 +18,6 @@ public class TextureMgr {
 	public static void init() {
 		//Load all resources 
 		String folderPath = "assets/res/";
-		System.out.println(Gdx.files.getLocalStoragePath());
 		File folder = new File(Gdx.files.getLocalStoragePath() + folderPath);
 		FileHandle[] images = Gdx.files.local("assets/res/").list();
 		for(final FileHandle img : images) {
