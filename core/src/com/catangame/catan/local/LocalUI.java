@@ -312,7 +312,7 @@ public class LocalUI extends UI implements InputProcessor {
 		//player resources
 		Label lblResource = null;
 		int pos_count = 1;
-		float cards_width = 120;
+		float cards_width = 70;
 		final float orientationAnchor = (window_size.x / 2) - 200;
 		Widget.set_default_outline_color(Color.WHITE);
 		Iterator<Entry<Resource, Integer>> it = state.my_player_data.get_all_resources().entrySet().iterator();
@@ -321,12 +321,12 @@ public class LocalUI extends UI implements InputProcessor {
 			java.util.Map.Entry<Resource, Integer> pair = (java.util.Map.Entry<Resource, Integer>) it.next();
 			Resource r = pair.getKey();
 			int num = pair.getValue();
-			lblResource = new Label("   " + Integer.toString(num),
-					new Rectangle(5, 200 + 60 * i, cards_width, 55));
+			lblResource = new Label("  " + Integer.toString(num),
+					new Rectangle(5, 200 + (cards_width + 5) * i, cards_width, cards_width));
 			lblResource.set_fill_color(r.get_color());
-			lblResource.set_outline(Color.BLACK, 2);
+			//lblResource.set_outline(Color.BLACK, 2);
 			lblResource.setTexture(TextureMgr.getTexture(r.name()));
-			lblResource.set_text_color(Color.WHITE);
+			lblResource.set_text_color(new Color(20, 20, 30, 255));
 			mapLblNumResources.put(r, lblResource);
 			widgets.add(lblResource);
 			i++;
