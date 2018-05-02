@@ -36,6 +36,10 @@ public abstract class Widget {
 	public Widget(Rectangle bounds) {
 		update_bounds(bounds);
 	}
+	
+	public enum Animation{
+		TEXT_BLINK
+	}
 
 	protected void update_bounds(Rectangle bounds) {
 		this.bounds = bounds;

@@ -1,5 +1,8 @@
 package com.catangame.catan.local.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -24,6 +27,10 @@ public class Label extends Widget {
 	private Vector2 textPosition;
 
 	private boolean visible = true;
+	
+	private List<Animation> animations = new ArrayList<>();
+	private long animationStart;
+	private boolean visibleText = true;
 
 	public Label(String text, Rectangle bounds) {
 		super(bounds);
@@ -59,11 +66,26 @@ public class Label extends Widget {
 				sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 				sr.end();
 			}
-
-			sb.begin();
-			font.setColor(textColor.gdx());
-			font.draw(sb, text, textPosition.x, textPosition.y);
-			sb.end();
+			if(animations.contains(Animation.TEXT_BLINK)) {
+				if(visibleText) {
+					if(System.currentTimeMillis() - this.animationStart > 1000) {
+						visibleText = !visibleText;
+						this.animationStart = System.currentTimeMillis();
+					}
+				}else {
+					if(System.currentTimeMillis() - this.animationStart > 500) {
+						visibleText = !visibleText;
+						this.animationStart = System.currentTimeMillis();
+					}
+				}
+				
+			}
+			if(visibleText) {
+				sb.begin();
+				font.setColor(textColor.gdx());
+				font.draw(sb, text, textPosition.x, textPosition.y);
+				sb.end();
+			}	
 		}
 	}
 
@@ -108,5 +130,14 @@ public class Label extends Widget {
 		GlyphLayout layout = new GlyphLayout(font, text);
 		update_bounds(new Rectangle(bounds.x, bounds.y, layout.width + padding * 2, bounds.height));
 		set_position(new Vector2(bounds.x, bounds.y));
+	}
+
+	public void animate(Animation animation) {
+		this.animations.add(animation);
+		this.animationStart = System.currentTimeMillis();
+	}
+	
+	public void stopAnimating() {
+		this.animations = new ArrayList<>();
 	}
 }

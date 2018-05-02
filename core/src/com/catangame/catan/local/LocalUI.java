@@ -51,6 +51,7 @@ import com.catangame.catan.local.gui.PopUp;
 import com.catangame.catan.local.gui.ScrollContainer;
 import com.catangame.catan.local.gui.TextField;
 import com.catangame.catan.local.gui.Widget;
+import com.catangame.catan.local.gui.Widget.Animation;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.UI;
 import com.catangame.catan.utils.FontMgr;
@@ -111,6 +112,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private Label lblOreCards;
 	private Label lblInfo;
 	private Button btnTrade;
+	private java.util.Map<Resource, Widget> mapLblNumResources = new HashMap<Resource, Widget>();
 	
 	boolean buttonsEnabled = true;
 
@@ -325,6 +327,7 @@ public class LocalUI extends UI implements InputProcessor {
 			lblResource.set_outline(Color.BLACK, 2);
 			lblResource.setTexture(TextureMgr.getTexture(r.name()));
 			lblResource.set_text_color(Color.WHITE);
+			mapLblNumResources.put(r, lblResource);
 			widgets.add(lblResource);
 			i++;
 		}
@@ -435,6 +438,7 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuildVillage.addHover(new Runnable() {	
 			@Override
 			public void run() {
+				
 				if(cVillage.widgets.size() == 0) {
 					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
 					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
@@ -448,12 +452,25 @@ public class LocalUI extends UI implements InputProcessor {
 					lblText.set_text_color(Color.WHITE);
 					cVillage.addWidget(lblText);
 				}
+				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
+				for(Resource r : neededresources.keySet()) {
+					((Label)(mapLblNumResources.get(r))).set_text( "   " + (state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
+					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					((Label)(mapLblNumResources.get(r))).animate(Animation.TEXT_BLINK);
+				 }
 				cVillage.visible = true;
 			}
 		}, new Runnable() {
 			@Override
 			public void run() {
 				cVillage.visible = false;
+				
+				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
+				for(Resource r : neededresources.keySet()) {
+					 ((Label)(mapLblNumResources.get(r))).set_text("   " + state.my_player_data.get_resources(r) + "");
+					 ((Label)(mapLblNumResources.get(r))).set_text_color(Color.WHITE);
+					 ((Label)(mapLblNumResources.get(r))).stopAnimating();;
+				 }
 			}
 		});
 		widgets.add(cVillage);
