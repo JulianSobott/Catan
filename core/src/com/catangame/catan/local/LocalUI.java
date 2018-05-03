@@ -456,7 +456,6 @@ public class LocalUI extends UI implements InputProcessor {
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text( "   " + (state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
 					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
-					((Label)(mapLblNumResources.get(r))).animate(Animation.TEXT_BLINK);
 				 }
 				cVillage.visible = true;
 			}
@@ -468,8 +467,7 @@ public class LocalUI extends UI implements InputProcessor {
 				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					 ((Label)(mapLblNumResources.get(r))).set_text("   " + state.my_player_data.get_resources(r) + "");
-					 ((Label)(mapLblNumResources.get(r))).set_text_color(Color.WHITE);
-					 ((Label)(mapLblNumResources.get(r))).stopAnimating();;
+					 ((Label)(mapLblNumResources.get(r))).set_text_color(new Color(20, 20, 30, 255));
 				 }
 			}
 		});
