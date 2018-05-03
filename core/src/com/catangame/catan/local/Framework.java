@@ -335,5 +335,9 @@ public class Framework extends ApplicationAdapter {
 	public void reset_game() {
 		data_connection.closeAllResources();
 		data_connection = null;
-	}	
+	}
+	
+	public OrthographicCamera getCamera() {
+		return this.camera;
+	}
 }
