@@ -30,8 +30,6 @@ public class ClientInputListener extends Thread{
 						}
 					});				
 				}catch(EOFException e) {
-					e.printStackTrace();
-					System.err.println("Connection to Server closed (ClientInputListener Line 26)");
 					this.connectionToServer = false;
 					Gdx.app.postRunnable(new Runnable() {
 						@Override
@@ -41,7 +39,12 @@ public class ClientInputListener extends Thread{
 					});			
 				}catch(IOException e) {
 					this.connectionToServer = false;
-					e.printStackTrace();
+					Gdx.app.postRunnable(new Runnable() {
+						@Override
+						public void run() {
+							client.message_from_core(new Packet(Command.CONNECTION_LOST, new Packet.StringData("Host")));
+						}
+					});		
 				}catch(ClassNotFoundException e) {
 					System.err.println("Object is from unknown Class");
 					e.printStackTrace();
@@ -59,6 +62,7 @@ public class ClientInputListener extends Thread{
 		try {
 			this.input.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.err.println("Can't close Listener at ClientInputListener");
 		}
 	}

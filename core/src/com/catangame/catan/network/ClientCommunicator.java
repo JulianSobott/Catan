@@ -82,7 +82,8 @@ public class ClientCommunicator extends Thread{
 			this.input.close();
 			this.output.close();
 		} catch (IOException e) {
-			System.err.println("Can't close Listener at ClientCommunicator");
+			e.printStackTrace();
+			System.err.println("Can't close Listener at ClientCommunicator"+  e.getMessage());	
 		}
 	}
 

@@ -958,7 +958,7 @@ public class LocalCore extends Core {
 		}
 	}
 
-	private void removePlayer(int id) {
+	private void removePlayer(int id){
 		int idx;
 		for(idx = 0; idx < this.player.size(); idx++) {
 			if(player.get(idx).getId() == id) {
@@ -968,7 +968,9 @@ public class LocalCore extends Core {
 		player.remove(idx);
 		uis.remove(idx);
 		logics.remove(idx);
-		data_server.remove_client(id);
+		if(id != 0) { // Player is not Host
+			data_server.remove_client(id);
+		}		
 	}
 
 	@Override
