@@ -515,11 +515,21 @@ public class LocalUI extends UI implements InputProcessor {
 					cCity.addWidget(lblText);
 				}
 				cCity.visible = true;
+				java.util.Map<Resource, Integer> neededresources = Building.Type.CITY.getNeededResources();
+				for(Resource r : neededresources.keySet()) {
+					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
+					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+				 }
 			}
 		}, new Runnable() {
 			@Override
 			public void run() {
 				cCity.visible = false;
+				java.util.Map<Resource, Integer> neededresources = Building.Type.CITY.getNeededResources();
+				for(Resource r : neededresources.keySet()) {
+					 ((Label)(mapLblNumResources.get(r))).set_text(state.my_player_data.get_resources(r) + "");
+					 ((Label)(mapLblNumResources.get(r))).set_text_color(new Color(20, 20, 30, 255));
+				 }
 			}
 		});
 		widgets.add(cCity);
@@ -563,11 +573,21 @@ public class LocalUI extends UI implements InputProcessor {
 					cStreet.addWidget(lblText);
 				}
 				cStreet.visible = true;
+				java.util.Map<Resource, Integer> neededresources = Building.Type.STREET.getNeededResources();
+				for(Resource r : neededresources.keySet()) {
+					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
+					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+				 }
 			}
 		}, new Runnable() {
 			@Override
 			public void run() {
 				cStreet.visible = false;
+				java.util.Map<Resource, Integer> neededresources = Building.Type.STREET.getNeededResources();
+				for(Resource r : neededresources.keySet()) {
+					 ((Label)(mapLblNumResources.get(r))).set_text(state.my_player_data.get_resources(r) + "");
+					 ((Label)(mapLblNumResources.get(r))).set_text_color(new Color(20, 20, 30, 255));
+				 }
 			}
 		});
 		widgets.add(cStreet);
@@ -607,11 +627,27 @@ public class LocalUI extends UI implements InputProcessor {
 					cDevCard.addWidget(lblText);
 				}
 				cDevCard.visible = true;
+				java.util.Map<Resource, Integer> neededresources = new HashMap<>();
+				neededresources.put(Resource.GRAIN,	 1);
+				neededresources.put(Resource.ORE,	 1);
+				neededresources.put(Resource.WOOL,	 1);
+				for(Resource r : neededresources.keySet()) {
+					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
+					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+				 }
 			}
 		}, new Runnable() {
 			@Override
 			public void run() {
 				cDevCard.visible = false;
+				java.util.Map<Resource, Integer> neededresources = new HashMap<>();
+				neededresources.put(Resource.GRAIN,	 1);
+				neededresources.put(Resource.ORE,	 1);
+				neededresources.put(Resource.WOOL,	 1);
+				for(Resource r : neededresources.keySet()) {
+					 ((Label)(mapLblNumResources.get(r))).set_text(state.my_player_data.get_resources(r) + "");
+					 ((Label)(mapLblNumResources.get(r))).set_text_color(new Color(20, 20, 30, 255));
+				 }
 			}
 		});
 		widgets.add(cDevCard);
