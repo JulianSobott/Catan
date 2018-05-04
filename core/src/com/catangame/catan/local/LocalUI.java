@@ -59,7 +59,7 @@ import com.catangame.catan.utils.TextureMgr;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
-		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES, STEEL_RESOURCE, JOINABLE_GAMES;
+		LOBBY, JOIN, LOAD, MENU, GUEST_LOBBY, HOST_LOBBY, GAME, TRADE_DEMAND, TRADE_VENDOR, DEV_CARD, END_SCREEN, TO_MUCH_RESOURCES, STEEL_RESOURCE, JOINABLE_GAMES, CONNECTION_LOST;
 	}
 
 	//TODO Either implement this modes or delete this enum!!
@@ -91,6 +91,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private boolean showDevelopmentCards = false;
 	private List<Message> messages = new LinkedList<Message>();
 	private List<ScrollContainer> allScrollContainer = new ArrayList<ScrollContainer>();
+	private String lostConnectionPlayerName = "";
 
 	// lobby
 	private SavedGame savedGame = null;
@@ -184,7 +185,7 @@ public class LocalUI extends UI implements InputProcessor {
 		destroy_widgets();
 		if(state.numToRemove > 0) {
 			buildToMuchResourcesWindow();
-		}else if (mode == GUIMode.LOBBY) {
+		} else if (mode == GUIMode.LOBBY) {
 			build_lobby();
 		} else if (mode == GUIMode.JOIN) {
 			build_join_menu();
@@ -198,20 +199,22 @@ public class LocalUI extends UI implements InputProcessor {
 			build__demander_trade_window();
 		} else if (mode == GUIMode.TRADE_VENDOR) {
 			build_vendor_trade_window();
-		}else if(mode == GUIMode.DEV_CARD) {
+		} else if(mode == GUIMode.DEV_CARD) {
 			buildDevCardWindow();
-		}else if(mode == GUIMode.TO_MUCH_RESOURCES) {
+		} else if(mode == GUIMode.TO_MUCH_RESOURCES) {
 			buildToMuchResourcesWindow();
-		}else if(mode == GUIMode.STEEL_RESOURCE) {
+		} else if(mode == GUIMode.STEEL_RESOURCE) {
 			buildSteelResource();
-		}else if (mode == GUIMode.LOAD) {
+		} else if (mode == GUIMode.LOAD) {
 			build_load_window();
 		} else if (mode == GUIMode.MENU) {
 			build_menu();
 		} else if (mode == GUIMode.END_SCREEN) {
 			buildEndScreen();
-		}else if(mode == GUIMode.JOINABLE_GAMES) {
+		} else if(mode == GUIMode.JOINABLE_GAMES) {
 			buildAllJoinableGamesWindow();
+		} else if(mode == GUIMode.CONNECTION_LOST){
+			showConnectionLost(this.lostConnectionPlayerName);
 		}
 			
 		
@@ -321,10 +324,10 @@ public class LocalUI extends UI implements InputProcessor {
 			java.util.Map.Entry<Resource, Integer> pair = (java.util.Map.Entry<Resource, Integer>) it.next();
 			Resource r = pair.getKey();
 			int num = pair.getValue();
-			lblResource = new Label("  " + Integer.toString(num),
+			lblResource = new Label(Integer.toString(num),
 					new Rectangle(5, 200 + (cards_width + 5) * i, cards_width, cards_width));
 			lblResource.set_fill_color(r.get_color());
-			//lblResource.set_outline(Color.BLACK, 2);
+			lblResource.centerText();
 			lblResource.setTexture(TextureMgr.getTexture(r.name()));
 			lblResource.set_text_color(new Color(20, 20, 30, 255));
 			mapLblNumResources.put(r, lblResource);
@@ -454,7 +457,7 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
-					((Label)(mapLblNumResources.get(r))).set_text( "   " + (state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
+					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
 					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 				cVillage.visible = true;
@@ -466,7 +469,7 @@ public class LocalUI extends UI implements InputProcessor {
 				
 				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
-					 ((Label)(mapLblNumResources.get(r))).set_text("   " + state.my_player_data.get_resources(r) + "");
+					 ((Label)(mapLblNumResources.get(r))).set_text(state.my_player_data.get_resources(r) + "");
 					 ((Label)(mapLblNumResources.get(r))).set_text_color(new Color(20, 20, 30, 255));
 				 }
 			}
@@ -1871,11 +1874,9 @@ public class LocalUI extends UI implements InputProcessor {
 						@Override
 						public void run() {
 							((LocalCore) core).kickPlayer(guest);
-							guests.remove(guest);
 							rebuild_gui();
 						}
 					});
-					widgets.add(btnKickPlayer);
 					widgets.add(btnKickPlayer);
 					i++;
 				}
@@ -2506,6 +2507,8 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	public void showConnectionLost(String playerName) {
+		this.mode = GUIMode.CONNECTION_LOST;
+		this.lostConnectionPlayerName = playerName;
 		if(mode == GUIMode.HOST_LOBBY) {
 			guests.remove(playerName);
 			rebuild_gui();

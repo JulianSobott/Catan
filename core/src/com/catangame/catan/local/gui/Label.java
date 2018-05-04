@@ -27,6 +27,7 @@ public class Label extends Widget {
 	private Vector2 textPosition;
 
 	private boolean visible = true;
+	private boolean centeredText = false;
 	
 	private List<Animation> animations = new ArrayList<>();
 	private long animationStart;
@@ -99,6 +100,8 @@ public class Label extends Widget {
 
 		GlyphLayout layout = new GlyphLayout(font, text);
 		textPosition = new Vector2(bounds.x + 5, bounds.y + (bounds.height - layout.height) * 0.5f);
+		if(this.centeredText)
+			textPosition = new Vector2(bounds.x + bounds.width/2 - layout.width/2, textPosition.y);
 	}
 
 	public void set_font(BitmapFont bitmapFont) {
@@ -139,5 +142,10 @@ public class Label extends Widget {
 	
 	public void stopAnimating() {
 		this.animations = new ArrayList<>();
+	}
+	
+	public void centerText() {
+		this.centeredText = true;
+		this.set_position(new Vector2(this.bounds.x, this.bounds.y));
 	}
 }

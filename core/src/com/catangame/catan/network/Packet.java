@@ -41,8 +41,8 @@ public class Packet implements Serializable {
 
 	public static class Num implements Serializable {
 		private static final long serialVersionUID = 10004L;
-		public Number num;
-		public Num(Number num) {
+		public int num;
+		public Num(int num) {
 			this.num = num;
 		}
 	}

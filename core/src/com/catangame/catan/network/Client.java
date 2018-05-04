@@ -129,7 +129,7 @@ public class Client extends Networkmanager {
 			ui.showDevelopmentCardWindow(((Packet.Developmentcard) packet.data).getCard());
 			break;
 		case SHOW_TO_MUCH_RESOURCES:
-			ui.showToMuchResourcesWindow(((Packet.Num) packet.data).num.intValue());
+			ui.showToMuchResourcesWindow(((Packet.Num) packet.data).num);
 			break;
 		case MOVE_ROBBER:
 			if(packet.data != null) {
