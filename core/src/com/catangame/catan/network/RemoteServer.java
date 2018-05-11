@@ -176,8 +176,10 @@ public class RemoteServer extends Server {
 	@Override
 	public void closeAllResources() {
 		try {
-			output.writeObject(new Packet(Command.EXIT));
-			output.flush();
+			if(output != null) {
+				output.writeObject(new Packet(Command.EXIT));
+				output.flush();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
