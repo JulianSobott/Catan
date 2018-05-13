@@ -201,6 +201,19 @@ public class LocalGameLogic extends GameLogic {
 					Gdx.gl.glDisable(GL20.GL_BLEND);
 					Texture texture = TextureMgr.getTexture("clay");
 					Pixmap pixMap = new Pixmap(Gdx.files.local("assets/res/woodField.png"));
+					if(resource.getKey() == Resource.WOOD)
+						pixMap = new Pixmap(Gdx.files.local("assets/res/woodField.png"));
+					if(resource.getKey() == Resource.GRAIN)
+						pixMap = new Pixmap(Gdx.files.local("assets/res/grainField.png"));
+					if(resource.getKey() == Resource.OCEAN)
+						pixMap = new Pixmap(Gdx.files.local("assets/res/oceanField.png"));
+					if(resource.getKey() == Resource.WOOL)
+						pixMap = new Pixmap(Gdx.files.local("assets/res/woolField.png"));
+					if(resource.getKey() == Resource.CLAY)
+						pixMap = new Pixmap(Gdx.files.local("assets/res/clayField.png"));
+					if(resource.getKey() == Resource.ORE)
+						pixMap = new Pixmap(Gdx.files.local("assets/res/oreField.png"));
+					
 					TextureRegion region = new TextureRegion(new Texture(pixMap));
 					Gdx.gl.glEnable(GL20.GL_BLEND);
 					Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
