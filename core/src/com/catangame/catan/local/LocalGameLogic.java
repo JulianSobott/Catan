@@ -313,18 +313,6 @@ public class LocalGameLogic extends GameLogic {
 				}
 
 			}
-
-			//Render Robber
-			Sprite spriteRobber = new Sprite(robber_txtr);
-			spriteRobber.flip(false, true);
-			//Vector2 pos = Map.index_to_position(state.robberPosition.x , state.robberPosition.y);
-			sb.draw(spriteRobber, state.robberPosition.x - spriteRobber.getWidth() * 0.05f,
-					state.robberPosition.y - spriteRobber.getHeight() * 0.05f, spriteRobber.getWidth() * 0.1f,
-					spriteRobber.getHeight() * 0.1f);
-			sb.end();
-
-
-
 		}
 	}
 
