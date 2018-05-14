@@ -14,6 +14,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,8 +43,9 @@ import com.catangame.catan.network.LocalServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
-import com.catangame.catan.utils.FontMgr.Type;
 import com.catangame.catan.utils.TextureMgr;
+import com.catangame.catan.utils.SoundMgr;
+import com.catangame.catan.utils.FontMgr.Type;
 
 public class Framework extends ApplicationAdapter {
 	public enum DeviceMode {
@@ -54,7 +56,7 @@ public class Framework extends ApplicationAdapter {
 	public static Color clearColor = new Color(0.04f, 0.57f, 1, 1);
 
 	// view & camera
-	private Vector2 windowSize = new Vector2();
+	public static Vector2 windowSize = new Vector2();
 	OrthographicCamera camera;
 	OrthographicCamera guiCamera;
 	float lastZoom;
@@ -101,6 +103,9 @@ public class Framework extends ApplicationAdapter {
 		guiCamera.setToOrtho(true, windowSize.x, windowSize.y);
 		update_view(true);
 
+		//Music
+		SoundMgr.init();
+		//SoundMgr.shuffleMusic();
 		// BitmapFont
 		FontMgr.init();
 		std_font = FontMgr.getFont(30); // font size 12 pixels
@@ -115,7 +120,7 @@ public class Framework extends ApplicationAdapter {
 		multiplexer.addProcessor(ui);
 		if (deviceMode == DeviceMode.DESKTOP)
 			multiplexer.addProcessor(new InputAdapter() {
-				
+
 				@Override
 				public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 					if (button == Input.Buttons.RIGHT) {
@@ -155,7 +160,7 @@ public class Framework extends ApplicationAdapter {
 				@Override
 				public boolean scrolled(int amount) {
 					camera.zoom *= Math.pow(0.9f, (float) -amount);
-					update_view(false);	
+					update_view(false);
 					return true;
 				}
 			});
@@ -213,6 +218,7 @@ public class Framework extends ApplicationAdapter {
 		sr.setProjectionMatrix(guiCamera.combined);
 		sb.setProjectionMatrix(guiCamera.combined);
 		ui.render(sr, sb);
+
 
 		// pause
 		long time = Math.max(0,
@@ -304,7 +310,7 @@ public class Framework extends ApplicationAdapter {
 
 		return true;
 	}
-	
+
 	public void initOnlineGuestGame() {
 		String serverIP;
 		serverIP = "93.222.148.241";
@@ -319,17 +325,21 @@ public class Framework extends ApplicationAdapter {
 		gameLogic.setCore(core);
 		gameLogic.setUI(ui);
 		((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
-		
+
 	}
-	
+
 	public void publicizeGame() {
 		reset_game();
 		initOnlineHostGame();
 	}
-	
+
 	public void reset_game() {
 		gameLogic.resetGame();
 		data_connection.closeAllResources();
 		data_connection = null;
-	}	
+	}
+
+	public OrthographicCamera getCamera() {
+		return this.camera;
+	}
 }

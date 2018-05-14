@@ -40,11 +40,13 @@ import com.catangame.catan.data.SavedGame;
 import com.catangame.catan.local.LocalState.Action;
 import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.local.TradeDemand.Vendor;
+import com.catangame.catan.local.gui.Background;
 import com.catangame.catan.local.gui.Button;
 import com.catangame.catan.local.gui.Checkbox;
 import com.catangame.catan.local.gui.ColorPicker;
 import com.catangame.catan.local.gui.Container;
 import com.catangame.catan.local.gui.Label;
+import com.catangame.catan.local.gui.LobbyBackground;
 import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.local.gui.MessageField;
 import com.catangame.catan.local.gui.PopUp;
@@ -229,6 +231,9 @@ public class LocalUI extends UI implements InputProcessor {
 		int mm_button_height = 100;
 		int mm_button_spacing = 10;
 
+		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
+		widgets.add(background);
+
 		Button btn = new Button(Language.CREATE_NEW_GAME.get_text(),
 				new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.addHoverEffect1();
@@ -297,6 +302,7 @@ public class LocalUI extends UI implements InputProcessor {
 								+ (mm_button_height + mm_button_spacing) * i));
 			}
 		}
+
 	}
 
 	public void build_game_menu() {
@@ -2249,7 +2255,9 @@ public class LocalUI extends UI implements InputProcessor {
 				e.printStackTrace();
 				System.err.println(i);
 			}
+
 		}
+
 	}
 
 	// returns true if was on a widget
@@ -2270,7 +2278,7 @@ public class LocalUI extends UI implements InputProcessor {
 				widget.do_mouse_click(cursor_position);
 				//Neccessary for the trading window
 				if (!(widget instanceof Label)) {
-					break;
+					//break;
 				}
 			}
 		}
