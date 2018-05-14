@@ -198,6 +198,7 @@ public class LocalGameLogic extends GameLogic {
 					sr.ellipse(pos.x - Map.field_size / 2, pos.y - Map.field_size / 2, Map.field_size, Map.field_size,
 							30, 6);
 					sr.end();
+					/*
 					Gdx.gl.glDisable(GL20.GL_BLEND);
 					Texture texture = TextureMgr.getTexture("clay");
 					Pixmap pixMap = new Pixmap(Gdx.files.local("assets/res/woodField.png"));

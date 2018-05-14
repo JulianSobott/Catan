@@ -272,15 +272,19 @@ public class LocalUI extends UI implements InputProcessor {
 
 		widgets.add(btn);
 
-		btn = new Button(Language.OPTIONS.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
+		btn = new Button(Language.CHANGE_LANGUAGE.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.addHoverEffect1();
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("Options");
+				if(Language.getCurrentLanguage() == Language.Type.german)
+					Language.set_language(Language.Type.english);
+				else
+					Language.set_language(Language.Type.german);
+				rebuild_gui();
 			}
 		});
-		btn.set_enabled(false); //TODO remove when implemented
+		//btn.set_enabled(false); //TODO remove when implemented
 		widgets.add(btn);
 
 		btn = new Button(Language.EXIT.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
