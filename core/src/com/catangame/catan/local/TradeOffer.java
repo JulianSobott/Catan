@@ -9,7 +9,7 @@ import com.catangame.catan.data.Resource;
 public class TradeOffer implements Serializable{
 	private int demander_id;
 	private int vendor_id;
-	private Map<Resource, Integer> offeredResources = new HashMap<Resource, Integer>();
+	private Map<Resource, Integer> offeredResources = new HashMap<Resource, Integer>(); 
 	private Map<Resource, Integer> demandedResources = new HashMap<Resource, Integer>();
 	
 	public void addOfferedResource(Resource r) {
@@ -73,5 +73,7 @@ public class TradeOffer implements Serializable{
 		this.vendor_id = vendor_id;
 	}
 
-
+	public void setOfferedresources(Map<Resource, Integer> offerdResources) {
+		this.offeredResources = offerdResources;
+	}
 }

@@ -11,7 +11,7 @@ import com.catangame.catan.data.Resource;
 
 public class ClientCommunicator extends Thread{
 	
-	private Server localDataServer;
+	private LocalServer localDataServer;
 	private Socket client;
 	private int id; 
 	private ObjectOutputStream output;
@@ -19,10 +19,9 @@ public class ClientCommunicator extends Thread{
 	
 	private boolean running = true;
 	
-	public ClientCommunicator(Server localDataServer, Socket client) {
+	public ClientCommunicator(LocalServer localDataServer, Socket client) {
 		this.localDataServer = localDataServer;
 		this.client = client;
-		this.id = this.localDataServer.getNumClients();
 	}
 	
 	public void run() {
@@ -51,6 +50,13 @@ public class ClientCommunicator extends Thread{
 			}catch(IOException e) {
 				System.err.println("End of File Exception at ClientCommunicator => stopped running");
 				this.running = false;
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						localDataServer.message_from_client(id, new Packet(Command.CONNECTION_LOST));
+					}
+				});
+				
 			} catch (ClassNotFoundException e) {
 				System.err.println("Object is from unknown Class");
 				e.printStackTrace();
@@ -61,7 +67,6 @@ public class ClientCommunicator extends Thread{
 	
 	public void message(Packet p) {
 		try {
-			int i = 0;
 			this.output.writeObject(p);
 			this.output.flush();
 			this.output.reset();
@@ -77,7 +82,8 @@ public class ClientCommunicator extends Thread{
 			this.input.close();
 			this.output.close();
 		} catch (IOException e) {
-			System.err.println("Can't close Listener at ClientCommunicator");
+			e.printStackTrace();
+			System.err.println("Can't close Listener at ClientCommunicator"+  e.getMessage());	
 		}
 	}
 

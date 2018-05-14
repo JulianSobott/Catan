@@ -12,11 +12,14 @@ public class LocalPlayer implements Serializable{
 	private int score = 0;
 	private Color color;
 	private Map<Resource, Integer> resources = new HashMap<Resource, Integer>();
+	private int ID;
+	public boolean declinedOffer = false;
 	
-	public LocalPlayer(String name, int score, Color color) {
+	public LocalPlayer(String name, int score, Color color, int ID) {
 		this.name = name;
 		this.score = score;
 		this.color = color;
+		this.ID = ID;
 	}
 	
 	public String getName() {
@@ -37,5 +40,13 @@ public class LocalPlayer implements Serializable{
 	
 	public Map<Resource, Integer> getResources(){
 		return this.resources;
+	}
+
+	public int getID() {
+		return this.ID;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

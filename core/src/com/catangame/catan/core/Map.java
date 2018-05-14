@@ -44,7 +44,7 @@ public class Map {
 	private List<Vector3i> available_street_places = new LinkedList<Vector3i>();
 	private List<Vector3i> built_villages = new LinkedList<Vector3i>();
 	private List<Vector2i> availableHarbourPlaces = new ArrayList<Vector2i>();
-	java.util.Map<Vector2, Resource> harbours = new HashMap<Vector2, Resource>(); 
+	public java.util.Map<Vector2, Resource> harbours = new HashMap<Vector2, Resource>(); 
 	private int number;
 	
 
@@ -80,6 +80,7 @@ public class Map {
 		System.out.println("field_count: " + field_count);
 
 		LinkedList<Resource> available_resources = new LinkedList<Resource>();
+		available_resources.push(Resource.DESERT);
 		for (Resource r : Resource.values()) {
 			if (r != Resource.OCEAN && r != Resource.DESERT) {
 				int count = (int) ((float) field_count * resource_ratio[r.ordinal()] / ratio_sum) + 1;
@@ -87,7 +88,7 @@ public class Map {
 					available_resources.push(r);
 			}
 		}
-		available_resources.push(Resource.DESERT);
+		
 		for (int i = available_resources.size(); i < field_count; i++)
 			available_resources.push(Resource.values()[rand.nextInt(Resource.values().length - 1) + 1]);
 
@@ -387,6 +388,7 @@ public class Map {
 		int y = Math.round((position.y - field_offset) / (Map.MAGIC_HEX_NUMBER * (field_size + field_distance)));
 		int x = Math.round((position.x - (field_offset + (y % 2 != 0 ? (field_size + field_distance) / 2.f : 0)))
 				/ (field_size + field_distance));
+		//FIXME Handle when click outside the map
 		return new Vector2i(x, y);
 	}
 
@@ -521,5 +523,5 @@ public class Map {
 		}
 		return harbours;
 	}
-
+	
 }

@@ -1,6 +1,7 @@
 package com.catangame.catan.network;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -17,7 +18,7 @@ import com.catangame.catan.superClasses.UI;
 //TODO Error handling when Entered a wrong IP address (reentering)
 public class Client extends Networkmanager {
 	private Socket server;
-	private static final int PORT = 56789;
+	private static final int PORT = 56780;
 	private String serverIP;
 
 	private ObjectOutputStream output;
@@ -39,6 +40,7 @@ public class Client extends Networkmanager {
 		try {
 			output = new ObjectOutputStream(server.getOutputStream());
 			input = new ObjectInputStream(server.getInputStream());
+			System.out.println("Connected");
 		} catch (IOException e) {
 			System.err.println("Can't create input and output streams to server");
 			e.printStackTrace();
@@ -98,6 +100,9 @@ public class Client extends Networkmanager {
 		case TRADE_DEMAND:
 			ui.show_trade_demand(((Packet.TradeDemand) packet.data).getTradeDemand());
 			break;
+		case DEMAND_DECLINED:
+			ui.showDemandDeclined(((Packet.ID)packet.data).getID());
+			break;
 		case ADD_TRADE_OFFER:
 			ui.addTradeOffer(((Packet.TradeOffer) packet.data).getTradeOffer());
 			break;
@@ -109,7 +114,7 @@ public class Client extends Networkmanager {
 			gameLogic.setID(((Packet.ID) packet.data).getID());
 			break;
 		case SHOW_KICKED:
-			ui.show_kicked();
+			ui.show_kicked(((Packet.StringData)packet.data).string);
 			break;
 		case SHOW_ALL_POSSIBLE_NAMES:
 			ui.showAllPossibleNames(((Packet.PlayerList)packet.data).getPlayer());	
@@ -124,7 +129,7 @@ public class Client extends Networkmanager {
 			ui.showDevelopmentCardWindow(((Packet.Developmentcard) packet.data).getCard());
 			break;
 		case SHOW_TO_MUCH_RESOURCES:
-			ui.showToMuchResourcesWindow(((Packet.Num) packet.data).num.intValue());
+			ui.showToMuchResourcesWindow(((Packet.Num) packet.data).num);
 			break;
 		case MOVE_ROBBER:
 			if(packet.data != null) {
@@ -140,8 +145,20 @@ public class Client extends Networkmanager {
 				ui.showSteelResource(((Packet.PlayerList) packet.data).getPlayer());
 			}
 			break;
+		case SHOW_ALL_JOINABLE_GAMES:
+			ui.showAllJoinableGames(((Packet.JoinableGames)packet.data).allJoinableGames);
+			break;
+		case SHOW_GUEST_LOBBY:
+			ui.showGuestLobby(((Packet.StringData)packet.data).string);
+			break;
+		case MESSAGE:
+			ui.addNewMessage(((Packet.MessageData) packet.data).msg);
+			break;
+		case CONNECTION_LOST:
+			ui.showConnectionLost(((Packet.StringData) packet.data).string);
+			break;
 		default:
-			System.err.println("Unknown Command reached Client");
+			System.err.println("Unknown Command reached Client" + packet.getCommand());
 		}
 	}
 

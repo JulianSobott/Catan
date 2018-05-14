@@ -2,6 +2,7 @@ package com.catangame.catan.data;
 public enum Language {
 
 	NO_TEXT("NO TEXT FOUND", "KEIN TEXT GEFUNDEN"),
+	FROM("from", "von"),
 	//Start Window
 	CREATE_NEW_GAME("Create new Game", "Neues Spiel erstellen"),
 	JOIN_GAME("Join game", "Spiel beitreten"),
@@ -24,6 +25,7 @@ public enum Language {
 	RANDOM_HOUSES("Random houses", "Zuf\u00E4llige h\u00E4user"), 
 	RESOURCE_HOUSES("Resource houses", "Resourcenh\u00E4user"),
 	IS_CIRCLE("Circle map", "Kreiskarte"),
+	LOCAL("local", "lokal"),
 	//In game
 	MENU("MENU", "MEN\u00DC"), 
 	DICE("Dice", "W\u00FCrfeln"),
@@ -45,8 +47,8 @@ public enum Language {
 	TRADE("Trade", "Handeln"), 
 	BANK("Bank", "Bank"),
 	PLAYER("Player", "Spieler"),
-	CMD_SELECT_WANTED("Select wanted resources", "Wähle Resourcen die du willst"),
-	CMD_SELECT_OFFERED("select resources that you offer", "Wähle Resourcen, die du anbietest"),
+	CMD_SELECT_WANTED("I want", "Ich fordere"),
+	CMD_SELECT_OFFERED("I offer", "Ich biete"),
 	ALL_OFFERS("All offers", "Alle Angebote"),
 	OFFER("Offer", "Angebot"),
 	ACCEPT("Accept", "Annehmen"),
@@ -61,8 +63,11 @@ public enum Language {
 	MONOPOL("Monopol", "Monopol"),
 	SEND("Send", "Abschicken"),
 	MOVE_ROBBER("Move Robber", "R\u00E4uber versetzen"),
+	CONNECTION_LOST("{} lost connection to the game","{} hat die Verbindung zum Spiel verloren"),
+	WAIT("Wait", "Warten"),
+	BACK_TO_LOBBY("Back to Lobby", "Zur\u00FCck zum Hauptmen\u00FC"),
 	//After Game
-	WINNER("{} won this game", "{} hat gewonnen"),    ;
+	WINNER("{} won this game", "{} hat gewonnen"), ;
 
 
 	

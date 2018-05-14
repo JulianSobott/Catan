@@ -29,8 +29,7 @@ public class Button extends Widget {
 	private boolean enabled = true;
 	private boolean selected = false; //For the trading window
 	private BoxShadow bs = null;
-	
-	private Texture texture = null;
+
 
 	public Button(String text, Rectangle bounds) {
 		super(bounds);
@@ -80,10 +79,7 @@ public class Button extends Widget {
 			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 			sr.end();
 		}else {
-			Sprite sprite = new Sprite(texture);
-			sb.begin();
-			sb.draw(sprite, bounds.x, bounds.y, bounds.width, bounds.height);
-			sb.end();
+			super.render(sr, sb);
 		}
 	
 		sb.begin();

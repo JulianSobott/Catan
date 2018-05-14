@@ -13,12 +13,13 @@ import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.catangame.catan.core.LocalCore;
 import com.catangame.catan.core.LocalFilehandler;
+import com.catangame.catan.superClasses.Server;
 
-public class Server extends Networkmanager {
+public class LocalServer extends Server {
 
 	private ServerSocket server;
 	private String localServerIP;
-	private static final int PORT = 56789;
+	private static final int PORT = 56780;
 
 	private int numClients = 0;
 
@@ -28,7 +29,7 @@ public class Server extends Networkmanager {
 
 	private LocalCore core;
 
-	public Server(LocalCore core) {
+	public LocalServer(LocalCore core) {
 		this.core = core;
 		//Getting the local IP Adress
 		DatagramSocket ds;
@@ -76,11 +77,13 @@ public class Server extends Networkmanager {
 
 	public void addNewClient(Socket client) {
 		//TODO maybe add setting ID communicator here
+		this.numClients++;
 		ClientCommunicator communicator = new ClientCommunicator(this, client);
 		clients.add(communicator);
 		communicator.start();
 	}
-
+	
+	
 	public void message_from_client(int id, Packet packet) {
 		switch (packet.getCommand()) {
 		case STRING:
@@ -89,7 +92,7 @@ public class Server extends Networkmanager {
 		case NAME:
 			String name = ((Packet.Name) packet.data).getName();
 			Color color = ((Packet.Name) packet.data).getColor();
-			core.register_new_user(name, color, id);
+			core.register_new_user(name, color);
 			break;
 		case BUILD_REQUEST:
 			core.buildRequest(id, ((Packet.BuildRequest) packet.data).getBuildingType(),
@@ -110,6 +113,9 @@ public class Server extends Networkmanager {
 		case CLOSE_TRADE_WINDOW:
 			core.closeTrade();
 			break;
+		case DEMAND_DECLINED:
+			core.declineTradeDemand(((Packet.ID) packet.data).getID());
+			break;
 		case BUY_DEVELOPMENT_CARD:
 			core.buyDevelopmentCard(id);
 			break;
@@ -125,11 +131,21 @@ public class Server extends Networkmanager {
 		case STEEL_RESOURCE:
 			core.stealResource(id, (int) ((Packet.Num) packet.data).num);
 			break;
+		case MESSAGE:
+			core.newChatMessage(((Packet.MessageData)packet.data).msg);
+			break;
+		case CONNECTION_LOST:
+			if(packet.data == null) {
+				core.clientLostConnection(id);
+				break;
+			}
+			
 		default:
 			System.err.println("Unknown Command reached Server: " + packet.getCommand());
 		}
 	}
-
+	
+	@Override
 	public void message_to_client(int id, Packet packet) {
 		for (ClientCommunicator client : clients) {
 			if (client.getID() == id) {

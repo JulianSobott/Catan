@@ -1,6 +1,10 @@
 package com.catangame.catan.local;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -29,12 +33,17 @@ import com.catangame.catan.core.Map;
 import com.catangame.catan.local.LocalGameLogic;
 import com.catangame.catan.local.LocalUI;
 import com.catangame.catan.network.Client;
+import com.catangame.catan.network.Command;
 import com.catangame.catan.network.Networkmanager;
+import com.catangame.catan.network.Packet;
 import com.catangame.catan.network.RemoteCore;
-import com.catangame.catan.network.Server;
+import com.catangame.catan.network.RemoteServer;
+import com.catangame.catan.network.LocalServer;
 import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.utils.Clock;
 import com.catangame.catan.utils.FontMgr;
+import com.catangame.catan.utils.FontMgr.Type;
+import com.catangame.catan.utils.TextureMgr;
 
 public class Framework extends ApplicationAdapter {
 	public enum DeviceMode {
@@ -95,7 +104,8 @@ public class Framework extends ApplicationAdapter {
 		// BitmapFont
 		FontMgr.init();
 		std_font = FontMgr.getFont(30); // font size 12 pixels
-
+		//Textures
+		TextureMgr.init();
 		// rendering
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
@@ -130,7 +140,6 @@ public class Framework extends ApplicationAdapter {
 
 				@Override
 				public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-					System.out.println(screenX + " - " + screenY);
 					if (button == Input.Buttons.LEFT) {
 						gameLogic.mouse_click_input(reverse_transform_position(screenX, screenY, camera));
 						return true;
@@ -150,7 +159,7 @@ public class Framework extends ApplicationAdapter {
 					return true;
 				}
 			});
-		else if (deviceMode == DeviceMode.MOBILE)
+		if (deviceMode == DeviceMode.MOBILE)
 			multiplexer.addProcessor(new GestureDetector(new GestureDetector.GestureAdapter() {
 
 				@Override
@@ -174,6 +183,13 @@ public class Framework extends ApplicationAdapter {
 					return true;
 				}
 			}));
+		multiplexer.addProcessor(new InputAdapter(){
+			@Override
+			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+				gameLogic.mouse_click_input(reverse_transform_position(screenX, screenY, camera));
+				return true;
+			}
+		});
 		Gdx.input.setInputProcessor(multiplexer);
 
 		gameLogic.init();
@@ -247,12 +263,25 @@ public class Framework extends ApplicationAdapter {
 
 	// creates a new game with this machine as host
 	void init_host_game() {
+		if(data_connection instanceof RemoteServer) {
+			data_connection.closeAllResources();
+		}
 		core = new LocalCore();
 		ui.setCore(core);
 		((LocalCore) core).addUI(ui);
 		((LocalCore) core).addLogic(gameLogic);
-		data_connection = new Server((LocalCore) core);
-		((LocalCore) core).setServer((Server) data_connection);
+		data_connection = new LocalServer((LocalCore) core);
+		((LocalCore) core).setServer((LocalServer) data_connection);
+		gameLogic.setCore(core);
+		gameLogic.setUI(ui);
+	}
+	void initOnlineHostGame() {
+		core = new LocalCore();
+		ui.setCore(core);
+		((LocalCore) core).addUI(ui);
+		((LocalCore) core).addLogic(gameLogic);
+		data_connection = new RemoteServer((LocalCore) core);
+		((LocalCore) core).setServer((RemoteServer) data_connection);
 		gameLogic.setCore(core);
 		gameLogic.setUI(ui);
 	}
@@ -276,8 +305,31 @@ public class Framework extends ApplicationAdapter {
 		return true;
 	}
 	
+	public void initOnlineGuestGame() {
+		String serverIP;
+		serverIP = "93.222.148.241";
+		try {
+			data_connection = new Client(ui, gameLogic, serverIP);
+		} catch (IOException e) {
+			System.err.println("Wrong IP or server is not online");
+		}
+		core = new RemoteCore();
+		ui.setCore(core);
+		((RemoteCore) core).setClientConnection((Client) data_connection);
+		gameLogic.setCore(core);
+		gameLogic.setUI(ui);
+		((Client) data_connection).sendMessage(new Packet(Command.SHOW_ALL_JOINABLE_GAMES));
+		
+	}
+	
+	public void publicizeGame() {
+		reset_game();
+		initOnlineHostGame();
+	}
+	
 	public void reset_game() {
+		gameLogic.resetGame();
 		data_connection.closeAllResources();
 		data_connection = null;
-	}
+	}	
 }

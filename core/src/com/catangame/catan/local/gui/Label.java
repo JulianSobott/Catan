@@ -1,5 +1,8 @@
 package com.catangame.catan.local.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -24,6 +27,11 @@ public class Label extends Widget {
 	private Vector2 textPosition;
 
 	private boolean visible = true;
+	private boolean centeredText = false;
+	
+	private List<Animation> animations = new ArrayList<>();
+	private long animationStart;
+	private boolean visibleText = true;
 
 	public Label(String text, Rectangle bounds) {
 		super(bounds);
@@ -39,13 +47,18 @@ public class Label extends Widget {
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
 		if (this.visible) {
-			sr.begin(ShapeType.Filled);
-			Gdx.gl.glEnable(GL20.GL_BLEND);
-			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-			sr.setColor(backColor.gdx());
-			sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-			sr.end();
-			Gdx.gl.glDisable(GL20.GL_BLEND);
+			if(this.texture != null) {
+				super.render(sr, sb);
+			}else {
+				sr.begin(ShapeType.Filled);
+				Gdx.gl.glEnable(GL20.GL_BLEND);
+				Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+				sr.setColor(backColor.gdx());
+				sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+				sr.end();
+				Gdx.gl.glDisable(GL20.GL_BLEND);
+			}
+			
 
 			if (outlineThickness > 0) {
 				sr.begin(ShapeType.Line);
@@ -54,11 +67,26 @@ public class Label extends Widget {
 				sr.rect(bounds.x, bounds.y, bounds.width, bounds.height);
 				sr.end();
 			}
-
-			sb.begin();
-			font.setColor(textColor.gdx());
-			font.draw(sb, text, textPosition.x, textPosition.y);
-			sb.end();
+			if(animations.contains(Animation.TEXT_BLINK)) {
+				if(visibleText) {
+					if(System.currentTimeMillis() - this.animationStart > 1000) {
+						visibleText = !visibleText;
+						this.animationStart = System.currentTimeMillis();
+					}
+				}else {
+					if(System.currentTimeMillis() - this.animationStart > 500) {
+						visibleText = !visibleText;
+						this.animationStart = System.currentTimeMillis();
+					}
+				}
+				
+			}
+			if(visibleText) {
+				sb.begin();
+				font.setColor(textColor.gdx());
+				font.draw(sb, text, textPosition.x, textPosition.y);
+				sb.end();
+			}	
 		}
 	}
 
@@ -72,6 +100,8 @@ public class Label extends Widget {
 
 		GlyphLayout layout = new GlyphLayout(font, text);
 		textPosition = new Vector2(bounds.x + 5, bounds.y + (bounds.height - layout.height) * 0.5f);
+		if(this.centeredText)
+			textPosition = new Vector2(bounds.x + bounds.width/2 - layout.width/2, textPosition.y);
 	}
 
 	public void set_font(BitmapFont bitmapFont) {
@@ -103,5 +133,19 @@ public class Label extends Widget {
 		GlyphLayout layout = new GlyphLayout(font, text);
 		update_bounds(new Rectangle(bounds.x, bounds.y, layout.width + padding * 2, bounds.height));
 		set_position(new Vector2(bounds.x, bounds.y));
+	}
+
+	public void animate(Animation animation) {
+		this.animations.add(animation);
+		this.animationStart = System.currentTimeMillis();
+	}
+	
+	public void stopAnimating() {
+		this.animations = new ArrayList<>();
+	}
+	
+	public void centerText() {
+		this.centeredText = true;
+		this.set_position(new Vector2(this.bounds.x, this.bounds.y));
 	}
 }

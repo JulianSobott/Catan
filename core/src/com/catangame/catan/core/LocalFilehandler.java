@@ -16,8 +16,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.catangame.catan.data.Field;
 import com.catangame.catan.data.SavedGame;
+import com.catangame.catan.utils.TextureMgr;
 
 public class LocalFilehandler {
 	private OutputStream outputStream = null;
@@ -25,24 +30,24 @@ public class LocalFilehandler {
 	private InputStream inputStream = null;
 	private ObjectInputStream input = null;
 	
+	String folderPath = "../saves";
+	
 	private File folder;
 	
 	public LocalFilehandler() {
-		
+		if(!Gdx.files.local(folderPath).exists()) {
+			Gdx.files.local("../saves").mkdirs();
+		}
 	}
 	
 	public List<SavedGame> getAllGames() {
-		List<SavedGame> allSavedGames = new ArrayList<SavedGame>();
-		System.out.println(new File(Paths.get("").toAbsolutePath().toString()).getParent());
-		folder = new File(new File(Paths.get("").toAbsolutePath().toString()).getParent() + "/saves");
-		for(final File file : folder.listFiles()) {
-			if(!file.isDirectory()) {	
-				System.out.println(file.getName().substring(file.getName().lastIndexOf('.')));
-				if(file.getName().lastIndexOf('.') > 1 && file.getName().substring(file.getName().lastIndexOf('.')).equals(".catan")) {
-					SavedGame savedGame = loadGame(file);
-					allSavedGames.add(savedGame);
-				}		
-			}
+		List<SavedGame> allSavedGames = new ArrayList<SavedGame>();		
+		FileHandle[] games = Gdx.files.local(folderPath).list();
+		for(final FileHandle game : games) {
+			if(game.extension().equals("catan")) {
+				SavedGame savedGame = loadGame(game);
+				allSavedGames.add(savedGame);
+			}		
 		}
 		return allSavedGames;
 	}
@@ -67,28 +72,33 @@ public class LocalFilehandler {
 		System.out.println("Saved Game!");
 	}
 	
-	public SavedGame loadGame(File file) {
-		SavedGame game = null;
-		//Init resources
-		try {
-			inputStream = new FileInputStream(file);
-			input = new ObjectInputStream(inputStream);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+	public SavedGame loadGame(FileHandle file) {
+		if(file.extension().equals("catan")) {
+			SavedGame game = null;
+			//Init resources
+			try {
+				inputStream = file.read();
+				input = new ObjectInputStream(inputStream);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//Load game
+			try {
+				game = (SavedGame) input.readObject();
+			}catch(EOFException e) {
+				System.out.println("Finished Loading gameData");
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return game;
+		}else {
+			return null;
 		}
-		//Load game
-		try {
-			game = (SavedGame) input.readObject();
-		}catch(EOFException e) {
-			System.out.println("Finished Loading gameData");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return game;
+		
 	}
 
 }

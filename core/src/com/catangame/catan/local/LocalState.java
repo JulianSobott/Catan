@@ -53,6 +53,8 @@ public class LocalState {
 
 	List<Player> surroundingPlayers; //When played robber
 
+	public String gameName;
+
 	
 
 }
