@@ -68,7 +68,7 @@ public class LobbyBackground extends Background {
 			+ "  float val = 0; "
 			+ "  if(dist < 50){"
 			+ "   val = 1.0;"
-			+ "    gl_FragColor = vec4(0.8f, 0.85f, 0.5f, 1f);}"
+			+ "    gl_FragColor = vec4(0.88f, 0.88f, 0.58f, 1f);}"
 			+ "  else{"
 			+ "  val = 500/dist; \n"
 			+ "  val = min(val, 0.7); \n"
@@ -97,6 +97,8 @@ public class LobbyBackground extends Background {
 	Texture txtrWaterReplace;
 	Texture txtrBackground;
 	Texture txtrSun;
+	Texture txtrStartlogo;
+	Sprite sprStartLogo;
 	Matrix4 matrix;
 	Mesh waterMesh;
 	Mesh backgroundMesh;
@@ -127,6 +129,10 @@ public class LobbyBackground extends Background {
 		txtrWater.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		txtrSun = TextureMgr.getTexture("sun");
 		txtrSun.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		txtrStartlogo = TextureMgr.getTexture("startlogo");
+		txtrStartlogo.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		sprStartLogo = new Sprite(txtrStartlogo);
+		sprStartLogo.flip(false, true);
 		
 		txtrWaterReplace = TextureMgr.getTexture("waterdisplacement");
 		txtrWaterReplace.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -202,8 +208,14 @@ public class LobbyBackground extends Background {
 		shader.setUniformf("timedelta", -angle);
 		waterMesh.render(shader, GL20.GL_TRIANGLE_FAN);
 		shader.end();
-		
 		Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
+		
+		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
+		sb.begin();
+		sb.draw(sprStartLogo, Gdx.graphics.getWidth()/2 - 300, 10, 600, 208);
+		sb.end();
+		
 		tick++;
 		sunX += sunSpeed;
 		if(sunX >= Gdx.graphics.getWidth() || sunX < 0)

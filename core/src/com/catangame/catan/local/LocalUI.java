@@ -229,7 +229,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 		int mm_button_width = 400;
 		int mm_button_height = 100;
-		int mm_button_spacing = 10;
+		int mm_button_spacing = 22;
 
 		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
 		widgets.add(background);
@@ -305,7 +305,7 @@ public class LocalUI extends UI implements InputProcessor {
 				Button button = (Button) widgets.get(i);
 				button.set_position(new Vector2((window_size.x - mm_button_width) * 0.5f,
 						(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
-								+ (mm_button_height + mm_button_spacing) * i));
+								+ 20 + (mm_button_height + mm_button_spacing) * i));
 			}
 		}
 		
