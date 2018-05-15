@@ -272,8 +272,10 @@ public class LocalUI extends UI implements InputProcessor {
 
 		widgets.add(btn);
 
-		btn = new Button(Language.CHANGE_LANGUAGE.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
+		/*btn = new Button(Language.CHANGE_LANGUAGE.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.addHoverEffect1();
+		String otherLanguage = Language.getCurrentLanguage() == Language.Type.german ? Language.Type.english.toString() : Language.Type.german.toString();
+		btn.setTexture(TextureMgr.getTexture(otherLanguage + "flag"));
 		btn.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
@@ -285,7 +287,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		//btn.set_enabled(false); //TODO remove when implemented
-		widgets.add(btn);
+		widgets.add(btn);*/
 
 		btn = new Button(Language.EXIT.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.addHoverEffect1();
@@ -306,7 +308,29 @@ public class LocalUI extends UI implements InputProcessor {
 								+ (mm_button_height + mm_button_spacing) * i));
 			}
 		}
-
+		
+		btn = new Button("", new Rectangle(Gdx.graphics.getWidth() - 60, 10, 50, 30));
+		btn.addHoverEffect1();
+		btn.setTexture(TextureMgr.getTexture(Language.Type.english.toString() + "flag"));
+		btn.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+					Language.set_language(Language.Type.english);
+				rebuild_gui();
+			}
+		});
+		widgets.add(btn);
+		btn = new Button("", new Rectangle(Gdx.graphics.getWidth() - 120, 10, 50, 30));
+		btn.addHoverEffect1();
+		btn.setTexture(TextureMgr.getTexture(Language.Type.german.toString() + "flag"));
+		btn.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+					Language.set_language(Language.Type.german);
+				rebuild_gui();
+			}
+		});
+		widgets.add(btn);
 	}
 
 	public void build_game_menu() {
