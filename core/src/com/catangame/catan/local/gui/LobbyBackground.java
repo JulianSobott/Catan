@@ -68,7 +68,7 @@ public class LobbyBackground extends Background {
 			+ "  float val = 0; "
 			+ "  if(dist < 50){"
 			+ "   val = 1.0;"
-			+ "    gl_FragColor = vec4(0.88f, 0.88f, 0.58f, 1f);}"
+			+ "    gl_FragColor = vec4(0.88f, 0.88f, 0.58f, 1.f);}"
 			+ "  else{"
 			+ "  val = 500/dist; \n"
 			+ "  val = min(val, 0.7); \n"
