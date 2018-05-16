@@ -710,6 +710,7 @@ public class LocalUI extends UI implements InputProcessor {
 		lblDiceResult = new Label(lbl_value_dice, new Rectangle(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(0.67f, 0.67f, 0.67f, 1.f));
 		lblDiceResult.set_outline(Color.BLACK, 2);
+		lblDiceResult.centerText();
 		widgets.add(lblDiceResult);
 
 		// info label
