@@ -121,7 +121,7 @@ public class LocalCore extends Core {
 										: building.get_type() == Building.Type.CITY ? 2 : 0;
 								Resource r = map.getFields()[position.x][position.y].resource;
 								p.add_resource(r, addCount);
-								uis.get(p.getId()).addNewMessage(new Message("You´ve got " + addCount + " " + r.name()));
+								uis.get(p.getId()).addNewMessage(new Message("You've got " + addCount + " " + r.name()));
 							}
 						}
 					}
@@ -697,7 +697,7 @@ public class LocalCore extends Core {
 					if(ui.getID() != current_player) {
 						ui.addNewMessage(new Message(player.get(id).toLocalPlayer(), "played Monopol and took all your " + r.name()));
 					}else {
-						ui.addNewMessage(new Message(player.get(id).toLocalPlayer(), "you´ve got " + addedResources + " " + r.name()));
+						ui.addNewMessage(new Message(player.get(id).toLocalPlayer(), "you've got " + addedResources + " " + r.name()));
 					}
 					ui.update_player_data(player.get(ui.getID()));
 				}
