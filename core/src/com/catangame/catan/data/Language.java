@@ -57,7 +57,7 @@ public enum Language {
 	ACCEPT("Accept", "Annehmen"),
 	TO_MUCH_RESOURCES("You have {} resources overmuch", "Du hast {} Resourcen zu viel"),
 	SAVE("Save game", "Spiel speichern"), 
-	DEVELOPMENT_CARD("Development card", "Entwicklungskarte"),
+	DEVELOPMENT_CARD("Development cards", "Entwicklungskarten"),
 	SAVED_GAME("Successfully saved game", "Erfolgreich Spiel gespeichert"),
 	KNIGHT("Knight", "Ritter"), 
 	POINT("Point", "Punkt"),

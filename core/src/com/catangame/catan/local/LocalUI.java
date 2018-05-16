@@ -400,9 +400,9 @@ public class LocalUI extends UI implements InputProcessor {
 		//player Development Cards
 		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(),
 				new Rectangle(5, 100, 220, 50));
-		btnShowDevelopmentCards.adjustWidth(5);
 		btnShowDevelopmentCards.set_enabled(buttonsEnabled);
-		btnShowDevelopmentCards.adjustWidth(3f);
+		btnShowDevelopmentCards.set_font(FontMgr.getFont(Type.Amatic, 20));
+		btnShowDevelopmentCards.adjustWidth(5f);
 		btnShowDevelopmentCards.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
