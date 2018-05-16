@@ -2152,9 +2152,11 @@ public class LocalUI extends UI implements InputProcessor {
 		btnLobby.set_click_callback(new Runnable() {
 			@Override
 			public void run() {
+				resetData(false);
+				framework.reset_game();
 				state.mode = GameMode.main_menu;
 				build_lobby();
-				rebuild_gui();
+				rebuild_gui();				
 			}
 		});
 		widgets.add(btnLobby);
