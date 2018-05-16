@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.MathUtils;
@@ -86,7 +87,6 @@ public class Framework extends ApplicationAdapter {
 	Core core;
 
 	public Framework(Vector2 windowSize, DeviceMode deviceMode) {
-		this.windowSize = windowSize;
 		this.deviceMode = deviceMode;
 	}
 
@@ -108,9 +108,11 @@ public class Framework extends ApplicationAdapter {
 		//SoundMgr.shuffleMusic();
 		// BitmapFont
 		FontMgr.init();
-		std_font = FontMgr.getFont(30); // font size 12 pixels
+		std_font = FontMgr.getFont(Type.Amatic, 20); // font size 12 pixels
 		//Textures
 		TextureMgr.init();
+		gameLogic.init();
+		ui.init(std_font);
 		// rendering
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
@@ -197,14 +199,17 @@ public class Framework extends ApplicationAdapter {
 		});
 		Gdx.input.setInputProcessor(multiplexer);
 
-		gameLogic.init();
-		ui.init(std_font);
+		
 
 		std_timer.restart();
 	}
 
 	@Override
 	public void render() { // equals update
+		sr.begin(ShapeType.Filled);
+		sr.setColor(Color.RED.gdx());
+		sr.rect(100, 100, 100, 100);
+		sr.end();
 		float whole_time = std_timer.getElapsedTime().asSeconds();
 
 		// actual rendering

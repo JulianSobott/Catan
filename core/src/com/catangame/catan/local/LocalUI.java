@@ -58,6 +58,7 @@ import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.UI;
 import com.catangame.catan.utils.FontMgr;
 import com.catangame.catan.utils.TextureMgr;
+import com.catangame.catan.utils.FontMgr.Type;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
@@ -303,6 +304,7 @@ public class LocalUI extends UI implements InputProcessor {
 		for (int i = 0; i < widgets.size(); i++) {
 			if(widgets.get(i) instanceof Button) {
 				Button button = (Button) widgets.get(i);
+				button.set_font(FontMgr.getFont(Type.Amatic, 30));
 				button.set_position(new Vector2((window_size.x - mm_button_width) * 0.5f,
 						(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
 								+ 20 + (mm_button_height + mm_button_spacing) * i));
@@ -704,7 +706,6 @@ public class LocalUI extends UI implements InputProcessor {
 
 		//Trade Button
 		btnTrade = new Button(Language.TRADE.get_text(), new Rectangle(100, 10, 70, 40));
-		btnTrade.set_font(FontMgr.getFont(25));
 		btnTrade.adjustWidth(5);
 		btnTrade.set_enabled(buttonsEnabled);
 		btnTrade.set_click_callback(new Runnable() {
