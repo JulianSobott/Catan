@@ -16,6 +16,8 @@ public enum Language {
 	RANDOM("Random", "Zuf\u00E4llig"),
 	//Join game window
 	JOIN("Join game", "Spiel beitreten"),
+	ENTER_IP("Host IP", "Host IP"),
+	ENTER_NAME("Name", "Name"),
 	//Lobby Window
 	SETTINGS("Settings for the Game: ", "Einstellungen f\u00FCr das Spiel"),
 	MEMBERS("Members", "Mitspieler"), 

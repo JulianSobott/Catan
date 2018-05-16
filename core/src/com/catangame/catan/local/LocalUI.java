@@ -364,7 +364,7 @@ public class LocalUI extends UI implements InputProcessor {
 					new Rectangle(5, 200 + (cards_width + 5) * i, cards_width, cards_width));
 			lblResource.set_fill_color(r.get_color());
 			lblResource.centerText();
-			lblResource.setTexture(TextureMgr.getTexture(r.name()));
+			//lblResource.setTexture(TextureMgr.getTexture(r.name()));
 			lblResource.set_text_color(new Color(20, 20, 30, 255));
 			mapLblNumResources.put(r, lblResource);
 			widgets.add(lblResource);
@@ -494,7 +494,10 @@ public class LocalUI extends UI implements InputProcessor {
 				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 				cVillage.visible = true;
 			}
@@ -554,7 +557,10 @@ public class LocalUI extends UI implements InputProcessor {
 				java.util.Map<Resource, Integer> neededresources = Building.Type.CITY.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 			}
 		}, new Runnable() {
@@ -612,7 +618,10 @@ public class LocalUI extends UI implements InputProcessor {
 				java.util.Map<Resource, Integer> neededresources = Building.Type.STREET.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 			}
 		}, new Runnable() {
@@ -669,7 +678,10 @@ public class LocalUI extends UI implements InputProcessor {
 				neededresources.put(Resource.WOOL,	 1);
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 			}
 		}, new Runnable() {
@@ -1509,6 +1521,7 @@ public class LocalUI extends UI implements InputProcessor {
 		mode = GUIMode.JOIN;
 
 		float mm_tf_width = 400;
+		float labelWidth = 200;
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
 
@@ -1618,12 +1631,12 @@ public class LocalUI extends UI implements InputProcessor {
 							+ (mm_tf_height + mm_tf_spacing) * i));
 		}
 		if(!onlineLobby) {
-			Label lbl = new Label("Enter IP: ",
-					new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, mm_tf_width, mm_tf_height));
+			Label lbl = new Label(Language.ENTER_IP.get_text(),
+					new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, labelWidth, mm_tf_height));
 			widgets.add(lbl);
 		}
-		Label lbl = new Label("Enter Name: ", new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
-				mm_tf_width, mm_tf_height));
+		Label lbl = new Label(Language.ENTER_NAME.get_text(), new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
+				labelWidth, mm_tf_height));
 		widgets.add(lbl);
 		widgets.add(lblConnecting);
 
