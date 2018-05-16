@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 public class FontMgr {
     static private HashMap<Type, FreeTypeFontGenerator> fontGenerator = new HashMap<>();
     static private HashMap<FontSpec, BitmapFont> fontMap = new HashMap<>();
+    public static boolean finishedLoading = false;
 
     public enum Type {
         DEFAULT, ROBOTO_LIGHT, OPEN_SANS_REGULAR, Amatic, Quicksand
@@ -27,12 +28,12 @@ public class FontMgr {
     }
 
     public static void init() {
-        fontGenerator.put(Type.DEFAULT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Canterbury.ttf")));
+    	fontGenerator.put(Type.DEFAULT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Canterbury.ttf")));
         fontGenerator.put(Type.ROBOTO_LIGHT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Roboto-Light.ttf")));
         fontGenerator.put(Type.OPEN_SANS_REGULAR, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/OpenSans-Regular.ttf")));
         fontGenerator.put(Type.Amatic, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Quicksand-Bold.otf")));
         fontGenerator.put(Type.Quicksand, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/AmaticSC-Regular.ttf")));
-
+        FontMgr.finishedLoading = true;
     }
 
     public static void dispose() {

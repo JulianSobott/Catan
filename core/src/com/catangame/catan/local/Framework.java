@@ -18,8 +18,11 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.catangame.catan.utils.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -52,7 +55,7 @@ public class Framework extends ApplicationAdapter {
 	public enum DeviceMode {
 		DESKTOP, MOBILE
 	}
-
+	
 	DeviceMode deviceMode;
 	public static Color clearColor = new Color(0.04f, 0.57f, 1, 1);
 
@@ -77,6 +80,8 @@ public class Framework extends ApplicationAdapter {
 	// rendering
 	private SpriteBatch sb;
 	private ShapeRenderer sr;
+	
+	private Sprite loadingTexture;
 
 	// local
 	Networkmanager data_connection;
@@ -92,6 +97,9 @@ public class Framework extends ApplicationAdapter {
 
 	@Override
 	public void create() {
+		loadingTexture = new Sprite(new Texture(Gdx.files.local("assets/res/startlogo.png")));
+		loadingTexture.flip(false, true);
+
 		Map.update_constants();
 
 		// camera
@@ -102,21 +110,11 @@ public class Framework extends ApplicationAdapter {
 		guiCamera = new OrthographicCamera();
 		guiCamera.setToOrtho(true, windowSize.x, windowSize.y);
 		update_view(true);
-
-		//Music
-		SoundMgr.init();
-		//SoundMgr.shuffleMusic();
-		// BitmapFont
-		FontMgr.init();
-		std_font = FontMgr.getFont(Type.Amatic, 20); // font size 12 pixels
-		//Textures
-		TextureMgr.init();
-		gameLogic.init();
-		ui.init(std_font);
+	
+		
 		// rendering
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
-
 		// event handling
 		InputMultiplexer multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(ui);
@@ -206,10 +204,29 @@ public class Framework extends ApplicationAdapter {
 
 	@Override
 	public void render() { // equals update
-		sr.begin(ShapeType.Filled);
-		sr.setColor(Color.RED.gdx());
-		sr.rect(100, 100, 100, 100);
-		sr.end();
+		//Assets loading loading
+		if(!FontMgr.finishedLoading || !TextureMgr.finishedLoading) {
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Gdx.app.postRunnable(new Runnable() {		
+						@Override
+						public void run() {
+							//Music
+							SoundMgr.init();
+							//SoundMgr.shuffleMusic();
+							FontMgr.init();
+							TextureMgr.init();
+							std_font = FontMgr.getFont(Type.Amatic, 20); // font size 12 pixels
+							ui.init(std_font);
+							gameLogic.init();
+						}
+					});
+					
+				}
+			}, "AssetLoader");
+	        t.start();
+		}		
 		float whole_time = std_timer.getElapsedTime().asSeconds();
 
 		// actual rendering
@@ -219,12 +236,20 @@ public class Framework extends ApplicationAdapter {
 
 		sr.setProjectionMatrix(camera.combined);
 		sb.setProjectionMatrix(camera.combined);
-		gameLogic.render_map(sr, sb);
+		if(FontMgr.finishedLoading && TextureMgr.finishedLoading)
+			gameLogic.render_map(sr, sb);
 		sr.setProjectionMatrix(guiCamera.combined);
 		sb.setProjectionMatrix(guiCamera.combined);
-		ui.render(sr, sb);
-
-
+		if(FontMgr.finishedLoading && TextureMgr.finishedLoading)
+			ui.render(sr, sb);
+		
+		//Loading screen
+		if(!FontMgr.finishedLoading || !TextureMgr.finishedLoading) {
+			sb.begin();
+			sb.draw(this.loadingTexture, Gdx.graphics.getWidth()/2 - 300, 10, 600, 208);
+			sb.end();
+		}
+		
 		// pause
 		long time = Math.max(0,
 				(long) (((1 / target_fps) - (std_timer.getElapsedTime().asSeconds() - whole_time)) * 1000.f));
