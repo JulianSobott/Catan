@@ -40,11 +40,13 @@ import com.catangame.catan.data.SavedGame;
 import com.catangame.catan.local.LocalState.Action;
 import com.catangame.catan.local.LocalState.GameMode;
 import com.catangame.catan.local.TradeDemand.Vendor;
+import com.catangame.catan.local.gui.Background;
 import com.catangame.catan.local.gui.Button;
 import com.catangame.catan.local.gui.Checkbox;
 import com.catangame.catan.local.gui.ColorPicker;
 import com.catangame.catan.local.gui.Container;
 import com.catangame.catan.local.gui.Label;
+import com.catangame.catan.local.gui.LobbyBackground;
 import com.catangame.catan.local.gui.Message;
 import com.catangame.catan.local.gui.MessageField;
 import com.catangame.catan.local.gui.PopUp;
@@ -56,6 +58,7 @@ import com.catangame.catan.superClasses.Core;
 import com.catangame.catan.superClasses.UI;
 import com.catangame.catan.utils.FontMgr;
 import com.catangame.catan.utils.TextureMgr;
+import com.catangame.catan.utils.FontMgr.Type;
 
 public class LocalUI extends UI implements InputProcessor {
 	enum GUIMode {
@@ -114,7 +117,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private Label lblInfo;
 	private Button btnTrade;
 	private java.util.Map<Resource, Widget> mapLblNumResources = new HashMap<Resource, Widget>();
-	
+
 	boolean buttonsEnabled = true;
 
 	//Trading
@@ -139,12 +142,12 @@ public class LocalUI extends UI implements InputProcessor {
 	private Color playerColor = Color.RED;
 	private boolean onlineLobby = false;
 	private String btnJoinText = Language.JOIN_GAME.get_text();
-	
-	
+
+
 	//Menu
 	List<SavedGame> allGames = null;
 	List<Packet.JoinableGame> allJoinableGames;
-	//End Screen 
+	//End Screen
 	private List<Player> player;
 
 	public int scrolled = 0;
@@ -216,8 +219,8 @@ public class LocalUI extends UI implements InputProcessor {
 		} else if(mode == GUIMode.CONNECTION_LOST){
 			showConnectionLost(this.lostConnectionPlayerName);
 		}
-			
-		
+
+
 	}
 
 	public void build_lobby() {
@@ -227,7 +230,10 @@ public class LocalUI extends UI implements InputProcessor {
 
 		int mm_button_width = 400;
 		int mm_button_height = 100;
-		int mm_button_spacing = 10;
+		int mm_button_spacing = 22;
+
+		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
+		widgets.add(background);
 
 		Button btn = new Button(Language.CREATE_NEW_GAME.get_text(),
 				new Rectangle(0, 0, mm_button_width, mm_button_height));
@@ -236,13 +242,13 @@ public class LocalUI extends UI implements InputProcessor {
 			@Override
 			public void run() {
 				framework.init_host_game();
-				//TODO Change to above when server is online
+				//TODO Change when server is online
 				//framework.initOnlineHostGame();
 				build_host_lobby_window();
 			}
 		});
 		widgets.add(btn);
-		
+
 
 		btn = new Button(Language.JOIN_GAME.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.set_click_callback(new Runnable() {
@@ -267,17 +273,6 @@ public class LocalUI extends UI implements InputProcessor {
 
 		widgets.add(btn);
 
-		btn = new Button(Language.OPTIONS.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
-		btn.addHoverEffect1();
-		btn.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("Options");
-			}
-		});
-		btn.set_enabled(false); //TODO remove when implemented
-		widgets.add(btn);
-
 		btn = new Button(Language.EXIT.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.addHoverEffect1();
 		btn.set_click_callback(new Runnable() {
@@ -292,11 +287,35 @@ public class LocalUI extends UI implements InputProcessor {
 		for (int i = 0; i < widgets.size(); i++) {
 			if(widgets.get(i) instanceof Button) {
 				Button button = (Button) widgets.get(i);
+				button.set_font(FontMgr.getFont(Type.Amatic, 30));
 				button.set_position(new Vector2((window_size.x - mm_button_width) * 0.5f,
 						(window_size.y - (mm_button_height + mm_button_spacing) * widgets.size()) * 0.5f
-								+ (mm_button_height + mm_button_spacing) * i));
-			}		
+								+ 20 + (mm_button_height + mm_button_spacing) * i));
+			}
 		}
+		
+		btn = new Button("", new Rectangle(Gdx.graphics.getWidth() - 60, 10, 50, 30));
+		btn.addHoverEffect1();
+		btn.setTexture(TextureMgr.getTexture(Language.Type.english.toString() + "flag"));
+		btn.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+					Language.set_language(Language.Type.english);
+				rebuild_gui();
+			}
+		});
+		widgets.add(btn);
+		btn = new Button("", new Rectangle(Gdx.graphics.getWidth() - 120, 10, 50, 30));
+		btn.addHoverEffect1();
+		btn.setTexture(TextureMgr.getTexture(Language.Type.german.toString() + "flag"));
+		btn.set_click_callback(new Runnable() {
+			@Override
+			public void run() {
+					Language.set_language(Language.Type.german);
+				rebuild_gui();
+			}
+		});
+		widgets.add(btn);
 	}
 
 	public void build_game_menu() {
@@ -328,7 +347,7 @@ public class LocalUI extends UI implements InputProcessor {
 					new Rectangle(5, 200 + (cards_width + 5) * i, cards_width, cards_width));
 			lblResource.set_fill_color(r.get_color());
 			lblResource.centerText();
-			lblResource.setTexture(TextureMgr.getTexture(r.name()));
+			//lblResource.setTexture(TextureMgr.getTexture(r.name()));
 			lblResource.set_text_color(new Color(20, 20, 30, 255));
 			mapLblNumResources.put(r, lblResource);
 			widgets.add(lblResource);
@@ -342,7 +361,7 @@ public class LocalUI extends UI implements InputProcessor {
 		int additionalMargin = 0;
 		for(int j = messages.size()-1; j >= 0; j--) {
 			Message msg = messages.get(j);
-			
+
 			MessageField dummymfMessage = new MessageField(msg, new Rectangle(0,0, 200, 200));
 			MessageField mfMessage = new MessageField(msg, new Rectangle(5, window_size.y - dummymfMessage.getHeight() - additionalMargin - 90, 170, 200));
 			sc.addWidget(mfMessage);
@@ -364,7 +383,7 @@ public class LocalUI extends UI implements InputProcessor {
 					}
 					showChatTf = false;
 					widgets.get(7).setVisible(false);
-					activeTF = null;						
+					activeTF = null;
 				}else {
 					showChatTf = true;
 					widgets.get(7).setVisible(true);
@@ -377,7 +396,7 @@ public class LocalUI extends UI implements InputProcessor {
 			tfChat.setVisible(false);
 		}
 		widgets.add(tfChat);
-		
+
 		//player Development Cards
 		Button btnShowDevelopmentCards = new Button(Language.DEVELOPMENT_CARD.get_text(),
 				new Rectangle(5, 100, 220, 50));
@@ -402,7 +421,7 @@ public class LocalUI extends UI implements InputProcessor {
 				Button btnCard = new Button(Language.valueOf(card.type.toString()).get_text(), new Rectangle(215, 100 + 75 * i, 300, 70));
 				btnCard.set_fill_color(new Color(0.2f, 0.3f, 0.67f, 0.9f));
 				btnCard.set_click_callback(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						showDevelopmentCards = false;
@@ -415,7 +434,7 @@ public class LocalUI extends UI implements InputProcessor {
 			allScrollContainer.add(sc);
 			widgets.add(sc);
 			sc.calcBounds();
-			
+
 		}
 
 		// finished move button
@@ -438,10 +457,10 @@ public class LocalUI extends UI implements InputProcessor {
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildVillage.set_enabled(buttonsEnabled);
 		final Container cVillage = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
-		btnBuildVillage.addHover(new Runnable() {	
+		btnBuildVillage.addHover(new Runnable() {
 			@Override
 			public void run() {
-				
+
 				if(cVillage.widgets.size() == 0) {
 					Label lblContainer = new Label("", new Rectangle(orientationAnchor + (buttons_width + 5) * 0, window_size.y - 240, 200, 150));
 					lblContainer.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
@@ -458,7 +477,10 @@ public class LocalUI extends UI implements InputProcessor {
 				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 				cVillage.visible = true;
 			}
@@ -466,7 +488,7 @@ public class LocalUI extends UI implements InputProcessor {
 			@Override
 			public void run() {
 				cVillage.visible = false;
-				
+
 				java.util.Map<Resource, Integer> neededresources = Building.Type.VILLAGE.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					 ((Label)(mapLblNumResources.get(r))).set_text(state.my_player_data.get_resources(r) + "");
@@ -477,7 +499,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(cVillage);
 		btnBuildVillage.set_click_callback(new Runnable() {
 			@Override
-			public void run() {		
+			public void run() {
 				if(state.curr_action != LocalState.Action.build_village) {
 					state.curr_action = LocalState.Action.build_village;
 					show_informative_hint(Language.SELECT_BUILD_PLACE, "");
@@ -492,13 +514,13 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnBuildVillage);
-		
+
 		btnBuildCity = new Button(Language.BUILD_CITY.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildCity.set_enabled(buttonsEnabled);
 		final Container cCity = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 1, window_size.y - 190, 200, 100));
 		btnBuildCity.addHoverEffect1();
-		btnBuildCity.addHover(new Runnable() {	
+		btnBuildCity.addHover(new Runnable() {
 			@Override
 			public void run() {
 				if(cCity.widgets.size() == 0) {
@@ -518,7 +540,10 @@ public class LocalUI extends UI implements InputProcessor {
 				java.util.Map<Resource, Integer> neededresources = Building.Type.CITY.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 			}
 		}, new Runnable() {
@@ -546,17 +571,17 @@ public class LocalUI extends UI implements InputProcessor {
 					show_informative_hint(Language.DO_MOVE, "");
 					state.curr_action = null;
 					btnBuildCity.set_fill_color(Widget.getDefaultFillColor());
-				}		
+				}
 			}
 		});
 		widgets.add(btnBuildCity);
-		
+
 		btnBuildStreet = new Button(Language.BUILD_STREET.get_text(), new Rectangle(
 				orientationAnchor + (buttons_width + 5) * pos_count++, window_size.y - 80, buttons_width, 70));
 		btnBuildStreet.set_enabled(buttonsEnabled);
 		final Container cStreet = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 2, window_size.y - 190, 200, 100));
 		btnBuildStreet.addHoverEffect1();
-		btnBuildStreet.addHover(new Runnable() {	
+		btnBuildStreet.addHover(new Runnable() {
 			@Override
 			public void run() {
 				if(cStreet.widgets.size() == 0) {
@@ -576,7 +601,10 @@ public class LocalUI extends UI implements InputProcessor {
 				java.util.Map<Resource, Integer> neededresources = Building.Type.STREET.getNeededResources();
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 			}
 		}, new Runnable() {
@@ -604,7 +632,7 @@ public class LocalUI extends UI implements InputProcessor {
 					show_informative_hint(Language.DO_MOVE, "");
 					state.curr_action = null;
 					btnBuildStreet.set_fill_color(Widget.getDefaultFillColor());
-				}	
+				}
 			}
 		});
 		widgets.add(btnBuildStreet);
@@ -614,7 +642,7 @@ public class LocalUI extends UI implements InputProcessor {
 		btnBuyDevelopmentCard.adjustWidth(5);
 		btnBuyDevelopmentCard.set_enabled(buttonsEnabled);
 		final Container cDevCard = new Container(this, new Rectangle(orientationAnchor + (buttons_width + 5) * 3, window_size.y - 240, 200, 150));
-		btnBuyDevelopmentCard.addHover(new Runnable() {	
+		btnBuyDevelopmentCard.addHover(new Runnable() {
 			@Override
 			public void run() {
 				if(cDevCard.widgets.size() == 0) {
@@ -633,7 +661,10 @@ public class LocalUI extends UI implements InputProcessor {
 				neededresources.put(Resource.WOOL,	 1);
 				for(Resource r : neededresources.keySet()) {
 					((Label)(mapLblNumResources.get(r))).set_text((state.my_player_data.get_resources(r)-neededresources.get(r)) + "");
-					((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
+					if(state.my_player_data.get_resources(r)-neededresources.get(r) >= 0)
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.GREEN);
+					else
+						((Label)(mapLblNumResources.get(r))).set_text_color(Color.RED);
 				 }
 			}
 		}, new Runnable() {
@@ -662,6 +693,7 @@ public class LocalUI extends UI implements InputProcessor {
 		lblDiceResult = new Label(lbl_value_dice, new Rectangle(10, 10, 50, 50));
 		lblDiceResult.set_fill_color(new Color(0.67f, 0.67f, 0.67f, 1.f));
 		lblDiceResult.set_outline(Color.BLACK, 2);
+		lblDiceResult.centerText();
 		widgets.add(lblDiceResult);
 
 		// info label
@@ -670,7 +702,6 @@ public class LocalUI extends UI implements InputProcessor {
 
 		//Trade Button
 		btnTrade = new Button(Language.TRADE.get_text(), new Rectangle(100, 10, 70, 40));
-		btnTrade.set_font(FontMgr.getFont(25));
 		btnTrade.adjustWidth(5);
 		btnTrade.set_enabled(buttonsEnabled);
 		btnTrade.set_click_callback(new Runnable() {
@@ -755,7 +786,6 @@ public class LocalUI extends UI implements InputProcessor {
 		int btnSpace = 10;
 
 		//All wanted resources
-		//TODO Add phrases to Language
 		if (tradeDemand.getVendor() != null) {
 			Label lblWantedResources = new Label(Language.CMD_SELECT_WANTED.get_text(), new Rectangle(50, 100, 200, 50));
 			lblWantedResources.set_text_color(Color.WHITE);
@@ -803,9 +833,6 @@ public class LocalUI extends UI implements InputProcessor {
 
 					Button btnMinus = new Button("-", new Rectangle(start1 + btnSpace + lblWidth1,
 							190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-					/*btnMinus.set_text_position(start1 + btnSpace + lblWidth1 + btnWidth1 / 2,
-							190 + (lblHeight + btnSpace) * i);*/// TODO del
-					//btnMinus.adjustWidth(2);
 					btnMinus.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
@@ -824,9 +851,6 @@ public class LocalUI extends UI implements InputProcessor {
 					widgets.add(lblNumresources);
 					Button btnPlus = new Button("+", new Rectangle(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2,
 							190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-					/*btnPlus.set_text_position(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2.5f,
-							195 + (lblHeight + btnSpace) * i);*/// TODO del
-					//btnPlus.adjustWidth(2);
 					btnPlus.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
@@ -848,7 +872,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 				if (r != Resource.OCEAN && r != Resource.DESERT && state.my_player_data.get_resources(r) >= 1
 						&& tradeDemand.getVendor() == Vendor.PLAYER
-						|| r != Resource.OCEAN && r != Resource.DESERT && (state.my_player_data.get_resources(r) >= 4 || state.my_player_data.get_resources(r) >= 3 && state.my_player_data.harbours.contains(null) 
+						|| r != Resource.OCEAN && r != Resource.DESERT && (state.my_player_data.get_resources(r) >= 4 || state.my_player_data.get_resources(r) >= 3 && state.my_player_data.harbours.contains(null)
 						|| state.my_player_data.get_resources(r) >= 2 && state.my_player_data.harbours.contains(r))
 								&& tradeDemand.getVendor() == Vendor.BANK) {
 					String resourceString = (Language.valueOf(r.toString()).get_text()) + ": "
@@ -914,7 +938,7 @@ public class LocalUI extends UI implements InputProcessor {
 							widgets.add(lblOfferID);
 							Label lblOfferContainer = new Label("",
 									new Rectangle(window_size.x / 2, 200 + (150 + 3) * offerI, window_size.x / 2 - 30, 150));
-							lblOfferContainer.set_fill_color(new Color(1.f, 1.f, 1.f, 0.3f)); //TODO Maybe change to player color
+							lblOfferContainer.set_fill_color(state.player_data.get(offer.getVendor_id()).getColor());
 							widgets.add(lblOfferContainer);
 
 							//Offered resources
@@ -941,7 +965,7 @@ public class LocalUI extends UI implements InputProcessor {
 								widgets.add(lblWantedResource);
 								j++;
 							}
-							
+
 							//Button accept
 							Button btnAccept = new Button(Language.ACCEPT.get_text(),
 									new Rectangle(window_size.x - 140, 250 + (110 + 20) * offerI, 80, 50));
@@ -1061,7 +1085,7 @@ public class LocalUI extends UI implements InputProcessor {
 						280 + (lblHeight + btnSpace) * i, btnWidth1, 50));
 				lblNumresources.set_fill_color(Color.WHITE);;
 				widgets.add(lblNumresources);
-				
+
 				Label lblResource = new Label(Language.valueOf(r.toString()).get_text(),
 						new Rectangle(start1, 270 + (lblHeight + btnSpace) * i, lblWidth1, lblHeight));
 				lblResource.set_text_color(r.get_color());
@@ -1077,11 +1101,11 @@ public class LocalUI extends UI implements InputProcessor {
 						}else {
 							lblNumresources.set_text("0");
 						}
-						
+
 					}
 				});
 				widgets.add(btnMinus);
-				
+
 				Button btnPlus = new Button("+", new Rectangle(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2,
 						290 + (lblHeight + btnSpace) * i, btnWidth1, 30));
 				btnPlus.set_click_callback(new Runnable() {
@@ -1135,7 +1159,7 @@ public class LocalUI extends UI implements InputProcessor {
 					}
 				});
 				widgets.add(btnMinus);
-				
+
 				Button btnPlus = new Button("+", new Rectangle(start + btnSpace * 3 + lblWidth + btnWidths * 2,
 						290 + (lblHeight + btnSpace) * i, btnWidths, 30));
 				btnPlus.set_click_callback(new Runnable() {
@@ -1227,13 +1251,13 @@ public class LocalUI extends UI implements InputProcessor {
 		});
 		widgets.add(btnSendOffer);
 	}
-	
-	public void buildDevCardWindow() {		
+
+	public void buildDevCardWindow() {
 		switch(state.devCard.type) {
 		case FREE_RESOURCES:
 			buildIngameWindow();
 			state.devCard = new DevCard(DevCardType.FREE_RESOURCES, new DevCard.FreeResources());
-			int i = 0;		
+			int i = 0;
 			for(final Resource r : Resource.values()) {
 				if(r != Resource.OCEAN && r != Resource.DESERT) {
 					final String str = Language.valueOf(r.name()).get_text() + ": ";
@@ -1254,7 +1278,7 @@ public class LocalUI extends UI implements InputProcessor {
 								@Override
 								public void run() {
 									int valResource = ((DevCard.FreeResources) state.devCard.data).newResources.get(r) + state.my_player_data.get_resources(r);
-									lblResource.set_text(str + valResource);	
+									lblResource.set_text(str + valResource);
 								}
 							});
 							((DevCard.FreeResources)state.devCard.data).remainedFreeresources--;
@@ -1274,11 +1298,11 @@ public class LocalUI extends UI implements InputProcessor {
 		case FREE_STREETS:
 			if(state.devCard.data == null) {
 				state.devCard = new DevCard(DevCardType.FREE_STREETS, new DevCard.FreeStreets());
-			}	
+			}
 			mode = GUIMode.GAME;
 			show_informative_hint(Language.BUILD_FREE_STREETS, Integer.toString(((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets));
 			rebuild_gui();
-			
+
 			//state.devCard ;
 			break;
 		case KNIGHT:
@@ -1300,7 +1324,7 @@ public class LocalUI extends UI implements InputProcessor {
 						@Override
 						public void run() {
 							((DevCard.Monopol)state.devCard.data).resource = r;
-							core.playCard(id, state.devCard);							
+							core.playCard(id, state.devCard);
 						}
 					});
 					widgets.add(btnResource);
@@ -1310,18 +1334,18 @@ public class LocalUI extends UI implements InputProcessor {
 			break;
 		case POINT:
 			mode = GUIMode.GAME;
-			core.playCard(id, state.devCard);	
+			core.playCard(id, state.devCard);
 			break;
 		default:
 			System.err.println("Unkown Card played");
 			break;
 		}
-		
+
 	}
-	
+
 	private void buildToMuchResourcesWindow() {
-		buildIngameWindow();	
-		
+		buildIngameWindow();
+
 		float start1 = window_size.x / 2 - window_size.x / 4;
 		float containerWidth1 = window_size.x / 3;
 		float lblWidth1 = containerWidth1 / 2;
@@ -1329,16 +1353,16 @@ public class LocalUI extends UI implements InputProcessor {
 		float lblHeight = 50;
 		float btnSpace = 20;
 		int i = 0;
-		
+
 		Label lblNum = new Label(Language.TO_MUCH_RESOURCES.get_text(Integer.toString(state.numToRemove)), new Rectangle(start1, 40, 100, 50));
 		if(state.numToRemove > 0) {
 			lblNum.set_fill_color(Color.RED);
 		}else {
 			lblNum.set_fill_color(Color.GREEN);
-		}	
+		}
 		lblNum.adjustWidth(7);
 		widgets.add(lblNum);
-		
+
 		for (final Resource r : Resource.values()) {
 			if (r != Resource.OCEAN && r != Resource.DESERT) {
 				String str;
@@ -1400,16 +1424,16 @@ public class LocalUI extends UI implements InputProcessor {
 								if(state.my_player_data.get_resources(r) - state.removedResources.get(r) > 0) {
 									state.removedResources.put(r, state.removedResources.get(r) + 1);
 									state.numToRemove--;
-									rebuild_gui();	
-								}	
+									rebuild_gui();
+								}
 							}else {
 								if(state.my_player_data.get_resources(r) > 0) {
 									state.removedResources.put(r, 1);
 									state.numToRemove--;
-									rebuild_gui();	
-								}		
+									rebuild_gui();
+								}
 							}
-						}	
+						}
 					}
 				});
 				widgets.add(btnPlus);
@@ -1430,12 +1454,12 @@ public class LocalUI extends UI implements InputProcessor {
 				if(state.numToRemove == 0) {
 					core.removeResources(id, state.removedResources);
 					state.removedResources.clear();
-				}	
+				}
 			}
 		});
 		widgets.add(btnSend);
 	}
-	
+
 	private void buildSteelResource() {
 		buildIngameWindow();
 		int i = 0;
@@ -1446,14 +1470,14 @@ public class LocalUI extends UI implements InputProcessor {
 			btnPlayer.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					core.stealResource(id, p.getId());	
+					core.stealResource(id, p.getId());
 				}
 			});
 			btnPlayer.adjustWidth(10);
 			widgets.add(btnPlayer);
 		}
 	}
-	
+
 	private void buildIngameWindow() {
 		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
 		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
@@ -1474,9 +1498,10 @@ public class LocalUI extends UI implements InputProcessor {
 		mode = GUIMode.JOIN;
 
 		float mm_tf_width = 400;
+		float labelWidth = 200;
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
-		
+
 		final Checkbox cbOnlineLobby = new Checkbox(new Rectangle(window_size.x /2 + 100, 200, 35, 35));
 		cbOnlineLobby.setSelected(onlineLobby);
 		cbOnlineLobby.set_click_callback(new Runnable() {
@@ -1489,7 +1514,7 @@ public class LocalUI extends UI implements InputProcessor {
 				}else {
 					btnJoinText = Language.JOIN_GAME.get_text();
 				}
-				
+
 				rebuild_gui();
 			}
 		});
@@ -1551,7 +1576,7 @@ public class LocalUI extends UI implements InputProcessor {
 					new Thread(new Runnable() {
 						public void run() {
 							if(onlineLobby) {
-								
+
 								framework.initOnlineGuestGame();
 							}else {
 								if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
@@ -1560,7 +1585,7 @@ public class LocalUI extends UI implements InputProcessor {
 									lblConnecting.set_text("Entered wrong IP or the server is not online");
 								}
 							}
-							
+
 						}
 					}).start();
 				} else {
@@ -1583,12 +1608,12 @@ public class LocalUI extends UI implements InputProcessor {
 							+ (mm_tf_height + mm_tf_spacing) * i));
 		}
 		if(!onlineLobby) {
-			Label lbl = new Label("Enter IP: ",
-					new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, mm_tf_width, mm_tf_height));
+			Label lbl = new Label(Language.ENTER_IP.get_text(),
+					new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfIp.get_position().y, labelWidth, mm_tf_height));
 			widgets.add(lbl);
-		}	
-		Label lbl = new Label("Enter Name: ", new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
-				mm_tf_width, mm_tf_height));
+		}
+		Label lbl = new Label(Language.ENTER_NAME.get_text(), new Rectangle((window_size.x - mm_tf_width) * 0.5f, tfName.get_position().y,
+				labelWidth, mm_tf_height));
 		widgets.add(lbl);
 		widgets.add(lblConnecting);
 
@@ -1601,7 +1626,7 @@ public class LocalUI extends UI implements InputProcessor {
 			}
 		});
 		widgets.add(btnBack);
-		
+
 		//Online stuff
 		Label lblOnlineLobby = new Label("Online lobby", new Rectangle((window_size.x - mm_tf_width) * 0.5f, cbOnlineLobby.get_position().y, mm_tf_width, mm_tf_height));
 		widgets.add(lblOnlineLobby);
@@ -1618,7 +1643,7 @@ public class LocalUI extends UI implements InputProcessor {
 			btnGame.set_click_callback(new Runnable() {
 				@Override
 				public void run() {
-					core.joinGameLobby(game.gameID, tf_value_name, playerColor);				
+					core.joinGameLobby(game.gameID, tf_value_name, playerColor);
 				}
 			});
 			c.addWidget(btnGame);
@@ -2032,7 +2057,7 @@ public class LocalUI extends UI implements InputProcessor {
 				});
 				widgets.add(btnSave);
 			}
-			
+
 			Button btnLobby = new Button(Language.EXIT.get_text(), new Rectangle(window_size.x / 2 - 150, 260, 300, 50));
 			btnLobby.set_click_callback(new Runnable() {
 				@Override
@@ -2070,12 +2095,12 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 			});
 			widgets.add(btnSaveGame);
-			
-			
+
+
 			Gdx.app.postRunnable(new Runnable() {
 				@Override
 				public void run() {
-					allGames = fileHandler.getAllGames();	
+					allGames = fileHandler.getAllGames();
 					int i = 0;
 					for (final SavedGame game : allGames) {
 						Button btnGame = new Button(game.getName(),
@@ -2091,8 +2116,8 @@ public class LocalUI extends UI implements InputProcessor {
 					}
 				}
 			});
-			
-			
+
+
 		}
 	}
 
@@ -2237,7 +2262,7 @@ public class LocalUI extends UI implements InputProcessor {
 				sc.scrolled(amount);
 				return true;
 			}
-		}	
+		}
 		return false;
 	}
 
@@ -2251,7 +2276,9 @@ public class LocalUI extends UI implements InputProcessor {
 				e.printStackTrace();
 				System.err.println(i);
 			}
+
 		}
+
 	}
 
 	// returns true if was on a widget
@@ -2271,7 +2298,7 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 				widget.do_mouse_click(cursor_position);
 				//Neccessary for the trading window
-				if (!(widget instanceof Label)) {
+				if (!(widget instanceof Label) && (!this.allTradeOffer.isEmpty() || tradeDemand != null)) {
 					break;
 				}
 			}
@@ -2409,7 +2436,7 @@ public class LocalUI extends UI implements InputProcessor {
 		}else {
 			guests.remove(name);
 		}
-		
+
 	}
 
 	public void showIpInLobby(String ip) {
@@ -2454,7 +2481,7 @@ public class LocalUI extends UI implements InputProcessor {
 		state.curr_action = Action.moveRobber;
 		enableAllButton(false);
 	}
-	
+
 	public void enableAllButton(boolean enabled) {
 		buttonsEnabled = enabled;
 		btnBuildCity.set_enabled(enabled);
@@ -2490,7 +2517,7 @@ public class LocalUI extends UI implements InputProcessor {
 		state.gameName = gameName;
 		rebuild_gui();
 	}
-	
+
 	private void resetData(boolean textFields) {
 		// gui data
 		activeTF = null;
@@ -2505,20 +2532,20 @@ public class LocalUI extends UI implements InputProcessor {
 		allPossiblePlayer = new ArrayList<Player>();
 		idxPlayer = 0;
 		tf_value_seed = "" + (int) (Math.random() * Integer.MAX_VALUE);
-		
+
 		buttonsEnabled = true;
 
 		//Trading
 		tradeDemand = null;
 		tradeOffer = null;
 		allTradeOffer = new ArrayList<TradeOffer>();
-	
+
 		//Menu
 		allGames = null;
 		allJoinableGames = null;
-		//End Screen 
+		//End Screen
 		player = null;
-		
+
 		if(textFields) {
 			serverIP = "";
 			tf_value_ip = "127.0.0.1";
@@ -2537,7 +2564,7 @@ public class LocalUI extends UI implements InputProcessor {
 			btnJoinText = Language.JOIN_GAME.get_text();
 		}
 	}
-	
+
 	@Override
 	public void addNewMessage(Message msg) {
 		this.messages.add(msg);
@@ -2579,7 +2606,6 @@ public class LocalUI extends UI implements InputProcessor {
 			});
 			p.addWidget(btnBackToLobby);
 		}
-		
+
 	}
 }
-

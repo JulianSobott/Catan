@@ -8,6 +8,7 @@ public enum Language {
 	JOIN_GAME("Join game", "Spiel beitreten"),
 	LOAD_GAME("Load game", "Spiel laden"),
 	OPTIONS("Options", "Einstellungen"),
+	CHANGE_LANGUAGE("Deutsch", "English"),
 	EXIT("Exit game", "Spiel beenden"),
 	BACK("Back", "Zur\u00FCck"),
 	//Create game window 
@@ -15,6 +16,8 @@ public enum Language {
 	RANDOM("Random", "Zuf\u00E4llig"),
 	//Join game window
 	JOIN("Join game", "Spiel beitreten"),
+	ENTER_IP("Host IP", "Host IP"),
+	ENTER_NAME("Name", "Name"),
 	//Lobby Window
 	SETTINGS("Settings for the Game: ", "Einstellungen f\u00FCr das Spiel"),
 	MEMBERS("Members", "Mitspieler"), 
@@ -77,7 +80,7 @@ public enum Language {
 
 	// management
 
-	enum Type {
+	public enum Type {
 		english, german,
 	}
 
@@ -88,8 +91,12 @@ public enum Language {
 		this.german = german;
 	}
 
-	void set_language(Type type) {
+	public static void set_language(Type type) {
 		curr_language = type;
+	}
+	
+	public static Type getCurrentLanguage() {
+		return curr_language;
 	}
 
 	public String get_text() {
@@ -101,4 +108,5 @@ public enum Language {
 		String txt = curr_language == Type.english ? english : german;
 		return txt.replace("{}", replacement);
 	}
+
 }

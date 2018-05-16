@@ -1,6 +1,7 @@
 package com.catangame.catan.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -105,6 +106,8 @@ public class Map {
 		Vector2 island_center = Map.index_to_position(new Vector2i(map_size_x / 2, map_size_y / 2));
 
 		this.fields = new Field[map_size_x][map_size_y];
+		
+		boolean addedDesert = false;
 		for (int x = 0; x < map_size_x; x++) {
 			for (int y = 0; y < map_size_y; y++) {
 				Vector2 pos = Map.index_to_position(new Vector2i(x, y));
@@ -128,6 +131,7 @@ public class Map {
 					int index_n = rand.nextInt(available_numbers.size());
 					if(available_resources.get(index_r) == Resource.DESERT) {
 						this.fields[x][y] = new Field(available_resources.get(index_r), (byte) 0);
+						addedDesert = true;
 					}else {
 						this.fields[x][y] = new Field(available_resources.get(index_r), available_numbers.get(index_n));
 					}		
@@ -137,28 +141,11 @@ public class Map {
 					this.fields[x][y] = new Field(Resource.OCEAN, (byte) 0);
 			}
 		}
+		if(!addedDesert) {
+			this.fields[rand.nextInt(map_size_x)][rand.nextInt(map_size_y)] = new Field(Resource.DESERT, (byte) 0);
+		}
 		System.out.println("Available resources: " + available_resources.size());
 		System.out.println("Available numbers: " + available_numbers.size());
-		
-		for(int x = 0; x < map_size_x; x++) {
-			for(int y = 0; y < map_size_y; y++) {
-				if(fields[x][y].resource == Resource.OCEAN) {
-					if(y % 2 == 0) {
-						//Checks if there are land fields
-						if(fields[x-1<0 ? 0 : x-1][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x-1<0?0:x-1][y].resource != Resource.OCEAN ||
-								fields[x+1>map_size_x-1?map_size_x-1: x+1][y].resource != Resource.OCEAN || fields[x-1<0?0:x-1][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN || fields[x][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN) {
-							availableHarbourPlaces.add(new Vector2i(x, y));
-						}
-					}else {
-						if(fields[x][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x+1>map_size_x-1?map_size_x-1: x+1][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x-1<0 ? 0 : x-1][y].resource != Resource.OCEAN ||
-								fields[x+1>map_size_x-1?map_size_x-1: x+1][y].resource != Resource.OCEAN || fields[x][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN || fields[x+1>map_size_x-1?map_size_x-1: x+1][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN) {
-							availableHarbourPlaces.add(new Vector2i(x, y));
-						}
-					}
-					
-				}
-			}
-		}
 	}
 
 	public boolean is_inside_hexagon(Vector2 origin, float diameter, Vector2 position) {
@@ -169,7 +156,7 @@ public class Map {
 
 	List<Vector2i> get_surrounding_fields(Vector3i settlement_pos, boolean allFields) {
 		List<Vector2i> ret = new ArrayList<Vector2i>();
-		if (fields[settlement_pos.x][settlement_pos.y].resource != Resource.OCEAN && fields[settlement_pos.x][settlement_pos.y].resource != Resource.DESERT)
+		if (fields[settlement_pos.x][settlement_pos.y].resource != Resource.OCEAN && fields[settlement_pos.x][settlement_pos.y].resource != Resource.DESERT || allFields)
 			ret.add(new Vector2i(settlement_pos.x, settlement_pos.y));
 		if (settlement_pos.z == LAYER_NORTH_STMT ? settlement_pos.y > 0 : settlement_pos.y < map_size_y - 1) {
 			int left_x = settlement_pos.y % 2 == 0 ? settlement_pos.x - 1 : settlement_pos.x;
@@ -285,6 +272,26 @@ public class Map {
 				// west
 				if (fields[x][y].resource != Resource.OCEAN || (x > 0) && fields[x - 1][y].resource != Resource.OCEAN) {
 					available_street_places.add(new Vector3i(x, y, LAYER_WEST_STREET));
+				}
+			}
+		}
+		
+		for(int y = 0; y < map_size_y; y++) {
+			for(int x = 0; x < map_size_x; x++) {
+				if(fields[x][y].resource == Resource.OCEAN) {
+					if(y % 2 == 0) {
+						//Checks if there are land fields
+						if(fields[x-1<0 ? 0 : x-1][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x-1<0?0:x-1][y].resource != Resource.OCEAN ||
+								fields[x+1>map_size_x-1?map_size_x-1: x+1][y].resource != Resource.OCEAN || fields[x-1<0?0:x-1][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN || fields[x][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN) {
+							availableHarbourPlaces.add(new Vector2i(x, y));
+						}
+					}else {
+						if(fields[x][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x+1>map_size_x-1?map_size_x-1: x+1][y-1<0 ? 0: y-1].resource != Resource.OCEAN || fields[x-1<0 ? 0 : x-1][y].resource != Resource.OCEAN ||
+								fields[x+1>map_size_x-1?map_size_x-1: x+1][y].resource != Resource.OCEAN || fields[x][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN || fields[x+1>map_size_x-1?map_size_x-1: x+1][y+1>map_size_y-1? map_size_y-1: y+1].resource != Resource.OCEAN) {
+							availableHarbourPlaces.add(new Vector2i(x, y));
+						}
+					}
+					
 				}
 			}
 		}
@@ -473,14 +480,45 @@ public class Map {
 
 	public java.util.Map<Vector2, Resource> addHarbours() {
 		Random rand = new Random();
-		for(int i = 0; i < 10; i++) {
-			int idx = rand.nextInt(availableHarbourPlaces.size()-1);
-			Vector2 pos = new Vector2(availableHarbourPlaces.get(idx).x, availableHarbourPlaces.get(idx).y);
-			Resource r = Resource.values()[rand.nextInt(Resource.values().length-1)];
-			if(r == Resource.OCEAN || r == Resource.CLAY) {
-				r = null; //null equals 3 for 1
-			}
-			availableHarbourPlaces.remove(idx);
+		//add available harbours
+		List<Resource> availableHarbours = new ArrayList<Resource>();
+		for(int i = 0; i < Resource.values().length-1; i++) {
+			if(Resource.values()[i] == Resource.OCEAN || Resource.values()[i] == Resource.DESERT) {
+				availableHarbours.add(null);
+				availableHarbours.add(null);
+			}else {
+				availableHarbours.add(Resource.values()[i]);
+			}		
+		}
+		Collections.shuffle(availableHarbourPlaces);
+		int numHarbours =  availableHarbours.size();
+		int idx = 0;
+		for(int i = 0; i < numHarbours; i++) {
+			boolean foundPlace = true;
+			Vector2 pos;
+			do {
+				 foundPlace = true;
+				 pos = new Vector2(availableHarbourPlaces.get(idx).x, availableHarbourPlaces.get(idx).y);
+				 List<Vector2i> surroundingFields = new ArrayList<Vector2i>();
+				 surroundingFields.addAll(get_surrounding_fields(new Vector3i((int)pos.x, (int)pos.y, 0), true));
+				 surroundingFields.addAll(get_surrounding_fields(new Vector3i((int)pos.x, (int)pos.y, 1), true));
+				 surroundingFields.addAll(get_surrounding_fields(new Vector3i((int)pos.x, (int)pos.y, 2), true));
+				 if(pos.y < map_size_y-1)
+					 surroundingFields.addAll(get_surrounding_fields(new Vector3i((int)pos.x, (int)pos.y+1, 0), true));
+
+				 for(Vector2i v : surroundingFields) {
+					 for(Vector2 v2 : harbours.keySet()) {
+						 if(v.x == v2.x && v.y == v2.y) {
+							 foundPlace = false;
+							 break;
+						 }
+					 }
+				 }
+				 idx++;
+			}while(foundPlace == false && idx < availableHarbourPlaces.size());
+			int idxR = rand.nextInt(availableHarbours.size());
+			Resource r = availableHarbours.get(idxR);
+			availableHarbours.remove(idxR);
 			harbours.put(pos, r);
 		}
 		return harbours;

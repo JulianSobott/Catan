@@ -107,7 +107,6 @@ public class ScrollContainer extends Widget{
 	
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
-		//TODO evaluate which widget should be rendered
 		for(Widget widget : widgets) {
 			if(widget.bounds.y > this.maxBounds.y && widget.bounds.y + widget.bounds.height < this.maxBounds.y + this.maxBounds.height) {
 				widget.render(sr, sb);

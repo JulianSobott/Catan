@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 public class TextureMgr {
 	private static HashMap<String, Texture> textures = new HashMap<>();
+	public static boolean finishedLoading;
 	
 	public static void init() {
 		//Load all resources 
@@ -23,7 +24,8 @@ public class TextureMgr {
 		for(final FileHandle img : images) {
 			TextureMgr.textures.put(getNameWithoutExtension(img.name()), new Texture(img, true));
 			TextureMgr.textures.get(getNameWithoutExtension(img.name())).setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-		}		
+		}	
+		finishedLoading = true;
 	}
 	
 	public static Texture getTexture(String texture) {

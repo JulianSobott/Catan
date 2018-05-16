@@ -61,7 +61,7 @@ public class LocalGameLogic extends GameLogic {
 	Texture city_txtr;
 	Texture street_txtr;
 	Texture robber_txtr;
-	
+
 	PolygonSpriteBatch polyBatch;
 	PolygonSprite polySprite;
 	float[] ellipseVertices = new float[6 * 3 * 2];
@@ -157,7 +157,7 @@ public class LocalGameLogic extends GameLogic {
 				villages.add(Map.index_to_building_position(building.get_position()));
 				state.villages.put(user, villages);
 			}
-			
+
 		} else if (building.get_type() == Building.Type.CITY) {
 			// remove old village
 			Vector2 building_pos = Map.index_to_building_position(building.get_position());
@@ -188,7 +188,7 @@ public class LocalGameLogic extends GameLogic {
 								pos.y - Map.field_size / 2 - Map.border_size, Map.field_size + Map.border_size * 2,
 								Map.field_size + Map.border_size * 2, 30, 6);
 						sr.end();
-						
+
 					}
 
 					sr.begin(ShapeType.Filled);
@@ -198,6 +198,7 @@ public class LocalGameLogic extends GameLogic {
 					sr.ellipse(pos.x - Map.field_size / 2, pos.y - Map.field_size / 2, Map.field_size, Map.field_size,
 							30, 6);
 					sr.end();
+					/*
 					Gdx.gl.glDisable(GL20.GL_BLEND);
 					Texture texture = TextureMgr.getTexture("clay");
 					Pixmap pixMap = new Pixmap(Gdx.files.local("assets/res/woodField.png"));
@@ -213,12 +214,12 @@ public class LocalGameLogic extends GameLogic {
 						pixMap = new Pixmap(Gdx.files.local("assets/res/clayField.png"));
 					if(resource.getKey() == Resource.ORE)
 						pixMap = new Pixmap(Gdx.files.local("assets/res/oreField.png"));
-					
+
 					TextureRegion region = new TextureRegion(new Texture(pixMap));
 					Gdx.gl.glEnable(GL20.GL_BLEND);
 					Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 					sb.begin();
-					
+
 					//sb.draw(texture, pos.x- Map.field_size / 2, pos.y- Map.field_size / 2, Map.field_size, Map.field_size);
 					sb.draw(region, pos.x- Map.field_size / 2, pos.y- Map.field_size / 2, Map.field_size / 2, Map.field_size / 2, Map.field_size, Map.field_size, 1f, 1f, 180f);
 					sb.end();
@@ -231,10 +232,10 @@ public class LocalGameLogic extends GameLogic {
 					polyBatch.begin();
 					//polySprite.draw(polyBatch);
 					polyBatch.end();*/
-					
+
 				}
 			}
-			
+
 			// render field numbers
 			for (java.util.Map.Entry<Byte, List<Vector2>> number : state.field_numbers.entrySet()) {
 				std_font.getData().setScale(
@@ -294,26 +295,25 @@ public class LocalGameLogic extends GameLogic {
 					state.robberPosition.y - spriteRobber.getHeight() * 0.05f, spriteRobber.getWidth() * 0.1f,
 					spriteRobber.getHeight() * 0.1f);
 			sb.end();
-			
+
 			for(Entry<Vector2, Resource> entry : state.harbours.entrySet()) {
 				if(entry.getValue() == null) { // null = 3 for 1
 					sr.begin(ShapeType.Filled);
-					sr.setColor(new Color(100, 100, 100, 250).gdx());
+					sr.setColor(new Color(0, 0, 0, 250).gdx());
 					sr.ellipse(Map.index_to_position(entry.getKey().x, entry.getKey().y).x - Map.field_size / 2 + 30,
 							Map.index_to_position(entry.getKey().x, entry.getKey().y).y - Map.field_size / 2 + 30, Map.field_size - 60,
-							Map.field_size - 60,  30, 6);		
+							Map.field_size - 60,  30, 6);
 					sr.end();
 				}else {
 					sr.begin(ShapeType.Filled);
 					sr.setColor(entry.getValue().get_color().gdx());
 					sr.ellipse(Map.index_to_position(entry.getKey().x, entry.getKey().y).x - Map.field_size / 2 + 30,
 							Map.index_to_position(entry.getKey().x, entry.getKey().y).y - Map.field_size / 2 + 30, Map.field_size - 60,
-							Map.field_size - 60,  30, 6);		
+							Map.field_size - 60,  30, 6);
 					sr.end();
 				}
-				
+
 			}
-			
 		}
 	}
 
@@ -340,7 +340,7 @@ public class LocalGameLogic extends GameLogic {
 					((DevCard.FreeStreets) state.devCard.data).remainedFreeStreets--;
 					core.playCard(id, state.devCard);
 				}
-			}	
+			}
 		}
 	}
 
@@ -356,24 +356,24 @@ public class LocalGameLogic extends GameLogic {
 		ui.switch_to_idle();
 		ui.enableAllButton(state.isCurrentPlayer);
 	}
-	
+
 	public void resetGame() {
 		state.cities = new java.util.HashMap<Integer, List<Vector2>>();
 		state.streets = new java.util.HashMap<Integer, List<AbstractStreet>>();
 		state.villages = new java.util.HashMap<Integer, List<Vector2>>();
 	}
-	
+
 	PolygonRegion createFieldRegion(float x, float y, Resource r) { //coordinates for left bottom corner of invisible rect
 		createFieldVertices(x, y, Map.field_size + Map.border_size * 2, Map.field_size + Map.border_size * 2);
-		return  new PolygonRegion(new TextureRegion(TextureMgr.getTexture(r.toString().toLowerCase())), 
-				 this.ellipseVertices, 
+		return  new PolygonRegion(new TextureRegion(TextureMgr.getTexture(r.toString().toLowerCase())),
+				 this.ellipseVertices,
 				 new short[] {
 						 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
 				 });
 	}
-	
+
 	void createFieldVertices(float x, float y, float width, float height) {
-		float angle = 2 * MathUtils.PI / 6; 
+		float angle = 2 * MathUtils.PI / 6;
 		float rotation = MathUtils.PI * 30 / 180f;
 		float sin = MathUtils.sin(rotation);
 		float cos = MathUtils.cos(rotation);
@@ -387,9 +387,9 @@ public class LocalGameLogic extends GameLogic {
 			y1 = (height * 0.5f * MathUtils.sin((i + 1) * angle));
 			addVertex2FieldEllipse(cx + cos * x1 - sin * y1, cy + sin * x1 + cos * y1, i * 3 + 2);
 		}
-		
+
 	}
-	
+
 	void addVertex2FieldEllipse(float x, float y, int idxVertex) {
 		this.ellipseVertices[idxVertex * 2 + 0] = x;
 		this.ellipseVertices[idxVertex * 2 + 1] = y;

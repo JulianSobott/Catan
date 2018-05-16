@@ -156,13 +156,13 @@ public class LocalCore extends Core {
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
 			// DEBUG
-
+			/*
 			player.get(i).add_resource(Resource.CLAY, 10);
 			player.get(i).add_resource(Resource.GRAIN, 10);
 			player.get(i).add_resource(Resource.ORE, 10);
 			player.get(i).add_resource(Resource.WOOD, 10);
 			player.get(i).add_resource(Resource.WOOL, 10);
-
+			 */
 			uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
@@ -820,11 +820,11 @@ public class LocalCore extends Core {
 						for(Player p : this.player) {
 							if(p.hasLongestStreet() && !p.equals(this.player.get(current_player))) {
 								p.setLongestStreet(false);
-								//TODO Add message here
+								uis.get(p.getId()).addNewMessage(new Message(p.getName() + " has the longest street (" + length + ")"));
 							}
 						}
 						this.player.get(current_player).setLongestStreet(true);
-						//TODO Add message here
+						uis.get(current_player).addNewMessage(new Message("You have the longest street (" + length + ")"));
 						update_scoreboard_data();
 						System.out.println(maxStreetlength);
 					}

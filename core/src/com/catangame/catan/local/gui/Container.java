@@ -85,7 +85,6 @@ public class Container extends Widget{
 	
 	@Override
 	public void render(ShapeRenderer sr, SpriteBatch sb) {
-		//TODO evaluate which widget should be rendered
 		if(visible) {
 			for(Widget widget : widgets) {
 				if(widget.bounds.y + widget.bounds.height/2 > this.maxBounds.y && widget.bounds.y - widget.bounds.height/2 < this.maxBounds.y + this.maxBounds.height) {
