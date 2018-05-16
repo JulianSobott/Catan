@@ -20,13 +20,11 @@ public class Background extends Widget{
 
 	@Override
 	public void set_position(Vector2 pos) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void do_mouse_click(Vector2 pos) {
-		// TODO Auto-generated method stub
 		
 	}
 }
