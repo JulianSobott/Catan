@@ -820,11 +820,11 @@ public class LocalCore extends Core {
 						for(Player p : this.player) {
 							if(p.hasLongestStreet() && !p.equals(this.player.get(current_player))) {
 								p.setLongestStreet(false);
-								//TODO Add message here
+								uis.get(p.getId()).addNewMessage(new Message(p.getName() + " has the longest street (" + length + ")"));
 							}
 						}
 						this.player.get(current_player).setLongestStreet(true);
-						//TODO Add message here
+						uis.get(current_player).addNewMessage(new Message("You have the longest street (" + length + ")"));
 						update_scoreboard_data();
 						System.out.println(maxStreetlength);
 					}

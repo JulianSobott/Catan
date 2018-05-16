@@ -242,7 +242,7 @@ public class LocalUI extends UI implements InputProcessor {
 			@Override
 			public void run() {
 				framework.init_host_game();
-				//TODO Change to above when server is online
+				//TODO Change when server is online
 				//framework.initOnlineHostGame();
 				build_host_lobby_window();
 			}
@@ -272,23 +272,6 @@ public class LocalUI extends UI implements InputProcessor {
 		});
 
 		widgets.add(btn);
-
-		/*btn = new Button(Language.CHANGE_LANGUAGE.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
-		btn.addHoverEffect1();
-		String otherLanguage = Language.getCurrentLanguage() == Language.Type.german ? Language.Type.english.toString() : Language.Type.german.toString();
-		btn.setTexture(TextureMgr.getTexture(otherLanguage + "flag"));
-		btn.set_click_callback(new Runnable() {
-			@Override
-			public void run() {
-				if(Language.getCurrentLanguage() == Language.Type.german)
-					Language.set_language(Language.Type.english);
-				else
-					Language.set_language(Language.Type.german);
-				rebuild_gui();
-			}
-		});
-		//btn.set_enabled(false); //TODO remove when implemented
-		widgets.add(btn);*/
 
 		btn = new Button(Language.EXIT.get_text(), new Rectangle(0, 0, mm_button_width, mm_button_height));
 		btn.addHoverEffect1();
@@ -803,7 +786,6 @@ public class LocalUI extends UI implements InputProcessor {
 		int btnSpace = 10;
 
 		//All wanted resources
-		//TODO Add phrases to Language
 		if (tradeDemand.getVendor() != null) {
 			Label lblWantedResources = new Label(Language.CMD_SELECT_WANTED.get_text(), new Rectangle(50, 100, 200, 50));
 			lblWantedResources.set_text_color(Color.WHITE);
@@ -851,9 +833,6 @@ public class LocalUI extends UI implements InputProcessor {
 
 					Button btnMinus = new Button("-", new Rectangle(start1 + btnSpace + lblWidth1,
 							190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-					/*btnMinus.set_text_position(start1 + btnSpace + lblWidth1 + btnWidth1 / 2,
-							190 + (lblHeight + btnSpace) * i);*/// TODO del
-					//btnMinus.adjustWidth(2);
 					btnMinus.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
@@ -872,9 +851,6 @@ public class LocalUI extends UI implements InputProcessor {
 					widgets.add(lblNumresources);
 					Button btnPlus = new Button("+", new Rectangle(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2,
 							190 + (lblHeight + btnSpace) * i, btnWidth1, 30));
-					/*btnPlus.set_text_position(start1 + btnSpace * 3 + lblWidth1 + btnWidth1 * 2.5f,
-							195 + (lblHeight + btnSpace) * i);*/// TODO del
-					//btnPlus.adjustWidth(2);
 					btnPlus.set_click_callback(new Runnable() {
 						@Override
 						public void run() {
@@ -962,7 +938,7 @@ public class LocalUI extends UI implements InputProcessor {
 							widgets.add(lblOfferID);
 							Label lblOfferContainer = new Label("",
 									new Rectangle(window_size.x / 2, 200 + (150 + 3) * offerI, window_size.x / 2 - 30, 150));
-							lblOfferContainer.set_fill_color(new Color(1.f, 1.f, 1.f, 0.3f)); //TODO Maybe change to player color
+							lblOfferContainer.set_fill_color(state.player_data.get(offer.getVendor_id()).getColor());
 							widgets.add(lblOfferContainer);
 
 							//Offered resources
@@ -2320,8 +2296,8 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 				widget.do_mouse_click(cursor_position);
 				//Neccessary for the trading window
-				if (!(widget instanceof Label)) {
-					//break;
+				if (!(widget instanceof Label) && (!this.allTradeOffer.isEmpty() || tradeDemand != null)) {
+					break;
 				}
 			}
 		}
