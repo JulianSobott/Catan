@@ -2,6 +2,8 @@ package com.catangame.catan.utils;
 
 import java.util.Map.Entry;
 import java.util.HashMap;
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -51,17 +53,27 @@ public class FontMgr {
     }
 
     public static BitmapFont getFont(Type type, int size) {
-        FontSpec spec = new FontSpec(type, size);
-        if (!fontMap.containsKey(spec)) {// create a new font
+        BitmapFont foundBitmap = null;
+        Iterator<Entry<FontSpec, BitmapFont>> fms = fontMap.entrySet().iterator();
+        while( fms.hasNext() ) {
+            Entry<FontSpec, BitmapFont> tmpBmF = fms.next();
+            if( tmpBmF.getKey().type == type && tmpBmF.getKey().size == size ) {
+                foundBitmap = tmpBmF.getValue();
+                break;
+            }
+        }
+        if (foundBitmap == null) {// create a new font
             FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+            System.out.println("NOT CONTAINING");
             parameter.size = size;
             parameter.flip = true;
             parameter.genMipMaps = true;
             parameter.magFilter = TextureFilter.Linear;
             parameter.minFilter = TextureFilter.MipMapLinearLinear;
-            fontMap.put(spec, fontGenerator.get(type).generateFont(parameter));
+            foundBitmap = fontGenerator.get(type).generateFont(parameter);
+            fontMap.put(new FontSpec(type, size), foundBitmap);
         }
-        return fontMap.get(spec);
+        return foundBitmap;
     }
 
     public static BitmapFont getFont(int size) {
