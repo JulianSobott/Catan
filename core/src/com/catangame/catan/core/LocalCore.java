@@ -121,7 +121,8 @@ public class LocalCore extends Core {
 										: building.get_type() == Building.Type.CITY ? 2 : 0;
 								Resource r = map.getFields()[position.x][position.y].resource;
 								p.add_resource(r, addCount);
-								uis.get(p.getId()).addNewMessage(new Message("You've got " + addCount + " " + r.name()));
+								if( addCount > 0 )
+									uis.get(p.getId()).addNewMessage(new Message("You've got " + addCount + " " + r.name()));
 							}
 						}
 					}
