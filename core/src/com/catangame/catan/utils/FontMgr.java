@@ -28,11 +28,11 @@ public class FontMgr {
     }
 
     public static void init() {
-    	fontGenerator.put(Type.DEFAULT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Canterbury.ttf")));
-        fontGenerator.put(Type.ROBOTO_LIGHT, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Roboto-Light.ttf")));
-        fontGenerator.put(Type.OPEN_SANS_REGULAR, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/OpenSans-Regular.ttf")));
-        fontGenerator.put(Type.Amatic, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/Quicksand-Bold.otf")));
-        fontGenerator.put(Type.Quicksand, new FreeTypeFontGenerator(Gdx.files.local("assets/fonts/AmaticSC-Regular.ttf")));
+    	fontGenerator.put(Type.DEFAULT, new FreeTypeFontGenerator(Gdx.files.internal("fonts/Canterbury.ttf")));
+        fontGenerator.put(Type.ROBOTO_LIGHT, new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto-Light.ttf")));
+        fontGenerator.put(Type.OPEN_SANS_REGULAR, new FreeTypeFontGenerator(Gdx.files.internal("fonts/OpenSans-Regular.ttf")));
+        fontGenerator.put(Type.Amatic, new FreeTypeFontGenerator(Gdx.files.internal("fonts/Quicksand-Bold.otf")));
+        fontGenerator.put(Type.Quicksand, new FreeTypeFontGenerator(Gdx.files.internal("fonts/AmaticSC-Regular.ttf")));
         FontMgr.finishedLoading = true;
     }
 

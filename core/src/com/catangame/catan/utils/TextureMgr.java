@@ -18,9 +18,9 @@ public class TextureMgr {
 	
 	public static void init() {
 		//Load all resources 
-		String folderPath = "assets/res/";
+		String folderPath = "res/";
 		File folder = new File(Gdx.files.getLocalStoragePath() + folderPath);
-		FileHandle[] images = Gdx.files.local("assets/res/").list();
+		FileHandle[] images = Gdx.files.internal("res/").list();
 		for(final FileHandle img : images) {
 			TextureMgr.textures.put(getNameWithoutExtension(img.name()), new Texture(img, true));
 			TextureMgr.textures.get(getNameWithoutExtension(img.name())).setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);

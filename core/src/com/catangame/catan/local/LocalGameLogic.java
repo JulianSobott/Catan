@@ -84,13 +84,13 @@ public class LocalGameLogic extends GameLogic {
 	void init() {
 		std_font = FontMgr.getFont(120);
 		std_font.getData().setScale(fontScale);
-		village_txtr = new Texture(Gdx.files.local("assets/res/village.png"), true);
+		village_txtr = new Texture(Gdx.files.internal("res/village.png"), true);
 		village_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-		city_txtr = new Texture(Gdx.files.local("assets/res/city.png"), true);
+		city_txtr = new Texture(Gdx.files.internal("res/city.png"), true);
 		city_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-		street_txtr = new Texture(Gdx.files.local("assets/res/street.png"), true);
+		street_txtr = new Texture(Gdx.files.internal("res/street.png"), true);
 		street_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-		robber_txtr = new Texture(Gdx.files.local("assets/res/robber.png"), true);
+		robber_txtr = new Texture(Gdx.files.internal("res/robber.png"), true);
 		robber_txtr.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 	}
 
