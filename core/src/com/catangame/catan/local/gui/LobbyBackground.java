@@ -117,12 +117,7 @@ public class LobbyBackground extends Background {
 	public LobbyBackground(Rectangle bounds) {
 		super(bounds);
 		
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
 
-		//camera = new OrthographicCamera(1, h / w);
-		//batch = new SpriteBatch();
-		
 		txtrBackground = TextureMgr.getTexture("background");
 		txtrBackground.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		txtrWater = TextureMgr.getTexture("water");
