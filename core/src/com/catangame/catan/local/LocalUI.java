@@ -1582,17 +1582,22 @@ public class LocalUI extends UI implements InputProcessor {
 					//Entered wrong Ip or server is not online
 					new Thread(new Runnable() {
 						public void run() {
-							if(onlineLobby) {
+							Gdx.app.postRunnable(new Runnable() {	
+								@Override
+								public void run() {
+									if(onlineLobby) {
+										framework.initOnlineGuestGame();
+									}else {
+										if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
+											System.out.println("Not accepted");
+											tfIp.set_outline(Color.RED, 2);
+											lblConnecting.set_text("Entered wrong IP or the server is not online");
+										}
+									}
 
-								framework.initOnlineGuestGame();
-							}else {
-								if (!framework.init_guest_game(tf_value_ip.trim(), tf_value_name.trim(), playerColor)) {
-									System.out.println("Not accepted");
-									tfIp.set_outline(Color.RED, 2);
-									lblConnecting.set_text("Entered wrong IP or the server is not online");
 								}
-							}
-
+							});
+							
 						}
 					}).start();
 				} else {
