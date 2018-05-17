@@ -182,7 +182,8 @@ public class Framework extends ApplicationAdapter {
 
 				@Override
 				public boolean pan(float x, float y, float deltaX, float deltaY) {
-					camera.translate(-deltaX * camera.zoom, -deltaY * camera.zoom);
+					if( !ui.isTouchDown )
+						camera.translate(-deltaX * camera.zoom, -deltaY * camera.zoom);
 					mouse_start = new Vector2(x, y);
 					update_view(false);
 					return true;

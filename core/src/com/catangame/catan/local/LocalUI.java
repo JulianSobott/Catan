@@ -148,6 +148,9 @@ public class LocalUI extends UI implements InputProcessor {
 	//End Screen
 	private List<Player> player;
 
+	// Touch events
+	boolean isTouchDown = false;
+
 	public int scrolled = 0;
 	LocalUI(LocalGameLogic logic, Framework framework) {
 		this.state = logic.state;
@@ -2206,7 +2209,8 @@ public class LocalUI extends UI implements InputProcessor {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (button == Input.Buttons.LEFT) { // reset mouse position
-			return check_on_click_widgets(framework.reverse_transform_position(screenX, screenY, camera));
+			isTouchDown = check_on_click_widgets(framework.reverse_transform_position(screenX, screenY, camera));
+			return isTouchDown;
 		} else
 			return false;
 	}
@@ -2246,6 +2250,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		isTouchDown = false;
 		return false;
 	}
 
