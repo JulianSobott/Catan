@@ -408,6 +408,10 @@ public class LocalCore extends Core {
 	@Override
 	public void nextTurn(int id) {
 		if (id == current_player) {
+			for (UI ui : uis) {
+				ui.addNewMessage(new Message(player.get(id).toLocalPlayer(), "Finished his move"));
+			}
+
 			//Checks if player won
 			if (player.get(id).getScore() >= winningScore) {
 				for (UI ui : uis) {
