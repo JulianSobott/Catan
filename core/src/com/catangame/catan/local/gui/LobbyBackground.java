@@ -213,7 +213,7 @@ public class LobbyBackground extends Background {
 		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl20.glEnable(GL20.GL_BLEND);
 		sb.begin();
-		sb.draw(sprStartLogo, Gdx.graphics.getWidth()/2 - 300, 10, 600, 208);
+		//sb.draw(sprStartLogo, Gdx.graphics.getWidth()/2 - 300, 10, 600, 208);
 		sb.end();
 		
 		tick++;

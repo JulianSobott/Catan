@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.jsfml.graphics.FloatRect;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -164,7 +162,8 @@ public class LocalUI extends UI implements InputProcessor {
 		// Is global for all Widgets! Change them on demand
 		Widget.set_default_font(std_font);
 		Widget.set_default_back_color(Color.WHITE);
-		Widget.set_default_text_color(new Color(0.08f, 0.2f, 0.2f, 1.f));
+		//Widget.set_default_text_color(new Color(0.08f, 0.2f, 0.2f, 1.f));
+		Widget.set_default_text_color(Color.BLACK);
 		Widget.set_default_outline_color(Color.TRANSPARENT);
 		Widget.set_default_outline_highlight_color(new Color(0.1f, 0.1f, 0.9f, .9f));
 		Widget.set_default_disabled_outline_color(new Color(0.3f, 0.3f, 0.3f, .9f));
@@ -234,6 +233,10 @@ public class LocalUI extends UI implements InputProcessor {
 
 		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
 		widgets.add(background);
+		
+		Label lbl = new Label("", new Rectangle(Gdx.graphics.getWidth()/2 - 300, 10, 600, 208));
+		lbl.setTexture(TextureMgr.getTexture("startlogo"));
+		widgets.add(lbl);
 
 		Button btn = new Button(Language.CREATE_NEW_GAME.get_text(),
 				new Rectangle(0, 0, mm_button_width, mm_button_height));
@@ -1502,6 +1505,10 @@ public class LocalUI extends UI implements InputProcessor {
 		float mm_tf_height = 50;
 		float mm_tf_spacing = 20;
 
+
+		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
+		widgets.add(background);
+		
 		final Checkbox cbOnlineLobby = new Checkbox(new Rectangle(window_size.x /2 + 100, 200, 35, 35));
 		cbOnlineLobby.setSelected(onlineLobby);
 		cbOnlineLobby.set_click_callback(new Runnable() {
@@ -1665,6 +1672,10 @@ public class LocalUI extends UI implements InputProcessor {
 		destroy_widgets();
 		mode = GUIMode.GUEST_LOBBY;
 
+
+		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
+		widgets.add(background);
+		
 		if (allPossiblePlayer.size() > 0) {
 			int i = 0;
 			for (final Player p : allPossiblePlayer) {
@@ -1725,6 +1736,11 @@ public class LocalUI extends UI implements InputProcessor {
 			widgets.add(lblGameName);
 
 		} else {
+
+			Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
+			widgets.add(background);
+			
+					
 			Label lbl = new Label(Language.SETTINGS.get_text() + ": ", new Rectangle(10,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
