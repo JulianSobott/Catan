@@ -61,7 +61,7 @@ public class LocalCore extends Core {
 	List<Player> player = new ArrayList<Player>();
 
 	//TODO add field at lobby to change this
-	int winningScore = 3; //Default Score to win a game
+	int winningScore = 10; //Default Score to win a game
 	int maxStreetlength = 0;
 
 	//Filehandler
@@ -963,19 +963,23 @@ public class LocalCore extends Core {
 		}
 	}
 
-	private void removePlayer(int id){
+	private void removePlayer(int id) {
 		int idx;
-		for(idx = 0; idx < this.player.size(); idx++) {
-			if(player.get(idx).getId() == id) {
+		for (idx = 0; idx < this.player.size(); idx++) {
+			if (player.get(idx).getId() == id) {
 				break;
 			}
 		}
 		player.remove(idx);
 		uis.remove(idx);
 		logics.remove(idx);
-		if(id != 0) { // Player is not Host
+		if (id != 0) { // Player is not Host
 			data_server.remove_client(id);
-		}		
+		}
+	}
+	
+	public void setWinningScore(int score) {
+		winningScore = score;
 	}
 
 	@Override

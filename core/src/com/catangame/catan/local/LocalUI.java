@@ -131,6 +131,7 @@ public class LocalUI extends UI implements InputProcessor {
 	private String tf_value_size = "5";
 	private String tf_value_random_houses = "1";
 	private String tf_value_resource_houses = "1";
+	private String tf_value_winning_score = "10";
 	private boolean cb_value_is_circle = false;
 	private boolean cbValueIsLocal = true;
 	private String lbl_value_info = "";
@@ -1776,6 +1777,9 @@ public class LocalUI extends UI implements InputProcessor {
 			lbl = new Label(Language.RESOURCE_HOUSES.get_text() + ": ", new Rectangle(column0,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
+			lbl = new Label(Language.WINNING_SCORE.get_text() + ": ", new Rectangle(column0,
+					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
+			widgets.add(lbl);
 			lbl = new Label(Language.IS_CIRCLE.get_text(), new Rectangle(column0 + 180 + textfield_height + 5,
 					height_anchor + (textfield_height + 10) * row_count++ - 5, textfield_width, textfield_height));
 			widgets.add(lbl);
@@ -1878,6 +1882,20 @@ public class LocalUI extends UI implements InputProcessor {
 				}
 			});
 			widgets.add(tfResourceHouses);
+
+			final TextField tfWinningScore = new TextField(new Rectangle(column0 + 200,
+					height_anchor + (textfield_height + 10) * row_count++, textfield_width, textfield_height));
+			tfWinningScore.set_text_color(new Color(0.08f, 0.08f, 0.08f, 1.f));
+			tfWinningScore.set_text(tf_value_winning_score);
+			tfWinningScore.set_input_callback(new Runnable() {
+				TextField textField = tfWinningScore;
+
+				@Override
+				public void run() {
+					tf_value_winning_score = textField.get_text();
+				}
+			});
+			widgets.add(tfWinningScore);
 
 			final Checkbox cbCircleMap = new Checkbox(new Rectangle(column0 + 200,
 					height_anchor + (textfield_height + 10) * row_count++ + textfield_height * .15f,
@@ -2013,6 +2031,7 @@ public class LocalUI extends UI implements InputProcessor {
 
 					((LocalCore) core).changePlayerProps(0, user_name, playerColor);
 					try {
+						((LocalCore) core).setWinningScore(Integer.parseInt(tf_value_winning_score));
 						((LocalCore) core).create_new_map(islandSize, seed,
 								new float[] { 0.f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f },
 								cb_value_is_circle ? GeneratorType.CIRCLE : GeneratorType.HEXAGON, // something
