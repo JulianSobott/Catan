@@ -1728,6 +1728,10 @@ public class LocalUI extends UI implements InputProcessor {
 	public void build_host_lobby_window() {
 		destroy_widgets();
 		mode = GUIMode.HOST_LOBBY;
+		
+		Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
+		widgets.add(background);
+
 		final Label lblHostIp = new Label(serverIP, new Rectangle(window_size.x / 2, 0, 100, 30));
 		widgets.add(lblHostIp);
 		float column0 = 0;
@@ -1745,8 +1749,6 @@ public class LocalUI extends UI implements InputProcessor {
 
 		} else {
 
-			Background background = new LobbyBackground(new Rectangle(0,0,window_size.x, window_size.y));
-			widgets.add(background);
 			
 					
 			Label lbl = new Label(Language.SETTINGS.get_text() + ": ", new Rectangle(10,
