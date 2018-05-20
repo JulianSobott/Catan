@@ -301,16 +301,40 @@ public class Map {
 		Random rand = new Random(seed);
 
 		List<Vector3i> new_cities = new ArrayList<Vector3i>();
-		if(house_count > available_village_places.size()) {
+		if (house_count > available_village_places.size()) {
 			house_count = available_village_places.size();
 		}
 		for (int i = 0; i < house_count; i++) {
 			int index = rand.nextInt(available_village_places.size());
+
+			List<Vector3i> nearbyBuildingSites = get_nearby_building_sites(available_village_places.get(index));
+			if (!allBuildingSitesAvailable(nearbyBuildingSites)) {
+				i--;
+				continue;
+			}
+
 			new_cities.add(available_village_places.get(index));
 			built_villages.add(available_village_places.get(index));
 			available_village_places.remove(index);
 		}
 		return new_cities;
+	}
+	
+	public boolean allBuildingSitesAvailable(List<Vector3i> nearbyBuildingSites) {
+		for (Vector3i site : nearbyBuildingSites) {
+			if (site.z == LAYER_NORTH_STMT || site.z == LAYER_SOUTH_STMT) {
+				boolean found = false;
+				for (Vector3i available : available_village_places) {
+					if (site.x == available.x && site.y == available.y && site.z == available.z) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean is_village_place_available(Vector3i pos) {
