@@ -772,8 +772,6 @@ public class LocalUI extends UI implements InputProcessor {
 				if (playerResources.get(r) >= 4) {
 					enabled = true;
 					break;
-				} else {
-					enabled = false;
 				}
 			}
 			btnAskBank.set_enabled(enabled);
