@@ -64,7 +64,6 @@ public class FontMgr {
         }
         if (foundBitmap == null) {// create a new font
             FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-            System.out.println("NOT CONTAINING");
             parameter.size = size;
             parameter.flip = true;
             parameter.genMipMaps = true;
