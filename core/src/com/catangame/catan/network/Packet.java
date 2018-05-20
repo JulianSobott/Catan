@@ -335,7 +335,7 @@ public class Packet implements Serializable {
 	public int sender; //Own ClientGameID
 	public int receiver; //0 = Host, else ClientGameID
 
-	String debugString;
+	private String debugString;
 
 	public Packet(Command cmd) {
 		this.cmd = cmd;
@@ -368,12 +368,7 @@ public class Packet implements Serializable {
 		this.debugString = str;
 	}
 
-	
-
 	public String getDebugString() {
 		return this.debugString;
-	}
-	public void setString(String str) {
-		this.debugString = str;
 	}
 }

@@ -156,15 +156,7 @@ public class LocalCore extends Core {
 			for (java.util.Map.Entry<Resource, Integer> nr : Building.Type.VILLAGE.getNeededResources().entrySet())
 				player.get(i).add_resource(nr.getKey(), nr.getValue() * startResources);
 
-			// DEBUG
-			/*
-			player.get(i).add_resource(Resource.CLAY, 10);
-			player.get(i).add_resource(Resource.GRAIN, 10);
-			player.get(i).add_resource(Resource.ORE, 10);
-			player.get(i).add_resource(Resource.WOOD, 10);
-			player.get(i).add_resource(Resource.WOOL, 10);
-			 */
-			uis.get(i).update_player_data(player.get(i));
+				uis.get(i).update_player_data(player.get(i));
 		}
 		for (GameLogic logic : logics) {
 			logic.update_new_map(map.getFields(), harbours);

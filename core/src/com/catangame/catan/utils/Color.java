@@ -19,13 +19,6 @@ public class Color implements Serializable {
         this.a = (float) a / 255.f;
     }
 
-    public Color(int rgba32) {// TODO test
-        r = (rgba32 & 0xff000000) >> 24;
-        g = (rgba32 & 0x00ff0000) >> 16;
-        b = (rgba32 & 0x0000ff00) >> 8;
-        a = (rgba32 & 0x000000ff);
-    }
-
     public com.badlogic.gdx.graphics.Color gdx() {
         return new com.badlogic.gdx.graphics.Color(r, g, b, a);
     }

@@ -202,7 +202,7 @@ public class LocalUI extends UI implements InputProcessor {
 		} else if (mode == GUIMode.GAME) {
 			build_game_menu();
 		} else if (mode == GUIMode.TRADE_DEMAND) {
-			build__demander_trade_window();
+			build_demander_trade_window();
 		} else if (mode == GUIMode.TRADE_VENDOR) {
 			build_vendor_trade_window();
 		} else if(mode == GUIMode.DEV_CARD) {
@@ -734,7 +734,7 @@ public class LocalUI extends UI implements InputProcessor {
 		widgets.add(btnMenu);
 	}
 
-	public void build__demander_trade_window() {
+	public void build_demander_trade_window() {
 		Label lblWindow = new Label("", new Rectangle(30, 30, window_size.x - 60, window_size.y - 60));
 		lblWindow.set_fill_color(new Color(0.2f, 0.2f, 0.2f, 0.75f));
 		widgets.add(lblWindow);
@@ -2551,7 +2551,6 @@ public class LocalUI extends UI implements InputProcessor {
 	}
 
 	public void showAllJoinableGames(List<Packet.JoinableGame> list) {
-		// TODO Auto-generated method stub
 		this.allJoinableGames = list;
 		mode = GUIMode.JOINABLE_GAMES;
 		rebuild_gui();

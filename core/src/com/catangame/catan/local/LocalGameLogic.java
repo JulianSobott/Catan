@@ -66,9 +66,6 @@ public class LocalGameLogic extends GameLogic {
 	PolygonSprite polySprite;
 	float[] ellipseVertices = new float[6 * 3 * 2];
 
-	//DEBUG
-	Clock timer = new Clock();
-
 	public LocalGameLogic() {
 		state = new LocalState();
 	}
