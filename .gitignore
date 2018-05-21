@@ -1,63 +1,134 @@
 *.class
 .vscode/
-deps/
-.classpath
-.project
-
-.metadata
-bin/
-tmp/
-idea/
-tools/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
+*/.classpath
+*/.project
+saves/
 
 # fss
 .fssignore
 
-# External tool builders
-.externalToolBuilders/
+## Java
 
-# Locally stored "Eclipse launch configurations"
+*.class
+*.war
+*.ear
+hs_err_pid*
+
+## Robovm
+/ios/robovm-build/
+
+## GWT
+/html/war/
+/html/gwt-unitCache/
+.apt_generated/
+.gwt/
+gwt-unitCache/
+www-test/
+.gwt-tmp/
+
+## Android Studio and Intellij and Android in general
+/android/libs/armeabi/
+/android/libs/armeabi-v7a/
+/android/libs/arm64-v8a/
+/android/libs/x86/
+/android/libs/x86_64/
+/android/gen/
+.idea/
+*.ipr
+*.iws
+*.iml
+/android/out/
+com_crashlytics_export_strings.xml
+
+## Eclipse
+
+.classpath
+.project
+.metadata/
+/android/bin/
+/core/bin/
+/desktop/bin/
+/html/bin/
+/ios/bin/
+/ios-moe/bin/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.settings/
+.loadpath
+.externalToolBuilders/
 *.launch
 
-# PyDev specific (Python IDE for Eclipse)
-*.pydevproject
+## NetBeans
 
-# CDT-specific (C/C++ Development Tooling)
-.cproject
+/nbproject/private/
+/android/nbproject/private/
+/core/nbproject/private/
+/desktop/nbproject/private/
+/html/nbproject/private/
+/ios/nbproject/private/
+/ios-moe/nbproject/private/
 
-# Java annotation processor (APT)
-.factorypath
+/build/
+/android/build/
+/core/build/
+/desktop/build/
+/html/build/
+/ios/build/
+/ios-moe/build/
 
-# PDT-specific (PHP Development Tools)
-.buildpath
+/nbbuild/
+/android/nbbuild/
+/core/nbbuild/
+/desktop/nbbuild/
+/html/nbbuild/
+/ios/nbbuild/
+/ios-moe/nbbuild/
 
-# sbteclipse plugin
-.target
+/dist/
+/android/dist/
+/core/dist/
+/desktop/dist/
+/html/dist/
+/ios/dist/
+/ios-moe/dist/
 
-# Tern plugin
-.tern-project
+/nbdist/
+/android/nbdist/
+/core/nbdist/
+/desktop/nbdist/
+/html/nbdist/
+/ios/nbdist/
+/ios-moe/nbdist/
 
-# TeXlipse plugin
-.texlipse
+nbactions.xml
+nb-configuration.xml
 
-# STS (Spring Tool Suite)
-.springBeans
+## Gradle
 
-# Code Recommenders
-.recommenders/
+/local.properties
+.gradle/
+gradle-app.setting
+/build/
+/android/build/
+/core/build/
+/desktop/build/
+/html/build/
+/ios/build/
+/ios-moe/build/
 
-# Scala IDE specific (Scala & Java development for Eclipse)
-.cache-main
-.scala_dependencies
-.worksheet
+## OS Specific
+.DS_Store
+Thumbs.db
 
-# resources
-saves/
+## iOS
+/ios/xcode/*.xcodeproj/*
+!/ios/xcode/*.xcodeproj/xcshareddata
+!/ios/xcode/*.xcodeproj/project.pbxproj
+/ios/xcode/native/
+
+/ios-moe/xcode/*.xcodeproj/*
+!/ios-moe/xcode/*.xcodeproj/xcshareddata
+!/ios-moe/xcode/*.xcodeproj/project.pbxproj
+/ios-moe/xcode/native/
