@@ -1,6 +1,6 @@
 android {
-    buildToolsVersion "27.0.3"
-    compileSdkVersion 19
+    buildToolsVersion "28.0.3"
+    compileSdkVersion 28
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -11,21 +11,16 @@ android {
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
-
-        instrumentTest.setRoot('tests')
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
         applicationId "com.catangame.catan"
-        minSdkVersion 19
-        targetSdkVersion 24
+        minSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        jackOptions {
-            enabled true
-        }
     }
     buildTypes {
         release {
@@ -66,6 +61,13 @@ task copyAndroidNatives() {
         }
     }
 }
+
+tasks.whenTaskAdded { packageTask ->
+    if (packageTask.name.contains("package")) {
+        packageTask.dependsOn 'copyAndroidNatives'
+    }
+}
+
 task run(type: Exec) {
     def path
     def localProperties = project.file("../local.properties")

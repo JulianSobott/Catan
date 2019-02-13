@@ -97,7 +97,7 @@ public class Framework extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-		loadingTexture = new Sprite(new Texture(Gdx.files.local("assets/res/startlogo.png")));
+		loadingTexture = new Sprite(new Texture(Gdx.files.internal("res/startlogo.png")));
 		loadingTexture.flip(false, true);
 
 		Map.update_constants();
